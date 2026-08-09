@@ -1,0 +1,7 @@
+[
+    {
+        "should": "Should not negate color value for linear gradient",
+        "expected": "div { background-image: linear-gradient(rgba(255,255,255,.3) 0%,#ff8 100%); }",
+        "input": "div { background-image: linear-gradient(rgba(255, 255, 255, .3) 0%, #ff8 100%); }"
+    }
+]

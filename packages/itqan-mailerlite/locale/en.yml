@@ -1,0 +1,108 @@
+itqan-mailerlite:
+  admin:
+    title: MailerLite Integration
+
+    connection:
+      connected: Connected to MailerLite
+      disconnected: Not connected to MailerLite
+      checking: Checking connection...
+      refresh: Refresh
+
+    settings:
+      enabled_label: Enable MailerLite Integration
+      api_key_label: MailerLite API Key
+      api_key_help: Get your API key from MailerLite dashboard → Integrations → API
+
+      groups_section: Group Settings
+      new_members_label: New Members Group
+      new_members_help: MailerLite group name for new user registrations
+      first_posters_label: First Posters Group
+      first_posters_help: MailerLite group name for users who make their first post
+      inactive_users_label: Inactive Users Group
+      inactive_users_help: MailerLite group name for inactive users
+      power_users_label: Power Users Group
+      power_users_help: MailerLite group name for highly active users
+
+      thresholds_section: Threshold Settings
+      inactivity_days_label: Inactivity Threshold (Days)
+      inactivity_days_help: Number of days of inactivity before a user is considered inactive
+      power_user_posts_label: Power User Posts Threshold
+      power_user_posts_help: Minimum number of posts to be considered a power user
+
+      webhook_section: Webhook Settings
+      webhook_url_label: Webhook URL
+      webhook_url_help: Configure this URL in MailerLite to receive unsubscribe events (click to copy)
+      webhook_secret_label: Webhook Secret
+      webhook_secret_help: Optional secret to validate webhook requests from MailerLite
+
+    tabs:
+      dashboard: Dashboard
+      subscribers: Subscribers
+      groups: Groups
+      logs: Sync Logs
+
+    dashboard:
+      quick_actions: Quick Actions
+      sync_all_users: Sync All Users
+      refresh_stats: Refresh Stats
+      recent_activity: Recent Activity
+      no_recent_activity: No recent sync activity
+      sync_cli_message: To sync all users, run the following command on your server:\n\nphp flarum mailerlite:sync-users
+      stats:
+        total_users: Total Users
+        synced: Synced
+        pending: Pending
+        failed: Failed
+
+    groups:
+      title: MailerLite Groups
+      refresh: Refresh Groups
+      no_groups: No groups found. Configure your API key and group names in settings.
+      subscribers: subscribers
+      sent: sent
+      opens: opens
+
+    subscribers:
+      filter_status: Filter by Status
+      search: Search
+      search_placeholder: Username or email...
+      search_button: Search
+      all: All
+      synced: Synced
+      pending: Pending
+      failed: Failed
+      unsubscribed: Unsubscribed
+      not_synced: Not Synced
+      no_subscribers: No subscribers found
+      sync: Sync
+      sync_failed: Failed to sync user. Please try again.
+
+    logs:
+      filter_status: Filter by Status
+      filter_action: Filter by Action
+      refresh: Refresh
+      all: All
+      success: Success
+      failed: Failed
+      pending: Pending
+      action_sync: Sync
+      action_add_to_group: Add to Group
+      action_remove_from_group: Remove from Group
+      action_unsubscribe: Unsubscribe
+      no_logs: No sync logs found
+
+    table:
+      user: User
+      email: Email
+      action: Action
+      group: Group
+      status: Status
+      error: Error
+      time: Time
+      groups: Groups
+      posts: Posts
+      last_synced: Last Synced
+      actions: Actions
+
+    pagination:
+      page: "Page {current} of {total}"

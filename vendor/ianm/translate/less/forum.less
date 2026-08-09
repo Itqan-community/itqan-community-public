@@ -1,0 +1,127 @@
+.CommentPost {
+  .Post-header {
+    .item-lang {
+      display: inline-block;
+    }
+  }
+}
+
+.Translation--meta {
+  font-size: 80%;
+
+  .icon {
+    color: @primary-color;
+    margin-right: 3px;
+    font-size: 100%;
+  }
+}
+
+.Post-footer {
+  width: 100%;
+
+  .CommentPost--translated {
+    padding: 0px 10px 0;
+    background-color: @control-bg;
+    margin-top: 20px;
+    border-radius: @border-radius;
+
+    .Post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .Post-body {
+      color: @text-color;
+      word-break: break-word;
+    }
+
+    .CommentPost {
+      min-height: auto;
+    }
+  }
+}
+
+.DiscussionTitle-container {
+  .DiscussionHero-title {
+    display: inline-block;
+    margin-right: 8px;
+    margin-bottom: 0px;
+  }
+
+  .DetectedLanguageLabel {
+    font-size: 80%;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+
+  .DiscussionTranslationAction {
+    font-size: 90%;
+    display: block;
+    margin-top: 0px;
+
+    .Button {
+      color: var(--contrast-color, var(--body-bg));
+    }
+  }
+}
+
+.DiscussionTitle {
+  &--translated {
+    border-radius: @border-radius;
+
+    .Title-header {
+      display: flex; 
+      align-items: center;
+      justify-content: space-between;
+
+      .Translation--meta {
+        display: inline-block;
+        margin-right: 5px;
+      }
+
+      .TitleMeta.TitleTranslation--action-items {
+        display: inline-block;
+        font-size: 80%;
+        vertical-align: middle;
+
+        .Button { 
+          padding: 2px 4px;
+          font-size: 90%;
+          margin: 0 2px;
+          width: auto;
+        }
+
+        .icon {
+          font-size: 100%;
+        }
+      }
+    }
+
+    .Title-body {
+      color: @text-color;
+      word-break: break-word;
+    }
+
+    .DiscussionTitle {
+      min-height: auto;
+    }
+  }
+}
+
+.TitleMeta.TitleTranslation--action-items {
+  display: inline-block;
+  font-size: 80%;
+  vertical-align: middle;
+
+  .Button { 
+    padding: 2px 4px;
+    font-size: 90%;
+    margin: 0 2px;
+    width: auto;
+  }
+
+  .icon { 
+    font-size: 80%;
+  }
+}

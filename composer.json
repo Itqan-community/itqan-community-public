@@ -1,0 +1,99 @@
+{
+    "name": "flarum/flarum",
+    "description": "Delightfully simple forum software.",
+    "type": "project",
+    "keywords": [
+        "forum",
+        "discussion"
+    ],
+    "homepage": "https://flarum.org/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Flarum",
+            "email": "info@flarum.org",
+            "homepage": "https://flarum.org/team"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/flarum/core/issues",
+        "source": "https://github.com/flarum/flarum",
+        "docs": "https://docs.flarum.org/"
+    },
+    "require": {
+        "acpl/mobile-tab": "*",
+        "askvortsov/flarum-markdown-tables": "*",
+        "askvortsov/flarum-pwa": "*",
+        "askvortsov/flarum-rich-text": "*",
+        "bendary/flarum-admin-audit": "^2.0.0",
+        "blomstra/database-queue": "^1.0",
+        "clarkwinkelmann/flarum-ext-author-change": "*",
+        "clarkwinkelmann/flarum-ext-likes-received": "*",
+        "datlechin/flarum-copy-links": "*",
+        "datlechin/flarum-discussion-count": "*",
+        "flarum-locale/arabic": "dev-main",
+        "flarum/approval": "*",
+        "flarum/bbcode": "*",
+        "flarum/core": "^1.8",
+        "flarum/emoji": "*",
+        "flarum/extension-manager": "*",
+        "flarum/flags": "*",
+        "flarum/lang-english": "*",
+        "flarum/likes": "*",
+        "flarum/lock": "*",
+        "flarum/markdown": "*",
+        "flarum/mentions": "*",
+        "flarum/nicknames": "*",
+        "flarum/pusher": "*",
+        "flarum/statistics": "*",
+        "flarum/sticky": "*",
+        "flarum/subscriptions": "*",
+        "flarum/suspend": "*",
+        "flarum/tags": "*",
+        "flarumtr/flarum-ext-mobile-search": "*",
+        "fof/analytics": "^1.1",
+        "fof/discussion-language": "*",
+        "fof/disposable-emails": "*",
+        "fof/formatting": "*",
+        "fof/linguist": "*",
+        "fof/links": "^1.3",
+        "fof/merge-discussions": "*",
+        "fof/oauth": "*",
+        "fof/pretty-mail": "*",
+        "fof/share-social": "*",
+        "fof/sitemap": "*",
+        "fof/socialprofile": "*",
+        "fof/upload": "*",
+        "fof/user-bio": "*",
+        "fof/webhooks": "*",
+        "ianm/follow-users": "*",
+        "ianm/html-head": "*",
+        "ianm/translate": "^0.4.2",
+        "irmmr/flarum-ext-rtl": "^0.2.5",
+        "itqan/flarum-mailerlite": "@dev",
+        "justoverclock/newsletter": "*",
+        "michaelbelgium/flarum-discussion-views": "^7.4",
+        "pipecraft/flarum-ext-id-slug": "*",
+        "the-turk/flarum-stickiest": "*",
+        "v17development/flarum-seo": "*",
+        "v17development/flarum-user-badges": "*"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "repositories": {
+        "itqan-mailerlite": {
+            "type": "path",
+            "url": "packages/itqan-mailerlite"
+        },
+        "0": {
+            "type": "vcs",
+            "url": "git@github.com:Itqan-community/flarum-lang-arabic.git",
+            "no-api": true
+        }
+    }
+}

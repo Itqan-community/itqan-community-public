@@ -1,0 +1,62 @@
+justoverclock-newsletter:
+  admin:
+    ctaText: Visit our community
+    newsLetterOptOutFooter: Don't like these emails?
+    newsLetterOptOutFooterUnsubscribe: Unsubscribe.
+    newsletterCountText: Your newsletter will be sent to all of the above subscribers.
+    newsletterCountTextTwo: users!
+    textOrHtml: Newsletter Body (text or html)
+    emailTitle: Newsletter Title
+    sendingText: Sending...
+    sendEmailButtonText: Send Email to All Subscribers
+    emailSentSuccessMessage: Emails sent successfully!
+    emailSentErrorMessage: Failed to send emails.
+    noNewsletterSent: No data
+    totalSubscribers: Total subscribers
+    totalSubscribersCount: count of total subscriber users
+    lastNewsletterSent: Last newsletter sent
+    lastNewsletterSentDescription: title of the last newsletter sent
+    lastNewsletterSentText: "sent on: "
+
+  forum:
+    optOutPlaceholder: Type here your email...
+    optOutPageTitle: Inbox feeling a little full? Here you can opt-out from our newsletter.
+    optOutPageDescription: |
+      <p>We understand that preferences change, and we're sorry to see you unsubscribe. If you no longer wish to receive
+      our newsletter, simply click the button below. You will stop receiving future updates, offers, and news from us.</p>
+      <p>We’d love to know if there’s anything we could do to improve our newsletter or if you have any feedback to share.
+      If you change your mind, you can always re-subscribe in the future!</p>
+      <p>Thank you for your time, and we hope to stay in touch.</p>
+    newsLetterTitle: Subscribe
+    newsLetterDescription: to our newsletter. Please enter your email and press enter
+    newsLetterModalTitle: Data processing policy *
+    consent: I read
+    subscribe: Subscribe
+    unSubscribe: Unsubscribe
+    emailRequired: Email is required
+    invalidEmailHint: Invalid Email
+    emailNotFound: Subscriber not found or already deleted
+    subscriberDeleted: Subscriber successfully deleted
+    subscriberExist: This email is already subscribed.
+    successMessage: You are now subscribed to our newsletter!
+    successUnsubscribedMessage: You are now unsubscribed from our newsletter!
+    dataProcessingModalContent: |
+      <p><strong>Purpose</strong></p>
+      <p>This policy outlines our approach to collecting, processing, and storing personal data for newsletter
+      subscriptions in compliance with the General Data Protection Regulation (GDPR). It ensures that individuals
+      have full control over their data and understand how it is used.</p>
+      <p><strong>Clear consent</strong></p>
+      <p>We collect newsletter subscriptions only through a clear, affirmative opt-in process.
+      Subscribers must actively check an unchecked box or click a dedicated "Agree" switch button to give consent.
+      Pre-ticked checkboxes or implied consent are not used.</p>
+      <p><strong>Data Minimization</strong></p>
+      <p>We only collect the necessary data for sending newsletters: Email address (required). </p>
+      <p><strong>Opt-out</strong></p>
+      <p>Subscribers can opt-out at any time. Every newsletter includes an unsubscribe link that is easy to find and use.
+      </p>
+      <p><strong>Data Retention</strong></p>
+      <p>Personal data is storedin our database only for the duration of the subscription. If a subscriber opts out, their email
+      address and other personal data are deleted unless required by law or for legitimate purposes (e.g., maintaining a suppression list to avoid future emails).</p>
+      <p><strong>Secure Data Handling</strong></p>
+      <p>We ensure appropriate technical and organizational measures to protect subscribers’ data, such as:
+      Encrypting data during transmission. Regular audits of our data storage and processing systems.</p>

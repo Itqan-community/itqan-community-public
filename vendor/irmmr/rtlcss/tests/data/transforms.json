@@ -1,0 +1,82 @@
+[
+    {
+        "should": "Should mirror transform : matrix",
+        "expected": "div { transform: matrix(2,.1,20.75,2,2,2); }",
+        "input": "div { transform: matrix(2, -0.1, -20.75, 2, -2, 2); }"
+    },
+    {
+        "should": "Should mirror transform (with no digits before dot): matrix",
+        "expected": "div { transform: matrix(2,.1,.75,2,2,2); }",
+        "input": "div { transform: matrix(2, -0.1, -.75, 2, -2, 2); }"
+    },
+    {
+        "should": "Should mirror transform with calc: matrix",
+        "expected": "div { transform: matrix(-moz-calc(( ( 25% / 2 ) * 10px )),calc(-1*(( ( 25% / 2 ) * 10px ))),20.75,2,2,2); }",
+        "input": "div { transform: matrix( -moz-calc(((25%/2) * 10px)), calc(( (25%/2) * 10px) ), -20.75, 2, -2, 2 ); }"
+    },
+    {
+        "should": "Should mirror transform : translate",
+        "expected": "div { transform: translate(-10.75px); }",
+        "input": "div { transform: translate(10.75px); }"
+    },
+    {
+        "should": "Should mirror transform (with no digits before dot): translate",
+        "expected": "div { transform: translate(-.75px); }",
+        "input": "div { transform: translate(.75px); }"
+    },
+    {
+        "should": "Should mirror transform with calc: translate",
+        "expected": "div { transform: translate(-moz-calc(-1*(( ( 25% / 2 ) * 10px )))); }",
+        "input": "div { transform: translate(-moz-calc(((25%/2) * 10px))); }"
+    },
+    {
+        "should": "Should mirror transform : translateX",
+        "expected": "div { transform: translateX(-50.25px); }",
+        "input": "div { transform: translateX(50.25px); }"
+    },
+    {
+        "should": "Should mirror transform (with no digits before dot): translateX",
+        "expected": "div { transform: translateX(-.25px); }",
+        "input": "div { transform: translateX(.25px); }"
+    },
+    {
+        "should": "Should mirror transform : translate3d",
+        "expected": "div { transform: translate3d(-12.75px,50%,3em); }",
+        "input": "div { transform: translate3d(12.75px, 50%, 3em); }"
+    },
+    {
+        "should": "Should mirror transform (with no digits before dot): translate3d",
+        "expected": "div { transform: translate3d(-.75px,50%,3em); }",
+        "input": "div { transform: translate3d(.75px, 50%, 3em); }"
+    },
+    {
+        "should": "Should mirror transform : rotate",
+        "expected": "div { transform: rotate(-20.75deg); }",
+        "input": "div { transform: rotate(20.75deg); }"
+    },
+    {
+        "should": "Should mirror transform (with no digits before dot): rotate",
+        "expected": "div { transform: rotate(-.75deg); }",
+        "input": "div { transform: rotate(.75deg); }"
+    },
+    {
+        "should": "Should mirror transform with calc: rotate",
+        "expected": "div { transform: rotate(calc(-1*(( ( 25% / 2 ) * 10deg )))); }",
+        "input": "div { transform: rotate(calc(((25%/2) * 10deg))); }"
+    },
+    {
+        "should": "Should mirror transform : rotate3d",
+        "expected": "div { transform: rotate3d(-10,20.15,10,-45.14deg); }",
+        "input": "div { transform: rotate3d(10, 20.15, 10, 45.14deg); }"
+    },
+    {
+        "should": "Should mirror transform (with no digits before dot): rotate3d",
+        "expected": "div { transform: rotate3d(-10,20,10,-.14deg); }",
+        "input": "div { transform: rotate3d(10, 20, 10, .14deg); }"
+    },
+    {
+        "should": "Should mirror transform with calc: rotate3d",
+        "expected": "div { transform: rotate3d(-10,20.15,10,calc(-1*(( ( 25% / 2 ) * 10deg )))); }",
+        "input": "div { transform: rotate3d(10, 20.15, 10, calc(((25%/2) * 10deg))); }"
+    }
+]

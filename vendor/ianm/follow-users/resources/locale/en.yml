@@ -1,0 +1,136 @@
+flarum-gdpr:
+  lib:
+    data:
+      followuser:
+        export_description: Exports details of users followed and users following.
+        anonymize_description: "=> flarum-gdpr.lib.data.followuser.delete_description"
+        delete_description: Deletes all data related to following users.
+
+ianm-follow-users:
+  admin:
+    permissions:
+      be_followed_label: Allow users to follow
+    settings:
+      button-on-profile-label: Show the Follow button directly on the user profile header
+      stats-on-profile-label: Show follower and following counts on user profiles
+
+  forum:
+    followed: Followed
+    followers: "{count, plural, one {Follower} other {Followers}}"
+    profile_link: => ianm-follow-users.lib.following_link
+
+    profile_page:
+      no_following: It looks like you're not following anyone.
+
+    user_controls:
+      follow_button: => ianm-follow-users.lib.follow
+      unfollow_button: => ianm-follow-users.lib.unfollow
+      change_button: => ianm-follow-users.lib.change_follow_type
+
+    settings:
+      notify_new_follower_label: Someone follows me
+      notify_new_unfollower_label: Someone stops following me
+      notify_new_discussion_label: Someone I'm following starts a discussion
+      notify_new_post_label: Someone I'm following posts in an existing discussion
+      block_follow: Prevent users from following me
+
+    index:
+      follow_tag_button: => ianm-follow-users.lib.follow
+      unfollow_tag_button: => ianm-follow-users.lib.change_follow_type
+
+    notifications:
+      new_discussion_text: "{username} started"
+      new_post_text: "{username} posted in a discussion"
+      new_follower_text: "{username} followed you"
+      new_unfollower_text: "{username} stopped following you"
+
+    badge:
+      label:
+        follow: Following discussions
+        lurk: Following all
+
+    filter:
+      following: Followed users
+
+    modals:
+      select_follow_level:
+        title: "Select follow level for {username}"
+        description: "Choose how you'd like to follow <em>{username}</em>."
+
+        follow_levels_heading: "Follow levels"
+        follow_select_label: "Follow type"
+
+        no_user_attr_provided_err: "Uh oh, something went wrong while opening this modal."
+        no_user_attr_provided_err_debug: "No `user` attribute was passed to the SelectFollowUserLevel modal when created. Modal cannot be rendered."
+
+        save_btn: "Save"
+        cancel_btn: "Cancel"
+
+  email:
+    new_discussion_by_user_subject: "[Follow User] {title}"
+    new_follower_subject: "[Follow User] You have a new follower!"
+    new_post_subject: "[Follow User] New post in {title}"
+    new_discussion_by_user_body: |
+      Hey {recipient_display_name},
+
+      {user_display_name} started a new discussion: {discussion_title}
+
+      To view the new discussion, check out the following link:
+
+      {discussion_url}
+
+      ---
+
+      {post_content}
+
+    new_follower_body: |
+      Hey {recipient_display_name},
+
+      {follower_display_name} started following you, so they'll be notified when you start a new discussion.
+
+      To view their profile, check out the following link:
+
+      {profile_url}
+
+    new_post_body: |
+      Hey {recipient_display_name},
+
+      {user_display_name} posted in a discussion: {discussion_title}
+
+      To view the new activity, check out the following link:
+
+      {post_url}
+
+      ---
+
+      {post_content}
+
+      ---
+
+      You won't receive any more notifications about this discussion until you're up-to-date.
+
+  lib:
+    following_link: Followed Users
+
+    follow: Follow
+    change_follow_type: Change follow type
+    unfollow: Unfollow
+
+    follow_levels:
+      unfollow:
+        name: Don't follow
+
+        description: |
+          Don't receive any notifications for <em>{username}</em>'s activity.
+
+      follow:
+        name: Follow discussions
+
+        description: |
+          Receive notifications when <em>{username}</em> starts new a new discussion.
+
+      lurk:
+        name: Follow all
+
+        description: |
+          Receive notifications when <em>{username}</em> starts a new discussion or posts within any discussion.

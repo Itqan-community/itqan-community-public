@@ -1,0 +1,67 @@
+[
+    {
+        "should": "Should mirror property value: clear",
+        "expected": "div { clear: right; }",
+        "input": "div { clear:left; }"
+    },
+    {
+        "should": "Should mirror property value: direction",
+        "expected": "div { direction: ltr; }",
+        "input": "div { direction:rtl; }"
+    },
+    {
+        "should": "Should mirror property value: float",
+        "expected": "div { float: right; }",
+        "input": "div { float:left; }"
+    },
+    {
+        "should": "Should mirror property value: text-align",
+        "expected": "div { text-align: right; }",
+        "input": "div { text-align:left; }"
+    },
+    {
+        "should": "Should mirror property value: justify-content",
+        "expected": "div { justify-content: right; }",
+        "input": "div { justify-content:left; }"
+    },
+    {
+        "should": "Should mirror property value: justify-items",
+        "expected": "div { justify-items: right; }",
+        "input": "div { justify-items:left; }"
+    },
+    {
+        "should": "Should mirror property value: justify-self",
+        "expected": "div { justify-self: right; }",
+        "input": "div { justify-self:left; }"
+    },
+    {
+        "should": "Should mirror property value: cursor nw",
+        "expected": "div { cursor: nw-resize; }",
+        "input": "div { cursor:ne-resize; }"
+    },
+    {
+        "should": "Should mirror property value: cursor sw",
+        "expected": "div { cursor: sw-resize; }",
+        "input": "div { cursor:se-resize; }"
+    },
+    {
+        "should": "Should mirror property value: cursor nesw",
+        "expected": "div { cursor: nesw-resize; }",
+        "input": "div { cursor:nwse-resize; }"
+    },
+    {
+        "should": "Should keep property value as is: cursor ew",
+        "expected": "div { cursor: ew-resize; }",
+        "input": "div { cursor:ew-resize; }"
+    },
+    {
+        "should": "Should mirror property value: transition",
+        "expected": ".foo { transition: right .3s ease .1s,left .3s ease .1s,margin-right .3s ease,margin-left .3s ease,padding-right .3s ease,padding-left .3s ease;}",
+        "input": ".foo { transition: left .3s ease .1s, right .3s ease .1s, margin-left .3s ease, margin-right .3s ease, padding-left .3s ease, padding-right .3s ease}"
+    },
+    {
+        "should": "Should mirror property value: transition-property",
+        "expected": ".foo { transition-property: right; }",
+        "input": ".foo { transition-property: left; }"
+    }
+]

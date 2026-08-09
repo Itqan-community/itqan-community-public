@@ -1,0 +1,101 @@
+{
+    "name": "ianm/translate",
+    "description": "Translate post content",
+    "keywords": [
+        "flarum",
+        "translate",
+        "translator",
+        "google translate",
+        "deepl"
+    ],
+    "type": "flarum-extension",
+    "require": {
+        "php": "^8.0",
+        "flarum/core": "^1.8.0",
+        "jefs42/libretranslate": "^1.1",
+        "stichoza/google-translate-php": "^4.1",
+        "google/cloud-translate": "^1.12",
+        "deeplcom/deepl-php": "^1.1"
+    },
+    "support": {
+        "email": "translate@morland.dev",
+        "forum": "https://discuss.flarum.org/d/32007"
+    },
+    "authors": [
+        {
+            "name": "IanM",
+            "email": "ian@morland.dev",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "IanM\\Translate\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Translate",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-language",
+                "color": "#fff",
+                "backgroundColor": "#0072e3"
+            }
+        },
+        "flarum-cli": {
+            "modules": {
+                "admin": true,
+                "forum": true,
+                "js": true,
+                "jsCommon": true,
+                "css": true,
+                "locale": true,
+                "gitConf": true,
+                "githubActions": true,
+                "prettier": true,
+                "typescript": true,
+                "bundlewatch": false,
+                "backendTesting": true,
+                "editorConfig": true,
+                "styleci": true
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "IanM\\Translate\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:unit": "phpunit -c tests/phpunit.unit.xml",
+        "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:setup": "@php tests/integration/setup.php",
+        "analyse:phpstan": "phpstan analyse",
+        "clear-cache:phpstan": "phpstan clear-result-cache"
+    },
+    "scripts-descriptions": {
+        "test": "Runs all tests.",
+        "test:unit": "Runs all unit tests.",
+        "test:integration": "Runs all integration tests.",
+        "test:setup": "Sets up a database for use with integration tests. Execute this only once.",
+        "analyse:phpstan": "Run static analysis"
+    },
+    "require-dev": {
+        "flarum/testing": "^1.0.0",
+        "flarum/phpstan": "*",
+        "flarum-lang/french": "*",
+        "flarum-lang/german": "*"
+    }
+}

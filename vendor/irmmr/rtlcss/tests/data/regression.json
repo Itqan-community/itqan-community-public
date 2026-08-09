@@ -1,0 +1,7 @@
+[
+    {
+        "should": "Should process value directive before !important",
+        "expected": "div { right: auto !important;}",
+        "input": "/* rtl:ignore */div { right: auto !important;}"
+    }
+]

@@ -1,0 +1,55 @@
+{
+    "name": "justoverclock/newsletter",
+    "description": "Add newsletter system to Flarum",
+    "keywords": [
+        "flarum"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": "^1.2.0"
+    },
+    "authors": [
+        {
+            "name": "Marco Colia",
+            "email": "info@justoverclock.it",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Justoverclock\\NewsLetter\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Newsletter",
+            "category": "fas fa-paper-plane",
+            "icon": {
+                "name": "",
+                "color": "white",
+                "backgroundColor": "red"
+            }
+        },
+        "flarum-cli": {
+            "modules": {
+                "admin": true,
+                "forum": true,
+                "js": true,
+                "jsCommon": true,
+                "css": true,
+                "locale": true,
+                "gitConf": true,
+                "githubActions": false,
+                "prettier": true,
+                "typescript": true,
+                "bundlewatch": true,
+                "backendTesting": false,
+                "editorConfig": true,
+                "styleci": true
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

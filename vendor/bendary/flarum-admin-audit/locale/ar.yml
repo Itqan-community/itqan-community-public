@@ -1,0 +1,43 @@
+bendary-admin-audit:
+  admin:
+    page:
+      title: سجل المراجعة
+      pagination: "صفحة {page}"
+    stats:
+      total: إجمالي الإجراءات
+      sensitive: الإجراءات الحساسة
+      sensitive_tooltip: "الإجراءات التي تؤثر على الأمان أو التحكم في الوصول، مثل تغييرات الصلاحيات وتعديلات الأعضاء (الأدوار، كلمات المرور، إنشاء/حذف الحسابات)."
+      active_admin: المدير الأكثر نشاطاً
+    filters:
+      search: "ابحث في الإجراءات، الأهداف..."
+      all_categories: جميع الأقسام
+    categories:
+      settings: الإعدادات
+      extensions: الإضافات
+      permissions: الصلاحيات
+      users: الأعضاء
+      system: النظام
+      sensitive: الإجراءات الحساسة
+    actions:
+      update_settings: تحديث الإعدادات
+      update_permission: تحديث الصلاحيات
+      enable_extension: تفعيل إضافة
+      disable_extension: تعطيل إضافة
+      create_user: إضافة عضو
+      update_user: تعديل بيانات عضو
+      rename_user: تم تغيير اسم المستخدم
+      change_user_email: تم تغيير البريد الإلكتروني
+      reset_user_password: تعيين كلمة مرور جديدة
+      change_user_groups: تعديل الأدوار
+      delete_user: حذف عضو
+    list:
+      empty: لم يتم العثور على سجلات تطابق بحثك.
+    drawer:
+      title: تفاصيل الإجراء
+      user: أُجري بواسطة
+      ip: عنوان الـ IP
+      time: وقت الإجراء
+      changes: التغييرات
+      before: قبل
+      after: بعد
+      additional_meta: بيانات إضافية

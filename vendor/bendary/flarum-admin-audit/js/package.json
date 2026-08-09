@@ -1,0 +1,18 @@
+{
+  "name": "@bendary/admin-audit",
+  "version": "2.0.0",
+  "description": "A comprehensive administration audit logging system for Flarum. Tracks and logs admin actions including permission changes, categorized settings updates, and extension toggles, featuring a modern dashboard.",
+  "private": true,
+  "scripts": {
+    "dev": "webpack --mode development --watch",
+    "build": "webpack --mode production"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.0"
+  },
+  "devDependencies": {
+    "flarum-webpack-config": "^2.0.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0"
+  }
+}

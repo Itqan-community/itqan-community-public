@@ -1,0 +1,77 @@
+.UserCard-info {
+    .item-bio {
+        display: block;
+        margin-top: 20px;
+    }
+}
+
+.UserBio {
+    margin: -10px -10px 10px;
+    border: 1px dashed transparent;
+    border-radius: @border-radius;
+
+    &.editable:not(.editing) {
+        cursor: text;
+        border-color: rgba(255, 255, 255, 0.1);
+        transition: 0.2s ease border-color;
+
+        &:hover, &:focus {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    &, textarea {
+        font-size: 14px;
+    }
+
+    textarea {
+        padding: 10px;
+        font-size: 14px;
+        resize: none;
+    }
+
+    .LoadingIndicator-container {
+        color: white;
+        height: 50px;
+    }
+
+    a {
+        font-weight: 600;
+
+        &:hover {
+            border-bottom: 1px solid;
+            text-decoration: none;
+        }
+    }
+
+    &-actions {
+        margin-top: 5px;
+        display: inline-flex;
+        gap: 5px;
+
+        .Button--primary {
+            background-color: var(--button-bg);
+
+            &, &:hover {
+                color: var(--button-color);
+            }
+
+            &:hover {
+                background-color: var(--button-bg-hover);
+            }
+        }
+    }
+}
+
+
+.UserBio-content {
+    padding: 10px 10px 1px;
+
+    line-height: 21px;
+    max-height: calc(~"1px + 20px + 21px * max(var(--bio-max-lines), 5)"); // padding + line-height * lines
+    overflow-y: auto;
+}
+
+.UserBio-placeholder {
+    opacity: 0.3;
+}

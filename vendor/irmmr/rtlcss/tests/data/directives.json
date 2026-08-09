@@ -1,0 +1,37 @@
+[
+    {
+        "should": "Should detect total ignore",
+        "expected": "div { text-align: right;float: right; }",
+        "input": "/* rtl:ignore */ div { text-align: right; float: right; }"
+    },
+    {
+        "should": "Should detect partial ignore",
+        "expected": "div { text-align: left;float: right; }",
+        "input": "/* rtl:ignore:float */ div { text-align: right; float: right; }"
+    },
+    {
+        "should": "Should detect total remove",
+        "expected": "",
+        "input": "/* rtl:remove */ div { text-align: right; float: right; }"
+    },
+    {
+        "should": "Should detect partial remove",
+        "expected": "div { text-align: left; }",
+        "input": "/* rtl:remove:float */ div { text-align: right; float: right; }"
+    },
+    {
+        "should": "Should detect raw",
+        "expected": "div { text-align: left;float: left;font-size: 12px; }",
+        "input": "/* rtl:raw:font-size:12px; */ div { text-align: right; float: right; }"
+    },
+    {
+        "should": "Should detect rename",
+        "expected": ".class { text-align: left;float: left; }",
+        "input": "/* rtl:rename:.class */ div { text-align: right; float: right; }"
+    },
+    {
+        "should": "Should detect discard",
+        "expected": "div { text-align: left;float: left; }",
+        "input": "/* rtl:discard:span */ div, span { text-align: right; float: right; }"
+    }
+]

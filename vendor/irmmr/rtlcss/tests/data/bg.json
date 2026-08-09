@@ -1,0 +1,62 @@
+[
+    {
+        "should": "Should treat 0 as 0%",
+        "expected": ".banner { background: 100% top url(\"topbanner.png\") #00d repeat-y fixed; }",
+        "input": ".banner { background: 0 top url(topbanner.png) #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should complement percentage horizontal position",
+        "expected": ".banner { background: 81% top url(\"topbanner.png\") #00d repeat-y fixed; }",
+        "input": ".banner { background: 19% top url(topbanner.png) #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should complement calc horizontal position",
+        "expected": ".banner { background: calc(100% - (19% + 2px)) top url(\"topbanner.png\") #00d repeat-y fixed; }",
+        "input": ".banner { background: calc(19% + 2px) top url(topbanner.png) #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should mirror keyword horizontal position",
+        "expected": ".banner { background: right top url(\"topbanner.png\") #00d repeat-y fixed; }",
+        "input": ".banner { background: left top url(topbanner.png) #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should mirror keyword horizontal position (with value)",
+        "expected": ".banner { background: #00d url(\"topbanner.png\") no-repeat top 50% left 16px; }",
+        "input": ".banner { background: #00d url(topbanner.png) no-repeat top 50% right 16px; }"
+    },
+    {
+        "should": "Should not process string map in url (default)",
+        "expected": ".banner { background: 10px top url(\"ltr-top-right-banner.png\") #00d repeat-y fixed; }",
+        "input": ".banner { background: 10px top url(ltr-top-right-banner.png) #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should not flip hex colors ",
+        "expected": ".banner { background: #ff0; }",
+        "input": ".banner { background: #ff0; }"
+    },
+    {
+        "should": "Should treat 0 as 0% (url first)",
+        "expected": ".banner { background: url(\"topbanner.png\") 100% top #00d repeat-y fixed; }",
+        "input": ".banner { background: url(topbanner.png) 0 top #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should complement calc horizontal position (url first)",
+        "expected": ".banner { background: url(\"topbanner.png\") calc(100% - (19% + 2px)) top #00d repeat-y fixed; }",
+        "input": ".banner { background: url(topbanner.png) calc(19% + 2px) top #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should mirror horizontal position expressed in length unit (one-value syntax)",
+        "expected": ".banner { background: right 20px top 50% url(\"topbanner.png\") #00d repeat-y fixed; }",
+        "input": ".banner { background: 20px url(topbanner.png) #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should mirror horizontal position expressed in length unit (two-value syntax)",
+        "expected": ".banner { background: right 20px top 30px url(\"topbanner.png\") #00d repeat-y fixed; }",
+        "input": ".banner { background: 20px 30px url(topbanner.png) #00d repeat-y fixed; }"
+    },
+    {
+        "should": "Should parse difficult backgrounds",
+        "expected": "div {background: padding-box linear-gradient(var(--button-bg),var(--button-bg)),border-box linear-gradient(rgba(255,255,255,.08) 90%,rgba(0,0,0,.4) 100%),border-box var(--button-bg);}",
+        "input": "div {background: padding-box linear-gradient(var(--button-bg),var(--button-bg)),border-box linear-gradient(rgba(255,255,255,.08) 90%,rgba(0,0,0,.4) 100%),border-box var(--button-bg);}"
+    }
+]

@@ -1,0 +1,117 @@
+{
+    "name": "fof/oauth",
+    "description": "Allow users to log in with GitHub, Twitter, Facebook, Google, and more!",
+    "keywords": [
+        "flarum",
+        "friendsofflarum",
+        "oauth",
+        "facebook",
+        "discord",
+        "github",
+        "gitlab",
+        "twitter",
+        "google",
+        "linkedin"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/FriendsOfFlarum/oauth/issues",
+        "source": "https://github.com/FriendsOfFlarum/oauth",
+        "forum": "https://discuss.flarum.org/d/25182"
+    },
+    "homepage": "https://friendsofflarum.org",
+    "funding": [
+        {
+            "type": "website",
+            "url": "https://opencollective.com/fof/donate"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "flarum/core": "^1.8.1",
+        "league/oauth1-client": "^1.10.1",
+        "league/oauth2-facebook": "^2.2.0",
+        "league/oauth2-github": "^3.1.0",
+        "league/oauth2-google": "^4.0.1",
+        "omines/oauth2-gitlab": ">=3.3.0 <3.8.0",
+        "wohali/oauth2-discord-new": "^1.2.1",
+        "fof/extend": "^1.3.3"
+    },
+    "replace": {
+        "flarum/auth-facebook": "*",
+        "flarum/auth-github": "*",
+        "flarum/auth-twitter": "*",
+        "fof/auth-discord": "*",
+        "fof/auth-gitlab": "*",
+        "luuhai48/oauth-google": "*",
+        "luuhai48/oauth-linkedin": "*"
+    },
+    "authors": [
+        {
+            "name": "David Sevilla Martin",
+            "email": "me+fof@datitisev.me",
+            "role": "Developer"
+        },
+        {
+            "name": "IanM",
+            "email": "ian@flarum.org",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "FoF\\OAuth\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "FoF OAuth",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-sign-in-alt",
+                "backgroundColor": "#e74c3c",
+                "color": "#fff"
+            },
+            "optional-dependencies": [
+                "flarum/gdpr"
+            ]
+        },
+        "flagrow": {
+            "discuss": "https://discuss.flarum.org/d/25182"
+        },
+        "flarum-cli": {
+            "modules": {
+                "githubActions": true,
+                "backendTesting": true
+            }
+        }
+    },
+    "require-dev": {
+        "flarum/phpstan": "*",
+        "flarum/testing": "^1.0.0"
+    },
+    "scripts": {
+        "analyse:phpstan": "phpstan analyse",
+        "clear-cache:phpstan": "phpstan clear-result-cache",
+        "test": [
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:unit": "phpunit -c tests/phpunit.unit.xml",
+        "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:setup": "@php tests/integration/setup.php"
+    },
+    "scripts-descriptions": {
+        "analyse:phpstan": "Run static analysis",
+        "test": "Runs all tests.",
+        "test:unit": "Runs all unit tests.",
+        "test:integration": "Runs all integration tests.",
+        "test:setup": "Sets up a database for use with integration tests. Execute this only once."
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FoF\\OAuth\\Tests\\": "tests/"
+        }
+    }
+}

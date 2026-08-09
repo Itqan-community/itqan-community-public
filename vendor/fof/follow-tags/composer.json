@@ -1,0 +1,102 @@
+{
+    "name": "fof/follow-tags",
+    "description": "Follow tags and be notified of new discussions and replies",
+    "keywords": [
+        "flarum"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/FriendsOfFlarum/follow-tags/issues",
+        "source": "https://github.com/FriendsOfFlarum/follow-tags",
+        "forum": "https://discuss.flarum.org/d/20525"
+    },
+    "homepage": "https://friendsofflarum.org",
+    "funding": [
+        {
+            "type": "website",
+            "url": "https://opencollective.com/fof/donate"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "flarum/core": "^1.8.3",
+        "flarum/tags": "^1.8.0",
+        "fof/extend": "^1.2.0"
+    },
+    "authors": [
+        {
+            "name": "David Sevilla Martín",
+            "email": "me+fof@datitisev.me",
+            "role": "Developer"
+        },
+        {
+            "name": "IanM",
+            "email": "ian@flarum.org",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "FoF\\FollowTags\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "FoF Follow Tags",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-user-tag",
+                "backgroundColor": "#e74c3c",
+                "color": "#fff"
+            },
+            "optional-dependencies": [
+                "flarum/subscriptions",
+                "flarum/approval",
+                "flarum/mentions",
+                "flarum/gdpr"
+            ]
+        },
+        "flagrow": {
+            "discuss": "https://discuss.flarum.org/d/20525"
+        },
+        "flarum-cli": {
+            "modules": {
+                "githubActions": true
+            }
+        }
+    },
+    "require-dev": {
+        "flarum/approval": "*",
+        "flarum/subscriptions": "*",
+        "flarum/phpstan": "*",
+        "flarum/mentions": "*",
+        "flarum/gdpr": "dev-main",
+        "flarum/testing": "^1.0.0",
+        "flarum/tags":"*",
+        "fof/extend": "*"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FoF\\FollowTags\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "analyse:phpstan": "phpstan analyse",
+        "clear-cache:phpstan": "phpstan clear-result-cache",
+        "test": [
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:unit": "phpunit -c tests/phpunit.unit.xml",
+        "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:setup": "@php tests/integration/setup.php"
+    },
+    "scripts-descriptions": {
+        "analyse:phpstan": "Run static analysis",
+        "test": "Runs all tests.",
+        "test:unit": "Runs all unit tests.",
+        "test:integration": "Runs all integration tests.",
+        "test:setup": "Sets up a database for use with integration tests. Execute this only once."
+    }
+}

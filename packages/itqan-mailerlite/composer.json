@@ -1,0 +1,46 @@
+{
+    "name": "itqan/flarum-mailerlite",
+    "description": "MailerLite integration for Flarum - sync users and automate email marketing",
+    "keywords": [
+        "flarum",
+        "mailerlite",
+        "email-marketing",
+        "newsletter",
+        "automation"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "suggest": {
+        "fof/horizon": "For Redis-based background queue processing",
+        "flarum-com/database-queue": "For database-based background queue processing"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\MailerLite\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "MailerLite Integration",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-envelope",
+                "color": "#09c269",
+                "backgroundColor": "#e8f5ef"
+            }
+        }
+    },
+    "scripts": {
+        "build:admin": "webpack --mode production"
+    }
+}

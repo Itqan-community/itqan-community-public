@@ -1,0 +1,43 @@
+bendary-admin-audit:
+  admin:
+    page:
+      title: Audit Logs
+      pagination: "Page {page}"
+    stats:
+      total: Total Actions
+      sensitive: Sensitive Actions
+      sensitive_tooltip: "Actions that affect security or access control, such as permission changes and user modifications (roles, passwords, account creation/deletion)."
+      active_admin: Most Active Admin
+    filters:
+      search: "Search actions, targets..."
+      all_categories: All Categories
+    categories:
+      settings: Settings
+      extensions: Extensions
+      permissions: Permissions
+      users: Users
+      system: System
+      sensitive: Sensitive Actions
+    actions:
+      update_settings: Updated Settings
+      update_permission: Updated Permissions
+      enable_extension: Enabled Extension
+      disable_extension: Disabled Extension
+      create_user: Created User
+      update_user: User Modified
+      rename_user: User Renamed
+      change_user_email: Email Changed
+      reset_user_password: Password Reset
+      change_user_groups: Roles Modified
+      delete_user: Deleted User
+    list:
+      empty: No audit logs found matching your criteria.
+    drawer:
+      title: Action Details
+      user: Performed By
+      ip: IP Address
+      time: Timestamp
+      changes: Changes
+      before: Before
+      after: After
+      additional_meta: Additional Metadata

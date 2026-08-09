@@ -1,0 +1,106 @@
+{
+    "name": "fof/upload",
+    "description": "The file upload extension for the Flarum forum with insane intelligence.",
+    "keywords": [
+        "upload",
+        "uploader",
+        "flarum",
+        "file",
+        "image",
+        "video",
+        "document"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniël Klabbers",
+            "email": "daniel@klabbers.email",
+            "homepage": "https://luceos.com/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/FriendsOfFlarum/upload/issues",
+        "source": "https://github.com/FriendsOfFlarum/upload",
+        "forum": "https://discuss.flarum.org/d/4154"
+    },
+    "homepage": "https://friendsofflarum.org",
+    "funding": [
+        {
+            "type": "website",
+            "url": "https://opencollective.com/fof/donate"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "ext-json": "*",
+        "enshrined/svg-sanitize": "^0",
+        "flarum/core": "^1.8.3",
+        "guzzlehttp/guzzle": "^6.0 || ^7.0",
+        "ramsey/uuid": "^3.5.2 || ^4",
+        "softcreatr/php-mime-detector": "^4.0"
+    },
+    "replace": {
+        "flagrow/upload": "*"
+    },
+    "suggest": {
+        "league/flysystem-aws-s3-v3": "Uploads to AWS S3 using API version 3.",
+        "overtrue/flysystem-qiniu": "Uploads to QiNiu using API."
+    },
+    "require-dev": {
+        "league/flysystem-aws-s3-v3": "^1.0",
+        "overtrue/flysystem-qiniu": "1.0.4",
+        "flarum/gdpr": "dev-main",
+        "flarum/phpstan": "*",
+        "flarum/testing": "^1.0.0"
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "FoF Upload",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-file-upload",
+                "backgroundColor": "#e74c3c",
+                "color": "#fff"
+            }
+        },
+        "flagrow": {
+            "discuss": "https://discuss.flarum.org/d/4154"
+        },
+        "flarum-cli": {
+            "modules": {
+                "githubActions": true,
+                "typescript": true,
+                "backendTesting": true
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "FoF\\Upload\\": "src/"
+        }
+    },
+    "scripts": {
+        "analyse:phpstan": "phpstan analyse",
+        "clear-cache:phpstan": "phpstan clear-result-cache",
+        "test": [
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:unit": "phpunit -c tests/phpunit.unit.xml",
+        "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:setup": "@php tests/integration/setup.php"
+    },
+    "scripts-descriptions": {
+        "analyse:phpstan": "Run static analysis",
+        "test": "Runs all tests.",
+        "test:unit": "Runs all unit tests.",
+        "test:integration": "Runs all integration tests.",
+        "test:setup": "Sets up a database for use with integration tests. Execute this only once."
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FoF\\Upload\\Tests\\": "tests/"
+        }
+    }
+}
