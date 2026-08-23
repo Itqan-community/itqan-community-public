@@ -1,4 +1,4 @@
-# Contributing to Itqan Community (Beta)
+# Contributing to Itqan Community
 
 Thank you for your interest in contributing to **Itqan Community**! We welcome bug fixes, design improvements, and feature extensions that serve the Quranic tech ecosystem.
 
@@ -17,7 +17,7 @@ All contributions follow our standard open-source campaign rules:
                                              5. Share Post on community.itqan.dev
 ```
 
-1. **Pick an Issue:** Find an issue labeled `good first issue` or `help wanted` on [GitHub Issues](https://github.com/Itqan-community/itqan-community-beta/issues).
+1. **Pick an Issue:** Find an issue labeled `good first issue` or `help wanted` on [GitHub Issues](https://github.com/Itqan-community/itqan-community-public/issues).
 2. **Request Assignment:** Leave a comment on the issue. A maintainer will assign it to you before you start.
 3. **Branch from `develop`:** Always branch off `develop` and name your branch descriptively (e.g. `feat/categories-grid` or `fix/font-fout`).
 4. **Submit PR targeting `develop`:** Ensure all tests pass locally and follow the issue's acceptance criteria.
