@@ -1,0 +1,185 @@
+// ---------------------------------------------------------------------------
+// Colour schemes
+// ---------------------------------------------------------------------------
+//
+// Flarum ships a single, compile-time colour scheme: the admin "Dark mode"
+// switch flips `@config-dark-mode`, the LESS is recompiled, and every visitor
+// gets the result. There is no per-user choice and no way to follow the
+// operating system.
+//
+// The palette itself, though, reaches components as custom properties declared
+// on `:root` — so it can be replaced at runtime. Both blocks below match the
+// same element as `:root` (`<html>`) and win on specificity, which means the
+// scheme changes the moment `data-itqan-theme` changes, with no reload and no
+// recompile.
+//
+// Both schemes are declared explicitly rather than only overriding "the other
+// one", so the extension behaves identically whether or not the admin has the
+// core dark mode setting enabled.
+//
+// Derivations mirror `flarum/core/less/common/variables.less` and
+// `common/root.less` so the result stays recognisably Flarum, and stays tied
+// to the primary/secondary colours the admin has chosen. Where core's formula
+// produces unreadable results on the opposite background, the deviation is
+// commented.
+
+.itqan-scheme(@dark) when (@dark = false) {
+  @t-body-bg:              @body-bg-light;
+  @t-text:                 #111;
+  @t-muted:                hsl(@secondary-hue, min(20%, @secondary-sat), 50%);
+  @t-muted-more:           #aaa;
+  @t-muted-dark:           darken(@t-muted, 50%);
+  @t-shadow:               rgba(0, 0, 0, 0.35);
+  @t-control-bg:           hsl(@secondary-hue, min(50%, @secondary-sat), 93%);
+  @t-control-danger-bg:    #fdd;
+  @t-control-danger-color: #d66;
+  @t-overlay-bg:           fade(@config-secondary-color, 90%);
+  @t-code-color:           lighten(@t-text, 30%);
+  @t-yiq-threshold:        150;
+  @t-color-scheme:         light;
+}
+
+.itqan-scheme(@dark) when (@dark = true) {
+  @t-body-bg:              @body-bg-dark;
+  @t-text:                 #ddd;
+  @t-muted:                hsl(@secondary-hue, min(15%, @secondary-sat), 50%);
+  @t-muted-more:           hsl(@secondary-hue, min(10%, @secondary-sat), 40%);
+  // Core derives this as `darken(@muted-color, 50%)`, which lands on near-black
+  // — invisible against a dark control (it is the checkbox loading state).
+  @t-muted-dark:           lighten(@t-muted, 25%);
+  @t-shadow:               rgba(0, 0, 0, 0.5);
+  @t-control-bg:           hsl(@secondary-hue, min(20%, @secondary-sat), 13%);
+  @t-control-danger-bg:    #411;
+  @t-control-danger-color: #a88;
+  @t-overlay-bg:           fade(darken(@body-bg-dark, 5%), 90%);
+  @t-code-color:           #fff;
+  @t-yiq-threshold:        108;
+  @t-color-scheme:         dark;
+}
+
+// A dark brand colour is fine as a button fill on white, but as link text on a
+// dark background it falls below any reasonable contrast ratio. Lift it just
+// far enough to read, and leave lighter brand colours alone.
+//
+// The guards are written out in full rather than leaning on `default()`,
+// because a mixin can only introduce a variable the calling scope has not
+// already declared — the fallback has to be a sibling definition, not an
+// assignment the guarded one tries to overwrite.
+@itqan-primary-floor: 45%;
+
+.itqan-primary-ui(@dark) when (@dark = true) and (lightness(@config-primary-color) < @itqan-primary-floor) {
+  @t-primary-ui: lighten(@config-primary-color, @itqan-primary-floor - lightness(@config-primary-color));
+}
+.itqan-primary-ui(@dark) when (@dark = true) and (lightness(@config-primary-color) >= @itqan-primary-floor) {
+  @t-primary-ui: @config-primary-color;
+}
+.itqan-primary-ui(@dark) when (@dark = false) {
+  @t-primary-ui: @config-primary-color;
+}
+
+// Emits the palette. Reads the `@t-*` variables the scheme mixin put into the
+// calling scope.
+.itqan-scheme-vars(@dark) {
+  .itqan-scheme(@dark);
+
+  .itqan-primary-ui(@dark);
+
+  @t-control-color: @t-muted;
+  @t-code-bg:       darken(@t-body-bg, 3%);
+  @t-link:          saturate(@t-primary-ui, 10%);
+
+  color-scheme: @t-color-scheme;
+
+  // ---------------------------------
+  // COLORS
+
+  --primary-color:                 @t-primary-ui;
+  --secondary-color:               @config-secondary-color;
+
+  --body-bg:                       @t-body-bg;
+  --body-bg-shaded:                darken(@t-body-bg, 3%);
+  --body-bg-light:                 lighten(@t-body-bg, 5%);
+  --body-bg-faded:                 fade(@t-body-bg, 93%);
+  --text-color:                    @t-text;
+  --link-color:                    @t-link;
+  --heading-color:                 @t-text;
+
+  --muted-color:                   @t-muted;
+  --muted-color-light:             lighten(@t-muted, 10%);
+  --muted-color-dark:              @t-muted-dark;
+  --muted-more-color:              @t-muted-more;
+
+  --shadow-color:                  @t-shadow;
+
+  --control-bg:                    @t-control-bg;
+  --control-bg-light:              lighten(@t-control-bg, 3%);
+  --control-bg-shaded:             darken(@t-control-bg, 4%);
+  --control-color:                 @t-control-color;
+  --control-danger-bg:             @t-control-danger-bg;
+  --control-danger-color:          @t-control-danger-color;
+
+  --yiq-threshold:                 @t-yiq-threshold;
+
+  // ---------------------------------
+  // COMPONENTS
+
+  --overlay-bg:                    @t-overlay-bg;
+  --code-bg:                       @t-code-bg;
+  --code-color:                    @t-code-color;
+
+  --hero-bg:                       @t-control-bg;
+  --hero-color:                    @t-control-color;
+
+  --discussion-title-color:        mix(@t-text, @t-body-bg, 55%);
+  --discussion-list-item-bg-hover: mix(@t-control-bg, @t-body-bg, 50%);
+
+  // Core hardcodes the primary button's label to `@body-bg`, which disappears
+  // on a dark background when the brand colour is also dark. Pick whichever of
+  // the two page backgrounds actually reads against the fill.
+  .Button--color-vars(@t-control-color, @t-control-bg, 'button');
+  .Button--color-vars(contrast(@t-primary-ui, @body-bg-dark, @body-bg-light), @t-primary-ui, 'button-primary');
+  .Button--color-vars(@t-control-danger-color, @t-control-danger-bg, 'control-danger');
+  .Button--color-vars(@t-muted-more, fade(@t-muted-more, 30%), 'muted-more');
+  .Button--color-vars(@t-control-color, @t-body-bg, 'button-inverted');
+
+  .light-contents-vars();
+
+  // `Button--color-vars` derives every interactive state by darkening the
+  // resting colour. On white that reads as pressure; on a dark surface it reads
+  // as the control switching off. Light is the direction depth comes from in a
+  // dark scheme, so the hover and active states are re-derived upward. Declared
+  // after the mixin so they replace what it emitted.
+  & when (@dark = true) {
+    --button-bg-hover:           lighten(@t-control-bg, 6%);
+    --button-bg-active:          lighten(@t-control-bg, 10%);
+    --button-inverted-bg-hover:  lighten(@t-body-bg, 6%);
+    --button-inverted-bg-active: lighten(@t-body-bg, 10%);
+  }
+
+  & when (@config-colored-header = false) {
+    --header-bg:            @t-body-bg;
+    --header-color:         @t-primary-ui;
+    --header-control-bg:    @t-control-bg;
+    --header-control-color: @t-control-color;
+
+    .light-contents-vars(@t-control-color, @t-control-bg, @t-control-color, 'header-colored');
+  }
+  & when (@config-colored-header = true) {
+    @t-header-color: contrast(@t-primary-ui, @body-bg-dark, @body-bg-light);
+
+    --header-bg:            @t-primary-ui;
+    --header-color:         @t-header-color;
+    --header-control-bg:    mix(#000, @t-primary-ui, 10%);
+    --header-control-color: mix(@t-header-color, @t-primary-ui, 60%);
+
+    .light-contents-vars(@t-header-color, mix(#000, @t-primary-ui, 10%), mix(@t-header-color, @t-primary-ui, 60%), 'header-colored');
+  }
+}
+
+html[data-itqan-theme='light'] {
+  .itqan-scheme-vars(false);
+}
+
+html[data-itqan-theme='dark'] {
+  .itqan-scheme-vars(true);
+}

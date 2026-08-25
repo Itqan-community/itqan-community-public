@@ -1,0 +1,176 @@
+// ---------------------------------------------------------------------------
+// Compatibility
+// ---------------------------------------------------------------------------
+//
+// Core and most extensions read their colours back through `var(--…)`, so they
+// follow the scheme without being asked. Some don't: they use the LESS
+// variables directly (`@control-bg`, `@text-color`), which are resolved once at
+// compile time and then frozen into the stylesheet. A surface built that way
+// stays light no matter what the root element says.
+//
+// Every rule below was found by auditing the forum's own compiled stylesheet
+// for literal light backgrounds and literal dark text — not guessed — and each
+// is mapped back onto the custom property the original was derived from. In
+// light mode the two values are identical, so this file is scoped to dark and
+// provably changes nothing otherwise.
+
+html[data-itqan-theme='dark'] {
+  // -------------------------------------------------------------------------
+  // The forum's own styling
+  //
+  // The rounded discussion and post cards, and the toast, come from the custom
+  // LESS in Appearance rather than from any package here — which is why they
+  // are the most visible thing dark mode misses. Worth folding into this
+  // extension eventually; until then, they are corrected here.
+  // -------------------------------------------------------------------------
+
+  .DiscussionListItem,
+  .PostStream-item {
+    background: var(--body-bg-light);
+  }
+
+  .notify-popup {
+    background: var(--body-bg-light);
+    color: var(--text-color);
+  }
+
+  .close-btn:hover {
+    color: var(--text-color);
+  }
+
+  // -------------------------------------------------------------------------
+  // flarum/tags, flarum/likes, flarum/mentions, flarum/flags
+  // -------------------------------------------------------------------------
+
+  .SelectTagList > li.active {
+    background: var(--control-bg);
+  }
+
+  .PostLikesModal-list a,
+  .FlagPostModal .checkbox strong,
+  .MentionsDropdown .PostPreview .username,
+  .PostMention-preview .PostPreview .username,
+  .Post-mentionedBy-preview .PostPreview .username {
+    color: var(--text-color);
+  }
+
+  // -------------------------------------------------------------------------
+  // fof/follow-tags, fof/merge-discussions, fof/links
+  // -------------------------------------------------------------------------
+
+  .SubscriptionOption {
+    background-color: var(--body-bg-light);
+
+    &:hover {
+      background-color: var(--control-bg-shaded);
+    }
+  }
+
+  .SubscriptionModal .Modal-body {
+    color: var(--text-color);
+  }
+
+  .FoFMergeDiscussionsModal .MergeDiscussions-Preview .MergeDiscussions-PostStream {
+    background-color: var(--body-bg-light);
+  }
+
+  .LinkDropdown ul {
+    .LinksButton--label {
+      color: var(--text-color);
+    }
+
+    .LinksButton:hover,
+    .LinksButton:active,
+    .LinksButton:focus {
+      background-color: var(--control-bg);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // fof/upload
+  // -------------------------------------------------------------------------
+
+  .Composer.fof-upload-dragging,
+  .fof-file-manager-modal .fof-drag-and-drop {
+    background-color: var(--control-bg);
+  }
+
+  .UploadedFile,
+  .fof-upload-file-list .UploadedFile,
+  .FofUpload-TextPreviewFull,
+  .FofUpload-TextPreviewSnippet,
+  .FofUpload-TextPreviewLoading,
+  .FofUpload-TextPreviewError {
+    background: var(--body-bg-light);
+  }
+
+  .FofUpload-TextPreview,
+  .UploadedFile--actions .Button {
+    background: var(--control-bg);
+
+    &:hover,
+    &:focus {
+      background: var(--control-bg-shaded);
+    }
+  }
+
+  .fof-upload-file-list .UploadedFile .fof-file-action {
+    background-color: fade(#000, 40%);
+  }
+
+  .fof-download.row .card {
+    .wrapper,
+    .wrapper:hover .data,
+    .wrapper:hover .header {
+      background-color: var(--body-bg-light);
+    }
+
+    .data,
+    .menu-content li > div {
+      color: var(--text-color);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // ianm/translate, v17development/user-badges, fof/socialprofile
+  // -------------------------------------------------------------------------
+
+  .Post-footer .CommentPost--translated {
+    background: var(--control-bg);
+
+    .Post-body {
+      color: var(--text-color);
+    }
+  }
+
+  .DiscussionTitle--translated .Title-body {
+    color: var(--text-color);
+  }
+
+  .BadgeContainer,
+  .BadgeUserListInfo,
+  .BadgeUserList li .BadgeUserList-user:hover {
+    background: var(--control-bg);
+  }
+
+  .BadgeContainer .UserBadge,
+  .UserCardBadgesModal .UserCardBadgesModalCategory-badge:hover {
+    background: var(--body-bg-light);
+  }
+
+  .BadgeUserList li .BadgeUserList-user .BadgeUserList-userinfo h4 {
+    color: var(--text-color);
+  }
+
+  .form-group-social .iconpicker-item {
+    color: var(--text-color);
+  }
+
+  // -------------------------------------------------------------------------
+  // Markdown tables in posts
+  // -------------------------------------------------------------------------
+
+  .Post-body tr {
+    color: var(--text-color);
+  }
+}
