@@ -72,6 +72,7 @@
         "irmmr/flarum-ext-rtl": "^0.2.5",
         "itqan/flarum-mailerlite": "@dev",
         "itqan/flarum-theme": "@dev",
+        "itqan/flarum-typography": "@dev",
         "justoverclock/newsletter": "*",
         "michaelbelgium/flarum-discussion-views": "^7.4",
         "pipecraft/flarum-ext-id-slug": "*",
@@ -94,6 +95,10 @@
         "itqan-theme": {
             "type": "path",
             "url": "packages/itqan-theme"
+        },
+        "itqan-typography": {
+            "type": "path",
+            "url": "packages/itqan-typography"
         },
         "0": {
             "type": "vcs",

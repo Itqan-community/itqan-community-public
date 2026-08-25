@@ -1,0 +1,15 @@
+// Itqan Typography — Arabic webfonts for the community forum.
+//
+// Everything about how the fonts reach the browser lives here and in
+// `extend.php`: the faces below, the preload that starts the download with the
+// page rather than after the app boots, and the removal of the Google Fonts
+// tags that would otherwise win the cascade.
+
+@import "forum/fonts.less";
+
+// Extension stylesheets are appended after the Custom LESS from Appearance,
+// so this replaces the `body` rule there rather than competing with it. The
+// only change is the fallback face between Noto and the generic family.
+body {
+  font-family: 'Noto Sans Arabic', 'Noto Sans Arabic Fallback', sans-serif;
+}

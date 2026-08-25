@@ -1,0 +1,41 @@
+{
+    "name": "itqan/flarum-typography",
+    "description": "Arabic typography for the Itqan community — self-hosted webfonts, preloaded, with matched fallback metrics",
+    "keywords": [
+        "flarum",
+        "typography",
+        "arabic",
+        "webfonts",
+        "performance"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\Typography\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Typography",
+            "category": "theme",
+            "icon": {
+                "name": "fas fa-font",
+                "color": "#ffffff",
+                "backgroundColor": "#064e3b"
+            },
+            "optional-dependencies": [
+                "ianm-html-head"
+            ]
+        }
+    }
+}
