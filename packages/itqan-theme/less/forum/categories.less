@@ -1,0 +1,178 @@
+// ---------------------------------------------------------------------------
+// Categories
+// ---------------------------------------------------------------------------
+//
+// The categories page already had a card grid before this file existed. What
+// it did not have was a second column count:
+//
+//   .TagTiles { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px }
+//
+// Four columns, no media query, every viewport. At 414px that leaves each card
+// about 95px wide — the title breaks over three lines, the description is cut
+// after two words, and the last-post line disappears.
+//
+// Rather than add breakpoints to that rule, the track count is handed to the
+// grid itself: `auto-fill` with a sensible minimum fits as many columns as the
+// space allows and drops to one on a phone, without a single media query to
+// keep in sync with the design.
+
+@itqan-tag-card-min: 264px;
+@itqan-tag-card-gap: 14px;
+
+.TagTiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(@itqan-tag-card-min, 1fr));
+  gap: @itqan-tag-card-gap;
+  // Core sets `overflow: hidden` for its float layout; with grid it only
+  // clips the focus ring.
+  overflow: visible;
+
+  @media @phone {
+    // Core pulls the list out to the screen edges on phones for its
+    // edge-to-edge float layout. Cards have their own corners now.
+    margin: 0;
+  }
+
+  // A single narrow column looks stranded on a wide screen when the forum has
+  // only a couple of categories.
+  &:not(:has(> li:nth-child(2))) {
+    grid-template-columns: minmax(@itqan-tag-card-min, 420px);
+  }
+}
+
+.TagTiles > li {
+  // `flarum/tags` pins every tile to 200px, so a card with one line of
+  // description is as tall as one with five, and a longer description is
+  // simply cut off. Let the row decide, and let the tallest card in it set
+  // the height.
+  height: auto;
+  min-height: 190px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  // Core rounds only the four corners of the whole block, which was right for
+  // a seamless mosaic and wrong for separated cards.
+  &:first-child, &:nth-child(2), &:nth-child(3), &:last-child {
+    border-radius: 12px;
+  }
+}
+
+.TagTile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px var(--shadow-color);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// Core positions these absolutely against the fixed 200px tile. With a flex
+// column they can size themselves, which is what lets the card grow.
+.TagTile-info,
+.TagTile-lastPostedDiscussion {
+  position: static;
+  left: auto;
+  right: auto;
+}
+
+.TagTile-info {
+  flex: 1 1 auto;
+  top: auto;
+  bottom: auto;
+  overflow: hidden;
+  padding: 18px 18px 14px;
+
+  .icon {
+    float: none;
+    display: block;
+    margin: 0 0 10px;
+    font-size: 22px;
+    opacity: 0.9;
+  }
+}
+
+.TagTile-name {
+  font-size: 17px;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.TagTile-description {
+  font-size: 13px;
+  line-height: 1.7;
+  opacity: 0.78;
+
+  // Ends the description on a line rather than mid-word, and keeps a row of
+  // cards close enough in height that the grid does not look ragged.
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Child categories, shown on the parent's card instead of as a loose row of
+// pills at the foot of the page.
+.TagTile-children {
+  margin-top: 10px;
+  font-weight: normal;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  a {
+    margin-right: 0;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: fade(#fff, 16%);
+    font-size: 11.5px;
+    line-height: 1.7;
+
+    &:hover {
+      background: fade(#fff, 26%);
+    }
+  }
+}
+
+.TagTile-lastPostedDiscussion {
+  flex: 0 0 auto;
+  bottom: auto;
+  height: auto;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  margin: 0;
+  // The rule above it is a hairline of black on a coloured card; on a dark
+  // card it is invisible. A translucent white reads on both.
+  border-top: 1px solid fade(#fff, 18%);
+  // The row stays one line. Only the discussion title gives way; wrapping the
+  // timestamp instead pushed the footer to three lines and left the cards in a
+  // row at visibly different heights.
+  white-space: nowrap;
+
+  time {
+    flex: 0 0 auto;
+  }
+}
+
+.TagTile-lastPostedDiscussion-title {
+  margin-right: 0;
+  flex: 1 1 auto;
+  // Without this a flex item refuses to shrink below its content, and the
+  // ellipsis never appears.
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
