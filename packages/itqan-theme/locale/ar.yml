@@ -17,3 +17,9 @@ itqan-theme:
 
     settings:
       heading: المظهر
+
+    lightbox:
+      title: عارض الصور
+      open: فتح الصورة بملء الشاشة
+      close: إغلاق
+      hint: قرصة للتكبير · نقرتان لملء الشاشة · سحب لأسفل للإغلاق
