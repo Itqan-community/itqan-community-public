@@ -1,0 +1,19 @@
+itqan-theme:
+  admin:
+    settings:
+      default_mode_label: المظهر الافتراضي
+      default_mode_help: يُطبَّق على من لم يختر مظهرًا بنفسه.
+      default_mode_auto: حسب إعداد الجهاز
+      default_mode_light: فاتح
+      default_mode_dark: داكن
+
+  forum:
+    switcher:
+      title: المظهر
+      accessible_label: تغيير مظهر الألوان
+      light: فاتح
+      dark: داكن
+      auto: حسب إعداد جهازي
+
+    settings:
+      heading: المظهر

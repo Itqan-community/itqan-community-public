@@ -1,0 +1,40 @@
+{
+    "name": "itqan/flarum-theme",
+    "description": "Itqan community theme — per-user light, dark and automatic colour schemes",
+    "keywords": [
+        "flarum",
+        "theme",
+        "dark-mode",
+        "accessibility"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\Theme\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Theme",
+            "category": "theme",
+            "icon": {
+                "name": "fas fa-moon",
+                "color": "#ffffff",
+                "backgroundColor": "#0D9488"
+            }
+        }
+    },
+    "scripts": {
+        "build": "cd js && npm run build"
+    }
+}

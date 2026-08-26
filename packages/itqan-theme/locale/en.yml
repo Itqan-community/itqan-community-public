@@ -1,0 +1,19 @@
+itqan-theme:
+  admin:
+    settings:
+      default_mode_label: Default colour scheme
+      default_mode_help: Applies to readers who have not chosen one themselves.
+      default_mode_auto: Follow the reader's device
+      default_mode_light: Light
+      default_mode_dark: Dark
+
+  forum:
+    switcher:
+      title: Appearance
+      accessible_label: Change the colour scheme
+      light: Light
+      dark: Dark
+      auto: Match my device
+
+    settings:
+      heading: Appearance
