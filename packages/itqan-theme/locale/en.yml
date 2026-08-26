@@ -17,3 +17,9 @@ itqan-theme:
 
     settings:
       heading: Appearance
+
+    lightbox:
+      title: Image viewer
+      open: Open image full screen
+      close: Close
+      hint: Pinch to zoom · double-tap to fill · drag down to close
