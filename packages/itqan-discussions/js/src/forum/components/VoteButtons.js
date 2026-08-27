@@ -9,11 +9,15 @@ const UP = 1;
 const DOWN = -1;
 
 /**
- * The score and the two arrows, shown under every post.
+ * The score and the two arrows.
  *
- * The button state is driven by the post's own attributes rather than by local
- * state, so a post redrawn from the store — after a reply, a page change, or
- * another tab — shows what the server actually holds.
+ * Takes any model carrying `votes`, `userVote` and `canVote` — a post in the
+ * stream, or a discussion in the list, which votes on its opening post. The
+ * button state is read from that model rather than kept locally, so a redraw
+ * from the store shows what the server actually holds.
+ *
+ * @param model  the Post or Discussion whose attributes to read and update
+ * @param postId the post the vote is actually cast on
  */
 export default class VoteButtons extends Component {
   oninit(vnode) {
@@ -25,12 +29,17 @@ export default class VoteButtons extends Component {
   }
 
   view() {
-    const post = this.attrs.post;
-    const mine = post.attribute('userVote') || 0;
-    const score = post.attribute('votes') || 0;
+    const model = this.attrs.model;
+    const mine = model.attribute('userVote') || 0;
+    const score = model.attribute('votes') || 0;
 
     return (
-      <div className={classList('VoteButtons', { 'VoteButtons--saving': this.saving })}>
+      <div
+        className={classList('VoteButtons', {
+          'VoteButtons--saving': this.saving,
+          'VoteButtons--vertical': this.attrs.vertical,
+        })}
+      >
         {this.button(UP, 'fas fa-arrow-up', mine === UP, 'up')}
         {/* Coloured by what this reader did, not by the sign of the total: a
             green number above grey arrows reads as a state nobody chose. */}
@@ -40,6 +49,12 @@ export default class VoteButtons extends Component {
             'VoteButtons-score--negative': mine === DOWN,
           })}
           aria-live="polite"
+          // Not `direction: ltr` in the stylesheet: Flarum's right-to-left
+          // build rewrites any property ending in `direction` and flips the
+          // value, so the guard against `-2` rendering as `2-` was itself
+          // inverted in the only sheet this forum serves. An attribute is
+          // beyond the reach of that pass.
+          dir="ltr"
         >
           {score}
         </span>
@@ -63,16 +78,17 @@ export default class VoteButtons extends Component {
   }
 
   vote(value) {
-    const post = this.attrs.post;
+    const model = this.attrs.model;
+    const postId = this.attrs.postId;
 
     if (!app.session.user) {
       app.modal.show(LogInModal);
       return;
     }
 
-    if (this.saving || !post.attribute('canVote')) return;
+    if (this.saving || !postId || !model.attribute('canVote')) return;
 
-    const previous = { votes: post.attribute('votes') || 0, userVote: post.attribute('userVote') || 0 };
+    const previous = { votes: model.attribute('votes') || 0, userVote: model.attribute('userVote') || 0 };
 
     // Clicking the arrow you already chose withdraws it, which is what every
     // site with these arrows does.
@@ -81,7 +97,7 @@ export default class VoteButtons extends Component {
     // Applied before the request so the arrow answers the finger immediately.
     // `pushAttributes` writes into the store, so every component showing this
     // post updates, not just this one.
-    post.pushAttributes({
+    model.pushAttributes({
       votes: previous.votes - previous.userVote + next,
       userVote: next,
     });
@@ -91,16 +107,24 @@ export default class VoteButtons extends Component {
     app
       .request({
         method: 'PATCH',
-        url: `${app.forum.attribute('apiUrl')}/posts/${post.id()}/vote`,
+        url: `${app.forum.attribute('apiUrl')}/posts/${postId}/vote`,
         body: { data: { attributes: { vote: next } } },
       })
       .then((result) => {
         // The server's score is authoritative: between the click and the
         // reply, other people may have voted too.
         app.store.pushPayload(result);
+
+        // Pushing the post updates the post model. A discussion holding the
+        // same score is a separate record and has to be told.
+        const authoritative = result?.data?.attributes?.votes;
+
+        if (authoritative !== undefined && model.data?.type !== 'posts') {
+          model.pushAttributes({ votes: authoritative, userVote: next });
+        }
       })
       .catch((error) => {
-        post.pushAttributes(previous);
+        model.pushAttributes(previous);
         throw error;
       })
       .then(() => {

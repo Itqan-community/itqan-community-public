@@ -29,25 +29,28 @@ app.initializers.add('itqan-discussions', () => {
     map.hot = '-hotness';
   });
 
-  // Only real comments carry a score. Event posts — renames, locks, tag
-  // changes — are not opinions to agree with.
-  // A list ordered by score that never shows one asks the reader to take the
-  // ordering on trust. Shown only where there is something to show: a zero on
-  // every row of a quiet forum is noise.
-  extend(DiscussionListItem.prototype, 'infoItems', function (items) {
-    const votes = this.attrs.discussion.attribute('votes');
+  // A column of its own at the leading edge of the row, before the avatar —
+  // where a reader scanning a list of answers looks for the score, and where
+  // it can be acted on without opening the discussion. Stacked rather than in
+  // a line so it costs one narrow column instead of three.
+  //
+  // The discussion votes on its opening post, which is what `firstPostId` is
+  // for; the score shown is that post's.
+  extend(DiscussionListItem.prototype, 'contentItems', function (items) {
+    const discussion = this.attrs.discussion;
 
-    if (!votes) return;
+    if (discussion.attribute('votes') === undefined) return;
 
     items.add(
-      'itqanVotes',
-      <span className="DiscussionListItem-votes">
-        {app.translator.trans('itqan-discussions.forum.list.score', { count: votes })}
-      </span>,
-      15
+      'itqanVote',
+      <VoteButtons model={discussion} postId={discussion.attribute('firstPostId')} vertical />,
+      110
     );
   });
 
+  // Only real comments carry a score. Event posts — renames, locks, tag
+  // changes — are not opinions to agree with.
+  //
   // The footer, not the action row. Core hides `.Post-actions` at
   // `opacity: 0` until the post is hovered, and there is no hover on a phone
   // at all — a score nobody can see until they reach for it is not a score.
@@ -58,7 +61,6 @@ app.initializers.add('itqan-discussions', () => {
 
     if (post.isHidden() || post.attribute('votes') === undefined) return;
 
-    items.add('itqanVote', <VoteButtons post={post} />, 100);
-
+    items.add('itqanVote', <VoteButtons model={post} postId={post.id()} />, 100);
   });
 });

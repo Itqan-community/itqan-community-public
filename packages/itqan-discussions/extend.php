@@ -57,16 +57,42 @@ return [
     // The discussion's own score, taken from its opening post. The list needs
     // it to show a score beside each row, and the sort needs it in the
     // payload to make the ordering legible rather than mysterious.
+    // Enough for the list to carry a working vote control, not just a number:
+    // which post to send the vote to, what this reader already did, and
+    // whether they may.
     (new Extend\ApiSerializer(DiscussionSerializer::class))
         ->attribute('votes', function (DiscussionSerializer $serializer, Discussion $discussion) {
             return (int) $discussion->votes;
+        })
+        ->attribute('firstPostId', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            return $discussion->first_post_id;
+        })
+        ->attribute('userVote', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            $actor = $serializer->getActor();
+            $post = $discussion->firstPost;
+
+            if (! $actor->exists || ! $post) {
+                return null;
+            }
+
+            $vote = $post->postVotes->firstWhere('user_id', $actor->id);
+
+            return $vote ? (int) $vote->value : 0;
+        })
+        ->attribute('canVote', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            $post = $discussion->firstPost;
+
+            return $post ? $serializer->getActor()->can('vote', $post) : false;
         }),
 
     // The two orderings the discussion list offers. Both read an indexed
     // column; neither aggregates post_votes at query time.
     (new Extend\ApiController(ListDiscussionsController::class))
         ->addSortField('votes')
-        ->addSortField('hotness'),
+        ->addSortField('hotness')
+        // Without both of these the serializer above would fetch a post and
+        // its votes once per row of the list.
+        ->load(['firstPost', 'firstPost.postVotes']),
 
     // The frontend map alone is not enough; see SortMapProvider.
     (new Extend\ServiceProvider())
