@@ -34,7 +34,7 @@
                 "backgroundColor": "#064e3b"
             },
             "optional-dependencies": [
-                "ianm-html-head"
+                "ianm/html-head"
             ]
         }
     }
