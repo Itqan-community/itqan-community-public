@@ -1,0 +1,109 @@
+// ---------------------------------------------------------------------------
+// Voting
+// ---------------------------------------------------------------------------
+
+// The three parts read as one control rather than three loose glyphs: a
+// grouped, square-cornered block, closer to a segmented control than to the
+// pill the big sites use.
+.VoteButtons {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px;
+  background: var(--control-bg);
+  border-radius: var(--border-radius);
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.VoteButtons-button {
+  width: 28px;
+  height: 26px;
+  padding: 0;
+  // Escaped: Less tries to evaluate the subtraction and fails on a
+  // custom property.
+  border-radius: ~"calc(var(--border-radius) - 1px)";
+  color: var(--muted-color);
+  background: transparent;
+  transition: background-color 0.12s ease, color 0.12s ease;
+
+  .Button-icon {
+    font-size: 13px;
+    margin: 0;
+    vertical-align: 0;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--text-color);
+    background: var(--control-bg-shaded);
+  }
+
+  // The chosen side lifts out of the group as a raised chip and takes a
+  // colour. Colour alone was too quiet at this size — on the default palette
+  // the muted and primary tones sit a few shades apart.
+  &--active {
+    background: var(--body-bg);
+    box-shadow: 0 1px 2px var(--shadow-color);
+  }
+
+  // Green for agreement, red for disagreement — the two sides need different
+  // hues, not different shades of one. Tying the up arrow to the theme's
+  // primary was tried first and read as barely-changed on a palette where the
+  // primary sits close to the muted tone.
+  //
+  // Flarum's own switch colours are used rather than fresh literals, so a
+  // theme that retunes them retunes this too.
+  &--up.VoteButtons-button--active {
+    color: var(--switch-on-color);
+  }
+
+  &--down.VoteButtons-button--active {
+    color: var(--switch-off-color);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.VoteButtons-score {
+  min-width: 26px;
+  padding: 0 2px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-color);
+  // Digits must not shuffle the arrows sideways as the score changes.
+  font-variant-numeric: tabular-nums;
+
+  // A signed number must read left to right whatever the page direction. In
+  // an RTL paragraph the leading minus is a neutral character and bidi moves
+  // it to the other end: -2 renders as 2-, which is not the same number.
+  // Isolated as well as directed, so the score cannot disturb the text around
+  // it either.
+  direction: ltr;
+  unicode-bidi: isolate;
+
+  &--positive {
+    color: var(--switch-on-color);
+  }
+
+  &--negative {
+    color: var(--switch-off-color);
+  }
+}
+
+// While a vote is in flight the control stays legible but stops inviting a
+// second click.
+.VoteButtons--saving {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+// The score beside a discussion in the list, so an ordering by score can be
+// read rather than trusted.
+.DiscussionListItem-votes {
+  font-weight: 600;
+  color: var(--muted-color);
+}

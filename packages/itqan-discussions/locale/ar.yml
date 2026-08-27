@@ -1,0 +1,12 @@
+itqan-discussions:
+  forum:
+    list:
+      score: "{count} نقطة"
+    vote:
+      up: تصويت مؤيّد
+      down: تصويت معارض
+
+core:
+  forum:
+    index_sort:
+      hot_button: الأكثر تفاعلًا
