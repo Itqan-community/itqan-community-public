@@ -1,0 +1,46 @@
+# The local development environment CONTRIBUTING.md and README.md assume:
+#
+#     docker compose up -d
+#
+# brings up the forum on http://localhost:8080, already installed, with
+# admin / password123. The first run builds the image and installs Flarum, so
+# it takes a few minutes; later runs only apply pending migrations.
+
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: flarum
+      MARIADB_USER: flarum
+      MARIADB_PASSWORD: flarum
+      MARIADB_ROOT_PASSWORD: root
+      # utf8mb4 throughout, or Arabic text and emoji come back mangled.
+      MARIADB_AUTO_UPGRADE: '1'
+    command: >-
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-u", "flarum", "-pflarum"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .docker
+    ports:
+      - "8080:80"
+    volumes:
+      # Bind mounted rather than copied: edit a file in packages/ and the next
+      # request serves it.
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  db-data:

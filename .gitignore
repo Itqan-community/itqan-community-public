@@ -1,0 +1,14 @@
+# Runtime state and secrets. site.php expects storage/ to exist; the container
+# creates it on boot.
+/config.php
+/storage/
+
+# User uploads, not source.
+/public/assets/avatars/
+/public/assets/files/
+
+# Build output from the extensions' JS toolchain.
+node_modules/
+packages/*/build/
+
+.DS_Store
