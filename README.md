@@ -69,6 +69,40 @@ docker compose up -d
 ```
 Access the local forum at `http://localhost:8080` (Admin: `admin` / `password123`).
 
+The first run builds the PHP image, waits for MariaDB, installs Flarum and enables the bundled extensions, so give it a few minutes. Every run after that only applies pending migrations. Follow along with `docker compose logs -f web`.
+
+The repository is bind mounted into the container, so an edit under `packages/` is served on the next request. The usual commands run inside the `web` service:
+
+```bash
+docker compose exec web php flarum migrate
+docker compose exec web php flarum cache:clear
+docker compose exec web php flarum extension:enable <id>
+```
+
+To start over from an empty database:
+
+```bash
+docker compose down -v && rm -rf storage config.php && docker compose up -d
+```
+
+> **`public/assets/` gets rewritten.** Flarum compiles its CSS and JS into
+> `public/assets/`, which this repository tracks with the production build.
+> Running locally replaces those files with your own install's. Restore them
+> before committing:
+>
+> ```bash
+> git checkout -- public/assets && git clean -fd public/assets
+> ```
+
+> **Note on the local extensions.** `packages/itqan-theme` and
+> `packages/itqan-typography` are path repositories that `composer.lock` does
+> not list yet, so the container cannot link them into `vendor/` and skips
+> them on boot. Linking needs a full Composer resolve, which also reaches the
+> private `flarum-lang-arabic` repository. Until a maintainer with access runs
+> `composer update itqan/flarum-theme itqan/flarum-typography --lock`, the
+> local forum runs without those two extensions. Everything else — core, the
+> bundled extensions, migrations, the API — works.
+
 ---
 
 ## 🤝 Contributing

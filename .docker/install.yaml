@@ -1,0 +1,19 @@
+# Answers for `php flarum install`, so `docker compose up` lands on a forum you
+# can log into rather than an installer form.
+debug: true
+baseUrl: http://localhost:8080
+databaseConfiguration:
+  driver: mysql
+  host: db
+  port: 3306
+  database: flarum
+  username: flarum
+  password: flarum
+  prefix: ''
+adminUser:
+  username: admin
+  password: password123
+  password_confirmation: password123
+  email: admin@example.com
+settings:
+  forum_title: 'Itqan Community — local'

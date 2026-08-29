@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ * This file is part of Flarum.
+ *
+ * For detailed copyright and license information, please view the
+ * LICENSE file that was distributed with this source code.
+ */
+
+/*
+|-------------------------------------------------------------------------------
+| Flarum's command line interface
+|-------------------------------------------------------------------------------
+|
+| The commands documented in CONTRIBUTING.md — `php flarum migrate`,
+| `php flarum cache:clear`, `php flarum assets:publish` — are run through this
+| script. It boots the site defined in site.php and hands control to Flarum's
+| console server.
+|
+*/
+
+$site = require __DIR__.'/site.php';
+
+$server = new Flarum\Console\Server($site);
+
+$server->listen();
