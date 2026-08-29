@@ -1,0 +1,182 @@
+// ---------------------------------------------------------------------------
+// Voting
+// ---------------------------------------------------------------------------
+
+// The three parts read as one control rather than three loose glyphs: a
+// grouped, square-cornered block, closer to a segmented control than to the
+// pill the big sites use.
+// Arrows sitting on the page, with no tray behind them. The grouping comes
+// from proximity alone; the feedback lives on the arrows themselves.
+.VoteButtons {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.VoteButtons-button {
+  width: 28px;
+  height: 26px;
+  padding: 0;
+  border-radius: var(--border-radius);
+  color: var(--muted-color);
+  background: transparent;
+  transition: background-color 0.12s ease, color 0.12s ease;
+
+  .Button-icon {
+    font-size: 13px;
+    margin: 0;
+    vertical-align: 0;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--text-color);
+    background: var(--control-bg);
+  }
+
+  // Green for agreement, red for disagreement — the two sides need different
+  // hues, not two shades of one. Flarum's own switch colours are used rather
+  // than fresh literals, so a theme that retunes them retunes this.
+  //
+  // The tint behind the active arrow is mixed from that same colour, so there
+  // is one value to change per side. `--control-bg` is declared first as the
+  // fallback for anything without `color-mix`.
+  &--active {
+    background: var(--control-bg);
+  }
+
+  &--up.VoteButtons-button--active {
+    color: var(--switch-on-color);
+    background: color-mix(in srgb, var(--switch-on-color) 14%, transparent);
+  }
+
+  &--down.VoteButtons-button--active {
+    color: var(--switch-off-color);
+    background: color-mix(in srgb, var(--switch-off-color) 14%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.VoteButtons-score {
+  min-width: 26px;
+  padding: 0 2px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-color);
+  // Digits must not shuffle the arrows sideways as the score changes.
+  font-variant-numeric: tabular-nums;
+
+  // A signed number must read left to right whatever the page direction: in
+  // an RTL paragraph the leading minus is a neutral character and bidi moves
+  // it to the other end, so -2 renders as 2-, which is not the same number.
+  //
+  // The direction itself is set by a `dir` attribute on the element, not here
+  // — the right-to-left build rewrites `direction` and flips its value. Only
+  // the isolation, which that pass leaves alone, belongs in CSS.
+  unicode-bidi: isolate;
+
+  &--positive {
+    color: var(--switch-on-color);
+  }
+
+  &--negative {
+    color: var(--switch-off-color);
+  }
+}
+
+// Stacked, for the head of a discussion-list row: one narrow column instead
+// of three across.
+.VoteButtons--vertical {
+  flex-direction: column;
+  gap: 0;
+
+  .VoteButtons-button {
+    width: 26px;
+    height: 20px;
+  }
+
+  .VoteButtons-score {
+    min-width: 0;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+}
+
+// A column at the leading edge of each discussion-list row.
+//
+// Core reserves a gutter there for the avatar: `.DiscussionListItem-content`
+// carries a left padding, and the floated avatar is pulled back into it by a
+// matching negative margin. Both values differ per breakpoint.
+//
+// The trick is that floats resolve against the content box. Widening the
+// padding by one column moves the avatar, badges, main and count along with
+// it automatically — so only two things need stating: the wider padding, and
+// how far the control itself is pulled back.
+//
+// Written with physical properties on purpose. Flarum compiles a separate
+// right-to-left stylesheet by flipping `left` to `right`, and core's own rules
+// here are physical; matching them keeps this flipping in step rather than
+// half-logical and half-mirrored.
+@itqan-vote-column: 34px;
+
+.DiscussionListItem-content > .VoteButtons--vertical {
+  float: left;
+  margin-top: 12px;
+}
+
+@media @phone {
+  // 15px outer gutter + 45px avatar gutter, plus the new column.
+  .DiscussionListItem-content {
+    padding-left: 15px + 45px + @itqan-vote-column;
+  }
+
+  // Pulled back to the outer gutter, not to the row edge: the 15px belongs to
+  // the row and the control should respect it.
+  .DiscussionListItem-content > .VoteButtons--vertical {
+    margin-left: -(45px + @itqan-vote-column);
+  }
+}
+
+@media @tablet-up {
+  .DiscussionListItem-content {
+    padding-left: 52px + @itqan-vote-column;
+  }
+
+  .DiscussionListItem-content > .VoteButtons--vertical {
+    margin-left: -(52px + @itqan-vote-column);
+  }
+
+  // The list also appears in the pane beside an open discussion, where core
+  // scopes a wider gutter — 52px plus the 15px it folds in when it cancels
+  // the row's bleed — at a specificity the rule above cannot reach. Left
+  // unhandled the column lands 19px outside the pane, where its `overflow`
+  // clips it away entirely.
+  .DiscussionPage-list .DiscussionListItem-content {
+    padding-left: 52px + 15px + @itqan-vote-column;
+  }
+
+  // Pulled back to the pane's own 15px gutter rather than to its edge.
+  .DiscussionPage-list .DiscussionListItem-content > .VoteButtons--vertical {
+    margin-left: -(52px + @itqan-vote-column);
+  }
+}
+
+// While a vote is in flight the control stays legible but stops inviting a
+// second click.
+.VoteButtons--saving {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+// The score beside a discussion in the list, so an ordering by score can be
+// read rather than trusted.
+.DiscussionListItem-votes {
+  font-weight: 600;
+  color: var(--muted-color);
+}

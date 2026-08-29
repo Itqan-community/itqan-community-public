@@ -1,0 +1,12 @@
+itqan-discussions:
+  forum:
+    list:
+      score: "{count} points"
+    vote:
+      up: Upvote
+      down: Downvote
+
+core:
+  forum:
+    index_sort:
+      hot_button: Hot

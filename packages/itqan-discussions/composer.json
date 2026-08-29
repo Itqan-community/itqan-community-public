@@ -1,0 +1,35 @@
+{
+    "name": "itqan/flarum-discussions",
+    "description": "Discussion browsing and moderation improvements for the Itqan community",
+    "keywords": ["flarum", "discussions", "voting"],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\Discussions\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Discussions",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-arrow-up",
+                "color": "#ffffff",
+                "backgroundColor": "#064e3b"
+            }
+        }
+    },
+    "scripts": {
+        "build": "cd js && npm run build"
+    }
+}
