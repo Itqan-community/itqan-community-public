@@ -1,0 +1,95 @@
+// One step of indentation per level of reply depth.
+//
+// Applied to `.PostStream-item`, the row, rather than to the post inside it.
+// Core pulls `.CommentPost` left by a negative margin so the avatar sits in the
+// gutter beside the text; setting a margin on the post to indent it overwrites
+// that pull and drags the avatar out of line with the body. Indenting the row
+// moves the post and its gutter together and leaves core's own geometry alone.
+//
+// Written against `left` on purpose, not `margin-inline-start`. Flarum builds a
+// separate right-to-left stylesheet by flipping `left` to `right`, which is
+// what voting.less already relies on, so a physical property lands correctly in
+// both directions while a logical one would be flipped a second time and undo
+// itself.
+@itqan-tree-step: 20px;
+@itqan-tree-step-phone: 12px;
+
+// Core's phone baseline, from PostStream.less:
+//
+//   .PostStream-item:not(:last-child) { @media @phone { margin: 0 -15px; padding: 0 15px } }
+//
+// so every row but the last bleeds past the container to run its separator edge
+// to edge. Indents on phones are measured from that, not from zero: setting a
+// plain margin instead would make the first step read as 27px and every step
+// after it as 12px, and would drop core's padding along with it.
+@itqan-tree-phone-bleed: -15px;
+
+// The line that carries the eye from a reply back up to what it answers. Faint
+// on purpose: at five levels there are five of these on screen at once, and a
+// border strong enough to read on its own becomes a cage around the text rather
+// than a hint about its shape.
+//
+// `border-left`, never the `border` shorthand — core puts the row separator on
+// `border-bottom`, and the shorthand would erase it.
+.PostStream-item:has(> .itqanTree) {
+  border-left: 2px solid var(--control-bg);
+  padding-left: 12px;
+}
+
+// The ladder. Written out rather than generated in a loop so each depth is
+// greppable, and so the ceiling is a fact stated in the stylesheet instead of a
+// number the reader has to go find in the JavaScript. Keep in step with
+// MAX_DEPTH in CommentTree.js.
+.PostStream-item:has(> .itqanTree--depth1) { margin-left: @itqan-tree-step * 1; }
+.PostStream-item:has(> .itqanTree--depth2) { margin-left: @itqan-tree-step * 2; }
+.PostStream-item:has(> .itqanTree--depth3) { margin-left: @itqan-tree-step * 3; }
+.PostStream-item:has(> .itqanTree--depth4) { margin-left: @itqan-tree-step * 4; }
+.PostStream-item:has(> .itqanTree--depth5) { margin-left: @itqan-tree-step * 5; }
+
+// A reply hidden by a collapsed ancestor takes its stream row with it. Hiding
+// only the post would leave the row's padding behind as a gap in the stream.
+.PostStream-item:has(> .itqanTree--hidden) {
+  display: none;
+}
+
+.itqanTree-toggle {
+  font-weight: 600;
+
+  // Core's footer buttons sit in a row of muted text. The caret is the part
+  // that says this one does something, so it takes the accent while the label
+  // stays as quiet as its neighbours.
+  .icon {
+    color: var(--primary-color);
+  }
+}
+
+// Phones get a shorter step. The indent exists to show the shape of the
+// conversation, and on a narrow screen five full steps would spend more width
+// on that shape than on the words inside it.
+//
+// Core's own padding is left alone here: at this width it is already 15px,
+// which is more than enough room between the branch line and the text.
+@media @phone {
+  .PostStream-item:not(:last-child):has(> .itqanTree--depth1) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 1); }
+  .PostStream-item:not(:last-child):has(> .itqanTree--depth2) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 2); }
+  .PostStream-item:not(:last-child):has(> .itqanTree--depth3) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 3); }
+  .PostStream-item:not(:last-child):has(> .itqanTree--depth4) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 4); }
+  .PostStream-item:not(:last-child):has(> .itqanTree--depth5) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 5); }
+
+  // The last row never gets core's bleed, so it is measured from zero like the
+  // desktop rules. In a live stream the last row is the reply placeholder
+  // rather than a post, so this rarely has anything to match — it is here so
+  // that the one time it does, the post does not hang off the edge.
+  .PostStream-item:last-child:has(> .itqanTree--depth1) { margin-left: @itqan-tree-step-phone * 1; }
+  .PostStream-item:last-child:has(> .itqanTree--depth2) { margin-left: @itqan-tree-step-phone * 2; }
+  .PostStream-item:last-child:has(> .itqanTree--depth3) { margin-left: @itqan-tree-step-phone * 3; }
+  .PostStream-item:last-child:has(> .itqanTree--depth4) { margin-left: @itqan-tree-step-phone * 4; }
+  .PostStream-item:last-child:has(> .itqanTree--depth5) { margin-left: @itqan-tree-step-phone * 5; }
+
+  // Matched to core's own phone padding rather than kept at the desktop 12px,
+  // so the text of an indented reply lines up with the text of the root post
+  // instead of sitting three pixels closer to its own edge.
+  .PostStream-item:has(> .itqanTree) {
+    padding-left: 15px;
+  }
+}
