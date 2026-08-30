@@ -5,6 +5,9 @@ itqan-discussions:
     vote:
       up: تصويت مؤيّد
       down: تصويت معارض
+    tree:
+      collapse: "{count, plural, one {طيّ ردّ واحد} two {طيّ ردّين} few {طيّ # ردود} many {طيّ # ردًّا} other {طيّ # ردّ}}"
+      expand: "{count, plural, one {إظهار ردّ واحد} two {إظهار ردّين} few {إظهار # ردود} many {إظهار # ردًّا} other {إظهار # ردّ}}"
 
 core:
   forum:

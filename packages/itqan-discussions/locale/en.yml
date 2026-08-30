@@ -5,6 +5,9 @@ itqan-discussions:
     vote:
       up: Upvote
       down: Downvote
+    tree:
+      collapse: "{count, plural, one {Collapse # reply} other {Collapse # replies}}"
+      expand: "{count, plural, one {Show # reply} other {Show # replies}}"
 
 core:
   forum:
