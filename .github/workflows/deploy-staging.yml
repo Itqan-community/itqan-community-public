@@ -91,6 +91,7 @@ jobs:
           sudo -u www-data php flarum cache:clear
 
           sed -i 's#root /var/www/flarum-placeholder;#root /var/www/flarum/public;#' /etc/nginx/sites-available/flarum.conf
+          sed -i 's#index index.html;#index index.php;#' /etc/nginx/sites-available/flarum.conf
           nginx -t
           systemctl reload nginx
           systemctl reload php8.1-fpm
