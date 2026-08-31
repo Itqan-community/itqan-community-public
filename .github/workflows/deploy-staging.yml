@@ -37,6 +37,8 @@ jobs:
           SMTP_USERNAME=$(printf '%s' "$2" | base64 -d)
           SMTP_PASSWORD=$(printf '%s' "$3" | base64 -d)
 
+          git config --global --add safe.directory /var/www/flarum
+
           if [ -d /var/www/flarum/.git ]; then
             cd /var/www/flarum
             git fetch origin staging
