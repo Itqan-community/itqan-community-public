@@ -1,0 +1,108 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - staging
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to staging-new.community.itqan.dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+          DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+          SMTP_USERNAME: ${{ secrets.STAGING_SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.STAGING_SMTP_PASSWORD }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/staging_deploy_key
+          chmod 600 ~/.ssh/staging_deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          ssh -i ~/.ssh/staging_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD" "$SMTP_USERNAME" "$SMTP_PASSWORD" <<'REMOTE'
+          set -euo pipefail
+          DB_PASSWORD="$1"
+          SMTP_USERNAME="$2"
+          SMTP_PASSWORD="$3"
+
+          if [ -d /var/www/flarum/.git ]; then
+            cd /var/www/flarum
+            git fetch origin staging
+            git reset --hard origin/staging
+          else
+            git clone --branch staging https://github.com/Itqan-community/itqan-community-public.git /var/www/flarum
+            cd /var/www/flarum
+          fi
+
+          cat > /var/www/flarum/config.php <<PHP
+          <?php return array (
+            'debug' => false,
+            'queue' => array('driver' => 'sync'),
+            'database' => array(
+              'driver' => 'mysql',
+              'database' => 'flarum',
+              'prefix' => '',
+              'prefix_indexes' => true,
+              'host' => '10.107.0.2',
+              'port' => 3306,
+              'username' => 'flarum',
+              'password' => '${DB_PASSWORD}',
+              'charset' => 'utf8mb4',
+              'collation' => 'utf8mb4_unicode_ci',
+              'engine' => 'InnoDB',
+              'strict' => false,
+            ),
+            'url' => 'https://staging-new.community.itqan.dev',
+            'paths' => array('api' => 'api', 'admin' => 'admin'),
+            'headers' => array('poweredByHeader' => false, 'referrerPolicy' => 'same-origin'),
+            'mail' => array(
+              'driver' => 'smtp',
+              'host' => 'in-v3.mailjet.com',
+              'port' => 587,
+              'username' => '${SMTP_USERNAME}',
+              'password' => '${SMTP_PASSWORD}',
+              'encryption' => 'tls',
+              'from' => array('address' => 'noreply@itqan.dev', 'name' => 'Itqan Community Staging'),
+            ),
+            'cookie' => array('name' => '__Host-flarum', 'samesite' => 'lax'),
+          );
+          PHP
+
+          mkdir -p storage/formatter storage/cache storage/assets storage/sessions storage/views storage/logs
+          rm -rf storage/cache storage/assets
+          find public/assets -maxdepth 1 -type f \( -name "*.js" -o -name "*.css" -o -name "*.map" -o -name "rev-manifest.json" \) -delete
+          mkdir -p storage/cache storage/assets public/assets
+
+          chown -R www-data:www-data /var/www/flarum
+
+          sudo -u www-data php flarum migrate
+          sudo -u www-data php flarum cache:clear
+
+          sed -i 's#root /var/www/flarum-placeholder;#root /var/www/flarum/public;#' /etc/nginx/sites-available/flarum.conf
+          nginx -t
+          systemctl reload nginx
+          systemctl reload php8.1-fpm
+          REMOTE
+
+      - name: Health check
+        env:
+          SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+        run: |
+          # 401 counts as healthy here: it proves nginx + php-fpm answered and
+          # Basic Auth is enforced, without needing the password as a CI secret.
+          for i in $(seq 1 10); do
+            code=$(curl -k -s -o /dev/null -w "%{http_code}" "https://$SSH_HOST" --resolve staging-new.community.itqan.dev:443:"$SSH_HOST" || true)
+            if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ] || [ "$code" = "401" ]; then
+              echo "Staging responded with $code"
+              exit 0
+            fi
+            echo "Attempt $i: got $code, retrying..."
+            sleep 6
+          done
+          echo "Staging did not respond as expected"
+          exit 1
