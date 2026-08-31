@@ -376,4 +376,18 @@ return function (RouteCollection $map, RouteHandlerFactory $route) {
         'mailTest',
         $route->toController(Controller\SendTestMailController::class)
     );
+
+    // Trigger a sync of the abandoned extensions list
+    $map->post(
+        '/extensions/abandoned/sync',
+        'extensions.abandoned.sync',
+        $route->toController(Controller\SyncAbandonedExtensionsController::class)
+    );
+
+    // List Flarum community announcements from discuss.flarum.org
+    $map->get(
+        '/flarum/announcements',
+        'announcements.list',
+        $route->toController(Controller\ListAnnouncementsController::class)
+    );
 };
