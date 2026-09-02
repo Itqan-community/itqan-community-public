@@ -46,7 +46,7 @@ export function isValid(mode) {
  * The forum-wide starting point, for readers who have never chosen.
  */
 export function defaultMode() {
-  const configured = app.forum.attribute('itqanThemeDefault');
+  const configured = app.forum ? app.forum.attribute('itqanThemeDefault') : null;
 
   return isValid(configured) ? configured : 'auto';
 }
@@ -56,10 +56,11 @@ export function defaultMode() {
  * between devices. A guest's lives in this browser.
  */
 export function currentMode() {
-  const user = app.session.user;
+  const user = (app.session && app.session.user) ? app.session.user : null;
 
-  if (user) {
-    const preference = user.preferences()?.[PREFERENCE];
+  if (user && typeof user.preferences === 'function') {
+    const prefs = user.preferences();
+    const preference = prefs ? prefs[PREFERENCE] : null;
 
     if (isValid(preference)) return preference;
   }
@@ -120,9 +121,9 @@ export function setMode(mode) {
   // next page load, before any of this JavaScript exists.
   writeStorage(mode);
 
-  const user = app.session.user;
+  const user = (app.session && app.session.user) ? app.session.user : null;
 
-  if (user) {
+  if (user && typeof user.savePreferences === 'function') {
     return user.savePreferences({ [PREFERENCE]: mode });
   }
 
