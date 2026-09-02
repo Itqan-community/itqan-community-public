@@ -1,15 +1,21 @@
 <?php
 
+use Flarum\Api\Controller\ListDiscussionsController;
+use Flarum\Api\Controller\ShowDiscussionController;
+use Flarum\Api\Serializer\BasicPostSerializer;
 use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Api\Serializer\PostSerializer;
-use Flarum\Extend;
 use Flarum\Discussion\Discussion;
+use Flarum\Extend;
+use Flarum\Post\Event\Deleted;
+use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
 use Itqan\Discussions\Access\PostPolicy;
 use Itqan\Discussions\Api\VoteController;
+use Itqan\Discussions\Listener\SaveParentIdToPost;
+use Itqan\Discussions\Listener\UpdateReplyCountOnDelete;
 use Itqan\Discussions\Provider\SortMapProvider;
 use Itqan\Discussions\Vote\Vote;
-use Flarum\Api\Controller\ListDiscussionsController;
 
 return [
     (new Extend\Frontend('forum'))
@@ -21,14 +27,23 @@ return [
     (new Extend\Routes('api'))
         ->patch('/posts/{id}/vote', 'itqan-discussions.vote', VoteController::class),
 
-    // Named `postVotes`, not `votes`: `posts.votes` is the stored score, and a
-    // relation of the same name would shadow the column — `$post->votes`
-    // would hand back a relation where the rest of the code expects an int.
+    // Relationships
     (new Extend\Model(Post::class))
-        ->hasMany('postVotes', Vote::class, 'post_id'),
+        ->hasMany('postVotes', Vote::class, 'post_id')
+        ->belongsTo('parent', Post::class, 'parent_id')
+        ->hasMany('replies', Post::class, 'parent_id'),
 
     (new Extend\Policy())
         ->modelPolicy(Post::class, PostPolicy::class),
+
+    // BasicPostSerializer attributes for threaded / nested replies
+    (new Extend\ApiSerializer(BasicPostSerializer::class))
+        ->attribute('parentId', function (BasicPostSerializer $serializer, Post $post) {
+            return $post->parent_id ? (int) $post->parent_id : null;
+        })
+        ->attribute('replyCount', function (BasicPostSerializer $serializer, Post $post) {
+            return (int) ($post->reply_count ?? 0);
+        }),
 
     (new Extend\ApiSerializer(PostSerializer::class))
         // `votes` is the stored score, not a count of the rows: the whole
@@ -54,12 +69,7 @@ return [
             return $serializer->getActor()->can('vote', $post);
         }),
 
-    // The discussion's own score, taken from its opening post. The list needs
-    // it to show a score beside each row, and the sort needs it in the
-    // payload to make the ordering legible rather than mysterious.
-    // Enough for the list to carry a working vote control, not just a number:
-    // which post to send the vote to, what this reader already did, and
-    // whether they may.
+    // The discussion's own score, taken from its opening post.
     (new Extend\ApiSerializer(DiscussionSerializer::class))
         ->attribute('votes', function (DiscussionSerializer $serializer, Discussion $discussion) {
             return (int) $discussion->votes;
@@ -85,21 +95,22 @@ return [
             return $post ? $serializer->getActor()->can('vote', $post) : false;
         }),
 
-    // The two orderings the discussion list offers. Both read an indexed
-    // column; neither aggregates post_votes at query time.
+    // Event listeners for parent_id persistence and reply_count synchronization
+    (new Extend\Event())
+        ->listen(Saving::class, SaveParentIdToPost::class)
+        ->listen(Deleted::class, UpdateReplyCountOnDelete::class),
+
+    // The two orderings the discussion list offers.
     (new Extend\ApiController(ListDiscussionsController::class))
         ->addSortField('votes')
         ->addSortField('hotness')
-        // Without both of these the serializer above would fetch a post and
-        // its votes once per row of the list.
         ->load(['firstPost', 'firstPost.postVotes']),
 
-    // The frontend map alone is not enough; see SortMapProvider.
+    // SortMap provider
     (new Extend\ServiceProvider())
         ->register(SortMapProvider::class),
 
-    // Without this the serializer's `userVote` lookup would fire a query for
-    // every post in the stream.
-    (new Extend\ApiController(Flarum\Api\Controller\ShowDiscussionController::class))
+    // Load post votes for discussions
+    (new Extend\ApiController(ShowDiscussionController::class))
         ->load(['posts.postVotes']),
 ];
