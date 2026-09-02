@@ -1,15 +1,21 @@
 itqan-discussions:
   forum:
+    reply: "Reply"
+    replying_to: "Replying to {username}"
+    cancel_reply: "Cancel nested reply"
+    replied_to: "Replied to {username}"
+    collapse_thread: "Collapse"
+    expand_thread: "Replies ({count})"
     list:
       score: "{count} points"
     vote:
-      up: Upvote
-      down: Downvote
+      up: "Upvote"
+      down: "Downvote"
     tree:
-      collapse: "{count, plural, one {Collapse # reply} other {Collapse # replies}}"
-      expand: "{count, plural, one {Show # reply} other {Show # replies}}"
+      collapse: "Collapse"
+      expand: "Replies ({count})"
 
 core:
   forum:
     index_sort:
-      hot_button: Hot
+      hot_button: "Hot"
