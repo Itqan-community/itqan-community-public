@@ -3,12 +3,17 @@
 // ---------------------------------------------------------------------------
 
 .ThemeSwitcher {
-  // On a phone the header lives inside the drawer, where controls are full
-  // width rows with visible labels. Only from tablet up does it become one of
-  // the small round icon buttons in the header strip — the same treatment
-  // core gives the notifications bell.
-  .Dropdown-toggle .Button-label {
-    margin-left: 7px;
+  display: inline-block;
+  vertical-align: middle;
+
+  .Dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .Button-label {
+      margin-left: 7px;
+    }
   }
 }
 
