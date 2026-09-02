@@ -91,6 +91,11 @@ app.initializers.add('itqan-discussions', () => {
     const parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
     if (parentId) {
       const parentPost = app.store ? app.store.getById('posts', String(parentId)) : null;
+      // Guard: Do NOT show reply badge if parent is OP post #1
+      if (parentPost && typeof parentPost.number === 'function' && parentPost.number() === 1) {
+        return;
+      }
+
       const parentUser = parentPost && parentPost.user && parentPost.user() ? parentPost.user().displayName() : null;
 
       items.add(
@@ -100,7 +105,7 @@ app.initializers.add('itqan-discussions', () => {
           {
             className: 'itqan-reply-badge',
             href: '#',
-            title: parentUser ? app.translator.trans('itqan-discussions.forum.replied_to', { username: parentUser }) : '',
+            title: parentUser ? (app.translator.trans('itqan-discussions.forum.replied_to', { username: parentUser }) || `رد على ${parentUser}`) : '',
             onclick: (e) => {
               e.preventDefault();
               const parentEl = document.querySelector(`.PostStream-item[data-id="${parentId}"]`);
@@ -114,7 +119,7 @@ app.initializers.add('itqan-discussions', () => {
           [
             icon ? icon('fas fa-reply') : null,
             ' ',
-            parentUser ? app.translator.trans('itqan-discussions.forum.replied_to', { username: parentUser }) : ('#' + parentId),
+            parentUser ? (app.translator.trans('itqan-discussions.forum.replied_to', { username: parentUser }) || `رد على ${parentUser}`) : ('#' + parentId),
           ]
         ),
         70
@@ -128,11 +133,12 @@ app.initializers.add('itqan-discussions', () => {
     if (!post) return;
 
     const postIdStr = (typeof post.id === 'function') ? String(post.id()) : '';
+    const isOP = typeof post.number === 'function' && post.number() === 1;
     const replyCount = (typeof post.replyCount === 'function') ? (post.replyCount() || 0) : 0;
     const isCollapsed = app.itqanCollapsedThreads.has(postIdStr);
 
-    // Dynamic collapse/expand pill toggle
-    if (replyCount > 0) {
+    // Dynamic collapse/expand pill toggle (Only on comments with child replies, not OP)
+    if (!isOP && replyCount > 0) {
       items.add(
         'itqan-collapse-thread',
         m(
@@ -183,8 +189,14 @@ app.initializers.add('itqan-discussions', () => {
         e.stopPropagation();
       }
 
-      app.itqanActiveParentId = post.id();
-      app.itqanActiveParentUsername = (post.user && post.user()) ? post.user().displayName() : ('#' + post.id());
+      if (isOP) {
+        // On OP (Post #1), open top-level discussion reply without nesting
+        app.itqanActiveParentId = null;
+        app.itqanActiveParentUsername = null;
+      } else {
+        app.itqanActiveParentId = post.id();
+        app.itqanActiveParentUsername = (post.user && post.user()) ? post.user().displayName() : ('#' + post.id());
+      }
 
       const disc = post.discussion ? post.discussion() : null;
       if (disc && DiscussionControls && DiscussionControls.replyAction) {
@@ -211,7 +223,7 @@ app.initializers.add('itqan-discussions', () => {
         [
           icon ? icon('fas fa-reply') : null,
           ' ',
-          app.translator.trans('itqan-discussions.forum.reply') || 'Reply',
+          app.translator.trans('itqan-discussions.forum.reply') || 'رد',
         ]
       ),
       10
@@ -232,13 +244,13 @@ app.initializers.add('itqan-discussions', () => {
             m('div', { className: 'replyBanner-content' }, [
               icon ? icon('fas fa-reply') : null,
               ' ',
-              app.translator.trans('itqan-discussions.forum.replying_to', { username: targetUsername }),
+              app.translator.trans('itqan-discussions.forum.replying_to', { username: targetUsername }) || `الرد على ${targetUsername}`,
             ]),
             m(
               'button',
               {
                 className: 'replyBanner-close',
-                title: app.translator.trans('itqan-discussions.forum.cancel_reply'),
+                title: app.translator.trans('itqan-discussions.forum.cancel_reply') || 'إلغاء الرد المتشعب',
                 onclick: (e) => {
                   e.stopPropagation();
                   app.itqanActiveParentId = null;
