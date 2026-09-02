@@ -1,15 +1,21 @@
 itqan-discussions:
   forum:
+    reply: "رد"
+    replying_to: "الرد على {username}"
+    cancel_reply: "إلغاء الرد المتشعب"
+    replied_to: "رد على {username}"
+    collapse_thread: "طي"
+    expand_thread: "ردود ({count})"
     list:
       score: "{count} نقطة"
     vote:
-      up: تصويت مؤيّد
-      down: تصويت معارض
+      up: "تصويت مؤيّد"
+      down: "تصويت معارض"
     tree:
-      collapse: "{count, plural, one {طيّ ردّ واحد} two {طيّ ردّين} few {طيّ # ردود} many {طيّ # ردًّا} other {طيّ # ردّ}}"
-      expand: "{count, plural, one {إظهار ردّ واحد} two {إظهار ردّين} few {إظهار # ردود} many {إظهار # ردًّا} other {إظهار # ردّ}}"
+      collapse: "طي"
+      expand: "ردود ({count})"
 
 core:
   forum:
     index_sort:
-      hot_button: الأكثر تفاعلًا
+      hot_button: "الأكثر تفاعلًا"

@@ -1,95 +1,202 @@
-// One step of indentation per level of reply depth.
-//
-// Applied to `.PostStream-item`, the row, rather than to the post inside it.
-// Core pulls `.CommentPost` left by a negative margin so the avatar sits in the
-// gutter beside the text; setting a margin on the post to indent it overwrites
-// that pull and drags the avatar out of line with the body. Indenting the row
-// moves the post and its gutter together and leaves core's own geometry alone.
-//
-// Written against `left` on purpose, not `margin-inline-start`. Flarum builds a
-// separate right-to-left stylesheet by flipping `left` to `right`, which is
-// what voting.less already relies on, so a physical property lands correctly in
-// both directions while a logical one would be flipped a second time and undo
-// itself.
-@itqan-tree-step: 20px;
-@itqan-tree-step-phone: 12px;
+// Itqan Discussions - Threaded / Nested Comments Styling
 
-// Core's phone baseline, from PostStream.less:
-//
-//   .PostStream-item:not(:last-child) { @media @phone { margin: 0 -15px; padding: 0 15px } }
-//
-// so every row but the last bleeds past the container to run its separator edge
-// to edge. Indents on phones are measured from that, not from zero: setting a
-// plain margin instead would make the first step read as 27px and every step
-// after it as 12px, and would drop core's padding along with it.
-@itqan-tree-phone-bleed: -15px;
+// Variables
+@itqan-primary: #0D9488;
+@itqan-primary-light: #F0FDFA;
+@itqan-primary-hover: #14B8A6;
+@itqan-border-line: rgba(13, 148, 136, 0.4);
+@itqan-border-line-hover: #0D9488;
+@thread-indent-unit: 36px;
+@thread-indent-mobile-unit: 18px;
 
-// The line that carries the eye from a reply back up to what it answers. Faint
-// on purpose: at five levels there are five of these on screen at once, and a
-// border strong enough to read on its own becomes a cage around the text rather
-// than a hint about its shape.
-//
-// `border-left`, never the `border` shorthand — core puts the row separator on
-// `border-bottom`, and the shorthand would erase it.
-.PostStream-item:has(> .itqanTree) {
-  border-left: 2px solid var(--control-bg);
-  padding-left: 12px;
-}
+// PostStream Item Indentation & Visual Tree Lines
+.PostStream-item {
+  position: relative;
+  max-height: 5000px;
+  opacity: 1;
+  overflow: visible; // Keep visible so dropdowns/menus are not clipped
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.25s ease, 
+              margin 0.3s ease, 
+              padding 0.3s ease;
 
-// The ladder. Written out rather than generated in a loop so each depth is
-// greppable, and so the ceiling is a fact stated in the stylesheet instead of a
-// number the reader has to go find in the JavaScript. Keep in step with
-// MAX_DEPTH in CommentTree.js.
-.PostStream-item:has(> .itqanTree--depth1) { margin-left: @itqan-tree-step * 1; }
-.PostStream-item:has(> .itqanTree--depth2) { margin-left: @itqan-tree-step * 2; }
-.PostStream-item:has(> .itqanTree--depth3) { margin-left: @itqan-tree-step * 3; }
-.PostStream-item:has(> .itqanTree--depth4) { margin-left: @itqan-tree-step * 4; }
-.PostStream-item:has(> .itqanTree--depth5) { margin-left: @itqan-tree-step * 5; }
+  &[data-thread-depth="1"],
+  &:has(.CommentPost[data-thread-depth="1"]) {
+    margin-inline-start: @thread-indent-unit !important;
+    padding-inline-start: 16px;
+    border-inline-start: 2px solid @itqan-border-line;
 
-// A reply hidden by a collapsed ancestor takes its stream row with it. Hiding
-// only the post would leave the row's padding behind as a gap in the stream.
-.PostStream-item:has(> .itqanTree--hidden) {
-  display: none;
-}
+    .CommentPost {
+      background: rgba(13, 148, 136, 0.015);
+      border-radius: 8px;
+    }
+  }
 
-.itqanTree-toggle {
-  font-weight: 600;
+  &[data-thread-depth="2"],
+  &:has(.CommentPost[data-thread-depth="2"]) {
+    margin-inline-start: calc(@thread-indent-unit * 2) !important;
+    padding-inline-start: 16px;
+    border-inline-start: 2px solid @itqan-border-line;
 
-  // Core's footer buttons sit in a row of muted text. The caret is the part
-  // that says this one does something, so it takes the accent while the label
-  // stays as quiet as its neighbours.
-  .icon {
-    color: var(--primary-color);
+    .CommentPost {
+      background: rgba(13, 148, 136, 0.03);
+      border-radius: 8px;
+    }
+  }
+
+  &[data-thread-depth="3"],
+  &[data-thread-depth="4"],
+  &[data-thread-depth="5"],
+  &:has(.CommentPost[data-thread-depth="3"]),
+  &:has(.CommentPost[data-thread-depth="4"]),
+  &:has(.CommentPost[data-thread-depth="5"]) {
+    margin-inline-start: calc(@thread-indent-unit * 3) !important;
+    padding-inline-start: 16px;
+    border-inline-start: 2px solid @itqan-border-line;
+
+    .CommentPost {
+      background: rgba(13, 148, 136, 0.045);
+      border-radius: 8px;
+    }
+  }
+
+  &:hover {
+    border-inline-start-color: @itqan-border-line-hover;
+  }
+
+  // Smooth collapse animation
+  &.thread-item-hidden {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    pointer-events: none !important;
+    border-inline-start-color: transparent !important;
+    overflow: hidden !important; // Only clip when collapsed
   }
 }
 
-// Phones get a shorter step. The indent exists to show the shape of the
-// conversation, and on a narrow screen five full steps would spend more width
-// on that shape than on the words inside it.
-//
-// Core's own padding is left alone here: at this width it is already 15px,
-// which is more than enough room between the branch line and the text.
-@media @phone {
-  .PostStream-item:not(:last-child):has(> .itqanTree--depth1) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 1); }
-  .PostStream-item:not(:last-child):has(> .itqanTree--depth2) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 2); }
-  .PostStream-item:not(:last-child):has(> .itqanTree--depth3) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 3); }
-  .PostStream-item:not(:last-child):has(> .itqanTree--depth4) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 4); }
-  .PostStream-item:not(:last-child):has(> .itqanTree--depth5) { margin-left: @itqan-tree-phone-bleed + (@itqan-tree-step-phone * 5); }
+// Hide redundant native in-body PostMention if comment is already nested
+.CommentPost[data-thread-depth],
+.PostStream-item[data-thread-depth] .CommentPost {
+  .Post-body > p:first-child > .PostMention:first-child {
+    display: none !important;
+  }
+}
 
-  // The last row never gets core's bleed, so it is measured from zero like the
-  // desktop rules. In a live stream the last row is the reply placeholder
-  // rather than a post, so this rarely has anything to match — it is here so
-  // that the one time it does, the post does not hang off the edge.
-  .PostStream-item:last-child:has(> .itqanTree--depth1) { margin-left: @itqan-tree-step-phone * 1; }
-  .PostStream-item:last-child:has(> .itqanTree--depth2) { margin-left: @itqan-tree-step-phone * 2; }
-  .PostStream-item:last-child:has(> .itqanTree--depth3) { margin-left: @itqan-tree-step-phone * 3; }
-  .PostStream-item:last-child:has(> .itqanTree--depth4) { margin-left: @itqan-tree-step-phone * 4; }
-  .PostStream-item:last-child:has(> .itqanTree--depth5) { margin-left: @itqan-tree-step-phone * 5; }
+// Mobile responsive indentation
+@media (max-width: 767px) {
+  .PostStream-item {
+    &[data-thread-depth="1"],
+    &:has(.CommentPost[data-thread-depth="1"]) {
+      margin-inline-start: @thread-indent-mobile-unit !important;
+      padding-inline-start: 10px;
+    }
 
-  // Matched to core's own phone padding rather than kept at the desktop 12px,
-  // so the text of an indented reply lines up with the text of the root post
-  // instead of sitting three pixels closer to its own edge.
-  .PostStream-item:has(> .itqanTree) {
-    padding-left: 15px;
+    &[data-thread-depth="2"],
+    &:has(.CommentPost[data-thread-depth="2"]) {
+      margin-inline-start: calc(@thread-indent-mobile-unit * 2) !important;
+      padding-inline-start: 10px;
+    }
+
+    &[data-thread-depth="3"],
+    &[data-thread-depth="4"],
+    &[data-thread-depth="5"],
+    &:has(.CommentPost[data-thread-depth="3"]) {
+      margin-inline-start: calc(@thread-indent-mobile-unit * 2.8) !important;
+      padding-inline-start: 10px;
+    }
+  }
+}
+
+// Thread Collapse Controls (Clean pill button with icon)
+.thread-collapse-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  padding: 3px 9px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.15s ease;
+  margin-inline-start: 8px;
+
+  &:hover {
+    color: @itqan-primary;
+    background: @itqan-primary-light;
+    border-color: rgba(13, 148, 136, 0.3);
+  }
+
+  &.is-collapsed {
+    background: rgba(13, 148, 136, 0.1);
+    color: @itqan-primary;
+    border-color: rgba(13, 148, 136, 0.3);
+  }
+
+  i {
+    font-size: 10px;
+  }
+}
+
+// Reply Context Badge (e.g. "رد على @User")
+.itqan-reply-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: @itqan-primary;
+  background: @itqan-primary-light;
+  border: 1px solid rgba(13, 148, 136, 0.25);
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-inline-start: 8px;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    background: rgba(13, 148, 136, 0.2);
+    color: #0f766e;
+  }
+}
+
+// Composer Reply Banner
+.Composer-replyBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: @itqan-primary-light;
+  border: 1px solid rgba(13, 148, 136, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #0f766e;
+  font-weight: 500;
+
+  .replyBanner-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .replyBanner-close {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+
+    &:hover {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
   }
 }
