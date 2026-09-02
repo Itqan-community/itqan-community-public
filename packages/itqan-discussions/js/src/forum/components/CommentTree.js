@@ -7,7 +7,8 @@ if (!app.itqanCollapsedThreads) {
 
 /**
  * Calculate arbitrary nesting depth for a post with cycle detection.
- * 0 = root comment, 1 = direct reply, 2 = reply-to-reply, etc.
+ * 0 = root comment, 1 = direct reply to a comment, 2 = reply-to-reply, etc.
+ * Comments on Post #1 (OP) are strictly depth 0.
  */
 export function getPostDepth(post, visited = new Set()) {
   if (!post) return 0;
@@ -19,7 +20,12 @@ export function getPostDepth(post, visited = new Set()) {
   visited.add(postId);
 
   const parent = app.store ? app.store.getById('posts', String(parentId)) : null;
-  if (!parent) return 1;
+  if (!parent) return 0;
+
+  // Guard: If parent is OP post #1, depth is 0 (root discussion comment)
+  if (typeof parent.number === 'function' && parent.number() === 1) {
+    return 0;
+  }
 
   return 1 + getPostDepth(parent, visited);
 }
@@ -32,6 +38,11 @@ export function isDescendantOfCollapsed(post, visited = new Set()) {
   const parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
   if (!parentId) return false;
 
+  const parent = app.store ? app.store.getById('posts', String(parentId)) : null;
+  if (!parent || (typeof parent.number === 'function' && parent.number() === 1)) {
+    return false;
+  }
+
   const parentIdStr = String(parentId);
   if (app.itqanCollapsedThreads.has(parentIdStr)) {
     return true;
@@ -41,7 +52,6 @@ export function isDescendantOfCollapsed(post, visited = new Set()) {
   if (visited.has(postId)) return false;
   visited.add(postId);
 
-  const parent = app.store ? app.store.getById('posts', parentIdStr) : null;
   return isDescendantOfCollapsed(parent, visited);
 }
 
@@ -88,11 +98,19 @@ export function reorderStreamTree() {
         }
       }
 
+      // If parent is OP post #1, treat as root item
+      let isChildOfComment = false;
       if (parentId) {
-        const pIdStr = String(parentId);
-        if (!childrenMap.has(pIdStr)) childrenMap.set(pIdStr, []);
-        childrenMap.get(pIdStr).push(id);
-      } else {
+        const parent = app.store ? app.store.getById('posts', String(parentId)) : null;
+        if (parent && (!parent.number || parent.number() > 1)) {
+          isChildOfComment = true;
+          const pIdStr = String(parentId);
+          if (!childrenMap.has(pIdStr)) childrenMap.set(pIdStr, []);
+          childrenMap.get(pIdStr).push(id);
+        }
+      }
+
+      if (!isChildOfComment) {
         rootIds.push(id);
       }
     });
