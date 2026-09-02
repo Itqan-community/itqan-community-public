@@ -105,7 +105,7 @@ app.initializers.add('itqan-discussions', () => {
           {
             className: 'itqan-reply-badge',
             href: '#',
-            title: parentUser ? (app.translator.trans('itqan-discussions.forum.replied_to', { username: parentUser }) || `رد على ${parentUser}`) : '',
+            title: parentUser ? `رد على ${parentUser}` : '',
             onclick: (e) => {
               e.preventDefault();
               const parentEl = document.querySelector(`.PostStream-item[data-id="${parentId}"]`);
@@ -119,7 +119,7 @@ app.initializers.add('itqan-discussions', () => {
           [
             icon ? icon('fas fa-reply') : null,
             ' ',
-            parentUser ? (app.translator.trans('itqan-discussions.forum.replied_to', { username: parentUser }) || `رد على ${parentUser}`) : ('#' + parentId),
+            parentUser ? `رد على ${parentUser}` : ('#' + parentId),
           ]
         ),
         70
@@ -137,45 +137,47 @@ app.initializers.add('itqan-discussions', () => {
     const replyCount = (typeof post.replyCount === 'function') ? (post.replyCount() || 0) : 0;
     const isCollapsed = app.itqanCollapsedThreads.has(postIdStr);
 
-    // Dynamic collapse/expand pill toggle (Only on comments with child replies, not OP)
+    // Dynamic collapse/expand button (Only on comments with child replies, not OP)
     if (!isOP && replyCount > 0) {
+      const labelText = isCollapsed ? `ردود (${replyCount})` : 'طي';
+      const iconName = isCollapsed ? 'fas fa-plus' : 'fas fa-minus';
+
       items.add(
         'itqan-collapse-thread',
         m(
           'button',
           {
-            className: 'Button Button--link thread-collapse-toggle' + (isCollapsed ? ' is-collapsed' : ''),
+            key: `collapse-btn-${postIdStr}-${isCollapsed ? 'col' : 'exp'}`,
+            className: `Button Button--link ${isCollapsed ? 'is-collapsed' : ''}`,
             'data-post-id': postIdStr,
             onclick: (e) => {
               e.preventDefault();
               e.stopPropagation();
               const btn = e.currentTarget;
               const currentlyCollapsed = app.itqanCollapsedThreads.has(postIdStr);
+
               if (currentlyCollapsed) {
                 app.itqanCollapsedThreads.delete(postIdStr);
-                btn.classList.remove('is-collapsed');
+                btn.className = 'Button Button--link';
+                const labelEl = btn.querySelector('.thread-collapse-label');
+                if (labelEl) labelEl.textContent = ' طي';
+                const iconEl = btn.querySelector('.icon, i');
+                if (iconEl) iconEl.className = 'icon fas fa-minus';
               } else {
                 app.itqanCollapsedThreads.add(postIdStr);
-                btn.classList.add('is-collapsed');
+                btn.className = 'Button Button--link is-collapsed';
+                const labelEl = btn.querySelector('.thread-collapse-label');
+                if (labelEl) labelEl.textContent = ` ردود (${replyCount})`;
+                const iconEl = btn.querySelector('.icon, i');
+                if (iconEl) iconEl.className = 'icon fas fa-plus';
               }
 
-              const nowCollapsed = !currentlyCollapsed;
-              const labelText = nowCollapsed
-                ? (app.translator.trans('itqan-discussions.forum.expand_thread', { count: replyCount }) || `ردود (${replyCount})`)
-                : (app.translator.trans('itqan-discussions.forum.collapse_thread') || 'طي');
-              const iconClass = nowCollapsed ? 'fas fa-plus' : 'fas fa-minus';
-
-              btn.innerHTML = `<i aria-hidden="true" class="icon ${iconClass}"></i> ${labelText}`;
               reorderStreamTree();
-              m.redraw();
             },
           },
           [
-            icon ? icon(isCollapsed ? 'fas fa-plus' : 'fas fa-minus') : null,
-            ' ',
-            isCollapsed
-              ? (app.translator.trans('itqan-discussions.forum.expand_thread', { count: replyCount }) || `ردود (${replyCount})`)
-              : (app.translator.trans('itqan-discussions.forum.collapse_thread') || 'طي'),
+            icon ? icon(iconName) : null,
+            m('span.thread-collapse-label', ` ${labelText}`),
           ]
         ),
         15
@@ -223,7 +225,7 @@ app.initializers.add('itqan-discussions', () => {
         [
           icon ? icon('fas fa-reply') : null,
           ' ',
-          app.translator.trans('itqan-discussions.forum.reply') || 'رد',
+          'رد',
         ]
       ),
       10
@@ -244,13 +246,13 @@ app.initializers.add('itqan-discussions', () => {
             m('div', { className: 'replyBanner-content' }, [
               icon ? icon('fas fa-reply') : null,
               ' ',
-              app.translator.trans('itqan-discussions.forum.replying_to', { username: targetUsername }) || `الرد على ${targetUsername}`,
+              `الرد على ${targetUsername}`,
             ]),
             m(
               'button',
               {
                 className: 'replyBanner-close',
-                title: app.translator.trans('itqan-discussions.forum.cancel_reply') || 'إلغاء الرد المتشعب',
+                title: 'إلغاء الرد المتشعب',
                 onclick: (e) => {
                   e.stopPropagation();
                   app.itqanActiveParentId = null;
