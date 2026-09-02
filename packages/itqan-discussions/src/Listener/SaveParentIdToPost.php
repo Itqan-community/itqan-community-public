@@ -29,13 +29,19 @@ class SaveParentIdToPost
 
         if ($parentId !== null) {
             $parentId = (int) $parentId;
-            if ($parentId > 0) {
+            if ($parentId > 0 && $parentId !== (int) $post->id) {
                 $parentPost = Post::find($parentId);
+                // Guard: Only nest if parent belongs to same discussion and is NOT the OP (number > 1)
                 if ($parentPost && (int) $parentPost->discussion_id === (int) $post->discussion_id) {
-                    $post->parent_id = $parentId;
-                    
-                    if (!$post->exists) {
-                        $parentPost->increment('reply_count');
+                    if ((int) $parentPost->number > 1) {
+                        $post->parent_id = $parentId;
+                        
+                        if (!$post->exists) {
+                            $parentPost->increment('reply_count');
+                        }
+                    } else {
+                        // Replying to OP (Post #1) is a clean top-level discussion comment
+                        $post->parent_id = null;
                     }
                 }
             }

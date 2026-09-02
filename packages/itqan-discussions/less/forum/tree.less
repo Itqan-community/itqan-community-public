@@ -6,8 +6,8 @@
 @itqan-primary-hover: #14B8A6;
 @itqan-border-line: rgba(13, 148, 136, 0.4);
 @itqan-border-line-hover: #0D9488;
-@thread-indent-unit: 36px;
-@thread-indent-mobile-unit: 18px;
+@thread-indent-unit: 32px;
+@thread-indent-mobile-unit: 8px;
 
 // PostStream Item Indentation & Visual Tree Lines
 .PostStream-item {
@@ -23,7 +23,7 @@
   &[data-thread-depth="1"],
   &:has(.CommentPost[data-thread-depth="1"]) {
     margin-inline-start: @thread-indent-unit !important;
-    padding-inline-start: 16px;
+    padding-inline-start: 14px;
     border-inline-start: 2px solid @itqan-border-line;
 
     .CommentPost {
@@ -35,7 +35,7 @@
   &[data-thread-depth="2"],
   &:has(.CommentPost[data-thread-depth="2"]) {
     margin-inline-start: calc(@thread-indent-unit * 2) !important;
-    padding-inline-start: 16px;
+    padding-inline-start: 14px;
     border-inline-start: 2px solid @itqan-border-line;
 
     .CommentPost {
@@ -50,8 +50,8 @@
   &:has(.CommentPost[data-thread-depth="3"]),
   &:has(.CommentPost[data-thread-depth="4"]),
   &:has(.CommentPost[data-thread-depth="5"]) {
-    margin-inline-start: calc(@thread-indent-unit * 3) !important;
-    padding-inline-start: 16px;
+    margin-inline-start: calc(@thread-indent-unit * 2.8) !important;
+    padding-inline-start: 14px;
     border-inline-start: 2px solid @itqan-border-line;
 
     .CommentPost {
@@ -86,46 +86,57 @@
   }
 }
 
-// Mobile responsive indentation
+// Mobile responsive compact indentation (Preserves screen real-estate)
 @media (max-width: 767px) {
   .PostStream-item {
     &[data-thread-depth="1"],
     &:has(.CommentPost[data-thread-depth="1"]) {
-      margin-inline-start: @thread-indent-mobile-unit !important;
-      padding-inline-start: 10px;
+      margin-inline-start: 8px !important;
+      padding-inline-start: 8px;
+      border-inline-start: 1.5px solid @itqan-border-line;
     }
 
     &[data-thread-depth="2"],
     &:has(.CommentPost[data-thread-depth="2"]) {
-      margin-inline-start: calc(@thread-indent-mobile-unit * 2) !important;
-      padding-inline-start: 10px;
+      margin-inline-start: 16px !important;
+      padding-inline-start: 8px;
+      border-inline-start: 1.5px solid @itqan-border-line;
     }
 
     &[data-thread-depth="3"],
     &[data-thread-depth="4"],
     &[data-thread-depth="5"],
-    &:has(.CommentPost[data-thread-depth="3"]) {
-      margin-inline-start: calc(@thread-indent-mobile-unit * 2.8) !important;
-      padding-inline-start: 10px;
+    &:has(.CommentPost[data-thread-depth="3"]),
+    &:has(.CommentPost[data-thread-depth="4"]),
+    &:has(.CommentPost[data-thread-depth="5"]) {
+      margin-inline-start: 24px !important;
+      padding-inline-start: 8px;
+      border-inline-start: 1.5px solid @itqan-border-line;
     }
   }
 }
 
-// Thread Collapse Controls (Clean pill button with icon)
+// Thread Collapse Controls (Aligned perfectly with post footer action items)
 .thread-collapse-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  gap: 4px;
   font-size: 11px;
   font-weight: 500;
+  line-height: 1;
+  height: 22px;
   color: #64748b;
   cursor: pointer;
-  padding: 3px 9px;
-  border-radius: 12px;
+  padding: 0 8px;
+  border-radius: 11px;
   background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   transition: all 0.15s ease;
   margin-inline-start: 8px;
+  margin-top: 0;
+  margin-bottom: 0;
 
   &:hover {
     color: @itqan-primary;
@@ -139,8 +150,10 @@
     border-color: rgba(13, 148, 136, 0.3);
   }
 
-  i {
-    font-size: 10px;
+  i, .icon {
+    font-size: 9px;
+    margin: 0;
+    line-height: 1;
   }
 }
 
@@ -150,10 +163,12 @@
   align-items: center;
   gap: 4px;
   font-size: 11px;
+  line-height: 1;
+  vertical-align: middle;
   color: @itqan-primary;
   background: @itqan-primary-light;
   border: 1px solid rgba(13, 148, 136, 0.25);
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 12px;
   margin-inline-start: 8px;
   font-weight: 500;
