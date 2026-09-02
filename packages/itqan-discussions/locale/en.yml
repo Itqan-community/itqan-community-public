@@ -1,21 +1,21 @@
 itqan-discussions:
   forum:
-    reply: "Reply"
-    replying_to: "Replying to {username}"
-    cancel_reply: "Cancel nested reply"
-    replied_to: "Replied to {username}"
-    collapse_thread: "Collapse"
-    expand_thread: "Replies ({count})"
+    reply: "رد"
+    replying_to: "الرد على {username}"
+    cancel_reply: "إلغاء الرد المتشعب"
+    replied_to: "رد على {username}"
+    collapse_thread: "طي"
+    expand_thread: "ردود ({count})"
     list:
-      score: "{count} points"
+      score: "{count} نقطة"
     vote:
-      up: "Upvote"
-      down: "Downvote"
+      up: "تصويت مؤيّد"
+      down: "تصويت معارض"
     tree:
-      collapse: "Collapse"
-      expand: "Replies ({count})"
+      collapse: "طي"
+      expand: "ردود ({count})"
 
 core:
   forum:
     index_sort:
-      hot_button: "Hot"
+      hot_button: "الأكثر تفاعلًا"
