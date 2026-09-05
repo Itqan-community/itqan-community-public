@@ -1,0 +1,8 @@
+itqan-composer-tools:
+  forum:
+    preview:
+      title: Markdown preview
+      show_button: Show Markdown preview
+      hide_button: Hide Markdown preview
+      empty: Start writing to see a preview.
+      error: The preview could not be rendered. Your draft is still safe.

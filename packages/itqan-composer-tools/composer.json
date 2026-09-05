@@ -1,0 +1,35 @@
+{
+    "name": "itqan/flarum-composer-tools",
+    "description": "Writing and preview tools for the Itqan community composer",
+    "keywords": ["flarum", "composer", "markdown", "preview"],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\ComposerTools\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Composer Tools",
+            "category": "feature",
+            "icon": {
+                "name": "fab fa-markdown",
+                "color": "#ffffff",
+                "backgroundColor": "#064e3b"
+            }
+        }
+    },
+    "scripts": {
+        "build": "cd js && npm run build"
+    }
+}

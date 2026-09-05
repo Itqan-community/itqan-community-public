@@ -1,0 +1,8 @@
+itqan-composer-tools:
+  forum:
+    preview:
+      title: معاينة ماركداون
+      show_button: عرض معاينة ماركداون
+      hide_button: إخفاء معاينة ماركداون
+      empty: ابدأ الكتابة لرؤية المعاينة.
+      error: تعذّر عرض المعاينة. ما زالت مسودتك محفوظة.
