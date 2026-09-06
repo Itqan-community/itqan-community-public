@@ -27,8 +27,8 @@ done
 # Registering them directly in vendor/composer/installed.json instead was
 # tried and rejected: Flarum boots far enough to fatal inside
 # Extension::nameToId, and a forum that dies on every request is a worse
-# outcome than one missing two extensions.
-for pkg in itqan-theme itqan-typography; do
+# outcome than a forum missing its local extensions.
+for pkg in itqan-composer-tools itqan-theme itqan-typography; do
     name="itqan/flarum-${pkg#itqan-}"
     if [ -d "packages/$pkg" ] && [ ! -e "vendor/itqan/flarum-${pkg#itqan-}" ]; then
         log "Linking $name into vendor/"
@@ -75,7 +75,7 @@ if [ ! -f config.php ]; then
     # These live in packages/ and only reach Flarum once Composer has linked
     # them. `extension:enable` reports success for an ID it has never heard
     # of, so the vendor directory is what gets checked here.
-    for pkg in theme typography; do
+    for pkg in composer-tools theme typography; do
         if [ -e "vendor/itqan/flarum-$pkg" ]; then
             su -s /bin/bash www-data -c "php -d error_reporting=0 flarum extension:enable itqan-$pkg" >/dev/null 2>&1 \
                 && echo "  enabled itqan-$pkg"

@@ -70,6 +70,7 @@
         "ianm/html-head": "*",
         "ianm/translate": "^0.4.2",
         "irmmr/flarum-ext-rtl": "^0.2.5",
+        "itqan/flarum-composer-tools": "@dev",
         "itqan/flarum-discussions": "@dev",
         "itqan/flarum-mailerlite": "@dev",
         "itqan/flarum-theme": "@dev",
@@ -89,6 +90,10 @@
         }
     },
     "repositories": {
+        "itqan-composer-tools": {
+            "type": "path",
+            "url": "packages/itqan-composer-tools"
+        },
         "itqan-discussions": {
             "type": "path",
             "url": "packages/itqan-discussions"
