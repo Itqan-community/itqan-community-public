@@ -1,0 +1,60 @@
+name: Sync Beta DB from Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Refresh beta's isolated DB from a fresh production dump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump prod, restore into beta DB, re-migrate to tested state
+        env:
+          SSH_KEY: ${{ secrets.BETA_SSH_KEY }}
+          SSH_HOST: ${{ secrets.BETA_SSH_HOST }}
+          PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/beta_deploy_key
+          chmod 600 ~/.ssh/beta_deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          PROD_DB_PASSWORD_B64=$(printf '%s' "$PROD_DB_PASSWORD" | base64 | tr -d '\n')
+
+          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$PROD_DB_PASSWORD_B64" <<'REMOTE'
+          set -euo pipefail
+          PROD_DB_PASSWORD=$(printf '%s' "$1" | base64 -d)
+
+          DUMP_DIR=/root/beta-db-backups
+          mkdir -p "$DUMP_DIR"
+          DUMP_FILE="$DUMP_DIR/prod-sync-$(date +%Y%m%d-%H%M%S).sql.gz"
+
+          echo "Dumping production (read-only, does not touch prod)..."
+          mysqldump -h 46.101.88.11 -u flarum -p"$PROD_DB_PASSWORD" flarum | gzip > "$DUMP_FILE"
+
+          # Verify before touching beta's DB at all - a truncated dump must never reach the restore step.
+          SIZE=$(stat -c%s "$DUMP_FILE")
+          if [ "$SIZE" -lt 1000000 ]; then
+            echo "Dump suspiciously small ($SIZE bytes) - aborting, beta DB untouched."
+            exit 1
+          fi
+          if ! zcat "$DUMP_FILE" | grep -q 'CREATE TABLE `posts`'; then
+            echo "Dump missing posts table - aborting, beta DB untouched."
+            exit 1
+          fi
+          echo "Dump verified: $DUMP_FILE ($(du -h "$DUMP_FILE" | cut -f1))"
+
+          echo "Restoring into beta's isolated DB (10.106.0.5)..."
+          zcat "$DUMP_FILE" | mysql -h 10.106.0.5 -u flarum -p"$PROD_DB_PASSWORD" flarum
+
+          # Keep the last 3 dumps only - disk isn't a constraint at ~10MB each.
+          ls -t "$DUMP_DIR"/prod-sync-*.sql.gz | tail -n +4 | xargs -r rm --
+
+          echo "Restore replaced beta's schema with production's current state (rehearsed migrations gone) - re-applying now..."
+          cd /var/www/flarum
+          sudo -u www-data php flarum migrate
+          sudo -u www-data php flarum extension:enable itqan-discussions itqan-theme itqan-typography
+          sudo -u www-data php flarum cache:clear
+
+          echo "Sync complete: beta now mirrors production's latest data, re-migrated to the tested state."
+          REMOTE
