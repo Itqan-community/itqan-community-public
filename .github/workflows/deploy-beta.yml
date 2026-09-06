@@ -19,27 +19,13 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/beta_deploy_key
           chmod 600 ~/.ssh/beta_deploy_key
-
-          set +e
-          timeout 10 ssh-keyscan -H "$SSH_HOST" > /tmp/ks_out.txt 2> /tmp/ks_err.txt
-          echo "KEYSCAN_EXIT=$?"
-          set -e
-          echo "--- keyscan stdout ---"
-          cat /tmp/ks_out.txt
-          echo "--- keyscan stderr ---"
-          cat /tmp/ks_err.txt
-          cat /tmp/ks_out.txt >> ~/.ssh/known_hosts
-
-          echo "--- raw TCP reachability test ---"
-          set +e
-          timeout 8 bash -c "echo > /dev/tcp/$SSH_HOST/22" && echo "TCP_22_OPEN" || echo "TCP_22_FAILED exit=$?"
-          set -e
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
           DB_PASSWORD_B64=$(printf '%s' "$DB_PASSWORD" | base64 | tr -d '\n')
           SMTP_USERNAME_B64=$(printf '%s' "$SMTP_USERNAME" | base64 | tr -d '\n')
           SMTP_PASSWORD_B64=$(printf '%s' "$SMTP_PASSWORD" | base64 | tr -d '\n')
 
-          ssh -vvv -o ConnectTimeout=15 -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" "$SMTP_USERNAME_B64" "$SMTP_PASSWORD_B64" <<'REMOTE'
+          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" "$SMTP_USERNAME_B64" "$SMTP_PASSWORD_B64" <<'REMOTE'
           set -euo pipefail
           DB_PASSWORD=$(printf '%s' "$1" | base64 -d)
           SMTP_USERNAME=$(printf '%s' "$2" | base64 -d)
@@ -53,14 +39,14 @@ jobs:
           mysqldump -h 46.101.88.11 -u flarum -p"$DB_PASSWORD" flarum | gzip > "$BACKUP_FILE"
           echo "DB backup written to $BACKUP_FILE ($(du -h "$BACKUP_FILE" | cut -f1))"
 
-          if [ -d /var/www/flarum/.git ]; then
-            cd /var/www/flarum
-            git fetch origin main
-            git reset --hard origin/main
-          else
-            git clone --branch main https://github.com/Itqan-community/itqan-community-public.git /var/www/flarum
-            cd /var/www/flarum
+          cd /var/www/flarum
+          if [ ! -d .git ]; then
+            git init
+            git remote add origin https://github.com/Itqan-community/itqan-community-public.git
           fi
+          git fetch origin main
+          git checkout -f main 2>/dev/null || git checkout -B main origin/main
+          git reset --hard origin/main
 
           cat > /var/www/flarum/config.php <<PHP
           <?php return array (
