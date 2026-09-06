@@ -1,0 +1,128 @@
+name: Deploy Beta
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy main to beta.community.itqan.dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.BETA_SSH_KEY }}
+          SSH_HOST: ${{ secrets.BETA_SSH_HOST }}
+          DB_PASSWORD: ${{ secrets.BETA_DB_PASSWORD }}
+          SMTP_USERNAME: ${{ secrets.BETA_SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.BETA_SMTP_PASSWORD }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/beta_deploy_key
+          chmod 600 ~/.ssh/beta_deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          DB_PASSWORD_B64=$(printf '%s' "$DB_PASSWORD" | base64 | tr -d '\n')
+          SMTP_USERNAME_B64=$(printf '%s' "$SMTP_USERNAME" | base64 | tr -d '\n')
+          SMTP_PASSWORD_B64=$(printf '%s' "$SMTP_PASSWORD" | base64 | tr -d '\n')
+
+          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" "$SMTP_USERNAME_B64" "$SMTP_PASSWORD_B64" <<'REMOTE'
+          set -euo pipefail
+          DB_PASSWORD=$(printf '%s' "$1" | base64 -d)
+          SMTP_USERNAME=$(printf '%s' "$2" | base64 -d)
+          SMTP_PASSWORD=$(printf '%s' "$3" | base64 -d)
+
+          git config --global --add safe.directory /var/www/flarum
+
+          # Shares production's live database - back it up before any migration runs.
+          mkdir -p /root/beta-db-backups
+          BACKUP_FILE="/root/beta-db-backups/flarum-$(date +%Y%m%d-%H%M%S).sql.gz"
+          mysqldump -h 46.101.88.11 -u flarum -p"$DB_PASSWORD" flarum | gzip > "$BACKUP_FILE"
+          echo "DB backup written to $BACKUP_FILE ($(du -h "$BACKUP_FILE" | cut -f1))"
+
+          if [ -d /var/www/flarum/.git ]; then
+            cd /var/www/flarum
+            git fetch origin main
+            git reset --hard origin/main
+          else
+            git clone --branch main https://github.com/Itqan-community/itqan-community-public.git /var/www/flarum
+            cd /var/www/flarum
+          fi
+
+          cat > /var/www/flarum/config.php <<PHP
+          <?php return array (
+            'debug' => false,
+            'database' => array(
+              'driver' => 'mysql',
+              'database' => 'flarum',
+              'prefix' => '',
+              'prefix_indexes' => true,
+              'host' => '46.101.88.11',
+              'port' => 3306,
+              'username' => 'flarum',
+              'password' => '${DB_PASSWORD}',
+              'charset' => 'utf8mb4',
+              'collation' => 'utf8mb4_unicode_ci',
+              'engine' => 'InnoDB',
+              'strict' => false,
+            ),
+            'url' => 'https://beta.community.itqan.dev',
+            'paths' => array('api' => 'api', 'admin' => 'admin'),
+            'headers' => array('poweredByHeader' => false, 'referrerPolicy' => 'same-origin'),
+            'mail' => array(
+              'driver' => 'smtp',
+              'host' => 'in-v3.mailjet.com',
+              'port' => 587,
+              'username' => '${SMTP_USERNAME}',
+              'password' => '${SMTP_PASSWORD}',
+              'encryption' => 'tls',
+              'from' => array('address' => 'noreply@itqan.dev', 'name' => 'Itqan Community'),
+            ),
+            'filesystems' => array(
+              'disks' => array(
+                'flarum-assets' => array(
+                  'driver' => 's3',
+                  'key' => 'SPACES_KEY_PLACEHOLDER',
+                  'secret' => 'SPACES_SECRET_PLACEHOLDER',
+                  'region' => 'SPACES_REGION_PLACEHOLDER',
+                  'bucket' => 'SPACES_NAME_PLACEHOLDER',
+                  'endpoint' => 'SPACES_ENDPOINT_PLACEHOLDER',
+                  'use_path_style_endpoint' => false,
+                  'url' => 'SPACES_CDN_ENDPOINT_PLACEHOLDER',
+                ),
+              ),
+            ),
+            'queue' => array('driver' => 'database'),
+            'cookie' => array('name' => '__Host-flarum', 'samesite' => 'lax'),
+          );
+          PHP
+
+          mkdir -p storage/formatter storage/cache storage/assets storage/sessions storage/views storage/logs
+          rm -rf storage/cache storage/assets
+          find public/assets -maxdepth 1 -type f \( -name "*.js" -o -name "*.css" -o -name "*.map" -o -name "rev-manifest.json" \) -delete
+          mkdir -p storage/cache storage/assets public/assets
+
+          chown -R www-data:www-data /var/www/flarum
+
+          sudo -u www-data php flarum migrate
+          sudo -u www-data php flarum cache:clear
+
+          nginx -t
+          systemctl reload nginx
+          systemctl reload php8.1-fpm
+          REMOTE
+
+      - name: Health check
+        env:
+          SSH_HOST: ${{ secrets.BETA_SSH_HOST }}
+        run: |
+          for i in $(seq 1 10); do
+            code=$(curl -k -s -o /dev/null -w "%{http_code}" "https://beta.community.itqan.dev" --resolve beta.community.itqan.dev:443:"$SSH_HOST" || true)
+            if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
+              echo "Beta responded with $code"
+              exit 0
+            fi
+            echo "Attempt $i: got $code, retrying..."
+            sleep 6
+          done
+          echo "Beta did not respond as expected"
+          exit 1
