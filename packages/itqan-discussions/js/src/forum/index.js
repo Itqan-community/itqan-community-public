@@ -16,6 +16,21 @@ import { getPostDepth, isDescendantOfCollapsed, reorderStreamTree } from './comp
 export { default as VoteButtons } from './components/VoteButtons';
 export * from './components/CommentTree';
 
+function clearActiveReplyTarget() {
+  document.querySelectorAll('.is-reply-target').forEach((el) => {
+    el.classList.remove('is-reply-target');
+  });
+}
+
+function setActiveReplyTarget(postId) {
+  clearActiveReplyTarget();
+  if (!postId) return;
+  const targetItem = document.querySelector(`.PostStream-item[data-id="${postId}"]`);
+  if (targetItem) {
+    targetItem.classList.add('is-reply-target');
+  }
+}
+
 app.initializers.add('itqan-discussions', () => {
   // ==========================================
   // 1. Voting System Extensions (PR #30)
@@ -83,7 +98,7 @@ app.initializers.add('itqan-discussions', () => {
     });
   }
 
-  // Header Items: "رد على @User" context badge with smooth scroll to parent
+  // Header Items: "رد على @اسم" context badge with smooth scroll to parent
   extend(CommentPost.prototype, 'headerItems', function (items) {
     const post = this.attrs ? this.attrs.post : null;
     if (!post) return;
@@ -137,7 +152,7 @@ app.initializers.add('itqan-discussions', () => {
     const replyCount = (typeof post.replyCount === 'function') ? (post.replyCount() || 0) : 0;
     const isCollapsed = app.itqanCollapsedThreads.has(postIdStr);
 
-    // Dynamic collapse/expand button (Only on comments with child replies, not OP)
+    // Dynamic collapse/expand pill button (Only on comments with child replies, not OP)
     if (!isOP && replyCount > 0) {
       const labelText = isCollapsed ? `ردود (${replyCount})` : 'طي';
       const iconName = isCollapsed ? 'fas fa-plus' : 'fas fa-minus';
@@ -148,7 +163,7 @@ app.initializers.add('itqan-discussions', () => {
           'button',
           {
             key: `collapse-btn-${postIdStr}-${isCollapsed ? 'col' : 'exp'}`,
-            className: `Button Button--link ${isCollapsed ? 'is-collapsed' : ''}`,
+            className: 'Button Button--link',
             'data-post-id': postIdStr,
             onclick: (e) => {
               e.preventDefault();
@@ -158,14 +173,12 @@ app.initializers.add('itqan-discussions', () => {
 
               if (currentlyCollapsed) {
                 app.itqanCollapsedThreads.delete(postIdStr);
-                btn.className = 'Button Button--link';
                 const labelEl = btn.querySelector('.thread-collapse-label');
                 if (labelEl) labelEl.textContent = ' طي';
                 const iconEl = btn.querySelector('.icon, i');
                 if (iconEl) iconEl.className = 'icon fas fa-minus';
               } else {
                 app.itqanCollapsedThreads.add(postIdStr);
-                btn.className = 'Button Button--link is-collapsed';
                 const labelEl = btn.querySelector('.thread-collapse-label');
                 if (labelEl) labelEl.textContent = ` ردود (${replyCount})`;
                 const iconEl = btn.querySelector('.icon, i');
@@ -195,9 +208,11 @@ app.initializers.add('itqan-discussions', () => {
         // On OP (Post #1), open top-level discussion reply without nesting
         app.itqanActiveParentId = null;
         app.itqanActiveParentUsername = null;
+        clearActiveReplyTarget();
       } else {
         app.itqanActiveParentId = post.id();
         app.itqanActiveParentUsername = (post.user && post.user()) ? post.user().displayName() : ('#' + post.id());
+        setActiveReplyTarget(post.id());
       }
 
       const disc = post.discussion ? post.discussion() : null;
@@ -257,6 +272,7 @@ app.initializers.add('itqan-discussions', () => {
                   e.stopPropagation();
                   app.itqanActiveParentId = null;
                   app.itqanActiveParentUsername = null;
+                  clearActiveReplyTarget();
                   if (app.composer.fields) {
                     app.composer.fields.parentId = null;
                     app.composer.fields.replyToUsername = null;
@@ -287,6 +303,7 @@ app.initializers.add('itqan-discussions', () => {
       setTimeout(() => {
         app.itqanActiveParentId = null;
         app.itqanActiveParentUsername = null;
+        clearActiveReplyTarget();
         if (app.composer.fields) {
           app.composer.fields.parentId = null;
           app.composer.fields.replyToUsername = null;

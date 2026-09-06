@@ -1,20 +1,22 @@
-// Itqan Discussions - Threaded / Nested Comments Styling
+// Itqan Discussions - Threaded / Nested Comments Styling (Redesigned)
 
 // Variables
-@itqan-primary: #0D9488;
-@itqan-primary-light: #F0FDFA;
-@itqan-primary-hover: #14B8A6;
-@itqan-border-line: rgba(13, 148, 136, 0.4);
-@itqan-border-line-hover: #0D9488;
+@itqan-primary: @config-primary-color;
+@itqan-primary-light: fade(@config-primary-color, 8%);
+@itqan-primary-hover: lighten(@config-primary-color, 8%);
+@itqan-border-line: fade(@config-primary-color, 28%);
+@itqan-border-line-hover: @config-primary-color;
 @thread-indent-unit: 32px;
 @thread-indent-mobile-unit: 8px;
 
-// PostStream Item Indentation & Visual Tree Lines
+// PostStream Item Indentation & Styling
 .PostStream-item {
   position: relative;
+  border-radius: 8px !important;
+  padding-block: 0 !important;
   max-height: 5000px;
   opacity: 1;
-  overflow: visible; // Keep visible so dropdowns/menus are not clipped
+  overflow: visible;
   transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
               opacity 0.25s ease, 
               margin 0.3s ease, 
@@ -23,23 +25,24 @@
   &[data-thread-depth="1"],
   &:has(.CommentPost[data-thread-depth="1"]) {
     margin-inline-start: @thread-indent-unit !important;
-    padding-inline-start: 14px;
-    border-inline-start: 2px solid @itqan-border-line;
+    padding-inline-start: 16px;
+    border-inline-start: 3px solid rgb(138, 177, 166) !important;
 
     .CommentPost {
-      background: rgba(13, 148, 136, 0.015);
+      background: rgba(13, 148, 136, 0.012);
       border-radius: 8px;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
     }
   }
 
   &[data-thread-depth="2"],
   &:has(.CommentPost[data-thread-depth="2"]) {
     margin-inline-start: calc(@thread-indent-unit * 2) !important;
-    padding-inline-start: 14px;
-    border-inline-start: 2px solid @itqan-border-line;
+    padding-inline-start: 16px;
+    border-inline-start: 3px solid rgb(138, 177, 166) !important;
 
     .CommentPost {
-      background: rgba(13, 148, 136, 0.03);
+      background: rgba(13, 148, 136, 0.025);
       border-radius: 8px;
     }
   }
@@ -51,11 +54,11 @@
   &:has(.CommentPost[data-thread-depth="4"]),
   &:has(.CommentPost[data-thread-depth="5"]) {
     margin-inline-start: calc(@thread-indent-unit * 2.8) !important;
-    padding-inline-start: 14px;
-    border-inline-start: 2px solid @itqan-border-line;
+    padding-inline-start: 16px;
+    border-inline-start: 3px solid rgb(138, 177, 166) !important;
 
     .CommentPost {
-      background: rgba(13, 148, 136, 0.045);
+      background: rgba(13, 148, 136, 0.038);
       border-radius: 8px;
     }
   }
@@ -64,17 +67,20 @@
     border-inline-start-color: @itqan-border-line-hover;
   }
 
-  // Smooth collapse animation
+  // Active reply target highlight when user is composing a reply to this comment
+  &.is-reply-target,
+  &:has(.CommentPost.is-reply-target) {
+    border-inline-start-color: @itqan-primary !important;
+
+    .CommentPost {
+      background: rgba(13, 148, 136, 0.06) !important;
+      box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.35) !important;
+    }
+  }
+
+  // Completely hide collapsed thread items so flex container gap is not rendered
   &.thread-item-hidden {
-    max-height: 0 !important;
-    opacity: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    pointer-events: none !important;
-    border-inline-start-color: transparent !important;
-    overflow: hidden !important; // Only clip when collapsed
+    display: none !important;
   }
 }
 
@@ -86,21 +92,21 @@
   }
 }
 
-// Mobile responsive compact indentation (Preserves screen real-estate)
+// Mobile responsive compact indentation
 @media (max-width: 767px) {
   .PostStream-item {
     &[data-thread-depth="1"],
     &:has(.CommentPost[data-thread-depth="1"]) {
       margin-inline-start: 8px !important;
       padding-inline-start: 8px;
-      border-inline-start: 1.5px solid @itqan-border-line;
+      border-inline-start: 3px solid rgb(138, 177, 166) !important;
     }
 
     &[data-thread-depth="2"],
     &:has(.CommentPost[data-thread-depth="2"]) {
       margin-inline-start: 16px !important;
       padding-inline-start: 8px;
-      border-inline-start: 1.5px solid @itqan-border-line;
+      border-inline-start: 3px solid rgb(138, 177, 166) !important;
     }
 
     &[data-thread-depth="3"],
@@ -111,42 +117,50 @@
     &:has(.CommentPost[data-thread-depth="5"]) {
       margin-inline-start: 24px !important;
       padding-inline-start: 8px;
-      border-inline-start: 1.5px solid @itqan-border-line;
+      border-inline-start: 3px solid rgb(138, 177, 166) !important;
     }
   }
 }
 
-// Reply Context Badge (e.g. "رد على @User")
+// Reply Context Badge (e.g. "رد على @اسم")
 .itqan-reply-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   font-size: 11px;
   line-height: 1;
   vertical-align: middle;
   color: @itqan-primary;
   background: @itqan-primary-light;
-  border: 1px solid rgba(13, 148, 136, 0.25);
-  padding: 3px 8px;
+  border: 1px solid rgba(13, 148, 136, 0.28);
+  padding: 3px 9px;
   border-radius: 12px;
   margin-inline-start: 8px;
   font-weight: 500;
   text-decoration: none;
+  transition: all 0.15s ease;
 
   &:hover {
-    background: rgba(13, 148, 136, 0.2);
+    background: rgba(13, 148, 136, 0.15);
     color: #0f766e;
+    border-color: @itqan-primary;
+  }
+
+  i, .icon {
+    font-size: 9px;
   }
 }
 
-// Composer Reply Banner
+
+
+// Composer Reply Context Banner
 .Composer-replyBanner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: @itqan-primary-light;
   border: 1px solid rgba(13, 148, 136, 0.3);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 8px 12px;
   margin-bottom: 10px;
   font-size: 13px;
@@ -167,10 +181,69 @@
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 14px;
+    transition: all 0.15s ease;
 
     &:hover {
       color: #ef4444;
       background: rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+// Dark Theme Overrides
+html[data-itqan-theme='dark'] {
+  .itqan-reply-badge {
+    background: rgba(13, 148, 136, 0.2);
+    color: #2dd4bf;
+    border-color: rgba(45, 212, 191, 0.35);
+
+    &:hover {
+      background: rgba(13, 148, 136, 0.3);
+      color: #5eead4;
+    }
+  }
+
+
+
+  .Composer-replyBanner {
+    background: rgba(13, 148, 136, 0.16);
+    border-color: rgba(45, 212, 191, 0.35);
+    color: #2dd4bf;
+
+    .replyBanner-close {
+      color: #94a3b8;
+
+      &:hover {
+        color: #f87171;
+        background: rgba(239, 68, 68, 0.2);
+      }
+    }
+  }
+
+  .PostStream-item {
+    &[data-thread-depth="1"] .CommentPost,
+    &:has(.CommentPost[data-thread-depth="1"]) .CommentPost {
+      background: rgba(255, 255, 255, 0.015);
+    }
+    &[data-thread-depth="2"] .CommentPost,
+    &:has(.CommentPost[data-thread-depth="2"]) .CommentPost {
+      background: rgba(255, 255, 255, 0.025);
+    }
+    &[data-thread-depth="3"] .CommentPost,
+    &[data-thread-depth="4"] .CommentPost,
+    &[data-thread-depth="5"] .CommentPost,
+    &:has(.CommentPost[data-thread-depth="3"]) .CommentPost,
+    &:has(.CommentPost[data-thread-depth="4"]) .CommentPost,
+    &:has(.CommentPost[data-thread-depth="5"]) .CommentPost {
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    &.is-reply-target,
+    &:has(.CommentPost.is-reply-target) {
+      .CommentPost {
+        background: rgba(13, 148, 136, 0.12) !important;
+        box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.45) !important;
+      }
     }
   }
 }
