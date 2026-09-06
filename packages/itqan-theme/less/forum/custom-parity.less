@@ -1,0 +1,360 @@
+// Itqan Theme - Global Redesign & Parity Styles
+// Migrated from Admin Panel Appearance (custom_less) into Git-tracked codebase.
+
+.UserPage .UserHero .Dropdown-toggle .Button-icon {
+  display: none;
+}
+
+body {
+  font-family: "Noto Sans Arabic", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: auto;
+  font-style: normal;
+  background: rgba(6, 41, 31, 0.03);
+}
+
+.DiscussionListItem-title {
+  line-height: 2;
+}
+
+.LogInButtons {
+  text-align: right;
+  width: 100%;
+}
+
+.Button-label {
+  padding-right: 5px;
+}
+
+.Post-body pre code {
+  width: 100%;
+  display: block;
+  direction: ltr !important;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.Button.Button--primary,
+.SplitDropdown-button.Button.Button--primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  height: 36px;
+  line-height: 1.2;
+  padding: 0 12px;
+  text-align: center;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+// 4-Column Tag Grid
+.TagTiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.TagTile {
+  width: 100% !important;
+}
+
+:root {
+  --primary: #064e3b;
+  --primary-light: #0a6b51;
+  --primary-bg: #e6f4ef;
+}
+
+// Notification Popup
+.notify-popup {
+  position: fixed;
+  top: 20px;
+  right: 50%;
+  transform: translateX(50%);
+  background: #fff;
+  color: #000;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  opacity: 0;
+  z-index: 9999;
+  transition: all 0.4s ease;
+
+  &.visible {
+    opacity: 1;
+    transform: translateX(50%) translateY(0);
+  }
+
+  .notify-popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    position: relative;
+    padding-top: 8px;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .notif-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: var(--primary-light);
+    }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: -14px;
+    inset-inline-end: -14px;
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    height: 14px;
+    width: 14px;
+
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+// PWA Install Banner
+.pwa-banner {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  left: 20px;
+  background: var(--primary-bg);
+  border: 1px solid var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 9998;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  .pwa-banner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .pwa-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  button {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 0.95rem;
+
+    &:hover {
+      background: var(--primary-light);
+    }
+  }
+}
+
+[dir="ltr"] .pwa-banner,
+[dir="ltr"] .notify-popup {
+  direction: rtl;
+}
+
+@media (max-width: 420px) {
+  .notify-popup {
+    width: calc(68%);
+    right: 50%;
+  }
+
+  .pwa-banner {
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+  }
+}
+
+// Discussion List Cardification
+.DiscussionList-discussions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 1100px) {
+  .container {
+    width: 1200px;
+  }
+}
+
+.DiscussionListItem {
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 20px;
+  padding: 16px;
+  transition: 0.1s border ease-out;
+  background: #fff;
+
+  @media (min-width: 768px) {
+    &:hover {
+      box-shadow: 0 3px 10px -2px #00000047;
+      border-inline-start: 6px solid #0f8264;
+      background: #fcfffe;
+    }
+  }
+}
+
+button {
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .ml-form-embedContainer {
+    margin-bottom: 54px !important;
+  }
+  .App-content {
+    background-color: #fff0;
+  }
+}
+
+// PostStream Base Container Styling
+.PostStream {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 24px;
+}
+
+.PostStream-item {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  padding-block: 0;
+  box-shadow: 0 3px 10px -3px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.Post-actions {
+  opacity: 1 !important;
+}
+
+.ReplyPlaceholder {
+  margin: 0;
+  max-width: 100%;
+  border-color: var(--control-bg) !important;
+}
+
+// Mobile Composer Positioning
+@media (max-width: 767.98px) {
+  .Composer:not(.minimized) {
+    top: unset !important;
+    bottom: 52px !important;
+  }
+
+  .ComposerBody-editor .TextEditor-controls .item-submit {
+    inset-inline: 0;
+    bottom: -52px !important;
+    top: unset !important;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #064e3b;
+
+    button {
+      gap: 4px;
+      color: white !important;
+
+      span {
+        display: unset !important;
+      }
+    }
+  }
+
+  .DiscussionPage-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: space-between;
+    padding: 16px 24px;
+
+    li {
+      margin: 0;
+
+      .SubscriptionMenu {
+        display: flex;
+
+        .SubscriptionMenu-button {
+          flex: 1;
+        }
+      }
+    }
+
+    .item-share-social .Dropdown {
+      display: flex;
+
+      .SplitDropdown-button {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.LanguageSelector,
+.item-locale,
+li.item-language,
+Button[aria-label*="Language"] {
+  display: none !important;
+}
+
+.item-badges {
+  display: none;
+}
+
+.UserBadgeImage {
+  width: 42px;
+  height: 42px;
+}
