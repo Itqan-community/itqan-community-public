@@ -13,6 +13,8 @@ jobs:
           SSH_KEY: ${{ secrets.BETA_SSH_KEY }}
           SSH_HOST: ${{ secrets.BETA_SSH_HOST }}
           DB_PASSWORD: ${{ secrets.BETA_DB_PASSWORD }}
+          SMTP_USERNAME: ${{ secrets.BETA_SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.BETA_SMTP_PASSWORD }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/beta_deploy_key
@@ -20,10 +22,14 @@ jobs:
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
           DB_PASSWORD_B64=$(printf '%s' "$DB_PASSWORD" | base64 | tr -d '\n')
+          SMTP_USERNAME_B64=$(printf '%s' "$SMTP_USERNAME" | base64 | tr -d '\n')
+          SMTP_PASSWORD_B64=$(printf '%s' "$SMTP_PASSWORD" | base64 | tr -d '\n')
 
-          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" <<'REMOTE'
+          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" "$SMTP_USERNAME_B64" "$SMTP_PASSWORD_B64" <<'REMOTE'
           set -euo pipefail
           DB_PASSWORD=$(printf '%s' "$1" | base64 -d)
+          SMTP_USERNAME=$(printf '%s' "$2" | base64 -d)
+          SMTP_PASSWORD=$(printf '%s' "$3" | base64 -d)
 
           git config --global --add safe.directory /var/www/flarum
 
@@ -63,7 +69,12 @@ jobs:
             'paths' => array('api' => 'api', 'admin' => 'admin'),
             'headers' => array('poweredByHeader' => false, 'referrerPolicy' => 'same-origin'),
             'mail' => array(
-              'driver' => 'log',
+              'driver' => 'smtp',
+              'host' => 'in-v3.mailjet.com',
+              'port' => 587,
+              'username' => '${SMTP_USERNAME}',
+              'password' => '${SMTP_PASSWORD}',
+              'encryption' => 'tls',
               'from' => array('address' => 'noreply@itqan.dev', 'name' => 'Itqan Community Beta'),
             ),
             'filesystems' => array(
