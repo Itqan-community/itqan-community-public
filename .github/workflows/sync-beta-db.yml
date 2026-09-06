@@ -54,7 +54,9 @@ jobs:
           echo "Restore replaced beta's schema with production's current state (rehearsed migrations gone) - re-applying now..."
           cd /var/www/flarum
           sudo -u www-data php flarum migrate
-          sudo -u www-data php flarum extension:enable itqan-discussions itqan-theme itqan-typography
+          sudo -u www-data php flarum extension:enable itqan-discussions
+          sudo -u www-data php flarum extension:enable itqan-theme
+          sudo -u www-data php flarum extension:enable itqan-typography
           sudo -u www-data php flarum cache:clear
 
           echo "Sync complete: beta now mirrors production's latest data, re-migrated to the tested state."
