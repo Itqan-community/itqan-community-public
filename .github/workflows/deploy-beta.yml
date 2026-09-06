@@ -19,11 +19,21 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/beta_deploy_key
           chmod 600 ~/.ssh/beta_deploy_key
-          wc -l ~/.ssh/beta_deploy_key
-          head -c 40 ~/.ssh/beta_deploy_key
-          echo
-          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>&1
-          echo "keyscan exit: $?"
+
+          set +e
+          timeout 10 ssh-keyscan -H "$SSH_HOST" > /tmp/ks_out.txt 2> /tmp/ks_err.txt
+          echo "KEYSCAN_EXIT=$?"
+          set -e
+          echo "--- keyscan stdout ---"
+          cat /tmp/ks_out.txt
+          echo "--- keyscan stderr ---"
+          cat /tmp/ks_err.txt
+          cat /tmp/ks_out.txt >> ~/.ssh/known_hosts
+
+          echo "--- raw TCP reachability test ---"
+          set +e
+          timeout 8 bash -c "echo > /dev/tcp/$SSH_HOST/22" && echo "TCP_22_OPEN" || echo "TCP_22_FAILED exit=$?"
+          set -e
 
           DB_PASSWORD_B64=$(printf '%s' "$DB_PASSWORD" | base64 | tr -d '\n')
           SMTP_USERNAME_B64=$(printf '%s' "$SMTP_USERNAME" | base64 | tr -d '\n')
