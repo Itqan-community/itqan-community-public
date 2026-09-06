@@ -38,9 +38,8 @@ jobs:
             echo "Dump suspiciously small ($SIZE bytes) - aborting, beta DB untouched."
             exit 1
           fi
-          echo "DIAG: zcat byte count: $(zcat "$DUMP_FILE" | wc -c)"
-          zcat "$DUMP_FILE" | grep 'CREATE TABLE' | grep -i post || true
-          if ! zcat "$DUMP_FILE" | grep -q 'CREATE TABLE `posts` ('; then
+          POSTS_TABLE_COUNT=$(zcat "$DUMP_FILE" | grep -c 'CREATE TABLE `posts` (' || true)
+          if [ "$POSTS_TABLE_COUNT" -eq 0 ]; then
             echo "Dump missing posts table - aborting, beta DB untouched."
             exit 1
           fi
