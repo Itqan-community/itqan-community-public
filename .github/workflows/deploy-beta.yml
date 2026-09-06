@@ -19,13 +19,17 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/beta_deploy_key
           chmod 600 ~/.ssh/beta_deploy_key
-          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          wc -l ~/.ssh/beta_deploy_key
+          head -c 40 ~/.ssh/beta_deploy_key
+          echo
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>&1
+          echo "keyscan exit: $?"
 
           DB_PASSWORD_B64=$(printf '%s' "$DB_PASSWORD" | base64 | tr -d '\n')
           SMTP_USERNAME_B64=$(printf '%s' "$SMTP_USERNAME" | base64 | tr -d '\n')
           SMTP_PASSWORD_B64=$(printf '%s' "$SMTP_PASSWORD" | base64 | tr -d '\n')
 
-          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" "$SMTP_USERNAME_B64" "$SMTP_PASSWORD_B64" <<'REMOTE'
+          ssh -vvv -o ConnectTimeout=15 -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" "$SMTP_USERNAME_B64" "$SMTP_PASSWORD_B64" <<'REMOTE'
           set -euo pipefail
           DB_PASSWORD=$(printf '%s' "$1" | base64 -d)
           SMTP_USERNAME=$(printf '%s' "$2" | base64 -d)
