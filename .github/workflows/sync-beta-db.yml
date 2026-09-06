@@ -45,6 +45,9 @@ jobs:
           fi
           echo "Dump verified: $DUMP_FILE ($(du -h "$DUMP_FILE" | cut -f1))"
 
+          echo "Wiping beta's isolated DB for a clean restore (mysqldump has no DROP TABLE by default, so leftover tables from prior rehearsal would otherwise survive)..."
+          mysql -h 10.106.0.5 -u flarum -p"$PROD_DB_PASSWORD" -e "DROP DATABASE flarum; CREATE DATABASE flarum CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
           echo "Restoring into beta's isolated DB (10.106.0.5)..."
           zcat "$DUMP_FILE" | mysql -h 10.106.0.5 -u flarum -p"$PROD_DB_PASSWORD" flarum
 
