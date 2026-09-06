@@ -34,7 +34,7 @@
         "flarum-locale/arabic": "dev-main",
         "flarum/approval": "*",
         "flarum/bbcode": "*",
-        "flarum/core": "^1.8",
+        "flarum/core": "v1.8.17",
         "flarum/emoji": "*",
         "flarum/extension-manager": "*",
         "flarum/flags": "*",

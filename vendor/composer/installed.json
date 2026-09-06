@@ -3154,17 +3154,17 @@
         },
         {
             "name": "flarum/core",
-            "version": "v1.8.12",
-            "version_normalized": "1.8.12.0",
+            "version": "v1.8.17",
+            "version_normalized": "1.8.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flarum/flarum-core.git",
-                "reference": "681f602c5fa8d4afd5d43ae9921551b9906699fd"
+                "reference": "bbf6d4c114778d231ed8b2c391fa5179a68a19f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flarum/flarum-core/zipball/681f602c5fa8d4afd5d43ae9921551b9906699fd",
-                "reference": "681f602c5fa8d4afd5d43ae9921551b9906699fd",
+                "url": "https://api.github.com/repos/flarum/flarum-core/zipball/bbf6d4c114778d231ed8b2c391fa5179a68a19f2",
+                "reference": "bbf6d4c114778d231ed8b2c391fa5179a68a19f2",
                 "shasum": ""
             },
             "require": {
@@ -3223,7 +3223,7 @@
             "require-dev": {
                 "flarum/testing": "^1.0.0"
             },
-            "time": "2026-01-07T08:54:15+00:00",
+            "time": "2026-06-15T10:56:21+00:00",
             "type": "library",
             "extra": {
                 "flarum-cli": {
@@ -8783,6 +8783,61 @@
             "install-path": "../irmmr/rtlcss"
         },
         {
+            "name": "itqan/flarum-discussions",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-discussions",
+                "reference": "29f3100ca6cb4ac97fc6289bb55af752fd1426dd"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Discussions",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fas fa-arrow-up",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Discussions\\": "src/"
+                }
+            },
+            "scripts": {
+                "build": [
+                    "cd js && npm run build"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Discussion browsing and moderation improvements for the Itqan community",
+            "keywords": [
+                "discussions",
+                "flarum",
+                "voting"
+            ],
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-discussions"
+        },
+        {
             "name": "itqan/flarum-mailerlite",
             "version": "dev-main",
             "version_normalized": "dev-main",
@@ -8843,6 +8898,117 @@
                 "relative": true
             },
             "install-path": "../itqan/flarum-mailerlite"
+        },
+        {
+            "name": "itqan/flarum-theme",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-theme",
+                "reference": "9525586f76ba565feb772fe664d315b0279b76f3"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Theme",
+                    "category": "theme",
+                    "icon": {
+                        "name": "fas fa-moon",
+                        "color": "#ffffff",
+                        "backgroundColor": "#0D9488"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Theme\\": "src/"
+                }
+            },
+            "scripts": {
+                "build": [
+                    "cd js && npm run build"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Itqan community theme — per-user light, dark and automatic colour schemes",
+            "keywords": [
+                "accessibility",
+                "dark-mode",
+                "flarum",
+                "theme"
+            ],
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-theme"
+        },
+        {
+            "name": "itqan/flarum-typography",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-typography",
+                "reference": "a8df89f86fb3258b263b3a49ff3cef210195eb24"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Typography",
+                    "category": "theme",
+                    "icon": {
+                        "name": "fas fa-font",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    },
+                    "optional-dependencies": [
+                        "ianm/html-head"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Typography\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Arabic typography for the Itqan community — self-hosted webfonts, preloaded, with matched fallback metrics",
+            "keywords": [
+                "arabic",
+                "flarum",
+                "performance",
+                "typography",
+                "webfonts"
+            ],
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-typography"
         },
         {
             "name": "jaybizzle/crawler-detect",
