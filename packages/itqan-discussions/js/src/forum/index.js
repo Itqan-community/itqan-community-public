@@ -51,11 +51,11 @@ app.initializers.add('itqan-discussions', () => {
     );
   });
 
-  extend(CommentPost.prototype, 'footerItems', function (items) {
+  extend(CommentPost.prototype, 'contentItems', function (items) {
     const post = this.attrs.post;
     if (post.isHidden() || post.attribute('votes') === undefined) return;
 
-    items.add('itqanVote', <VoteButtons model={post} postId={post.id()} />, 100);
+    items.add('itqanVote', <VoteButtons model={post} postId={post.id()} vertical />, 120);
   });
 
   // ==========================================
