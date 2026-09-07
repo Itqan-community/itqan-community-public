@@ -52,13 +52,6 @@ app.initializers.add('itqan-discussions', () => {
     );
   });
 
-  extend(CommentPost.prototype, 'contentItems', function (items) {
-    const post = this.attrs.post;
-    if (post.isHidden() || post.attribute('votes') === undefined) return;
-
-    items.add('itqanVote', <VoteButtons model={post} postId={post.id()} vertical />, 120);
-  });
-
   // ==========================================
   // 2. Threaded / Nested Replies Extension
   // ==========================================
@@ -156,6 +149,15 @@ app.initializers.add('itqan-discussions', () => {
     const isOP = typeof post.number === 'function' && post.number() === 1;
     const replyCount = (typeof post.replyCount === 'function') ? (post.replyCount() || 0) : 0;
     const isCollapsed = app.itqanCollapsedThreads.has(postIdStr);
+
+    // Vote buttons horizontal pill chip
+    if (!post.isHidden() && post.attribute('votes') !== undefined) {
+      items.add(
+        'itqanVote',
+        <VoteButtons model={post} postId={post.id()} />,
+        100
+      );
+    }
 
     // Dynamic collapse/expand pill button (Only on comments with child replies, not OP)
     if (!isOP && replyCount > 0) {
