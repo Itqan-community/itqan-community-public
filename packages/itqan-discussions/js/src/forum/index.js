@@ -9,6 +9,7 @@ import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import icon from 'flarum/common/helpers/icon';
+import extractText from 'flarum/common/utils/extractText';
 
 import VoteButtons from './components/VoteButtons';
 import { getPostDepth, isDescendantOfCollapsed, reorderStreamTree } from './components/CommentTree';
@@ -120,7 +121,9 @@ app.initializers.add('itqan-discussions', () => {
           {
             className: 'itqan-reply-badge',
             href: '#',
-            title: parentUser ? `رد على ${parentUser}` : '',
+            title: parentUser
+              ? extractText(app.translator.trans('itqan-discussions.forum.replied_to', { username: parentUser }))
+              : '',
             onclick: (e) => {
               e.preventDefault();
               const parentEl = document.querySelector(`.PostStream-item[data-id="${parentId}"]`);
@@ -134,7 +137,9 @@ app.initializers.add('itqan-discussions', () => {
           [
             icon ? icon('fas fa-reply') : null,
             ' ',
-            parentUser ? `رد على ${parentUser}` : ('#' + parentId),
+            parentUser
+              ? app.translator.trans('itqan-discussions.forum.replied_to', { username: parentUser })
+              : ('#' + parentId),
           ]
         ),
         70
