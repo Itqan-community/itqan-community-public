@@ -163,20 +163,14 @@ export function reorderStreamTree() {
       }
     });
 
-    // Apply the computed tree order via the CSS `order` property instead of
-    // physically moving nodes with appendChild. `.PostStream` is a flex
-    // column, so `order` reproduces the same visual layout without taking
-    // DOM ownership away from Mithril: reparenting these nodes here raced
-    // Mithril's own redraws (triggered by hover cards, vote updates, thread
-    // collapse, etc.) for control of the same elements, corrupting their
-    // position/sizing after subsequent updates.
-    orderedEls.forEach((el, index) => {
-      el.style.order = String(index);
-    });
+    // Batch re-insert into container
+    const fragment = document.createDocumentFragment();
+    orderedEls.forEach((el) => fragment.appendChild(el));
 
     const replyItem = container.querySelector('.PostStream-item:not([data-id])');
+    container.appendChild(fragment);
     if (replyItem) {
-      replyItem.style.order = String(orderedEls.length);
+      container.appendChild(replyItem);
     }
   });
 }
