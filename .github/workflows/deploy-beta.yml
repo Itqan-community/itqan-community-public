@@ -68,7 +68,7 @@ jobs:
               'engine' => 'InnoDB',
               'strict' => false,
             ),
-            'url' => 'https://beta.community.itqan.dev',
+            'url' => 'https://community.itqan.dev',
             'paths' => array('api' => 'api', 'admin' => 'admin'),
             'headers' => array('poweredByHeader' => false, 'referrerPolicy' => 'same-origin'),
             'mail' => array(
@@ -78,7 +78,7 @@ jobs:
               'username' => '${SMTP_USERNAME}',
               'password' => '${SMTP_PASSWORD}',
               'encryption' => 'tls',
-              'from' => array('address' => 'noreply@itqan.dev', 'name' => 'Itqan Community Beta'),
+              'from' => array('address' => 'noreply@itqan.dev', 'name' => 'Itqan Community'),
             ),
             'filesystems' => array(
               'disks' => array(
