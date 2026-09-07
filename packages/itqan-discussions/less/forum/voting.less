@@ -180,3 +180,581 @@
   font-weight: 600;
   color: var(--muted-color);
 }
+
+// ---------------------------------------------------------------------------
+// CommentPost Vertical Vote Buttons & Card Design (Figma Redesign)
+// ---------------------------------------------------------------------------
+
+.PostStream-item {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+
+  &:has(.open),
+  &:has(.openWithin),
+  &:focus-within {
+    z-index: 50 !important;
+  }
+}
+
+.PostStream-item .Post.CommentPost,
+.PostStream-item .CommentPost,
+.CommentPost.Post,
+.CommentPost {
+  position: relative !important;
+  top: 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #E9ECEF !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+  overflow: visible !important; // Must be visible so desktop dropdown menus are not clipped
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  float: none !important;
+
+  &:has(.open),
+  &:has(.openWithin),
+  &:focus-within {
+    z-index: 50 !important;
+  }
+
+  @media @tablet-up {
+    padding: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    min-height: 0 !important;
+  }
+
+  // Inner wrapper
+  > div {
+    position: relative !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+    padding-left: 50px !important; // In RTL, rtlcss converts to padding-right: 50px (36px strip + 14px gap)
+    padding-right: 20px !important; // In RTL, rtlcss converts to padding-left: 20px
+    min-height: 80px;
+    height: 100% !important;
+    overflow: visible !important;
+
+    @media @tablet-up {
+      padding-left: 50px !important;
+      padding-right: 20px !important;
+    }
+  }
+
+  // Leading-edge Full-height Voting Strip (36px wide, #F1F3F5)
+  // Matches .VoteButtons--vertical at any depth within CommentPost
+  .VoteButtons--vertical {
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important; // In RTL, rtlcss converts to right: 0
+    right: auto !important; // In RTL, rtlcss converts to left: auto
+    width: 36px !important;
+    height: auto !important;
+    min-height: 100% !important;
+    background: #F1F3F5 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    z-index: 2 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+
+    // Rounded outer corners matching the card's 12px border radius
+    border-top-left-radius: 11px !important;
+    border-bottom-left-radius: 11px !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-start-start-radius: 11px !important;
+    border-end-start-radius: 11px !important;
+    border-start-end-radius: 0 !important;
+    border-end-end-radius: 0 !important;
+
+    .VoteButtons-button {
+      width: 24px !important;
+      height: 22px !important;
+      border-radius: 4px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #868E96 !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      cursor: pointer !important;
+      transition: color 0.15s ease, background-color 0.15s ease !important;
+
+      .Button-icon {
+        font-size: 13px !important;
+        margin: 0 !important;
+        vertical-align: middle !important;
+      }
+
+      &:hover,
+      &:focus-visible {
+        color: #212529 !important;
+        background: rgba(0, 0, 0, 0.06) !important;
+      }
+
+      &--up.VoteButtons-button--active {
+        color: var(--switch-on-color, #10B981) !important;
+        background: rgba(16, 185, 129, 0.14) !important;
+      }
+
+      &--down.VoteButtons-button--active {
+        color: var(--switch-off-color, #EF4444) !important;
+        background: rgba(239, 68, 68, 0.14) !important;
+      }
+    }
+
+    .VoteButtons-score {
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      line-height: 1.2 !important;
+      color: #212529 !important;
+      min-width: 20px !important;
+      text-align: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  // Header styling matching the Figma design
+  .Post-header {
+    margin: 0 0 10px 0 !important;
+    padding: 0 !important;
+
+    > ul {
+      display: flex !important;
+      align-items: center !important;
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
+
+      > li {
+        display: inline-flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        float: none !important;
+      }
+    }
+
+    // Avatar styling (32x32 circle, always in-flow, reset core's absolute positioning)
+    .Avatar,
+    .PostUser-avatar {
+      position: static !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      bottom: auto !important;
+      float: none !important;
+      display: inline-block !important;
+      vertical-align: middle !important;
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      max-width: 32px !important;
+      line-height: 32px !important;
+      font-size: 14px !important;
+      border-radius: 50% !important;
+      margin: 0 !important;
+      margin-right: 8px !important; // in RTL: rtlcss converts to margin-left: 8px
+      box-sizing: border-box !important;
+      --size: 32px !important;
+    }
+
+    @media @tablet-up {
+      .Avatar,
+      .PostUser-avatar {
+        position: static !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+        float: none !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        max-width: 32px !important;
+        line-height: 32px !important;
+        font-size: 14px !important;
+        border-radius: 50% !important;
+        margin: 0 !important;
+        margin-right: 8px !important;
+        box-sizing: border-box !important;
+        --size: 32px !important;
+      }
+    }
+
+    .PostUser {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      margin: 0 !important;
+      position: static !important;
+
+      .PostUser-name {
+        display: inline-flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+
+        a {
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 8px !important;
+          text-decoration: none !important;
+        }
+      }
+
+      .username {
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        color: #212529 !important;
+        line-height: 1.2 !important;
+      }
+
+      .UserOnline {
+        margin: 0 2px !important;
+      }
+    }
+
+    // Badges reset
+    .PostUser-badges {
+      position: static !important;
+      float: none !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      bottom: auto !important;
+      margin: 0 4px !important;
+      padding: 0 !important;
+      width: auto !important;
+      display: inline-flex !important;
+      align-items: center !important;
+
+      .Badge {
+        width: 18px !important;
+        height: 18px !important;
+        min-width: 18px !important;
+        line-height: 18px !important;
+        font-size: 10px !important;
+        margin: 0 2px !important;
+        border-radius: 50% !important;
+      }
+    }
+
+    @media @tablet-up {
+      .PostUser-badges {
+        position: static !important;
+        float: none !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+        margin: 0 4px !important;
+        padding: 0 !important;
+        width: auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+
+        .Badge {
+          width: 18px !important;
+          height: 18px !important;
+          min-width: 18px !important;
+          line-height: 18px !important;
+          font-size: 10px !important;
+          margin: 0 2px !important;
+          border-radius: 50% !important;
+        }
+      }
+    }
+
+    // Time & Meta
+    .item-meta,
+    .PostMeta {
+      color: #868E96 !important;
+      font-size: 12px !important;
+      font-weight: 400 !important;
+      margin: 0 !important;
+      line-height: 1.2 !important;
+
+      a {
+        color: #868E96 !important;
+        text-decoration: none !important;
+      }
+
+      time {
+        color: #868E96 !important;
+        font-size: 12px !important;
+      }
+    }
+
+    .item-edited,
+    .Post-edited {
+      font-size: 12px !important;
+      font-style: italic !important;
+      color: #868E96 !important;
+      margin: 0 4px !important;
+    }
+  }
+
+  // Post Body
+  .Post-body {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    color: #212529 !important;
+    overflow: visible !important;
+    flex: 1 1 auto;
+
+    p {
+      margin: 0 0 0.5em 0 !important;
+
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
+
+  // Post Actions (unfloated, bottom row, fully enclosed within the card)
+  .Post-actions {
+    margin: 12px 0 0 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    float: none !important;
+    clear: both !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    position: relative !important;
+    overflow: visible !important;
+
+    &.openWithin {
+      z-index: 1050 !important;
+    }
+
+    > ul {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
+      overflow: visible !important;
+
+      > li {
+        display: inline-flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+        position: relative !important;
+      }
+    }
+
+    .Button--link {
+      color: #868E96 !important;
+      font-size: 13px !important;
+      padding: 0 !important;
+      text-decoration: none !important;
+
+      &:hover {
+        color: #212529 !important;
+      }
+    }
+
+    .Post-controls {
+      position: relative !important;
+
+      .Dropdown-toggle {
+        color: #868E96 !important;
+        padding: 4px !important;
+
+        &:hover {
+          color: #212529 !important;
+        }
+      }
+
+      &.open {
+        z-index: 1050 !important;
+
+        .Dropdown-menu {
+          display: block !important;
+          z-index: 1060 !important;
+        }
+      }
+
+      .Dropdown-menu {
+        z-index: 1060 !important;
+      }
+    }
+  }
+
+  // Footer reset
+  .Post-footer {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
+// Reply Context Badge (Pill with soft green background #E6F4EA and dark green text #137333)
+.itqan-reply-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+  color: #137333 !important;
+  background: #E6F4EA !important;
+  border: none !important;
+  padding: 3px 10px !important;
+  border-radius: 9999px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  transition: background-color 0.15s ease, opacity 0.15s ease !important;
+
+  &:hover {
+    background: darken(#E6F4EA, 5%) !important;
+    color: darken(#137333, 5%) !important;
+  }
+
+  i, .icon {
+    font-size: 10px !important;
+  }
+}
+
+// Dark Mode Support
+html[data-itqan-theme='dark'] {
+  .CommentPost.Post,
+  .CommentPost {
+    background: #181c20 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+
+    .VoteButtons--vertical {
+      background: #21262d !important;
+
+      .VoteButtons-button {
+        color: #8b949e !important;
+
+        &:hover,
+        &:focus-visible {
+          color: #f0f6fc !important;
+          background: rgba(255, 255, 255, 0.08) !important;
+        }
+      }
+
+      .VoteButtons-score {
+        color: #f0f6fc !important;
+      }
+    }
+
+    .Post-header {
+      .username {
+        color: #f0f6fc !important;
+      }
+
+      .item-meta,
+      .PostMeta,
+      .item-time,
+      .item-edited,
+      .Post-edited {
+        color: #8b949e !important;
+
+        a, time {
+          color: #8b949e !important;
+        }
+      }
+
+      .item-controls .Dropdown-toggle {
+        color: #8b949e !important;
+
+        &:hover {
+          color: #f0f6fc !important;
+        }
+      }
+    }
+
+    .Post-body {
+      color: #e6edf3 !important;
+    }
+
+    .Post-actions {
+      .Button--link {
+        color: #8b949e !important;
+
+        &:hover {
+          color: #f0f6fc !important;
+        }
+      }
+
+      .Post-controls .Dropdown-toggle {
+        color: #8b949e !important;
+
+        &:hover {
+          color: #f0f6fc !important;
+        }
+      }
+    }
+  }
+
+  .itqan-reply-badge {
+    background: rgba(19, 115, 51, 0.25) !important;
+    color: #81c995 !important;
+
+    &:hover {
+      background: rgba(19, 115, 51, 0.35) !important;
+      color: #a8dab5 !important;
+    }
+  }
+}
+
+// Mobile responsive adjustments
+@media (max-width: 767.98px) {
+  .CommentPost.Post,
+  .CommentPost {
+    > div {
+      padding-left: 50px !important;
+      padding-right: 14px !important;
+      padding-top: 14px !important;
+      padding-bottom: 14px !important;
+    }
+
+    .VoteButtons--vertical {
+      width: 36px !important;
+
+      .VoteButtons-button {
+        width: 24px !important;
+        height: 22px !important;
+
+        .Button-icon {
+          font-size: 12px !important;
+        }
+      }
+
+      .VoteButtons-score {
+        font-size: 12px !important;
+      }
+    }
+  }
+}
