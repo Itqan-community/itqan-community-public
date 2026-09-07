@@ -39,9 +39,8 @@ export default class VoteButtons extends Component {
           'VoteButtons--saving': this.saving,
           'VoteButtons--vertical': this.attrs.vertical,
         })}
-        dir="ltr"
       >
-        {this.button(UP, 'fas fa-caret-up', mine === UP, 'up')}
+        {this.button(UP, this.attrs.vertical ? 'fas fa-caret-up' : 'fas fa-arrow-up', mine === UP, 'up')}
         {/* Coloured by what this reader did, not by the sign of the total: a
             green number above grey arrows reads as a state nobody chose. */}
         <span
@@ -59,7 +58,7 @@ export default class VoteButtons extends Component {
         >
           {score}
         </span>
-        {this.button(DOWN, 'fas fa-caret-down', mine === DOWN, 'down')}
+        {this.button(DOWN, this.attrs.vertical ? 'fas fa-caret-down' : 'fas fa-arrow-down', mine === DOWN, 'down')}
       </div>
     );
   }
