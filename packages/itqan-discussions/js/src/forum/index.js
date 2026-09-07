@@ -32,6 +32,20 @@ function setActiveReplyTarget(postId) {
   }
 }
 
+export function isMainPost(post) {
+  if (!post) return false;
+  if (typeof post.number === 'function' && post.number() === 1) return true;
+
+  const discussion = typeof post.discussion === 'function' ? post.discussion() : null;
+  if (discussion) {
+    const firstPostId = (typeof discussion.attribute === 'function') ? discussion.attribute('firstPostId') : null;
+    const postId = (typeof post.id === 'function') ? post.id() : null;
+    if (firstPostId && postId && String(firstPostId) === String(postId)) return true;
+    if (typeof discussion.firstPost === 'function' && discussion.firstPost() && postId && String(discussion.firstPost().id()) === String(postId)) return true;
+  }
+  return false;
+}
+
 app.initializers.add('itqan-discussions', () => {
   // ==========================================
   // 1. Voting System Extensions (PR #30)
@@ -54,7 +68,10 @@ app.initializers.add('itqan-discussions', () => {
 
   extend(CommentPost.prototype, 'contentItems', function (items) {
     const post = this.attrs.post;
-    if (post.isHidden() || post.attribute('votes') === undefined) return;
+    if (!post || post.isHidden() || post.attribute('votes') === undefined) return;
+
+    // Do NOT render votes on the main post itself (OP)
+    if (isMainPost(post)) return;
 
     items.add('itqanVote', <VoteButtons model={post} postId={post.id()} vertical />, 120);
   });
@@ -71,10 +88,14 @@ app.initializers.add('itqan-discussions', () => {
   app.itqanActiveParentId = null;
   app.itqanActiveParentUsername = null;
 
-  // Element attributes for depth indentation
+  // Element attributes for depth indentation & OP styling
   extend(CommentPost.prototype, 'elementAttrs', function (attrs) {
     const post = this.attrs ? this.attrs.post : null;
     if (!post) return;
+
+    if (isMainPost(post)) {
+      attrs['data-is-op'] = 'true';
+    }
 
     const depth = getPostDepth(post);
     if (depth > 0) {
@@ -107,8 +128,8 @@ app.initializers.add('itqan-discussions', () => {
     const parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
     if (parentId) {
       const parentPost = app.store ? app.store.getById('posts', String(parentId)) : null;
-      // Guard: Do NOT show reply badge if parent is OP post #1
-      if (parentPost && typeof parentPost.number === 'function' && parentPost.number() === 1) {
+      // Guard: Do NOT show reply badge if parent is OP
+      if (parentPost && isMainPost(parentPost)) {
         return;
       }
 
@@ -153,7 +174,7 @@ app.initializers.add('itqan-discussions', () => {
     if (!post) return;
 
     const postIdStr = (typeof post.id === 'function') ? String(post.id()) : '';
-    const isOP = typeof post.number === 'function' && post.number() === 1;
+    const isOP = isMainPost(post);
     const replyCount = (typeof post.replyCount === 'function') ? (post.replyCount() || 0) : 0;
     const isCollapsed = app.itqanCollapsedThreads.has(postIdStr);
 

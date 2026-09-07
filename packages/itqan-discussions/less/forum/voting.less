@@ -249,6 +249,19 @@
     }
   }
 
+  // Main post (OP - post #1) has no vote strip, so use normal symmetric padding
+  &[data-is-op="true"] > div,
+  .PostStream-item[data-number="1"] & > div {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    min-height: 0 !important;
+
+    @media @tablet-up {
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+  }
+
   // Leading-edge Full-height Voting Strip (36px wide, #F1F3F5)
   // Matches .VoteButtons--vertical at any depth within CommentPost
   .VoteButtons--vertical {
@@ -738,6 +751,12 @@ html[data-itqan-theme='dark'] {
       padding-right: 14px !important;
       padding-top: 14px !important;
       padding-bottom: 14px !important;
+    }
+
+    &[data-is-op="true"] > div,
+    .PostStream-item[data-number="1"] & > div {
+      padding-left: 14px !important;
+      padding-right: 14px !important;
     }
 
     .VoteButtons--vertical {
