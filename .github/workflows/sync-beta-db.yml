@@ -13,6 +13,7 @@ jobs:
           SSH_KEY: ${{ secrets.BETA_SSH_KEY }}
           SSH_HOST: ${{ secrets.BETA_SSH_HOST }}
           PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+          PROD_ASSETS_RSYNC_KEY: ${{ secrets.PROD_ASSETS_RSYNC_KEY }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/beta_deploy_key
@@ -20,10 +21,27 @@ jobs:
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
           PROD_DB_PASSWORD_B64=$(printf '%s' "$PROD_DB_PASSWORD" | base64 | tr -d '\n')
+          PROD_ASSETS_RSYNC_KEY_B64=$(printf '%s' "$PROD_ASSETS_RSYNC_KEY" | base64 | tr -d '\n')
 
-          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$PROD_DB_PASSWORD_B64" <<'REMOTE'
+          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$PROD_DB_PASSWORD_B64" "$PROD_ASSETS_RSYNC_KEY_B64" <<'REMOTE'
           set -euo pipefail
           PROD_DB_PASSWORD=$(printf '%s' "$1" | base64 -d)
+          PROD_ASSETS_RSYNC_KEY=$(printf '%s' "$2" | base64 -d)
+
+          RSYNC_KEY_FILE=$(mktemp)
+          trap 'rm -f "$RSYNC_KEY_FILE"' EXIT
+          printf '%s\n' "$PROD_ASSETS_RSYNC_KEY" > "$RSYNC_KEY_FILE"
+          chmod 600 "$RSYNC_KEY_FILE"
+
+          echo "Syncing avatars from prod (read-only key, scoped to public/assets only)..."
+          rsync -az --stats -e "ssh -i $RSYNC_KEY_FILE -o StrictHostKeyChecking=accept-new" \
+            root@144.126.200.132:avatars/ /var/www/flarum/public/assets/avatars/ | grep -E 'Number of (created|deleted)' || true
+
+          echo "Syncing post attachments from prod..."
+          rsync -az --stats -e "ssh -i $RSYNC_KEY_FILE -o StrictHostKeyChecking=accept-new" \
+            root@144.126.200.132:files/ /var/www/flarum/public/assets/files/ | grep -E 'Number of (created|deleted)' || true
+
+          chown -R www-data:www-data /var/www/flarum/public/assets/avatars /var/www/flarum/public/assets/files
 
           DUMP_DIR=/root/beta-db-backups
           mkdir -p "$DUMP_DIR"
