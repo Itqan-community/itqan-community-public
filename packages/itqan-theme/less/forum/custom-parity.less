@@ -24,6 +24,10 @@ body {
   background: rgba(6, 41, 31, 0.03);
 }
 
+html[data-itqan-theme='dark'] body {
+  background: var(--body-bg, #0b0f13) !important;
+}
+
 .DiscussionListItem-title {
   line-height: 2;
 }
@@ -283,10 +287,109 @@ button {
   opacity: 1 !important;
 }
 
-.ReplyPlaceholder {
-  margin: 0;
-  max-width: 100%;
-  border-color: var(--control-bg) !important;
+// Discussion Reply Placeholder Card Revamp
+.ReplyPlaceholder,
+button.Post.ReplyPlaceholder {
+  display: flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  margin: 16px 0 0 0 !important;
+  padding: 14px 20px !important;
+  min-height: 56px !important;
+  background: var(--body-bg-light, #ffffff) !important;
+  border: 1px solid var(--control-bg-shaded, #e5e7eb) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+  color: var(--muted-color, #6b7280) !important;
+  font-size: 14.5px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  text-align: start !important;
+  transition: all 0.2s ease !important;
+
+  .Post-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    width: 100% !important;
+
+    .Avatar,
+    .PostUser-avatar {
+      position: static !important;
+      float: none !important;
+      margin: 0 !important;
+      width: 34px !important;
+      height: 34px !important;
+      line-height: 34px !important;
+      font-size: 14px !important;
+      border-radius: 50% !important;
+      flex-shrink: 0 !important;
+    }
+  }
+
+  &:hover {
+    border-color: #0f8264 !important;
+    background: var(--control-bg-light, #fafafa) !important;
+    color: var(--text-color, #111827) !important;
+    box-shadow: 0 4px 12px rgba(15, 130, 100, 0.08) !important;
+  }
+
+  &:focus-visible {
+    outline: none !important;
+    border-color: #0f8264 !important;
+    box-shadow: 0 0 0 3px rgba(15, 130, 100, 0.2) !important;
+  }
+}
+
+// Tablet-up overrides to cancel core Post.less absolute avatar positioning
+@media @tablet-up {
+  .ReplyPlaceholder,
+  button.Post.ReplyPlaceholder {
+    padding: 14px 20px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    min-height: 56px !important;
+
+    .Post-header {
+      padding-top: 0 !important;
+      position: static !important;
+
+      .Avatar,
+      .PostUser-avatar {
+        margin-top: 0 !important;
+        left: auto !important;
+      }
+    }
+  }
+}
+
+// Dark Mode for ReplyPlaceholder
+html[data-itqan-theme='dark'] {
+  .ReplyPlaceholder,
+  button.Post.ReplyPlaceholder {
+    background: #181c20 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #8b949e !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+
+    &:hover {
+      background: #1e2329 !important;
+      border-color: #146C60 !important;
+      color: #e6edf3 !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    &:focus-visible {
+      border-color: #146C60 !important;
+      box-shadow: 0 0 0 3px rgba(20, 108, 96, 0.3) !important;
+    }
+  }
 }
 
 // Mobile Composer Positioning
