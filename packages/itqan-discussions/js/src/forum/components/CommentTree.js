@@ -142,8 +142,34 @@ export function reorderStreamTree() {
       const p = app.store ? app.store.getById('posts', id) : null;
       return p && typeof p.number === 'function' && p.number() === 1;
     });
-    const otherRoots = rootIds.filter((id) => id !== opId).sort(comparePostIds);
-    const sortedRoots = opId ? [opId, ...otherRoots] : otherRoots;
+
+    // Stable Root Ordering:
+    // Keep track of root IDs that have already been ordered for this discussion.
+    // When "Load More" loads a new page of posts, previously loaded and visible roots
+    // maintain their stable relative order, and new roots are appended cleanly in sorted order.
+    // This prevents newly loaded posts from jumping above existing comments and shifting the page!
+    if (!window.__itqanRootOrderRegistry) {
+      window.__itqanRootOrderRegistry = new Map();
+    }
+    const discussionId = app.current.get('discussion') ? String(app.current.get('discussion').id()) : 'current';
+    let knownRoots = window.__itqanRootOrderRegistry.get(discussionId) || [];
+
+    // Filter out known roots that are no longer in rootIds
+    knownRoots = knownRoots.filter((id) => rootIds.includes(id) && id !== opId);
+
+    // New roots that haven't been placed in knownRoots yet
+    const newRoots = rootIds.filter((id) => id !== opId && !knownRoots.includes(id)).sort(comparePostIds);
+
+    // If knownRoots is empty (initial render of discussion), sort all non-OP roots by votes
+    let finalOtherRoots;
+    if (knownRoots.length === 0) {
+      finalOtherRoots = rootIds.filter((id) => id !== opId).sort(comparePostIds);
+    } else {
+      finalOtherRoots = [...knownRoots, ...newRoots];
+    }
+    window.__itqanRootOrderRegistry.set(discussionId, finalOtherRoots);
+
+    const sortedRoots = opId ? [opId, ...finalOtherRoots] : finalOtherRoots;
 
     const orderedEls = [];
     function traverse(id) {
@@ -158,6 +184,7 @@ export function reorderStreamTree() {
 
     // Append any orphaned items
     items.forEach((el) => {
+
       if (!orderedEls.includes(el)) {
         orderedEls.push(el);
       }
@@ -174,9 +201,19 @@ export function reorderStreamTree() {
       el.style.order = String(index);
     });
 
+    const loadPreviousItem = container.querySelector('.PostStream-loadPrevious');
+    if (loadPreviousItem) {
+      loadPreviousItem.style.order = '-1';
+    }
+
+    const loadMoreItem = container.querySelector('.PostStream-loadMore');
+    if (loadMoreItem) {
+      loadMoreItem.style.order = String(orderedEls.length + 1);
+    }
+
     const replyItem = container.querySelector('.PostStream-item:not([data-id])');
     if (replyItem) {
-      replyItem.style.order = String(orderedEls.length);
+      replyItem.style.order = String(orderedEls.length + 2);
     }
   });
 }

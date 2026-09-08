@@ -206,8 +206,8 @@
 .CommentPost {
   position: relative !important;
   top: 0 !important;
-  background: #ffffff !important;
-  border: 1px solid #E9ECEF !important;
+  background: var(--body-bg-light, #ffffff) !important;
+  border: 1px solid var(--control-bg-shaded, #E9ECEF) !important;
   border-radius: 12px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
   overflow: visible !important; // Must be visible so desktop dropdown menus are not clipped
@@ -262,7 +262,7 @@
     }
   }
 
-  // Leading-edge Full-height Voting Strip (36px wide, #F1F3F5)
+  // Leading-edge Full-height Voting Strip (36px wide)
   // Matches .VoteButtons--vertical at any depth within CommentPost
   .VoteButtons--vertical {
     position: absolute !important;
@@ -273,7 +273,7 @@
     width: 36px !important;
     height: auto !important;
     min-height: 100% !important;
-    background: #F1F3F5 !important;
+    background: var(--control-bg, #F1F3F5) !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -301,11 +301,12 @@
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      color: #868E96 !important;
+      color: var(--muted-color, #868E96) !important;
       background: transparent !important;
       border: none !important;
       padding: 0 !important;
       cursor: pointer !important;
+      touch-action: manipulation;
       transition: color 0.15s ease, background-color 0.15s ease !important;
 
       .Button-icon {
@@ -316,8 +317,8 @@
 
       &:hover,
       &:focus-visible {
-        color: #212529 !important;
-        background: rgba(0, 0, 0, 0.06) !important;
+        color: var(--text-color, #212529) !important;
+        background: var(--control-bg-shaded, rgba(0, 0, 0, 0.06)) !important;
       }
 
       &--up.VoteButtons-button--active {
@@ -335,7 +336,7 @@
       font-size: 13px !important;
       font-weight: 700 !important;
       line-height: 1.2 !important;
-      color: #212529 !important;
+      color: var(--text-color, #212529) !important;
       min-width: 20px !important;
       text-align: center !important;
       margin: 0 !important;
@@ -438,7 +439,7 @@
       .username {
         font-size: 15px !important;
         font-weight: 700 !important;
-        color: #212529 !important;
+        color: var(--heading-color, #212529) !important;
         line-height: 1.2 !important;
       }
 
@@ -501,19 +502,19 @@
     // Time & Meta
     .item-meta,
     .PostMeta {
-      color: #868E96 !important;
+      color: var(--muted-color, #868E96) !important;
       font-size: 12px !important;
       font-weight: 400 !important;
       margin: 0 !important;
       line-height: 1.2 !important;
 
       a {
-        color: #868E96 !important;
+        color: var(--muted-color, #868E96) !important;
         text-decoration: none !important;
       }
 
       time {
-        color: #868E96 !important;
+        color: var(--muted-color, #868E96) !important;
         font-size: 12px !important;
       }
     }
@@ -522,7 +523,7 @@
     .Post-edited {
       font-size: 12px !important;
       font-style: italic !important;
-      color: #868E96 !important;
+      color: var(--muted-color, #868E96) !important;
       margin: 0 4px !important;
     }
   }
@@ -533,7 +534,11 @@
     padding: 0 !important;
     font-size: 15px !important;
     line-height: 1.6 !important;
-    color: #212529 !important;
+    color: var(--text-color, #212529) !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
     overflow: visible !important;
     flex: 1 1 auto;
 
@@ -543,6 +548,21 @@
       &:last-child {
         margin-bottom: 0 !important;
       }
+    }
+
+    iframe,
+    img,
+    video,
+    [data-s9e-mediaembed],
+    .PostMention-preview {
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    table {
+      display: block !important;
+      max-width: 100% !important;
+      overflow-x: auto !important;
     }
   }
 
@@ -565,8 +585,9 @@
 
     > ul {
       display: flex !important;
+      flex-wrap: wrap !important;
       align-items: center !important;
-      gap: 12px !important;
+      gap: 8px 12px !important;
       margin: 0 !important;
       padding: 0 !important;
       list-style: none !important;
@@ -581,13 +602,13 @@
     }
 
     .Button--link {
-      color: #868E96 !important;
+      color: var(--muted-color, #868E96) !important;
       font-size: 13px !important;
       padding: 0 !important;
       text-decoration: none !important;
 
       &:hover {
-        color: #212529 !important;
+        color: var(--text-color, #212529) !important;
       }
     }
 
@@ -595,11 +616,11 @@
       position: relative !important;
 
       .Dropdown-toggle {
-        color: #868E96 !important;
+        color: var(--muted-color, #868E96) !important;
         padding: 4px !important;
 
         &:hover {
-          color: #212529 !important;
+          color: var(--text-color, #212529) !important;
         }
       }
 
@@ -742,6 +763,44 @@ html[data-itqan-theme='dark'] {
   }
 }
 
+// Deleted comment placeholder styling (Option A)
+.itqan-deleted-post-notice {
+  color: var(--muted-color) !important;
+  font-style: italic;
+  margin: 0 !important;
+}
+
+.Post--hidden {
+  opacity: 0.75;
+
+  .VoteButtons--vertical {
+    display: none !important;
+  }
+}
+
+// Touch target enhancement for touchscreen devices (smartphones, iPads, tablets)
+@media (pointer: coarse) {
+  .VoteButtons-button {
+    touch-action: manipulation;
+  }
+
+  .VoteButtons--vertical .VoteButtons-button {
+    width: 32px !important;
+    height: 30px !important;
+
+    .Button-icon {
+      font-size: 14px !important;
+    }
+  }
+
+  .Post-actions .Button--link {
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 4px !important;
+  }
+}
+
 // Mobile responsive adjustments
 @media (max-width: 767.98px) {
   .CommentPost.Post,
@@ -763,8 +822,8 @@ html[data-itqan-theme='dark'] {
       width: 36px !important;
 
       .VoteButtons-button {
-        width: 24px !important;
-        height: 22px !important;
+        width: 30px !important;
+        height: 28px !important;
 
         .Button-icon {
           font-size: 12px !important;
@@ -777,3 +836,78 @@ html[data-itqan-theme='dark'] {
     }
   }
 }
+
+// In-body PostMention modern pill styling
+.Post-body .PostMention {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  color: #137333 !important;
+  background: #E6F4EA !important;
+  border: none !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
+  text-decoration: none !important;
+  transition: background-color 0.15s ease, opacity 0.15s ease !important;
+
+  &:hover {
+    background: darken(#E6F4EA, 5%) !important;
+    color: darken(#137333, 5%) !important;
+  }
+}
+
+html[data-itqan-theme='dark'] .Post-body .PostMention {
+  background: rgba(19, 115, 51, 0.25) !important;
+  color: #81c995 !important;
+
+  &:hover {
+    background: rgba(19, 115, 51, 0.35) !important;
+    color: #a8dab5 !important;
+  }
+}
+
+// Main Post (OP) horizontal VoteButtons chip inside .Post-actions
+.Post-actions .VoteButtons {
+  background: var(--control-bg, #f1f3f4);
+  border: 1px solid var(--control-bg-shaded, #e8eaed);
+  border-radius: 9999px;
+  padding: 2px 6px;
+  gap: 4px;
+  height: 32px;
+  box-sizing: border-box;
+
+  .VoteButtons-button {
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .Button-icon {
+      font-size: 11px;
+    }
+  }
+
+  .VoteButtons-score {
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 20px;
+    padding: 0 4px;
+  }
+}
+
+html[data-itqan-theme='dark'] .Post-actions .VoteButtons {
+  background: #21262d;
+  border-color: #30363d;
+
+  .VoteButtons-score {
+    color: #f0f6fc;
+  }
+}
+

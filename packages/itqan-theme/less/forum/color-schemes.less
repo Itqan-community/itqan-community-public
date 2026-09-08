@@ -37,13 +37,14 @@
   @t-code-color:           lighten(@t-text, 30%);
   @t-yiq-threshold:        150;
   @t-color-scheme:         light;
+  @t-title-mix:            55%;
 }
 
 .itqan-scheme(@dark) when (@dark = true) {
   @t-body-bg:              @body-bg-dark;
   @t-text:                 #ddd;
-  @t-muted:                hsl(@secondary-hue, min(15%, @secondary-sat), 50%);
-  @t-muted-more:           hsl(@secondary-hue, min(10%, @secondary-sat), 40%);
+  @t-muted:                hsl(@secondary-hue, min(15%, @secondary-sat), 55%);
+  @t-muted-more:           hsl(@secondary-hue, min(12%, @secondary-sat), 60%);
   // Core derives this as `darken(@muted-color, 50%)`, which lands on near-black
   // — invisible against a dark control (it is the checkbox loading state).
   @t-muted-dark:           lighten(@t-muted, 25%);
@@ -55,6 +56,7 @@
   @t-code-color:           #fff;
   @t-yiq-threshold:        108;
   @t-color-scheme:         dark;
+  @t-title-mix:            85%;
 }
 
 // A dark brand colour is fine as a button fill on white, but as link text on a
@@ -130,7 +132,7 @@
   --hero-bg:                       @t-control-bg;
   --hero-color:                    @t-control-color;
 
-  --discussion-title-color:        mix(@t-text, @t-body-bg, 55%);
+  --discussion-title-color:        mix(@t-text, @t-body-bg, @t-title-mix);
   --discussion-list-item-bg-hover: mix(@t-control-bg, @t-body-bg, 50%);
 
   // Core hardcodes the primary button's label to `@body-bg`, which disappears

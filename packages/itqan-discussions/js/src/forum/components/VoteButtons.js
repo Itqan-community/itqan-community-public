@@ -39,6 +39,7 @@ export default class VoteButtons extends Component {
           'VoteButtons--saving': this.saving,
           'VoteButtons--vertical': this.attrs.vertical,
         })}
+        ontouchstart={(e) => e.stopPropagation()}
       >
         {this.button(UP, this.attrs.vertical ? 'fas fa-caret-up' : 'fas fa-arrow-up', mine === UP, 'up')}
         {/* Coloured by what this reader did, not by the sign of the total: a
@@ -64,6 +65,7 @@ export default class VoteButtons extends Component {
   }
 
   button(value, icon, active, name) {
+    const label = extractText(app.translator.trans(`itqan-discussions.forum.vote.${name}`));
     return (
       <Button
         className={classList('Button Button--icon Button--link VoteButtons-button', `VoteButtons-button--${name}`, {
@@ -71,7 +73,7 @@ export default class VoteButtons extends Component {
         })}
         icon={icon}
         aria-pressed={active ? 'true' : 'false'}
-        title={extractText(app.translator.trans(`itqan-discussions.forum.vote.${name}`))}
+        aria-label={label}
         onclick={() => this.vote(value)}
       />
     );
@@ -97,10 +99,18 @@ export default class VoteButtons extends Component {
     // Applied before the request so the arrow answers the finger immediately.
     // `pushAttributes` writes into the store, so every component showing this
     // post updates, not just this one.
+    const newVotes = previous.votes - previous.userVote + next;
     model.pushAttributes({
-      votes: previous.votes - previous.userVote + next,
+      votes: newVotes,
       userVote: next,
     });
+    if (typeof model.discussion === 'function' && model.discussion()) {
+      model.discussion().pushAttributes({
+        votes: newVotes,
+        userVote: next,
+      });
+    }
+    m.redraw();
 
     this.saving = true;
 
@@ -119,15 +129,21 @@ export default class VoteButtons extends Component {
         // same score is a separate record and has to be told.
         const authoritative = result?.data?.attributes?.votes;
 
-        if (authoritative !== undefined && model.data?.type !== 'posts') {
-          model.pushAttributes({ votes: authoritative, userVote: next });
+        if (authoritative !== undefined) {
+          if (model.data?.type !== 'posts') {
+            model.pushAttributes({ votes: authoritative, userVote: next });
+          } else if (typeof model.discussion === 'function' && model.discussion()) {
+            // If voting on a post (such as OP), also push attributes to the discussion model
+            const disc = model.discussion();
+            disc.pushAttributes({ votes: authoritative, userVote: next });
+          }
         }
       })
       .catch((error) => {
         model.pushAttributes(previous);
-        throw error;
+        m.redraw();
       })
-      .then(() => {
+      .finally(() => {
         this.saving = false;
         m.redraw();
       });

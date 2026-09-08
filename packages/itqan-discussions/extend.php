@@ -10,6 +10,7 @@ use Flarum\Extend;
 use Flarum\Post\Event\Deleted;
 use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
+use Flarum\User\User;
 use Itqan\Discussions\Access\PostPolicy;
 use Itqan\Discussions\Api\VoteController;
 use Itqan\Discussions\Listener\SaveParentIdToPost;
@@ -36,8 +37,37 @@ return [
     (new Extend\Policy())
         ->modelPolicy(Post::class, PostPolicy::class),
 
+    // Preserve thread tree for deleted comments that have nested replies (Option A)
+    (new Extend\ModelVisibility(Post::class))
+        ->scope(function (User $actor, $query) {
+            if (! $actor->hasPermission('discussion.hidePosts')) {
+                $queryBuilder = $query->getQuery();
+                if (isset($queryBuilder->wheres)) {
+                    foreach ($queryBuilder->wheres as &$where) {
+                        if (isset($where['type']) && $where['type'] === 'Nested' && isset($where['query']->wheres)) {
+                            foreach ($where['query']->wheres as $subWhere) {
+                                if (isset($subWhere['column']) && $subWhere['column'] === 'posts.hidden_at') {
+                                    $where['query']->orWhere(function ($subQ) {
+                                        $subQ->whereNotNull('posts.hidden_at')
+                                             ->where('posts.reply_count', '>', 0);
+                                    });
+                                    break 2;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }),
+
     // BasicPostSerializer attributes for threaded / nested replies
     (new Extend\ApiSerializer(BasicPostSerializer::class))
+        ->attribute('contentHtml', function (BasicPostSerializer $serializer, Post $post, array $attributes) {
+            if ($post->hidden_at && ! $serializer->getActor()->can('edit', $post) && ! $serializer->getActor()->hasPermission('discussion.hidePosts')) {
+                return '<p class="itqan-deleted-post-notice"><em>[تم حذف هذا التعليق]</em></p>';
+            }
+            return $attributes['contentHtml'] ?? null;
+        })
         ->attribute('parentId', function (BasicPostSerializer $serializer, Post $post) {
             return $post->parent_id ? (int) $post->parent_id : null;
         })

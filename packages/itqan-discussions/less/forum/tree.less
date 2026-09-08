@@ -16,9 +16,7 @@
   padding-block: 0 !important;
   opacity: 1;
   overflow: visible; // Keep visible so dropdowns/menus are not clipped
-  transition: opacity 0.2s ease, 
-              margin 0.3s ease, 
-              padding 0.3s ease;
+  transition: opacity 0.2s ease;
 
   &[data-thread-depth],
   &:has(.CommentPost[data-thread-depth]) {
@@ -66,16 +64,15 @@
   }
 }
 
-// Hide redundant native in-body PostMention if comment is already nested
-.CommentPost[data-thread-depth],
-.PostStream-item[data-thread-depth] .CommentPost {
+// Hide redundant native in-body PostMention if comment is replying/nested
+.CommentPost {
   .Post-body > p:first-child > .PostMention:first-child {
     display: none !important;
   }
 }
 
 // Mobile responsive compact indentation
-@media (max-width: 767px) {
+@media @phone {
   .PostStream-item {
     &[data-thread-depth],
     &:has(.CommentPost[data-thread-depth]) {
@@ -182,3 +179,57 @@ html[data-itqan-theme='dark'] {
     }
   }
 }
+
+// Load More & Load Previous Button Positioning in Flex PostStream
+.PostStream-loadMore {
+  order: 99998 !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin: 16px 0 !important;
+  width: 100% !important;
+
+  .Button {
+    min-height: 40px;
+    padding: 8px 24px;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 14px;
+    background: fade(@config-primary-color, 10%);
+    color: @config-primary-color;
+    border: 1px solid fade(@config-primary-color, 30%);
+    transition: all 0.2s ease;
+
+    &:hover, &:focus {
+      background: @config-primary-color;
+      color: #fff;
+      border-color: @config-primary-color;
+    }
+  }
+}
+
+.PostStream-loadPrevious {
+  order: -1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin: 16px 0 !important;
+  width: 100% !important;
+
+  .Button {
+    min-height: 40px;
+    padding: 8px 24px;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 14px;
+    background: fade(@config-primary-color, 10%);
+    color: @config-primary-color;
+    border: 1px solid fade(@config-primary-color, 30%);
+    transition: all 0.2s ease;
+
+    &:hover, &:focus {
+      background: @config-primary-color;
+      color: #fff;
+      border-color: @config-primary-color;
+    }
+  }
+}
+
