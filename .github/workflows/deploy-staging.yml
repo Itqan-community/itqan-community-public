@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to staging-new.community.itqan.dev
+    name: Deploy to staging.community.itqan.dev
     runs-on: ubuntu-latest
     steps:
       - name: Deploy over SSH
@@ -106,7 +106,7 @@ jobs:
           # 401 counts as healthy here: it proves nginx + php-fpm answered and
           # Basic Auth is enforced, without needing the password as a CI secret.
           for i in $(seq 1 10); do
-            code=$(curl -k -s -o /dev/null -w "%{http_code}" "https://$SSH_HOST" --resolve staging-new.community.itqan.dev:443:"$SSH_HOST" || true)
+            code=$(curl -k -s -o /dev/null -w "%{http_code}" "https://$SSH_HOST" --resolve staging.community.itqan.dev:443:"$SSH_HOST" || true)
             if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ] || [ "$code" = "401" ]; then
               echo "Staging responded with $code"
               exit 0
