@@ -179,3 +179,57 @@ html[data-itqan-theme='dark'] {
     }
   }
 }
+
+// Load More & Load Previous Button Positioning in Flex PostStream
+.PostStream-loadMore {
+  order: 99998 !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin: 16px 0 !important;
+  width: 100% !important;
+
+  .Button {
+    min-height: 40px;
+    padding: 8px 24px;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 14px;
+    background: fade(@config-primary-color, 10%);
+    color: @config-primary-color;
+    border: 1px solid fade(@config-primary-color, 30%);
+    transition: all 0.2s ease;
+
+    &:hover, &:focus {
+      background: @config-primary-color;
+      color: #fff;
+      border-color: @config-primary-color;
+    }
+  }
+}
+
+.PostStream-loadPrevious {
+  order: -1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin: 16px 0 !important;
+  width: 100% !important;
+
+  .Button {
+    min-height: 40px;
+    padding: 8px 24px;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 14px;
+    background: fade(@config-primary-color, 10%);
+    color: @config-primary-color;
+    border: 1px solid fade(@config-primary-color, 30%);
+    transition: all 0.2s ease;
+
+    &:hover, &:focus {
+      background: @config-primary-color;
+      color: #fff;
+      border-color: @config-primary-color;
+    }
+  }
+}
+

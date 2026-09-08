@@ -55,6 +55,19 @@ app.initializers.add('itqan-discussions', () => {
     map.hot = '-hotness';
   });
 
+  // Ensure clicking a discussion from the list always opens at Post #1 (OP)
+  // unless a search query is active (in which case it jumps to the most relevant post).
+  DiscussionListItem.prototype.getJumpTo = function () {
+    const discussion = this.attrs.discussion;
+    if (this.attrs.params && this.attrs.params.q) {
+      const post = discussion.mostRelevantPost();
+      if (post) {
+        return post.number();
+      }
+    }
+    return 1;
+  };
+
   extend(DiscussionListItem.prototype, 'contentItems', function (items) {
     const discussion = this.attrs.discussion;
     if (discussion.attribute('votes') === undefined) return;
