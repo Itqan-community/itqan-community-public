@@ -1,0 +1,296 @@
+// Itqan Theme - Newsletter Footer Redesign
+// Styles the MailerLite embed container into a modern, compact, comfortable card.
+
+div#mlb2-29840832.ml-form-embedContainer,
+.ml-form-embedContainer.ml-subscribe-form {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 36px auto 28px auto !important;
+  padding: 0 16px !important;
+  font-family: inherit !important;
+  display: block !important;
+
+  .ml-form-align-center {
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .ml-form-embedWrapper,
+  .ml-form-embedWrapper.embedForm {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 760px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    padding: 24px 28px !important;
+    margin: 0 !important;
+    display: block !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+
+  .ml-form-embedBody,
+  .ml-form-embedBody.ml-form-embedBodyDefault {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  // Header content (Title & Description)
+  .ml-form-embedContent {
+    text-align: center !important;
+    margin: 0 0 18px 0 !important;
+
+    h4 {
+      font-size: 19px !important;
+      font-weight: 700 !important;
+      line-height: 1.4 !important;
+      color: #111827 !important;
+      margin: 0 0 6px 0 !important;
+      font-family: inherit !important;
+    }
+
+    p {
+      font-size: 13.5px !important;
+      line-height: 1.6 !important;
+      color: #4b5563 !important;
+      margin: 0 auto !important;
+      max-width: 580px !important;
+      font-family: inherit !important;
+    }
+  }
+
+  // Form block layout
+  .ml-block-form {
+    margin: 0 !important;
+  }
+
+  .ml-form-formContent {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .ml-form-fieldRow {
+    flex: 1 1 0% !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+
+    .ml-field-group {
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    input.form-control {
+      box-sizing: border-box !important;
+      width: 100% !important;
+      height: 42px !important;
+      padding: 8px 14px !important;
+      font-size: 13.5px !important;
+      font-family: inherit !important;
+      line-height: 1.4 !important;
+      color: #1f2937 !important;
+      background-color: #f9fafb !important;
+      border: 1px solid #d1d5db !important;
+      border-radius: 8px !important;
+      outline: none !important;
+      box-shadow: none !important;
+      transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
+
+      &::placeholder {
+        color: #9ca3af !important;
+      }
+
+      &:focus {
+        border-color: #0f8264 !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 2px rgba(15, 130, 100, 0.15) !important;
+      }
+    }
+  }
+
+  // Submit button
+  .ml-form-embedSubmit {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+
+    button.primary {
+      box-sizing: border-box !important;
+      height: 42px !important;
+      padding: 0 24px !important;
+      background: #0f8264 !important;
+      color: #ffffff !important;
+      border: 1px solid #0f8264 !important;
+      border-radius: 8px !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: background-color 0.15s ease, transform 0.1s ease !important;
+      white-space: nowrap !important;
+      letter-spacing: normal !important;
+
+      &:hover {
+        background: #0a654e !important;
+        border-color: #0a654e !important;
+      }
+
+      &:active {
+        transform: scale(0.98) !important;
+      }
+    }
+
+    button.loading {
+      height: 42px !important;
+      padding: 0 24px !important;
+      border-radius: 8px !important;
+      background: #0f8264 !important;
+      color: #ffffff !important;
+      border: none !important;
+    }
+  }
+
+  // Success Message Body
+  .ml-form-successBody {
+    padding: 16px 0 !important;
+    text-align: center !important;
+
+    .ml-form-successContent {
+      h4 {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: #0f8264 !important;
+        margin: 0 0 6px 0 !important;
+      }
+
+      p {
+        font-size: 14px !important;
+        color: #4b5563 !important;
+        margin: 0 !important;
+      }
+    }
+  }
+
+  // Mobile layout (< 640px)
+  @media (max-width: 639.98px) {
+    margin: 24px auto 60px auto !important;
+
+    .ml-form-embedWrapper,
+    .ml-form-embedWrapper.embedForm {
+      padding: 20px 16px !important;
+      border-radius: 10px !important;
+    }
+
+    .ml-form-embedContent {
+      margin-bottom: 14px !important;
+
+      h4 {
+        font-size: 17px !important;
+      }
+
+      p {
+        font-size: 12.5px !important;
+      }
+    }
+
+    .ml-form-formContent {
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+
+    .ml-form-fieldRow {
+      width: 100% !important;
+      flex: 1 1 100% !important;
+
+      input.form-control {
+        height: 40px !important;
+        font-size: 13px !important;
+      }
+    }
+
+    .ml-form-embedSubmit {
+      width: 100% !important;
+
+      button.primary,
+      button.loading {
+        width: 100% !important;
+        height: 40px !important;
+      }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Dark Mode Overrides
+// --------------------------------------------------------------------------
+html[data-itqan-theme='dark'] div#mlb2-29840832.ml-form-embedContainer,
+html[data-itqan-theme='dark'] .ml-form-embedContainer.ml-subscribe-form {
+  .ml-form-embedWrapper,
+  .ml-form-embedWrapper.embedForm {
+    background: #161b22 !important;
+    border-color: #30363d !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .ml-form-embedContent {
+    h4 {
+      color: #f0f6fc !important;
+    }
+
+    p {
+      color: #8b949e !important;
+    }
+  }
+
+  .ml-form-fieldRow {
+    input.form-control {
+      background-color: #0d1117 !important;
+      border-color: #30363d !important;
+      color: #e6edf3 !important;
+
+      &::placeholder {
+        color: #6e7681 !important;
+      }
+
+      &:focus {
+        border-color: #146C60 !important;
+        background-color: #161b22 !important;
+        box-shadow: 0 0 0 2px rgba(20, 108, 96, 0.25) !important;
+      }
+    }
+  }
+
+  .ml-form-embedSubmit {
+    button.primary {
+      background: #146C60 !important;
+      border-color: #146C60 !important;
+      color: #ffffff !important;
+
+      &:hover {
+        background: #0f8264 !important;
+        border-color: #0f8264 !important;
+      }
+    }
+
+    button.loading {
+      background: #146C60 !important;
+    }
+  }
+
+  .ml-form-successBody .ml-form-successContent {
+    h4 {
+      color: #3fb950 !important;
+    }
+
+    p {
+      color: #8b949e !important;
+    }
+  }
+}

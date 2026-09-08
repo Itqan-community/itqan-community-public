@@ -5,6 +5,17 @@
   display: none;
 }
 
+// Suppress UserCard hover popup on mobile & touch screens
+@media (max-width: 767.98px), (pointer: coarse) {
+  .PostUser .UserCard,
+  .UserCard--popover {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+}
+
 body {
   font-family: "Noto Sans Arabic", sans-serif;
   font-optical-sizing: auto;
