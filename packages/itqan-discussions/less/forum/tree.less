@@ -16,9 +16,7 @@
   padding-block: 0 !important;
   opacity: 1;
   overflow: visible; // Keep visible so dropdowns/menus are not clipped
-  transition: opacity 0.2s ease, 
-              margin 0.3s ease, 
-              padding 0.3s ease;
+  transition: opacity 0.2s ease;
 
   &[data-thread-depth],
   &:has(.CommentPost[data-thread-depth]) {
@@ -75,7 +73,7 @@
 }
 
 // Mobile responsive compact indentation
-@media (max-width: 767px) {
+@media @phone {
   .PostStream-item {
     &[data-thread-depth],
     &:has(.CommentPost[data-thread-depth]) {

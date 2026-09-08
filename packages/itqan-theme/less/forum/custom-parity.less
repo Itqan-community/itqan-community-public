@@ -49,17 +49,6 @@ body {
   box-sizing: border-box;
 }
 
-// 4-Column Tag Grid
-.TagTiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.TagTile {
-  width: 100% !important;
-}
-
 :root {
   --primary: #064e3b;
   --primary-light: #0a6b51;
@@ -204,7 +193,9 @@ body {
 
 @media (max-width: 420px) {
   .notify-popup {
-    width: calc(68%);
+    width: calc(92%);
+    max-width: 360px;
+    padding: 18px 16px;
     right: 50%;
   }
 
@@ -233,13 +224,13 @@ body {
   border-radius: 20px;
   padding: 16px;
   transition: 0.1s border ease-out;
-  background: #fff;
+  background: var(--body-bg-light, #fff);
 
   @media (min-width: 768px) {
     &:hover {
       box-shadow: 0 3px 10px -2px #00000047;
       border-inline-start: 6px solid #0f8264;
-      background: #fcfffe;
+      background: var(--control-bg-light, #fcfffe);
     }
   }
 }
@@ -253,7 +244,7 @@ button {
     margin-bottom: 54px !important;
   }
   .App-content {
-    background-color: #fff0;
+    background-color: transparent;
   }
 }
 
@@ -263,6 +254,11 @@ button {
   flex-direction: column;
   padding: 24px;
   gap: 12px;
+
+  @media @phone {
+    padding: 12px 0;
+    gap: 8px;
+  }
 }
 
 .PostStream-item {

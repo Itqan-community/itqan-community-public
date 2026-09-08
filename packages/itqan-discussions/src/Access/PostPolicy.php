@@ -24,5 +24,28 @@ class PostPolicy extends AbstractPolicy
         if (! $post->isVisibleTo($actor)) {
             return $this->deny();
         }
+
+        return $this->allow();
+    }
+
+    /**
+     * Users can always edit their own comments as long as they can reply in
+     * the discussion and the comment has not been hidden by a moderator.
+     */
+    public function edit(User $actor, Post $post)
+    {
+        if ($post->user_id === $actor->id && (! $post->hidden_at || $post->hidden_user_id === $actor->id) && $actor->can('reply', $post->discussion)) {
+            return $this->allow();
+        }
+    }
+
+    /**
+     * Users can always delete (hide) their own comments even if it has nested replies.
+     */
+    public function hide(User $actor, Post $post)
+    {
+        if ($post->user_id === $actor->id && (! $post->hidden_at || $post->hidden_user_id === $actor->id) && $actor->can('reply', $post->discussion)) {
+            return $this->allow();
+        }
     }
 }

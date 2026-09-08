@@ -39,6 +39,7 @@ export default class VoteButtons extends Component {
           'VoteButtons--saving': this.saving,
           'VoteButtons--vertical': this.attrs.vertical,
         })}
+        ontouchstart={(e) => e.stopPropagation()}
       >
         {this.button(UP, this.attrs.vertical ? 'fas fa-caret-up' : 'fas fa-arrow-up', mine === UP, 'up')}
         {/* Coloured by what this reader did, not by the sign of the total: a
@@ -64,6 +65,7 @@ export default class VoteButtons extends Component {
   }
 
   button(value, icon, active, name) {
+    const label = extractText(app.translator.trans(`itqan-discussions.forum.vote.${name}`));
     return (
       <Button
         className={classList('Button Button--icon Button--link VoteButtons-button', `VoteButtons-button--${name}`, {
@@ -71,7 +73,7 @@ export default class VoteButtons extends Component {
         })}
         icon={icon}
         aria-pressed={active ? 'true' : 'false'}
-        title={extractText(app.translator.trans(`itqan-discussions.forum.vote.${name}`))}
+        aria-label={label}
         onclick={() => this.vote(value)}
       />
     );
@@ -101,6 +103,7 @@ export default class VoteButtons extends Component {
       votes: previous.votes - previous.userVote + next,
       userVote: next,
     });
+    m.redraw();
 
     this.saving = true;
 
@@ -125,9 +128,9 @@ export default class VoteButtons extends Component {
       })
       .catch((error) => {
         model.pushAttributes(previous);
-        throw error;
+        m.redraw();
       })
-      .then(() => {
+      .finally(() => {
         this.saving = false;
         m.redraw();
       });
