@@ -99,10 +99,17 @@ export default class VoteButtons extends Component {
     // Applied before the request so the arrow answers the finger immediately.
     // `pushAttributes` writes into the store, so every component showing this
     // post updates, not just this one.
+    const newVotes = previous.votes - previous.userVote + next;
     model.pushAttributes({
-      votes: previous.votes - previous.userVote + next,
+      votes: newVotes,
       userVote: next,
     });
+    if (typeof model.discussion === 'function' && model.discussion()) {
+      model.discussion().pushAttributes({
+        votes: newVotes,
+        userVote: next,
+      });
+    }
     m.redraw();
 
     this.saving = true;
@@ -122,8 +129,14 @@ export default class VoteButtons extends Component {
         // same score is a separate record and has to be told.
         const authoritative = result?.data?.attributes?.votes;
 
-        if (authoritative !== undefined && model.data?.type !== 'posts') {
-          model.pushAttributes({ votes: authoritative, userVote: next });
+        if (authoritative !== undefined) {
+          if (model.data?.type !== 'posts') {
+            model.pushAttributes({ votes: authoritative, userVote: next });
+          } else if (typeof model.discussion === 'function' && model.discussion()) {
+            // If voting on a post (such as OP), also push attributes to the discussion model
+            const disc = model.discussion();
+            disc.pushAttributes({ votes: authoritative, userVote: next });
+          }
         }
       })
       .catch((error) => {

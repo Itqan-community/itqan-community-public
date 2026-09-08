@@ -125,16 +125,25 @@ app.initializers.add('itqan-discussions', () => {
     const post = this.attrs ? this.attrs.post : null;
     if (!post) return;
 
-    const parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
+    let parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
+    let parentUser = null;
+
     if (parentId) {
       const parentPost = app.store ? app.store.getById('posts', String(parentId)) : null;
-      // Guard: Do NOT show reply badge if parent is OP
-      if (parentPost && isMainPost(parentPost)) {
-        return;
+      parentUser = parentPost && parentPost.user && parentPost.user() ? parentPost.user().displayName() : null;
+    } else {
+      // Legacy fallback: parse leading <a class="PostMention" data-id="...">@username</a> from contentHtml
+      const html = (typeof post.contentHtml === 'function') ? post.contentHtml() : (post.attribute && post.attribute('contentHtml'));
+      if (html) {
+        const match = html.match(/^\s*<p>\s*<a\s+[^>]*class="[^"]*PostMention[^"]*"[^>]*data-id="(\d+)"[^>]*>([^<]+)<\/a>/i);
+        if (match) {
+          parentId = match[1];
+          parentUser = match[2].trim().replace(/^@/, '');
+        }
       }
+    }
 
-      const parentUser = parentPost && parentPost.user && parentPost.user() ? parentPost.user().displayName() : null;
-
+    if (parentId) {
       items.add(
         'itqan-reply-badge',
         m(
@@ -177,6 +186,15 @@ app.initializers.add('itqan-discussions', () => {
     const isOP = isMainPost(post);
     const replyCount = (typeof post.replyCount === 'function') ? (post.replyCount() || 0) : 0;
     const isCollapsed = app.itqanCollapsedThreads.has(postIdStr);
+
+    // On OP (Post #1), add horizontal vote buttons inside the action bar
+    if (isOP && !post.isHidden() && post.attribute('votes') !== undefined) {
+      items.add(
+        'itqanVote',
+        m(VoteButtons, { model: post, postId: post.id(), vertical: false }),
+        50
+      );
+    }
 
     // Dynamic collapse/expand pill button (Only on comments with child replies, not OP)
     if (!isOP && replyCount > 0) {

@@ -64,9 +64,8 @@
   }
 }
 
-// Hide redundant native in-body PostMention if comment is already nested
-.CommentPost[data-thread-depth],
-.PostStream-item[data-thread-depth] .CommentPost {
+// Hide redundant native in-body PostMention if comment is replying/nested
+.CommentPost {
   .Post-body > p:first-child > .PostMention:first-child {
     display: none !important;
   }

@@ -836,3 +836,78 @@ html[data-itqan-theme='dark'] {
     }
   }
 }
+
+// In-body PostMention modern pill styling
+.Post-body .PostMention {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  color: #137333 !important;
+  background: #E6F4EA !important;
+  border: none !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
+  text-decoration: none !important;
+  transition: background-color 0.15s ease, opacity 0.15s ease !important;
+
+  &:hover {
+    background: darken(#E6F4EA, 5%) !important;
+    color: darken(#137333, 5%) !important;
+  }
+}
+
+html[data-itqan-theme='dark'] .Post-body .PostMention {
+  background: rgba(19, 115, 51, 0.25) !important;
+  color: #81c995 !important;
+
+  &:hover {
+    background: rgba(19, 115, 51, 0.35) !important;
+    color: #a8dab5 !important;
+  }
+}
+
+// Main Post (OP) horizontal VoteButtons chip inside .Post-actions
+.Post-actions .VoteButtons {
+  background: var(--control-bg, #f1f3f4);
+  border: 1px solid var(--control-bg-shaded, #e8eaed);
+  border-radius: 9999px;
+  padding: 2px 6px;
+  gap: 4px;
+  height: 32px;
+  box-sizing: border-box;
+
+  .VoteButtons-button {
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .Button-icon {
+      font-size: 11px;
+    }
+  }
+
+  .VoteButtons-score {
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 20px;
+    padding: 0 4px;
+  }
+}
+
+html[data-itqan-theme='dark'] .Post-actions .VoteButtons {
+  background: #21262d;
+  border-color: #30363d;
+
+  .VoteButtons-score {
+    color: #f0f6fc;
+  }
+}
+
