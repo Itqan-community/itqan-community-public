@@ -227,7 +227,7 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  inset-inline-start: calc(35px + var(--rail-col, 0) * @thread-indent-unit);
+  inset-inline-start: ~"calc(35px + var(--rail-col, 0) * @{thread-indent-unit})";
   background-color: var(--rail-color, @itqan-border-line);
   pointer-events: auto;
   cursor: pointer;
@@ -273,7 +273,7 @@
   }
 
   .itqan-thread-rail {
-    inset-inline-start: calc(27px + var(--rail-col, 0) * @thread-indent-mobile-unit) !important;
+    inset-inline-start: ~"calc(27px + var(--rail-col, 0) * @{thread-indent-mobile-unit}) !important";
 
     &--self {
       top: 44px;
