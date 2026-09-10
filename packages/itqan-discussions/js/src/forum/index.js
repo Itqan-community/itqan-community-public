@@ -13,6 +13,7 @@ import extractText from 'flarum/common/utils/extractText';
 
 import VoteButtons from './components/VoteButtons';
 import { getPostDepth, isDescendantOfCollapsed, reorderStreamTree } from './components/CommentTree';
+import { getPostRails } from './utils/AvatarColor';
 
 export { default as VoteButtons } from './components/VoteButtons';
 export * from './components/CommentTree';
@@ -55,6 +56,19 @@ app.initializers.add('itqan-discussions', () => {
     map.hot = '-hotness';
   });
 
+  // Ensure clicking a discussion from the list always opens at Post #1 (OP)
+  // unless a search query is active (in which case it jumps to the most relevant post).
+  DiscussionListItem.prototype.getJumpTo = function () {
+    const discussion = this.attrs.discussion;
+    if (this.attrs.params && this.attrs.params.q) {
+      const post = discussion.mostRelevantPost();
+      if (post) {
+        return post.number();
+      }
+    }
+    return 1;
+  };
+
   extend(DiscussionListItem.prototype, 'contentItems', function (items) {
     const discussion = this.attrs.discussion;
     if (discussion.attribute('votes') === undefined) return;
@@ -66,15 +80,7 @@ app.initializers.add('itqan-discussions', () => {
     );
   });
 
-  extend(CommentPost.prototype, 'contentItems', function (items) {
-    const post = this.attrs.post;
-    if (!post || post.isHidden() || post.attribute('votes') === undefined) return;
-
-    // Do NOT render votes on the main post itself (OP)
-    if (isMainPost(post)) return;
-
-    items.add('itqanVote', <VoteButtons model={post} postId={post.id()} vertical />, 120);
-  });
+  // Vote buttons are rendered horizontally in actionItems (Reddit-style)
 
   // ==========================================
   // 2. Threaded / Nested Replies Extension
@@ -118,23 +124,138 @@ app.initializers.add('itqan-discussions', () => {
     extend(PostStream.prototype, 'onupdate', () => {
       reorderStreamTree();
     });
+    extend(PostStream.prototype, 'view', function (vnode) {
+      if (!vnode || !vnode.children || !Array.isArray(vnode.children)) return;
+
+      const children = vnode.children;
+      if (children.length === 0) return;
+
+      let opVnode = null;
+      let afterFirstPostVnode = null;
+      let rest = [];
+
+      const firstChild = children[0];
+      if (firstChild && firstChild.tag === '[') {
+        const fragChildren = Array.isArray(firstChild.children) ? firstChild.children : [];
+        opVnode = fragChildren[0] || null;
+        afterFirstPostVnode = fragChildren[1] || null;
+        rest = children.slice(1);
+      } else {
+        const isOp = firstChild && firstChild.attrs && (firstChild.attrs['data-number'] === 1 || firstChild.attrs['data-number'] === '1');
+        if (isOp) {
+          opVnode = firstChild;
+          rest = children.slice(1);
+        } else {
+          opVnode = null;
+          rest = children;
+        }
+      }
+
+      const commentCardChildren = [];
+      if (afterFirstPostVnode) {
+        commentCardChildren.push(afterFirstPostVnode);
+      }
+      commentCardChildren.push(...rest);
+
+      if (commentCardChildren.length > 0) {
+        const commentsCard = m('div', { className: 'itqan-comments-card', key: 'itqan-comments-card' }, commentCardChildren);
+        vnode.children = opVnode ? [opVnode, commentsCard] : [commentsCard];
+      }
+    });
+    extend(PostStream.prototype, 'afterFirstPostItems', function (items) {
+      const discussion = this.discussion;
+      if (!discussion) return;
+      const postIds = (typeof discussion.postIds === 'function') ? discussion.postIds() : [];
+      if (!postIds || postIds.length <= 1) return;
+
+      const currentSort = app.itqanDiscussionSort || 'oldest';
+
+      items.add(
+        'itqan-thread-sort',
+        <div className="itqan-stream-sort-bar">
+          <div className="itqan-stream-sort-title">
+            <span>{app.translator.trans('itqan-discussions.forum.sort.label') || 'Sort by:'}</span>
+          </div>
+          <div className="itqan-thread-sort-wrapper">
+            <select
+              className="itqan-thread-sort-select"
+              value={currentSort}
+              onchange={(e) => {
+                app.itqanDiscussionSort = e.target.value;
+                reorderStreamTree();
+                m.redraw();
+              }}
+            >
+              <option value="oldest">{app.translator.trans('itqan-discussions.forum.sort.oldest') || 'الأقدم (افتراضي)'}</option>
+              <option value="top">{app.translator.trans('itqan-discussions.forum.sort.top') || 'الأعلى تقييماً'}</option>
+              <option value="latest">{app.translator.trans('itqan-discussions.forum.sort.latest') || 'الأحدث'}</option>
+            </select>
+          </div>
+        </div>,
+        50
+      );
+    });
   }
 
-  // Header Items: "رد على @اسم" context badge with smooth scroll to parent
+  // Continuous Unbroken Thread Guide Rails (Code-Editor / Reddit Style)
+  extend(CommentPost.prototype, 'contentItems', function (items) {
+    const post = this.attrs ? this.attrs.post : null;
+    if (!post || isMainPost(post)) return;
+
+    const rails = getPostRails(post);
+    if (!rails || rails.length === 0) return;
+
+    items.add(
+      'itqanThreadRails',
+      <div className="itqan-thread-rails" aria-hidden="true">
+        {rails.map((rail) => (
+          <div
+            key={`rail-${rail.postId}-${rail.col}`}
+            className="itqan-thread-rail"
+            data-rail-ancestor-id={rail.postId}
+            style={{
+              '--rail-col': rail.col,
+              '--rail-color': rail.color,
+            }}
+          />
+        ))}
+      </div>,
+      120
+    );
+  });
+
+  // Header Items: OP badge & "رد على @اسم" context badge with smooth scroll to parent
   extend(CommentPost.prototype, 'headerItems', function (items) {
     const post = this.attrs ? this.attrs.post : null;
     if (!post) return;
 
-    const parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
+    // OP author badge (Reddit-style)
+    const discussion = typeof post.discussion === 'function' ? post.discussion() : null;
+    const discUser = discussion && typeof discussion.user === 'function' ? discussion.user() : null;
+    const postUser = typeof post.user === 'function' ? post.user() : null;
+    if (discUser && postUser && discUser.id() && postUser.id() && String(discUser.id()) === String(postUser.id())) {
+      items.add('itqan-op-badge', <span className="itqan-op-badge">OP</span>, 85);
+    }
+
+    let parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
+    let parentUser = null;
+
     if (parentId) {
       const parentPost = app.store ? app.store.getById('posts', String(parentId)) : null;
-      // Guard: Do NOT show reply badge if parent is OP
-      if (parentPost && isMainPost(parentPost)) {
-        return;
+      parentUser = parentPost && parentPost.user && parentPost.user() ? parentPost.user().displayName() : null;
+    } else {
+      // Legacy fallback: parse leading <a class="PostMention" data-id="...">@username</a> from contentHtml
+      const html = (typeof post.contentHtml === 'function') ? post.contentHtml() : (post.attribute && post.attribute('contentHtml'));
+      if (html) {
+        const match = html.match(/^\s*<p>\s*<a\s+[^>]*class="[^"]*PostMention[^"]*"[^>]*data-id="(\d+)"[^>]*>([^<]+)<\/a>/i);
+        if (match) {
+          parentId = match[1];
+          parentUser = match[2].trim().replace(/^@/, '');
+        }
       }
+    }
 
-      const parentUser = parentPost && parentPost.user && parentPost.user() ? parentPost.user().displayName() : null;
-
+    if (parentId) {
       items.add(
         'itqan-reply-badge',
         m(
@@ -177,6 +298,15 @@ app.initializers.add('itqan-discussions', () => {
     const isOP = isMainPost(post);
     const replyCount = (typeof post.replyCount === 'function') ? (post.replyCount() || 0) : 0;
     const isCollapsed = app.itqanCollapsedThreads.has(postIdStr);
+
+    // Horizontal shaded vote buttons inside the action bar for all posts (Reddit-style)
+    if (!post.isHidden() && post.attribute('votes') !== undefined) {
+      items.add(
+        'itqanVote',
+        m(VoteButtons, { model: post, postId: post.id(), vertical: false }),
+        50
+      );
+    }
 
     // Dynamic collapse/expand pill button (Only on comments with child replies, not OP)
     if (!isOP && replyCount > 0) {

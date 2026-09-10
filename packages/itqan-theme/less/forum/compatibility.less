@@ -29,13 +29,27 @@ html[data-itqan-theme='dark'] {
     background: var(--body-bg-light);
   }
 
+  .DiscussionListItem:hover {
+    background: var(--control-bg) !important;
+  }
+
+  .pwa-banner {
+    background: var(--control-bg) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--text-color) !important;
+  }
+
   .notify-popup {
     background: var(--body-bg-light);
     color: var(--text-color);
   }
 
-  .close-btn:hover {
-    color: var(--text-color);
+  .close-btn {
+    color: var(--muted-color-light) !important;
+
+    &:hover {
+      color: var(--text-color) !important;
+    }
   }
 
   // -------------------------------------------------------------------------
