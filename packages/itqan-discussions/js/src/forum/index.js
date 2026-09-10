@@ -121,9 +121,14 @@ app.initializers.add('itqan-discussions', () => {
     extend(PostStream.prototype, 'oncreate', () => {
       reorderStreamTree();
     });
-    extend(PostStream.prototype, 'onupdate', () => {
-      reorderStreamTree();
-    });
+    // In threaded view, flex order arranges posts hierarchically rather than linearly.
+    // Disable automatic viewport scroll triggering of loadNext/loadPrevious which causes
+    // infinite re-fetch loops and erratic jumping. Loading more posts is explicitly handled via the Load More button.
+    PostStream.prototype.loadPostsIfNeeded = function () {
+      // Intentionally a no-op in threaded discussion layout.
+      // Posts are loaded via the explicit Load More button to prevent race loops.
+    };
+
     extend(PostStream.prototype, 'view', function (vnode) {
       if (!vnode || !vnode.children || !Array.isArray(vnode.children)) return;
 
