@@ -1,6 +1,7 @@
 <?php
 
 use Flarum\Api\Controller\ListDiscussionsController;
+use Flarum\Api\Controller\ListPostsController;
 use Flarum\Api\Controller\ShowDiscussionController;
 use Flarum\Api\Serializer\BasicPostSerializer;
 use Flarum\Api\Serializer\DiscussionSerializer;
@@ -140,10 +141,16 @@ return [
     (new Extend\ServiceProvider())
         ->register(SortMapProvider::class),
 
-    // Load post votes and tree posts for discussions
+    // Load post votes and tree posts for discussions with a 300 comments batch limit
     (new Extend\ApiController(ShowDiscussionController::class))
+        ->setLimit(300)
+        ->setMaxLimit(300)
         ->load(['posts.postVotes'])
         ->prepareDataForSerialization(LoadTreePostsRelationship::class),
+
+    (new Extend\ApiController(ListPostsController::class))
+        ->setLimit(300)
+        ->setMaxLimit(300),
 
     (new Extend\Console())
         ->command(BackfillParentIdsCommand::class),

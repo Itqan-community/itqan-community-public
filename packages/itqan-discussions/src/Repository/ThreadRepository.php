@@ -35,7 +35,7 @@ class ThreadRepository
         Discussion $discussion,
         User $actor,
         int $offset = 0,
-        int $limit = 20,
+        int $limit = 300,
         string $sort = 'oldest'
     ): array {
         // 1. Always load Post #1 (OP) first

@@ -4,6 +4,8 @@ import Model from 'flarum/common/Model';
 import Post from 'flarum/common/models/Post';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import PostStream from 'flarum/forum/components/PostStream';
+import DiscussionPage from 'flarum/forum/components/DiscussionPage';
+import PostStreamState from 'flarum/forum/states/PostStreamState';
 import ReplyComposer from 'flarum/forum/components/ReplyComposer';
 import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
@@ -200,6 +202,49 @@ app.initializers.add('itqan-discussions', () => {
         50
       );
     });
+  }
+
+  // Increase batch page size for loading comments to 300
+  if (PostStreamState) {
+    PostStreamState.loadCount = 300;
+  }
+
+  if (DiscussionPage && DiscussionPage.prototype) {
+    // Override DiscussionPage.prototype.show to load up to 300 posts from payload on initial render
+    DiscussionPage.prototype.show = function (discussion) {
+      app.history.push('discussion', discussion.title());
+      app.setTitle(discussion.title());
+      app.setTitleCount(0);
+
+      let includedPosts = [];
+      if (discussion.payload && discussion.payload.included) {
+        const discussionId = discussion.id();
+
+        includedPosts = discussion.payload.included
+          .filter(
+            (record) =>
+              record.type === 'posts' &&
+              record.relationships &&
+              record.relationships.discussion &&
+              !Array.isArray(record.relationships.discussion.data) &&
+              record.relationships.discussion.data.id === discussionId
+          )
+          .map((record) => app.store.getById('posts', record.id))
+          .filter(Boolean)
+          .sort((a, b) => (a.number ? a.number() : 0) - (b.number ? b.number() : 0))
+          .slice(0, 300);
+      }
+
+      this.stream = new PostStreamState(discussion, includedPosts);
+      const rawNearParam = m.route.param('near');
+      const nearParam = rawNearParam === 'reply' ? 'reply' : parseInt(rawNearParam);
+      this.stream.goToNumber(nearParam || (includedPosts[0]?.number ? includedPosts[0].number() : 0), true).then(() => {
+        this.discussion = discussion;
+
+        app.current.set('discussion', discussion);
+        app.current.set('stream', this.stream);
+      });
+    };
   }
 
   // Continuous Unbroken Thread Guide Rails (Code-Editor / Reddit Style)

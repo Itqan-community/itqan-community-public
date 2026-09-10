@@ -35,7 +35,7 @@ class LoadTreePostsRelationship
         $queryParams = $request->getQueryParams();
 
         // Check if tree pagination is requested (or default for discussions)
-        $limit = (int) Arr::get($queryParams, 'page.limit', 20);
+        $limit = (int) Arr::get($queryParams, 'page.limit', 300);
         $offset = (int) Arr::get($queryParams, 'page.offset', 0);
         $sort = (string) Arr::get($queryParams, 'sort', 'oldest');
 
