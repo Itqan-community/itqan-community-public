@@ -1,4 +1,4 @@
-// Itqan Discussions - Threaded / Nested Comments Styling (Redesigned)
+// Itqan Discussions - Threaded / Nested Comments Styling (Reddit-Style Redesign)
 
 // Variables
 @itqan-primary: @config-primary-color;
@@ -6,61 +6,231 @@
 @itqan-primary-hover: lighten(@config-primary-color, 8%);
 @itqan-border-line: fade(@config-primary-color, 28%);
 @itqan-border-line-hover: @config-primary-color;
-@thread-indent-unit: 32px;
+@thread-indent-unit: 28px;
 @thread-indent-mobile-unit: 8px;
 
-// PostStream Item Indentation & Styling
-.PostStream-item {
-  position: relative;
-  border-radius: 8px !important;
-  padding-block: 0 !important;
-  opacity: 1;
-  overflow: visible; // Keep visible so dropdowns/menus are not clipped
-  transition: opacity 0.2s ease;
+// Base Flex PostStream Container
+.PostStream {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
 
+// 1. OP Post (Post #1) Standalone Card
+.PostStream-item[data-number="1"],
+.PostStream-item:has(.CommentPost[data-is-op="true"]) {
+  margin-bottom: 16px !important;
+  border-radius: 12px !important;
+
+  .CommentPost {
+    background: var(--body-bg-light, #ffffff) !important;
+    border: 1px solid var(--control-bg-shaded, #e2e8f0) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    > div {
+      padding: 20px !important;
+    }
+  }
+}
+
+// OP Author Badge (Reddit-style)
+.itqan-op-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.1);
+  border-radius: 9999px;
+  margin-inline-start: 6px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// 2. Comments Unified Card Container
+.itqan-comments-card {
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--body-bg-light, #ffffff);
+  border: 1px solid var(--control-bg-shaded, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  margin-top: 0;
+  margin-bottom: 24px;
+  overflow: visible;
+  order: 1;
+
+  @media @phone {
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  // Header Sort Bar at Top of Comments Card
+  .PostStream-afterFirstPost {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+
+    .itqan-stream-sort-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 12px 20px;
+      margin: 0;
+      background: transparent;
+      border: none;
+      font-size: 13px;
+
+      .itqan-stream-sort-title {
+        font-weight: 500;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .itqan-thread-sort-wrapper {
+        display: flex;
+        align-items: center;
+      }
+
+      .itqan-thread-sort-select {
+        border: none;
+        background: transparent;
+        font-weight: 700;
+        font-size: 13px;
+        color: #1e293b;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 6px;
+        outline: none;
+        transition: background 0.15s ease;
+
+        &:hover, &:focus {
+          background: rgba(0, 0, 0, 0.05);
+        }
+      }
+    }
+  }
+
+  // Comments inside the Card
+  .PostStream-item {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible;
+
+    // Thin horizontal divider between root comments
+    &[data-is-subsequent-root="true"] {
+      border-top: 1px solid rgba(0, 0, 0, 0.07) !important;
+    }
+
+    .CommentPost {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+
+      > div {
+        padding: 12px 20px !important;
+        min-height: 0 !important;
+      }
+    }
+  }
+
+  // Reply Placeholder at Bottom of Card
+  .ReplyPlaceholder,
+  button.Post.ReplyPlaceholder {
+    background: transparent !important;
+    border: none !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.07) !important;
+    border-radius: 0 0 12px 12px !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 14px 20px !important;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.02) !important;
+    }
+  }
+}
+
+// 3. Nested Comments Indentation & Avatar-Colored Guide Lines
+.PostStream-item {
   &[data-thread-depth],
   &:has(.CommentPost[data-thread-depth]) {
-    padding-inline-start: 0 !important;
-    border-inline-start: none !important;
+    position: relative;
+    border-top: none !important; // Nested replies never have horizontal root dividers
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+    padding-inline-start: 14px !important;
+    border-inline-start: 2px solid var(--itqan-thread-color, @itqan-border-line) !important;
+    transition: border-color 0.2s ease, opacity 0.2s ease;
+
+    &:hover {
+      filter: brightness(0.9);
+    }
   }
 
   &[data-thread-depth="1"],
   &:has(.CommentPost[data-thread-depth="1"]) {
     margin-inline-start: @thread-indent-unit !important;
-    padding-inline-start: 0 !important;
-    border-inline-start: none !important;
   }
 
   &[data-thread-depth="2"],
   &:has(.CommentPost[data-thread-depth="2"]) {
     margin-inline-start: calc(@thread-indent-unit * 2) !important;
-    padding-inline-start: 0 !important;
-    border-inline-start: none !important;
   }
 
   &[data-thread-depth="3"],
+  &:has(.CommentPost[data-thread-depth="3"]) {
+    margin-inline-start: calc(@thread-indent-unit * 3) !important;
+  }
+
   &[data-thread-depth="4"],
   &[data-thread-depth="5"],
-  &:has(.CommentPost[data-thread-depth="3"]),
   &:has(.CommentPost[data-thread-depth="4"]),
   &:has(.CommentPost[data-thread-depth="5"]) {
-    margin-inline-start: calc(@thread-indent-unit * 2.8) !important;
-    padding-inline-start: 0 !important;
-    border-inline-start: none !important;
+    margin-inline-start: calc(@thread-indent-unit * 3.8) !important;
   }
 
   // Active reply target highlight when user is composing a reply to this comment
   &.is-reply-target,
   &:has(.CommentPost.is-reply-target) {
     .CommentPost {
-      border-color: @itqan-primary !important;
-      box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.35) !important;
+      background: fade(@config-primary-color, 3%) !important;
+      border-radius: 8px !important;
     }
   }
 
   // Completely hide collapsed thread items so flex container gap is not rendered
   &.thread-item-hidden {
     display: none !important;
+  }
+}
+
+// Separator between parent comment and its child replies stream
+.PostStream-item[data-has-thread-replies="true"] {
+  .CommentPost {
+    position: relative;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 12px;
+    margin-bottom: 6px;
   }
 }
 
@@ -76,22 +246,17 @@
   .PostStream-item {
     &[data-thread-depth],
     &:has(.CommentPost[data-thread-depth]) {
-      padding-inline-start: 0 !important;
-      border-inline-start: none !important;
+      padding-inline-start: 10px !important;
     }
 
     &[data-thread-depth="1"],
     &:has(.CommentPost[data-thread-depth="1"]) {
-      margin-inline-start: 8px !important;
-      padding-inline-start: 0 !important;
-      border-inline-start: none !important;
+      margin-inline-start: 10px !important;
     }
 
     &[data-thread-depth="2"],
     &:has(.CommentPost[data-thread-depth="2"]) {
-      margin-inline-start: 16px !important;
-      padding-inline-start: 0 !important;
-      border-inline-start: none !important;
+      margin-inline-start: 20px !important;
     }
 
     &[data-thread-depth="3"],
@@ -100,16 +265,10 @@
     &:has(.CommentPost[data-thread-depth="3"]),
     &:has(.CommentPost[data-thread-depth="4"]),
     &:has(.CommentPost[data-thread-depth="5"]) {
-      margin-inline-start: 24px !important;
-      padding-inline-start: 0 !important;
-      border-inline-start: none !important;
+      margin-inline-start: 28px !important;
     }
   }
 }
-
-
-
-
 
 // Composer Reply Context Banner
 .Composer-replyBanner {
@@ -148,11 +307,99 @@
   }
 }
 
+// Load More & Load Previous Button Positioning in Flex PostStream
+.PostStream-loadMore {
+  order: 99998 !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin: 16px 0 !important;
+  width: 100% !important;
+
+  .Button {
+    min-height: 38px;
+    padding: 8px 24px;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 13px;
+    background: fade(@config-primary-color, 10%);
+    color: @config-primary-color;
+    border: 1px solid fade(@config-primary-color, 30%);
+    transition: all 0.2s ease;
+
+    &:hover, &:focus {
+      background: @config-primary-color;
+      color: #fff;
+      border-color: @config-primary-color;
+    }
+  }
+}
+
+.PostStream-loadPrevious {
+  order: -2 !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin: 16px 0 !important;
+  width: 100% !important;
+
+  .Button {
+    min-height: 38px;
+    padding: 8px 24px;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 13px;
+    background: fade(@config-primary-color, 10%);
+    color: @config-primary-color;
+    border: 1px solid fade(@config-primary-color, 30%);
+    transition: all 0.2s ease;
+
+    &:hover, &:focus {
+      background: @config-primary-color;
+      color: #fff;
+      border-color: @config-primary-color;
+    }
+  }
+}
+
 // Dark Theme Overrides
 html[data-itqan-theme='dark'] {
+  .itqan-comments-card {
+    background: #181c24;
+    border-color: #2e3440;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 
+    .PostStream-afterFirstPost {
+      border-bottom-color: rgba(255, 255, 255, 0.07);
 
+      .itqan-stream-sort-bar {
+        .itqan-stream-sort-title {
+          color: #94a3b8;
+        }
+        .itqan-thread-sort-select {
+          color: #f1f5f9;
+          &:hover, &:focus {
+            background: rgba(255, 255, 255, 0.08);
+          }
+        }
+      }
+    }
 
+    .PostStream-item[data-is-subsequent-root="true"] {
+      border-top-color: rgba(255, 255, 255, 0.07) !important;
+    }
+  }
+
+  .PostStream-item[data-number="1"],
+  .PostStream-item:has(.CommentPost[data-is-op="true"]) {
+    .CommentPost {
+      background: #181c24 !important;
+      border-color: #2e3440 !important;
+    }
+  }
+
+  .itqan-op-badge {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, 0.15);
+  }
 
   .Composer-replyBanner {
     background: rgba(13, 148, 136, 0.16);
@@ -173,63 +420,8 @@ html[data-itqan-theme='dark'] {
     &.is-reply-target,
     &:has(.CommentPost.is-reply-target) {
       .CommentPost {
-        border-color: @itqan-primary !important;
-        box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.45) !important;
+        background: rgba(45, 212, 191, 0.08) !important;
       }
     }
   }
 }
-
-// Load More & Load Previous Button Positioning in Flex PostStream
-.PostStream-loadMore {
-  order: 99998 !important;
-  display: flex !important;
-  justify-content: center !important;
-  margin: 16px 0 !important;
-  width: 100% !important;
-
-  .Button {
-    min-height: 40px;
-    padding: 8px 24px;
-    border-radius: 9999px;
-    font-weight: 600;
-    font-size: 14px;
-    background: fade(@config-primary-color, 10%);
-    color: @config-primary-color;
-    border: 1px solid fade(@config-primary-color, 30%);
-    transition: all 0.2s ease;
-
-    &:hover, &:focus {
-      background: @config-primary-color;
-      color: #fff;
-      border-color: @config-primary-color;
-    }
-  }
-}
-
-.PostStream-loadPrevious {
-  order: -1 !important;
-  display: flex !important;
-  justify-content: center !important;
-  margin: 16px 0 !important;
-  width: 100% !important;
-
-  .Button {
-    min-height: 40px;
-    padding: 8px 24px;
-    border-radius: 9999px;
-    font-weight: 600;
-    font-size: 14px;
-    background: fade(@config-primary-color, 10%);
-    color: @config-primary-color;
-    border: 1px solid fade(@config-primary-color, 30%);
-    transition: all 0.2s ease;
-
-    &:hover, &:focus {
-      background: @config-primary-color;
-      color: #fff;
-      border-color: @config-primary-color;
-    }
-  }
-}
-

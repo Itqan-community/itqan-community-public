@@ -1,0 +1,112 @@
+/**
+ * Adds a focus ring to an element.
+ *
+ * This is only shown when focus is provided via keyboard, using the
+ * `:focus-visible` selector, and `:-moz-focusring` for older Firefox.
+ */
+/** 
+ * This mixin allows support for a custom focus
+ * selector to be supplied.
+ *
+ * For example...
+ * 
+ *? button { .add-keyboard-focus-ring(":focus-within") }
+ * becomes
+ *? button:focus-within { <styles>  }
+ *
+ * AND
+ *
+ *? button { .add-keyboard-focus-ring(" :focus-within") }
+ * becomes
+ *? button :focus-within { <styles>  }
+ */
+/** 
+ * This mixin allows support for a custom element nearby the focused one
+ * to have a focus style applied to it
+ *
+ * For example...
+ * 
+ *? button { .add-keyboard-focus-ring-nearby("+ .myOtherElement") }
+ * becomes
+ *? button:-moz-focusring + .myOtherElement { <styles> }
+ *? button:focus-within + .myOtherElement { <styles> }
+ */
+/**
+ * Allows an offset to be supplied for an a11y
+ * outline.
+ *
+ * Useful for elements whose content is right up
+ * against their bounds.
+ *
+ * `.addKeyboardFocusRingOffset(2px)` will add an
+ *  offset of 2 pixels to the outline.
+ */
+/**
+ * Allows an offset to be supplied for an a11y
+ * outline.
+ *
+ * Useful for elements whose content is right up
+ * against their bounds.
+ */
+/** 
+ * This mixin allows support for a custom element nearby the focused one
+ * to have a focus style applied to it
+ *
+ * For example...
+ * 
+ *? button { .add-keyboard-focus-ring-nearby("+ .myOtherElement") }
+ * becomes
+ *? button:-moz-focusring + .myOtherElement { <styles> }
+ *? button:focus-within + .myOtherElement { <styles> }
+ */
+/**
+ * Should be used at the `:root` level to declare the color variations as custom CSS properties first.
+ * Then use the `.Button--color-auto()` below to use those variations on your element.
+ *
+ * `@name` parameter must be unique.
+ *
+ * For example:
+ * :root {
+ *   .Button--color-vars(green, white, 'button-success');
+ * }
+ *
+ * .Button--success {
+ *   .Button-color-auto('button-success');
+ * }
+ */
+/**
+ * Legacy mixin, allows customizing button colors inline without declaring custom CSS properties at the root.
+ * For a better theming experience, declaring the custom CSS properties at the root first using `Button--color-vars()`
+ * then using `Button--color-auto()` is recommended.
+ */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */
+/** @deprecated */

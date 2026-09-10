@@ -1,9 +1,11 @@
 import app from 'flarum/forum/app';
+import { getAvatarDominantColor } from '../utils/AvatarColor';
 
 // Global reactive collapsed threads registry
 if (!app.itqanCollapsedThreads) {
   app.itqanCollapsedThreads = new Set();
 }
+app.itqanDiscussionSort = app.itqanDiscussionSort || 'oldest';
 
 /**
  * Calculate arbitrary nesting depth for a post with cycle detection.
@@ -115,23 +117,82 @@ export function reorderStreamTree() {
       }
     });
 
-    // Sibling comparator (votes DESC if available, then createdAt ASC)
+    // Tag items that have child replies for separator styling
+    items.forEach((el) => {
+      const id = el.dataset.id;
+      if (childrenMap.has(id) && childrenMap.get(id).length > 0) {
+        el.setAttribute('data-has-thread-replies', 'true');
+      } else {
+        el.removeAttribute('data-has-thread-replies');
+      }
+    });
+
+    // Extract and apply avatar dominant color to nested thread lines
+    items.forEach((el) => {
+      const id = el.dataset.id;
+      const post = app.store ? app.store.getById('posts', id) : null;
+      if (!post) return;
+      const depth = getPostDepth(post);
+      const parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
+
+      if (depth > 0 && parentId) {
+        const parentEl = itemMap.get(String(parentId));
+        const parentAvatar = parentEl ? parentEl.querySelector('.PostUser-avatar, .Avatar') : null;
+        const parentPost = app.store ? app.store.getById('posts', String(parentId)) : null;
+        const fallbackKey = (parentPost && parentPost.user && parentPost.user())
+          ? parentPost.user().displayName()
+          : String(parentId);
+
+        const color = getAvatarDominantColor(parentAvatar, fallbackKey, (readyColor) => {
+          el.style.setProperty('--itqan-thread-color', readyColor);
+          el.style.borderInlineStartColor = readyColor;
+        });
+        el.style.setProperty('--itqan-thread-color', color);
+        el.style.borderInlineStartColor = color;
+      } else {
+        el.style.removeProperty('--itqan-thread-color');
+        el.style.borderInlineStartColor = '';
+      }
+    });
+
+    // Sibling comparator (Configurable: oldest ASC [default], top DESC, latest DESC)
     function comparePostIds(a, b) {
       const postA = app.store ? app.store.getById('posts', a) : null;
       const postB = app.store ? app.store.getById('posts', b) : null;
       if (!postA || !postB) return 0;
 
-      const votesA = (typeof postA.attribute === 'function') 
-        ? (postA.attribute('votes') || 0) 
-        : ((typeof postA.votes === 'function') ? (postA.votes() || 0) : 0);
-      const votesB = (typeof postB.attribute === 'function') 
-        ? (postB.attribute('votes') || 0) 
-        : ((typeof postB.votes === 'function') ? (postB.votes() || 0) : 0);
+      const sortMode = app.itqanDiscussionSort || 'oldest';
 
-      if (votesB !== votesA) {
-        return votesB - votesA;
+      if (sortMode === 'top') {
+        const votesA = (typeof postA.attribute === 'function') 
+          ? (postA.attribute('votes') || 0) 
+          : ((typeof postA.votes === 'function') ? (postA.votes() || 0) : 0);
+        const votesB = (typeof postB.attribute === 'function') 
+          ? (postB.attribute('votes') || 0) 
+          : ((typeof postB.votes === 'function') ? (postB.votes() || 0) : 0);
+
+        if (votesB !== votesA) {
+          return votesB - votesA;
+        }
+
+        const timeA = postA.createdAt && postA.createdAt() ? postA.createdAt().getTime() : 0;
+        const timeB = postB.createdAt && postB.createdAt() ? postB.createdAt().getTime() : 0;
+        return timeA - timeB;
       }
 
+      if (sortMode === 'latest') {
+        const numA = (typeof postA.number === 'function') ? postA.number() : 0;
+        const numB = (typeof postB.number === 'function') ? postB.number() : 0;
+        if (numB !== numA) return numB - numA;
+        const timeA = postA.createdAt && postA.createdAt() ? postA.createdAt().getTime() : 0;
+        const timeB = postB.createdAt && postB.createdAt() ? postB.createdAt().getTime() : 0;
+        return timeB - timeA;
+      }
+
+      // Default: 'oldest' (strict chronological by post number / date)
+      const numA = (typeof postA.number === 'function') ? postA.number() : 0;
+      const numB = (typeof postB.number === 'function') ? postB.number() : 0;
+      if (numA !== numB) return numA - numB;
       const timeA = postA.createdAt && postA.createdAt() ? postA.createdAt().getTime() : 0;
       const timeB = postB.createdAt && postB.createdAt() ? postB.createdAt().getTime() : 0;
       return timeA - timeB;
@@ -143,16 +204,14 @@ export function reorderStreamTree() {
       return p && typeof p.number === 'function' && p.number() === 1;
     });
 
-    // Stable Root Ordering:
-    // Keep track of root IDs that have already been ordered for this discussion.
-    // When "Load More" loads a new page of posts, previously loaded and visible roots
-    // maintain their stable relative order, and new roots are appended cleanly in sorted order.
-    // This prevents newly loaded posts from jumping above existing comments and shifting the page!
+    // Stable Root Ordering per discussion & sort mode:
     if (!window.__itqanRootOrderRegistry) {
       window.__itqanRootOrderRegistry = new Map();
     }
     const discussionId = app.current.get('discussion') ? String(app.current.get('discussion').id()) : 'current';
-    let knownRoots = window.__itqanRootOrderRegistry.get(discussionId) || [];
+    const sortMode = app.itqanDiscussionSort || 'oldest';
+    const registryKey = `${discussionId}:${sortMode}`;
+    let knownRoots = window.__itqanRootOrderRegistry.get(registryKey) || [];
 
     // Filter out known roots that are no longer in rootIds
     knownRoots = knownRoots.filter((id) => rootIds.includes(id) && id !== opId);
@@ -160,21 +219,44 @@ export function reorderStreamTree() {
     // New roots that haven't been placed in knownRoots yet
     const newRoots = rootIds.filter((id) => id !== opId && !knownRoots.includes(id)).sort(comparePostIds);
 
-    // If knownRoots is empty (initial render of discussion), sort all non-OP roots by votes
     let finalOtherRoots;
     if (knownRoots.length === 0) {
       finalOtherRoots = rootIds.filter((id) => id !== opId).sort(comparePostIds);
     } else {
       finalOtherRoots = [...knownRoots, ...newRoots];
     }
-    window.__itqanRootOrderRegistry.set(discussionId, finalOtherRoots);
+    window.__itqanRootOrderRegistry.set(registryKey, finalOtherRoots);
 
     const sortedRoots = opId ? [opId, ...finalOtherRoots] : finalOtherRoots;
+
+    // Tag root comments for horizontal separator lines
+    let hasEncounteredFirstRoot = false;
+    sortedRoots.forEach((rId) => {
+      if (rId === opId) return;
+      const el = itemMap.get(rId);
+      if (el) {
+        if (!hasEncounteredFirstRoot) {
+          hasEncounteredFirstRoot = true;
+          el.setAttribute('data-is-first-root', 'true');
+          el.removeAttribute('data-is-subsequent-root');
+        } else {
+          el.setAttribute('data-is-subsequent-root', 'true');
+          el.removeAttribute('data-is-first-root');
+        }
+      }
+    });
 
     const orderedEls = [];
     function traverse(id) {
       const el = itemMap.get(id);
-      if (el) orderedEls.push(el);
+      if (el) {
+        orderedEls.push(el);
+        if (id !== opId && !sortedRoots.includes(id)) {
+          // Nested child item — clear root tags
+          el.removeAttribute('data-is-first-root');
+          el.removeAttribute('data-is-subsequent-root');
+        }
+      }
       const children = childrenMap.get(id) || [];
       children.sort(comparePostIds);
       children.forEach((cId) => traverse(cId));
@@ -184,7 +266,6 @@ export function reorderStreamTree() {
 
     // Append any orphaned items
     items.forEach((el) => {
-
       if (!orderedEls.includes(el)) {
         orderedEls.push(el);
       }
@@ -193,17 +274,19 @@ export function reorderStreamTree() {
     // Apply the computed tree order via the CSS `order` property instead of
     // physically moving nodes with appendChild. `.PostStream` is a flex
     // column, so `order` reproduces the same visual layout without taking
-    // DOM ownership away from Mithril: reparenting these nodes here raced
-    // Mithril's own redraws (triggered by hover cards, vote updates, thread
-    // collapse, etc.) for control of the same elements, corrupting their
-    // position/sizing after subsequent updates.
+    // DOM ownership away from Mithril.
     orderedEls.forEach((el, index) => {
       el.style.order = String(index);
     });
 
     const loadPreviousItem = container.querySelector('.PostStream-loadPrevious');
     if (loadPreviousItem) {
-      loadPreviousItem.style.order = '-1';
+      loadPreviousItem.style.order = '-2';
+    }
+
+    const sortBarItem = container.querySelector('.PostStream-afterFirstPost');
+    if (sortBarItem) {
+      sortBarItem.style.order = '-1';
     }
 
     const loadMoreItem = container.querySelector('.PostStream-loadMore');
@@ -211,7 +294,7 @@ export function reorderStreamTree() {
       loadMoreItem.style.order = String(orderedEls.length + 1);
     }
 
-    const replyItem = container.querySelector('.PostStream-item:not([data-id])');
+    const replyItem = container.querySelector('.PostStream-item:not([data-id]):not(.PostStream-afterFirstPost)');
     if (replyItem) {
       replyItem.style.order = String(orderedEls.length + 2);
     }
