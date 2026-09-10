@@ -5,8 +5,8 @@ import app from 'flarum/forum/app';
  * Extracts dominant color from user avatars (img or span) to color nested thread reply lines.
  */
 
-const colorCache = new Map();
-const postColorCache = new Map();
+export const colorCache = new Map();
+export const postColorCache = new Map();
 
 // Fallback palette inspired by vibrant modern UI colors
 const FALLBACK_PALETTE = [
@@ -52,8 +52,15 @@ function extractFromImg(img) {
     canvas.height = 16;
     ctx.drawImage(img, 0, 0, 16, 16);
 
-    const imageData = ctx.getImageData(0, 0, 16, 16).data;
+    let imageData;
+    try {
+      imageData = ctx.getImageData(0, 0, 16, 16).data;
+    } catch (corsErr) {
+      return null;
+    }
+
     let rTotal = 0, gTotal = 0, bTotal = 0, count = 0;
+    let fallbackR = 0, fallbackG = 0, fallbackB = 0, fallbackCount = 0;
 
     for (let i = 0; i < imageData.length; i += 4) {
       const a = imageData[i + 3];
@@ -63,7 +70,12 @@ function extractFromImg(img) {
       const g = imageData[i + 1];
       const b = imageData[i + 2];
 
-      // Skip near-white and near-black
+      fallbackR += r;
+      fallbackG += g;
+      fallbackB += b;
+      fallbackCount++;
+
+      // Skip near-white and near-black for dominant color extraction
       if (r > 240 && g > 240 && b > 240) continue;
       if (r < 20 && g < 20 && b < 20) continue;
 
@@ -73,18 +85,21 @@ function extractFromImg(img) {
       count++;
     }
 
-    if (count === 0) {
-      const centerIdx = (8 * 16 + 8) * 4;
-      const r = imageData[centerIdx];
-      const g = imageData[centerIdx + 1];
-      const b = imageData[centerIdx + 2];
-      return `rgb(${r}, ${g}, ${b})`;
+    if (count > 0) {
+      const rAvg = Math.round(rTotal / count);
+      const gAvg = Math.round(gTotal / count);
+      const bAvg = Math.round(bTotal / count);
+      return `rgb(${rAvg}, ${gAvg}, ${bAvg})`;
     }
 
-    const rAvg = Math.round(rTotal / count);
-    const gAvg = Math.round(gTotal / count);
-    const bAvg = Math.round(bTotal / count);
-    return `rgb(${rAvg}, ${gAvg}, ${bAvg})`;
+    if (fallbackCount > 0) {
+      const rAvg = Math.round(fallbackR / fallbackCount);
+      const gAvg = Math.round(fallbackG / fallbackCount);
+      const bAvg = Math.round(fallbackB / fallbackCount);
+      return `rgb(${rAvg}, ${gAvg}, ${bAvg})`;
+    }
+
+    return null;
   } catch (err) {
     return null;
   }
@@ -125,24 +140,40 @@ export function getAvatarDominantColor(avatarEl, fallbackKey = '', onColorReady 
   }
 
   if (img.complete && img.naturalWidth > 0) {
-    const color = extractFromImg(img) || getHashColor(fallbackKey);
-    colorCache.set(src, color);
-    return color;
+    const extracted = extractFromImg(img);
+    if (extracted) {
+      colorCache.set(src, extracted);
+      return extracted;
+    }
+    return getHashColor(fallbackKey);
   }
 
   if (onColorReady) {
     img.addEventListener(
       'load',
       () => {
-        const color = extractFromImg(img) || getHashColor(fallbackKey);
-        colorCache.set(src, color);
-        onColorReady(color);
+        const extracted = extractFromImg(img);
+        if (extracted) {
+          colorCache.set(src, extracted);
+          onColorReady(extracted);
+        }
       },
       { once: true }
     );
   }
 
   return getHashColor(fallbackKey);
+}
+
+/**
+ * Update the `--rail-color` CSS variable on all DOM rails belonging to a specific ancestor.
+ */
+export function updateRailsForAncestor(ancestorId, color) {
+  if (!ancestorId || !color) return;
+  const rails = document.querySelectorAll(`.itqan-thread-rail[data-rail-ancestor-id="${ancestorId}"]`);
+  rails.forEach((rail) => {
+    rail.style.setProperty('--rail-color', color);
+  });
 }
 
 /**
@@ -167,17 +198,25 @@ export function getPostColor(post) {
 
   const el = document.querySelector(`.PostStream-item[data-id="${postId}"]`);
   const avatarEl = el ? el.querySelector('.PostUser-avatar, .Avatar') : null;
-  const color = getAvatarDominantColor(avatarEl, username, (readyColor) => {
-    postColorCache.set(postId, readyColor);
-    if (window.m) window.m.redraw();
-  });
+  if (avatarEl) {
+    const color = getAvatarDominantColor(avatarEl, username, (readyColor) => {
+      postColorCache.set(postId, readyColor);
+      updateRailsForAncestor(postId, readyColor);
+    });
+    if (color && !color.startsWith('#')) {
+      postColorCache.set(postId, color);
+      return color;
+    }
+  }
 
-  postColorCache.set(postId, color);
-  return color;
+  // Fallback hash color for initial render (not stored permanently in cache so DOM inspection can upgrade it)
+  return getHashColor(username);
 }
 
 /**
- * Compute the complete list of active ancestor rails + self rail for a post.
+ * Compute the complete list of active ancestor rails for a post.
+ * Rails are only rendered for child replies (depth >= 1) to visually guide them back
+ * to their ancestors. Parent/root comments do NOT have a self-rail drawn over their own content.
  */
 export function getPostRails(post) {
   if (!post) return [];
@@ -204,22 +243,9 @@ export function getPostRails(post) {
     curr = parent;
   }
 
-  const railItems = rails.map((ancestorPost, colIndex) => ({
+  return rails.map((ancestorPost, colIndex) => ({
     col: colIndex,
     postId: String(ancestorPost.id()),
     color: getPostColor(ancestorPost),
-    isSelf: false,
   }));
-
-  const replyCount = typeof post.replyCount === 'function' ? (post.replyCount() || 0) : 0;
-  if (replyCount > 0) {
-    railItems.push({
-      col: rails.length,
-      postId: postId,
-      color: getPostColor(post),
-      isSelf: true,
-    });
-  }
-
-  return railItems;
 }

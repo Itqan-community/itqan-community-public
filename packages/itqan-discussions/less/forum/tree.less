@@ -229,23 +229,10 @@
   width: 2px;
   inset-inline-start: ~"calc(35px + var(--rail-col, 0) * @{thread-indent-unit})";
   background-color: var(--rail-color, @itqan-border-line);
-  pointer-events: auto;
-  cursor: pointer;
+  pointer-events: none;
+  cursor: default;
   border-radius: 1px;
-  transition: filter 0.15s ease, width 0.15s ease, background-color 0.15s ease;
-
-  &:hover {
-    filter: brightness(0.8);
-    width: 3px;
-    margin-inline-start: -0.5px;
-  }
-
-  // Parent's own rail starts directly below its avatar (14px top padding + 32px avatar + 2px)
-  &--self {
-    top: 48px;
-    pointer-events: none;
-    cursor: default;
-  }
+  transition: background-color 0.15s ease;
 }
 
 // Mobile responsive compact indentation & rail positions
@@ -274,10 +261,6 @@
 
   .itqan-thread-rail {
     inset-inline-start: ~"calc(27px + var(--rail-col, 0) * @{thread-indent-mobile-unit}) !important";
-
-    &--self {
-      top: 44px;
-    }
   }
 }
 

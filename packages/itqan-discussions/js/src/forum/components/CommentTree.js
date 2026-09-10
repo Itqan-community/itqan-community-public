@@ -1,5 +1,5 @@
 import app from 'flarum/forum/app';
-import { getAvatarDominantColor } from '../utils/AvatarColor';
+import { getAvatarDominantColor, postColorCache } from '../utils/AvatarColor';
 
 // Global reactive collapsed threads registry
 if (!app.itqanCollapsedThreads) {
@@ -125,6 +125,32 @@ export function reorderStreamTree() {
       } else {
         el.removeAttribute('data-has-thread-replies');
       }
+    });
+
+    // Extract and apply avatar dominant color to nested thread rails
+    items.forEach((el) => {
+      const rails = el.querySelectorAll('.itqan-thread-rail[data-rail-ancestor-id]');
+      rails.forEach((rail) => {
+        const ancestorId = rail.getAttribute('data-rail-ancestor-id');
+        if (!ancestorId) return;
+
+        const ancestorEl = itemMap.get(ancestorId);
+        const ancestorAvatar = ancestorEl ? ancestorEl.querySelector('.PostUser-avatar, .Avatar') : null;
+        const ancestorPost = app.store ? app.store.getById('posts', ancestorId) : null;
+        const fallbackKey = (ancestorPost && ancestorPost.user && ancestorPost.user())
+          ? ancestorPost.user().displayName()
+          : ancestorId;
+
+        const color = getAvatarDominantColor(ancestorAvatar, fallbackKey, (readyColor) => {
+          rail.style.setProperty('--rail-color', readyColor);
+          if (postColorCache) postColorCache.set(ancestorId, readyColor);
+        });
+
+        if (color) {
+          rail.style.setProperty('--rail-color', color);
+          if (postColorCache) postColorCache.set(ancestorId, color);
+        }
+      });
     });
 
 

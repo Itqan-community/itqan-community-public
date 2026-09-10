@@ -210,25 +210,12 @@ app.initializers.add('itqan-discussions', () => {
       <div className="itqan-thread-rails" aria-hidden="true">
         {rails.map((rail) => (
           <div
-            key={`rail-${rail.postId}-${rail.col}-${rail.isSelf ? 's' : 'a'}`}
-            className={`itqan-thread-rail ${rail.isSelf ? 'itqan-thread-rail--self' : ''}`}
+            key={`rail-${rail.postId}-${rail.col}`}
+            className="itqan-thread-rail"
+            data-rail-ancestor-id={rail.postId}
             style={{
               '--rail-col': rail.col,
               '--rail-color': rail.color,
-            }}
-            title={rail.isSelf ? '' : 'طي / فتح المحادثة'}
-            onclick={(e) => {
-              if (rail.isSelf) return;
-              e.preventDefault();
-              e.stopPropagation();
-              const pId = rail.postId;
-              if (app.itqanCollapsedThreads.has(pId)) {
-                app.itqanCollapsedThreads.delete(pId);
-              } else {
-                app.itqanCollapsedThreads.add(pId);
-              }
-              reorderStreamTree();
-              m.redraw();
             }}
           />
         ))}
