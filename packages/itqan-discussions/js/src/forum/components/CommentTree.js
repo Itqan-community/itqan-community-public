@@ -127,33 +127,6 @@ export function reorderStreamTree() {
       }
     });
 
-    // Extract and apply avatar dominant color to nested thread lines
-    items.forEach((el) => {
-      const id = el.dataset.id;
-      const post = app.store ? app.store.getById('posts', id) : null;
-      if (!post) return;
-      const depth = getPostDepth(post);
-      const parentId = (typeof post.parentId === 'function') ? post.parentId() : null;
-
-      if (depth > 0 && parentId) {
-        const parentEl = itemMap.get(String(parentId));
-        const parentAvatar = parentEl ? parentEl.querySelector('.PostUser-avatar, .Avatar') : null;
-        const parentPost = app.store ? app.store.getById('posts', String(parentId)) : null;
-        const fallbackKey = (parentPost && parentPost.user && parentPost.user())
-          ? parentPost.user().displayName()
-          : String(parentId);
-
-        const color = getAvatarDominantColor(parentAvatar, fallbackKey, (readyColor) => {
-          el.style.setProperty('--itqan-thread-color', readyColor);
-          el.style.borderInlineStartColor = readyColor;
-        });
-        el.style.setProperty('--itqan-thread-color', color);
-        el.style.borderInlineStartColor = color;
-      } else {
-        el.style.removeProperty('--itqan-thread-color');
-        el.style.borderInlineStartColor = '';
-      }
-    });
 
     // Sibling comparator (Configurable: oldest ASC [default], top DESC, latest DESC)
     function comparePostIds(a, b) {

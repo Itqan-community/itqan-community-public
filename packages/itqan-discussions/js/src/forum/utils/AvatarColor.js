@@ -1,9 +1,12 @@
+import app from 'flarum/forum/app';
+
 /**
  * Avatar dominant color extraction utility.
  * Extracts dominant color from user avatars (img or span) to color nested thread reply lines.
  */
 
 const colorCache = new Map();
+const postColorCache = new Map();
 
 // Fallback palette inspired by vibrant modern UI colors
 const FALLBACK_PALETTE = [
@@ -45,7 +48,6 @@ function extractFromImg(img) {
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return null;
 
-    // Downscale for fast sampling
     canvas.width = 16;
     canvas.height = 16;
     ctx.drawImage(img, 0, 0, 16, 16);
@@ -61,7 +63,7 @@ function extractFromImg(img) {
       const g = imageData[i + 1];
       const b = imageData[i + 2];
 
-      // Skip near-white (backgrounds) and near-black
+      // Skip near-white and near-black
       if (r > 240 && g > 240 && b > 240) continue;
       if (r < 20 && g < 20 && b < 20) continue;
 
@@ -72,7 +74,6 @@ function extractFromImg(img) {
     }
 
     if (count === 0) {
-      // Sample center pixel
       const centerIdx = (8 * 16 + 8) * 4;
       const r = imageData[centerIdx];
       const g = imageData[centerIdx + 1];
@@ -85,17 +86,12 @@ function extractFromImg(img) {
     const bAvg = Math.round(bTotal / count);
     return `rgb(${rAvg}, ${gAvg}, ${bAvg})`;
   } catch (err) {
-    // Canvas security error (e.g. cross-origin taint)
     return null;
   }
 }
 
 /**
  * Get or extract the dominant avatar color for a given DOM element or user identifier.
- * @param {HTMLElement} avatarEl - The avatar element (.Avatar, .PostUser-avatar, or img/span)
- * @param {string} fallbackKey - Key for hash fallback (e.g. username or userId)
- * @param {Function} onColorReady - Callback if color extraction was async (image loading)
- * @returns {string} CSS color string (hex or rgb)
  */
 export function getAvatarDominantColor(avatarEl, fallbackKey = '', onColorReady = null) {
   if (!avatarEl) {
@@ -110,7 +106,6 @@ export function getAvatarDominantColor(avatarEl, fallbackKey = '', onColorReady 
     }
   }
 
-  // Find img inside or check if element itself is img
   const img = avatarEl.tagName === 'IMG' ? avatarEl : avatarEl.querySelector('img');
   if (!img) {
     const bg = avatarEl.style.backgroundColor || window.getComputedStyle(avatarEl).backgroundColor;
@@ -135,7 +130,6 @@ export function getAvatarDominantColor(avatarEl, fallbackKey = '', onColorReady 
     return color;
   }
 
-  // Image not yet loaded — register listener
   if (onColorReady) {
     img.addEventListener(
       'load',
@@ -149,4 +143,83 @@ export function getAvatarDominantColor(avatarEl, fallbackKey = '', onColorReady 
   }
 
   return getHashColor(fallbackKey);
+}
+
+/**
+ * Get the dominant color associated with a post's author.
+ */
+export function getPostColor(post) {
+  if (!post) return FALLBACK_PALETTE[0];
+  const postId = typeof post.id === 'function' ? String(post.id()) : String(post.id || '');
+  if (postColorCache.has(postId)) {
+    return postColorCache.get(postId);
+  }
+
+  const user = typeof post.user === 'function' ? post.user() : null;
+  const username = user && typeof user.displayName === 'function' ? user.displayName() : (user && user.username ? user.username() : postId);
+  const avatarUrl = user && typeof user.avatarUrl === 'function' ? user.avatarUrl() : null;
+
+  if (avatarUrl && colorCache.has(avatarUrl)) {
+    const color = colorCache.get(avatarUrl);
+    postColorCache.set(postId, color);
+    return color;
+  }
+
+  const el = document.querySelector(`.PostStream-item[data-id="${postId}"]`);
+  const avatarEl = el ? el.querySelector('.PostUser-avatar, .Avatar') : null;
+  const color = getAvatarDominantColor(avatarEl, username, (readyColor) => {
+    postColorCache.set(postId, readyColor);
+    if (window.m) window.m.redraw();
+  });
+
+  postColorCache.set(postId, color);
+  return color;
+}
+
+/**
+ * Compute the complete list of active ancestor rails + self rail for a post.
+ */
+export function getPostRails(post) {
+  if (!post) return [];
+  const rails = [];
+  const postId = typeof post.id === 'function' ? String(post.id()) : '';
+  const visited = new Set();
+  visited.add(postId);
+
+  let curr = post;
+  while (curr) {
+    const parentId = typeof curr.parentId === 'function' ? curr.parentId() : null;
+    if (!parentId) break;
+    const pIdStr = String(parentId);
+    if (visited.has(pIdStr)) break;
+    visited.add(pIdStr);
+
+    const parent = app.store ? app.store.getById('posts', pIdStr) : null;
+    if (!parent) break;
+    if (typeof parent.number === 'function' && parent.number() === 1) {
+      break;
+    }
+
+    rails.unshift(parent);
+    curr = parent;
+  }
+
+  const railItems = rails.map((ancestorPost, colIndex) => ({
+    col: colIndex,
+    postId: String(ancestorPost.id()),
+    color: getPostColor(ancestorPost),
+    isSelf: false,
+  }));
+
+  const replyCount = typeof post.replyCount === 'function' ? (post.replyCount() || 0) : 0;
+  if (replyCount > 0) {
+    railItems.push({
+      col: rails.length,
+      postId: postId,
+      color: getPostColor(post),
+      isSelf: true,
+    });
+  }
+
+  return railItems;
 }

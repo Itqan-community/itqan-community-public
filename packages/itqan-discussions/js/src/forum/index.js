@@ -13,6 +13,7 @@ import extractText from 'flarum/common/utils/extractText';
 
 import VoteButtons from './components/VoteButtons';
 import { getPostDepth, isDescendantOfCollapsed, reorderStreamTree } from './components/CommentTree';
+import { getPostRails } from './utils/AvatarColor';
 
 export { default as VoteButtons } from './components/VoteButtons';
 export * from './components/CommentTree';
@@ -195,6 +196,46 @@ app.initializers.add('itqan-discussions', () => {
       );
     });
   }
+
+  // Continuous Unbroken Thread Guide Rails (Code-Editor / Reddit Style)
+  extend(CommentPost.prototype, 'contentItems', function (items) {
+    const post = this.attrs ? this.attrs.post : null;
+    if (!post || isMainPost(post)) return;
+
+    const rails = getPostRails(post);
+    if (!rails || rails.length === 0) return;
+
+    items.add(
+      'itqanThreadRails',
+      <div className="itqan-thread-rails" aria-hidden="true">
+        {rails.map((rail) => (
+          <div
+            key={`rail-${rail.postId}-${rail.col}-${rail.isSelf ? 's' : 'a'}`}
+            className={`itqan-thread-rail ${rail.isSelf ? 'itqan-thread-rail--self' : ''}`}
+            style={{
+              '--rail-col': rail.col,
+              '--rail-color': rail.color,
+            }}
+            title={rail.isSelf ? '' : 'طي / فتح المحادثة'}
+            onclick={(e) => {
+              if (rail.isSelf) return;
+              e.preventDefault();
+              e.stopPropagation();
+              const pId = rail.postId;
+              if (app.itqanCollapsedThreads.has(pId)) {
+                app.itqanCollapsedThreads.delete(pId);
+              } else {
+                app.itqanCollapsedThreads.add(pId);
+              }
+              reorderStreamTree();
+              m.redraw();
+            }}
+          />
+        ))}
+      </div>,
+      120
+    );
+  });
 
   // Header Items: OP badge & "رد على @اسم" context badge with smooth scroll to parent
   extend(CommentPost.prototype, 'headerItems', function (items) {
