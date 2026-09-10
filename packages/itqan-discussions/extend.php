@@ -12,7 +12,9 @@ use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
 use Flarum\User\User;
 use Itqan\Discussions\Access\PostPolicy;
+use Itqan\Discussions\Api\LoadTreePostsRelationship;
 use Itqan\Discussions\Api\VoteController;
+use Itqan\Discussions\Console\BackfillParentIdsCommand;
 use Itqan\Discussions\Listener\SaveParentIdToPost;
 use Itqan\Discussions\Listener\UpdateReplyCountOnDelete;
 use Itqan\Discussions\Provider\SortMapProvider;
@@ -76,14 +78,9 @@ return [
         }),
 
     (new Extend\ApiSerializer(PostSerializer::class))
-        // `votes` is the stored score, not a count of the rows: the whole
-        // reason the column exists is that nothing should aggregate the table
-        // to render a post.
         ->attribute('votes', function (PostSerializer $serializer, Post $post) {
             return (int) $post->votes;
         })
-        // What this reader did, so the buttons can show their state without a
-        // second request. Null for guests, who cannot vote anyway.
         ->attribute('userVote', function (PostSerializer $serializer, Post $post) {
             $actor = $serializer->getActor();
 
@@ -123,6 +120,9 @@ return [
             $post = $discussion->firstPost;
 
             return $post ? $serializer->getActor()->can('vote', $post) : false;
+        })
+        ->attribute('rootCommentCount', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            return isset($discussion->root_comment_count) ? (int) $discussion->root_comment_count : null;
         }),
 
     // Event listeners for parent_id persistence and reply_count synchronization
@@ -140,7 +140,11 @@ return [
     (new Extend\ServiceProvider())
         ->register(SortMapProvider::class),
 
-    // Load post votes for discussions
+    // Load post votes and tree posts for discussions
     (new Extend\ApiController(ShowDiscussionController::class))
-        ->load(['posts.postVotes']),
+        ->load(['posts.postVotes'])
+        ->prepareDataForSerialization(LoadTreePostsRelationship::class),
+
+    (new Extend\Console())
+        ->command(BackfillParentIdsCommand::class),
 ];
