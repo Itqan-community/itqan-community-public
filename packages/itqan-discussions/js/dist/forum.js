@@ -1,2 +1,702 @@
-(()=>{const t={n:e=>{const r=e&&e.__esModule?()=>e.default:()=>e;return t.d(r,{a:r}),r},d:(e,r)=>{if(Array.isArray(r))for(var n=0;n<r.length;){var o=r[n++],a=r[n++];t.o(e,o)?0===a&&n++:0===a?Object.defineProperty(e,o,{enumerable:!0,value:r[n++]}):Object.defineProperty(e,o,{enumerable:!0,get:a})}else for(var o in r)t.o(r,o)&&!t.o(e,o)&&Object.defineProperty(e,o,{enumerable:!0,get:r[o]})},o:(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r:t=>{Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})}};let e={};(()=>{"use strict";t.r(e),t.d(e,{VoteButtons:()=>O,getPostDepth:()=>H,isDescendantOfCollapsed:()=>W,isMainPost:()=>K,reorderStreamTree:()=>G});const r=flarum.core.compat["forum/app"];var n=t.n(r);const o=flarum.core.compat["common/extend"],a=flarum.core.compat["common/Model"];var s=t.n(a);const i=flarum.core.compat["common/models/Post"];var u=t.n(i);const l=flarum.core.compat["forum/components/CommentPost"];var c=t.n(l);const d=flarum.core.compat["forum/components/PostStream"];var f=t.n(d);const p=flarum.core.compat["forum/components/ReplyComposer"];var v=t.n(p);const y=flarum.core.compat["forum/utils/DiscussionControls"];var h=t.n(y);const g=flarum.core.compat["forum/states/DiscussionListState"];var b=t.n(g);const q=flarum.core.compat["forum/components/DiscussionListItem"];var S=t.n(q);const A=flarum.core.compat["common/helpers/icon"];var P=t.n(A);const I=flarum.core.compat["common/utils/extractText"];var w=t.n(I);function B(t,e){return B=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(t,e){return t.__proto__=e,t},B(t,e)}const C=flarum.core.compat["common/Component"];var N=t.n(C);const T=flarum.core.compat["common/components/Button"];var V=t.n(T);const x=flarum.core.compat["forum/components/LogInModal"];var M=t.n(x);const k=flarum.core.compat["common/utils/classList"];var _=t.n(k),O=function(t){function e(){return t.apply(this,arguments)||this}var r,o;o=t,(r=e).prototype=Object.create(o.prototype),r.prototype.constructor=r,B(r,o);var a=e.prototype;return a.oninit=function(e){t.prototype.oninit.call(this,e),this.saving=!1},a.view=function(){var t=this.attrs.model,e=t.attribute("userVote")||0,r=t.attribute("votes")||0;return m("div",{className:_()("VoteButtons",{"VoteButtons--saving":this.saving,"VoteButtons--vertical":this.attrs.vertical}),ontouchstart:function(t){return t.stopPropagation()}},this.button(1,this.attrs.vertical?"fas fa-caret-up":"fas fa-arrow-up",1===e,"up"),m("span",{className:_()("VoteButtons-score",{"VoteButtons-score--positive":1===e,"VoteButtons-score--negative":-1===e}),"aria-live":"polite",dir:"ltr"},r),this.button(-1,this.attrs.vertical?"fas fa-caret-down":"fas fa-arrow-down",-1===e,"down"))},a.button=function(t,e,r,o){var a=this,s=w()(n().translator.trans("itqan-discussions.forum.vote."+o));return m(V(),{className:_()("Button Button--icon Button--link VoteButtons-button","VoteButtons-button--"+o,{"VoteButtons-button--active":r}),icon:e,"aria-pressed":r?"true":"false","aria-label":s,onclick:function(){return a.vote(t)}})},a.vote=function(t){var e=this,r=this.attrs.model,o=this.attrs.postId;if(n().session.user){if(!this.saving&&o&&r.attribute("canVote")){var a={votes:r.attribute("votes")||0,userVote:r.attribute("userVote")||0},s=a.userVote===t?0:t,i=a.votes-a.userVote+s;r.pushAttributes({votes:i,userVote:s}),"function"==typeof r.discussion&&r.discussion()&&r.discussion().pushAttributes({votes:i,userVote:s}),m.redraw(),this.saving=!0,n().request({method:"PATCH",url:n().forum.attribute("apiUrl")+"/posts/"+o+"/vote",body:{data:{attributes:{vote:s}}}}).then(function(t){var e;n().store.pushPayload(t);var o,a=null==t||null==(e=t.data)||null==(e=e.attributes)?void 0:e.votes;void 0!==a&&("posts"!==(null==(o=r.data)?void 0:o.type)?r.pushAttributes({votes:a,userVote:s}):"function"==typeof r.discussion&&r.discussion()&&r.discussion().pushAttributes({votes:a,userVote:s}))}).catch(function(t){r.pushAttributes(a),m.redraw()}).finally(function(){e.saving=!1,m.redraw()})}}else n().modal.show(M())},e}(N()),D=new Map,E=new Map,U=["#0D9488","#F97316","#3B82F6","#8B5CF6","#EC4899","#10B981","#EF4444","#F59E0B","#6366F1"];function R(t){if(!t)return U[0];for(var e=0,r=0;r<t.length;r++)e=(e<<5)-e+t.charCodeAt(r),e|=0;var n=Math.abs(e)%U.length;return U[n]}function F(t){try{if(!t.complete||0===t.naturalWidth)return null;var e,r=document.createElement("canvas"),n=r.getContext("2d",{willReadFrequently:!0});if(!n)return null;r.width=16,r.height=16,n.drawImage(t,0,0,16,16);try{e=n.getImageData(0,0,16,16).data}catch(t){return null}for(var o=0,a=0,s=0,i=0,u=0,l=0,c=0,d=0,f=0;f<e.length;f+=4)if(!(e[f+3]<128)){var p=e[f],m=e[f+1],v=e[f+2];u+=p,l+=m,c+=v,d++,p>240&&m>240&&v>240||p<20&&m<20&&v<20||(o+=p,a+=m,s+=v,i++)}return i>0?"rgb("+Math.round(o/i)+", "+Math.round(a/i)+", "+Math.round(s/i)+")":d>0?"rgb("+Math.round(u/d)+", "+Math.round(l/d)+", "+Math.round(c/d)+")":null}catch(t){return null}}function L(t,e,r){if(void 0===e&&(e=""),void 0===r&&(r=null),!t)return R(e);if("SPAN"===t.tagName||"DIV"===t.tagName){var n=t.style.backgroundColor||window.getComputedStyle(t).backgroundColor;if(n&&"transparent"!==n&&"rgba(0, 0, 0, 0)"!==n)return n}var o="IMG"===t.tagName?t:t.querySelector("img");if(!o){var a=t.style.backgroundColor||window.getComputedStyle(t).backgroundColor;return a&&"transparent"!==a&&"rgba(0, 0, 0, 0)"!==a?a:R(e)}var s=o.src||o.getAttribute("src");if(!s)return R(e);if(D.has(s))return D.get(s);if(o.complete&&o.naturalWidth>0){var i=F(o);return i?(D.set(s,i),i):R(e)}return r&&o.addEventListener("load",function(){var t=F(o);t&&(D.set(s,t),r(t))},{once:!0}),R(e)}function j(t){if(!t)return U[0];var e="function"==typeof t.id?String(t.id()):String(t.id||"");if(E.has(e))return E.get(e);var r="function"==typeof t.user?t.user():null,n=r&&"function"==typeof r.displayName?r.displayName():r&&r.username?r.username():e,o=r&&"function"==typeof r.avatarUrl?r.avatarUrl():null;if(o&&D.has(o)){var a=D.get(o);return E.set(e,a),a}var s=document.querySelector('.PostStream-item[data-id="'+e+'"]'),i=s?s.querySelector(".PostUser-avatar, .Avatar"):null;if(i){var u=L(i,n,function(t){E.set(e,t),function(t,e){t&&e&&document.querySelectorAll('.itqan-thread-rail[data-rail-ancestor-id="'+t+'"]').forEach(function(t){t.style.setProperty("--rail-color",e)})}(e,t)});if(u&&!u.startsWith("#"))return E.set(e,u),u}return R(n)}function H(t,e){if(void 0===e&&(e=new Set),!t)return 0;var r="function"==typeof t.parentId?t.parentId():null;if(!r)return 0;var o="function"==typeof t.id?String(t.id()):"";if(e.has(o))return 0;e.add(o);var a=n().store?n().store.getById("posts",String(r)):null;return a?"function"==typeof a.number&&1===a.number()?0:1+H(a,e):0}function W(t,e){if(void 0===e&&(e=new Set),!t)return!1;var r="function"==typeof t.parentId?t.parentId():null;if(!r)return!1;var o=n().store?n().store.getById("posts",String(r)):null;if(!o||"function"==typeof o.number&&1===o.number())return!1;var a=String(r);if(n().itqanCollapsedThreads.has(a))return!0;var s="function"==typeof t.id?String(t.id()):"";return!e.has(s)&&(e.add(s),W(o,e))}n().itqanCollapsedThreads||(n().itqanCollapsedThreads=new Set),n().itqanDiscussionSort=n().itqanDiscussionSort||"oldest";var z=!1;function G(){z||(z=!0,requestAnimationFrame(function(){z=!1;var t=document.querySelector(".PostStream");if(t){var e=Array.from(t.querySelectorAll(".PostStream-item[data-id]"));if(e.length){var r=new Map,o=new Map,a=[];e.forEach(function(t){var e=t.dataset.id,s=n().store?n().store.getById("posts",e):null,i=s&&"function"==typeof s.parentId?s.parentId():null;if(r.set(e,t),s){var u=H(s);u>0?t.setAttribute("data-thread-depth",String(u)):t.removeAttribute("data-thread-depth"),W(s)?t.classList.add("thread-item-hidden"):t.classList.remove("thread-item-hidden")}var l=!1;if(i){var c=n().store?n().store.getById("posts",String(i)):null;if(c&&(!c.number||c.number()>1)){l=!0;var d=String(i);o.has(d)||o.set(d,[]),o.get(d).push(e)}}l||a.push(e)}),e.forEach(function(t){var e=t.dataset.id;o.has(e)&&o.get(e).length>0?t.setAttribute("data-has-thread-replies","true"):t.removeAttribute("data-has-thread-replies")}),e.forEach(function(t){t.querySelectorAll(".itqan-thread-rail[data-rail-ancestor-id]").forEach(function(t){var e=t.getAttribute("data-rail-ancestor-id");if(e){var o=r.get(e),a=o?o.querySelector(".PostUser-avatar, .Avatar"):null,s=n().store?n().store.getById("posts",e):null,i=L(a,s&&s.user&&s.user()?s.user().displayName():e,function(r){t.style.setProperty("--rail-color",r),E&&E.set(e,r)});i&&(t.style.setProperty("--rail-color",i),E&&E.set(e,i))}})});var s=a.find(function(t){var e=n().store?n().store.getById("posts",t):null;return e&&"function"==typeof e.number&&1===e.number()});window.__itqanRootOrderRegistry||(window.__itqanRootOrderRegistry=new Map);var i=(n().current.get("discussion")?String(n().current.get("discussion").id()):"current")+":"+(n().itqanDiscussionSort||"oldest"),u=window.__itqanRootOrderRegistry.get(i)||[];u=u.filter(function(t){return a.includes(t)&&t!==s});var l,c=a.filter(function(t){return t!==s&&!u.includes(t)}).sort(g);l=0===u.length?a.filter(function(t){return t!==s}).sort(g):[].concat(u,c),window.__itqanRootOrderRegistry.set(i,l);var d=s?[s].concat(l):l,f=!1;d.forEach(function(t){if(t!==s){var e=r.get(t);e&&(f?(e.setAttribute("data-is-subsequent-root","true"),e.removeAttribute("data-is-first-root")):(f=!0,e.setAttribute("data-is-first-root","true"),e.removeAttribute("data-is-subsequent-root")))}});var p=[];d.forEach(function(t){return b(t)}),e.forEach(function(t){p.includes(t)||p.push(t)}),p.forEach(function(t,e){t.style.order=String(e)});var m=t.querySelector(".PostStream-loadPrevious");m&&(m.style.order="-2");var v=t.querySelector(".PostStream-afterFirstPost");v&&(v.style.order="-1");var y=t.querySelector(".PostStream-loadMore");y&&(y.style.order=String(p.length+1));var h=t.querySelector(".PostStream-item:not([data-id]):not(.PostStream-afterFirstPost)");h&&(h.style.order=String(p.length+2))}}function g(t,e){var r=n().store?n().store.getById("posts",t):null,o=n().store?n().store.getById("posts",e):null;if(!r||!o)return 0;var a=n().itqanDiscussionSort||"oldest";if("top"===a){var s="function"==typeof r.attribute?r.attribute("votes")||0:"function"==typeof r.votes&&r.votes()||0,i="function"==typeof o.attribute?o.attribute("votes")||0:"function"==typeof o.votes&&o.votes()||0;return i!==s?i-s:(r.createdAt&&r.createdAt()?r.createdAt().getTime():0)-(o.createdAt&&o.createdAt()?o.createdAt().getTime():0)}if("latest"===a){var u="function"==typeof r.number?r.number():0,l="function"==typeof o.number?o.number():0;if(l!==u)return l-u;var c=r.createdAt&&r.createdAt()?r.createdAt().getTime():0;return(o.createdAt&&o.createdAt()?o.createdAt().getTime():0)-c}var d="function"==typeof r.number?r.number():0,f="function"==typeof o.number?o.number():0;return d!==f?d-f:(r.createdAt&&r.createdAt()?r.createdAt().getTime():0)-(o.createdAt&&o.createdAt()?o.createdAt().getTime():0)}function b(t){var e=r.get(t);e&&(p.push(e),t===s||d.includes(t)||(e.removeAttribute("data-is-first-root"),e.removeAttribute("data-is-subsequent-root")));var n=o.get(t)||[];n.sort(g),n.forEach(function(t){return b(t)})}}))}function J(){document.querySelectorAll(".is-reply-target").forEach(function(t){t.classList.remove("is-reply-target")})}function K(t){if(!t)return!1;if("function"==typeof t.number&&1===t.number())return!0;var e="function"==typeof t.discussion?t.discussion():null;if(e){var r="function"==typeof e.attribute?e.attribute("firstPostId"):null,n="function"==typeof t.id?t.id():null;if(r&&n&&String(r)===String(n))return!0;if("function"==typeof e.firstPost&&e.firstPost()&&n&&String(e.firstPost().id())===String(n))return!0}return!1}n().initializers.add("itqan-discussions",function(){(0,o.extend)(b().prototype,"sortMap",function(t){t.top="-votes",t.hot="-hotness"}),S().prototype.getJumpTo=function(){var t=this.attrs.discussion;if(this.attrs.params&&this.attrs.params.q){var e=t.mostRelevantPost();if(e)return e.number()}return 1},(0,o.extend)(S().prototype,"contentItems",function(t){var e=this.attrs.discussion;void 0!==e.attribute("votes")&&t.add("itqanVote",m(O,{model:e,postId:e.attribute("firstPostId"),vertical:!0}),110)}),s()&&u()&&u().prototype&&(u().prototype.parentId=s().attribute("parentId"),u().prototype.replyCount=s().attribute("replyCount")),n().itqanActiveParentId=null,n().itqanActiveParentUsername=null,(0,o.extend)(c().prototype,"elementAttrs",function(t){var e=this.attrs?this.attrs.post:null;if(e){K(e)&&(t["data-is-op"]="true");var r=H(e);r>0&&(t["data-thread-depth"]=String(r))}}),(0,o.extend)(c().prototype,"oncreate",function(){G()}),(0,o.extend)(c().prototype,"onupdate",function(){G()}),f()&&((0,o.extend)(f().prototype,"oncreate",function(){G()}),f().prototype.loadPostsIfNeeded=function(){},(0,o.extend)(f().prototype,"view",function(t){if(t&&t.children&&Array.isArray(t.children)){var e=t.children;if(0!==e.length){var r=null,n=null,o=[],a=e[0];if(a&&"["===a.tag){var s=Array.isArray(a.children)?a.children:[];r=s[0]||null,n=s[1]||null,o=e.slice(1)}else a&&a.attrs&&(1===a.attrs["data-number"]||"1"===a.attrs["data-number"])?(r=a,o=e.slice(1)):(r=null,o=e);var i=[];if(n&&i.push(n),i.push.apply(i,o),i.length>0){var u=m("div",{className:"itqan-comments-card",key:"itqan-comments-card"},i);t.children=r?[r,u]:[u]}}}}),(0,o.extend)(f().prototype,"afterFirstPostItems",function(t){var e=this.discussion;if(e){var r="function"==typeof e.postIds?e.postIds():[];if(r&&!(r.length<=1)){var o=n().itqanDiscussionSort||"oldest";t.add("itqan-thread-sort",m("div",{className:"itqan-stream-sort-bar"},m("div",{className:"itqan-stream-sort-title"},m("span",null,n().translator.trans("itqan-discussions.forum.sort.label")||"Sort by:")),m("div",{className:"itqan-thread-sort-wrapper"},m("select",{className:"itqan-thread-sort-select",value:o,onchange:function(t){n().itqanDiscussionSort=t.target.value,G(),m.redraw()}},m("option",{value:"oldest"},n().translator.trans("itqan-discussions.forum.sort.oldest")||"الأقدم (افتراضي)"),m("option",{value:"top"},n().translator.trans("itqan-discussions.forum.sort.top")||"الأعلى تقييماً"),m("option",{value:"latest"},n().translator.trans("itqan-discussions.forum.sort.latest")||"الأحدث")))),50)}}})),(0,o.extend)(c().prototype,"contentItems",function(t){var e=this.attrs?this.attrs.post:null;if(e&&!K(e)){var r=function(t){if(!t)return[];var e=[],r="function"==typeof t.id?String(t.id()):"",o=new Set;o.add(r);for(var a=t;a;){var s="function"==typeof a.parentId?a.parentId():null;if(!s)break;var i=String(s);if(o.has(i))break;o.add(i);var u=n().store?n().store.getById("posts",i):null;if(!u)break;if("function"==typeof u.number&&1===u.number())break;e.unshift(u),a=u}return e.map(function(t,e){return{col:e,postId:String(t.id()),color:j(t)}})}(e);r&&0!==r.length&&t.add("itqanThreadRails",m("div",{className:"itqan-thread-rails","aria-hidden":"true"},r.map(function(t){return m("div",{key:"rail-"+t.postId+"-"+t.col,className:"itqan-thread-rail","data-rail-ancestor-id":t.postId,style:{"--rail-col":t.col,"--rail-color":t.color}})})),120)}}),(0,o.extend)(c().prototype,"headerItems",function(t){var e=this.attrs?this.attrs.post:null;if(e){var r="function"==typeof e.discussion?e.discussion():null,o=r&&"function"==typeof r.user?r.user():null,a="function"==typeof e.user?e.user():null;o&&a&&o.id()&&a.id()&&String(o.id())===String(a.id())&&t.add("itqan-op-badge",m("span",{className:"itqan-op-badge"},"OP"),85);var s="function"==typeof e.parentId?e.parentId():null,i=null;if(s){var u=n().store?n().store.getById("posts",String(s)):null;i=u&&u.user&&u.user()?u.user().displayName():null}else{var l="function"==typeof e.contentHtml?e.contentHtml():e.attribute&&e.attribute("contentHtml");if(l){var c=l.match(/^\s*<p>\s*<a\s+[^>]*class="[^"]*PostMention[^"]*"[^>]*data-id="(\d+)"[^>]*>([^<]+)<\/a>/i);c&&(s=c[1],i=c[2].trim().replace(/^@/,""))}}s&&t.add("itqan-reply-badge",m("a",{className:"itqan-reply-badge",href:"#",title:i?w()(n().translator.trans("itqan-discussions.forum.replied_to",{username:i})):"",onclick:function(t){t.preventDefault();var e=document.querySelector('.PostStream-item[data-id="'+s+'"]');e&&(e.scrollIntoView({behavior:"smooth",block:"center"}),e.classList.add("flash"),setTimeout(function(){return e.classList.remove("flash")},1500))}},[P()?P()("fas fa-reply"):null," ",i?n().translator.trans("itqan-discussions.forum.replied_to",{username:i}):"#"+s]),70)}}),(0,o.extend)(c().prototype,"actionItems",function(t){var e=this.attrs?this.attrs.post:null;if(e){var r="function"==typeof e.id?String(e.id()):"",o=K(e),a="function"==typeof e.replyCount&&e.replyCount()||0,s=n().itqanCollapsedThreads.has(r);if(e.isHidden()||void 0===e.attribute("votes")||t.add("itqanVote",m(O,{model:e,postId:e.id(),vertical:!1}),50),!o&&a>0){var i=s?"ردود ("+a+")":"طي",u=s?"fas fa-plus":"fas fa-minus";t.add("itqan-collapse-thread",m("button",{key:"collapse-btn-"+r+"-"+(s?"col":"exp"),className:"Button Button--link","data-post-id":r,onclick:function(t){t.preventDefault(),t.stopPropagation();var e=t.currentTarget;if(n().itqanCollapsedThreads.has(r)){n().itqanCollapsedThreads.delete(r);var o=e.querySelector(".thread-collapse-label");o&&(o.textContent=" طي");var s=e.querySelector(".icon, i");s&&(s.className="icon fas fa-minus")}else{n().itqanCollapsedThreads.add(r);var i=e.querySelector(".thread-collapse-label");i&&(i.textContent=" ردود ("+a+")");var u=e.querySelector(".icon, i");u&&(u.className="icon fas fa-plus")}G()}},[P()?P()(u):null,m("span.thread-collapse-label"," "+i)]),15)}t.has("reply")&&t.remove("reply"),t.add("reply",m("button",{className:"Button Button--link",onclick:function(t){t&&(t.preventDefault(),t.stopPropagation()),o?(n().itqanActiveParentId=null,n().itqanActiveParentUsername=null,J()):(n().itqanActiveParentId=e.id(),n().itqanActiveParentUsername=e.user&&e.user()?e.user().displayName():"#"+e.id(),function(t){if(J(),t){var e=document.querySelector('.PostStream-item[data-id="'+t+'"]');e&&e.classList.add("is-reply-target")}}(e.id()));var r=e.discussion?e.discussion():null;r&&h()&&h().replyAction&&h().replyAction.call(r).then(function(){n().composer.fields=n().composer.fields||{},n().composer.fields.parentId=n().itqanActiveParentId,n().composer.fields.replyToUsername=n().itqanActiveParentUsername,m.redraw()})}},[P()?P()("fas fa-reply"):null," ","رد"]),10)}}),v()&&((0,o.extend)(v().prototype,"headerItems",function(t){var e=n().itqanActiveParentId||n().composer.fields&&n().composer.fields.parentId,r=n().itqanActiveParentUsername||n().composer.fields&&n().composer.fields.replyToUsername;if(e){var o=r||"#"+e;t.add("itqan-replying-banner",m("div",{className:"Composer-replyBanner"},[m("div",{className:"replyBanner-content"},[P()?P()("fas fa-reply"):null," ","الرد على "+o]),m("button",{className:"replyBanner-close",title:"إلغاء الرد المتشعب",onclick:function(t){t.stopPropagation(),n().itqanActiveParentId=null,n().itqanActiveParentUsername=null,J(),n().composer.fields&&(n().composer.fields.parentId=null,n().composer.fields.replyToUsername=null),m.redraw()}},P()?P()("fas fa-times"):"x")]),100)}}),(0,o.extend)(v().prototype,"data",function(t){var e=n().itqanActiveParentId||n().composer.fields&&n().composer.fields.parentId||this.attrs&&this.attrs.parentId;e&&(t.parentId=e,t.parent_id=e)}),(0,o.extend)(v().prototype,"onsubmit",function(){setTimeout(function(){n().itqanActiveParentId=null,n().itqanActiveParentUsername=null,J(),n().composer.fields&&(n().composer.fields.parentId=null,n().composer.fields.replyToUsername=null),G()},500)}))})})(),module.exports=e})();
-//# sourceMappingURL=forum.js.map
+(() => {
+  "use strict";
+
+  const app = flarum.core.compat['forum/app'];
+  const { extend, override } = flarum.core.compat['common/extend'];
+  const Model = flarum.core.compat['common/Model'];
+  const Post = flarum.core.compat['common/models/Post'];
+  const Discussion = flarum.core.compat['common/models/Discussion'];
+  const CommentPost = flarum.core.compat['forum/components/CommentPost'];
+  const PostStream = flarum.core.compat['forum/components/PostStream'];
+  const ReplyComposer = flarum.core.compat['forum/components/ReplyComposer'];
+  const DiscussionControls = flarum.core.compat['forum/utils/DiscussionControls'];
+  const DiscussionListState = flarum.core.compat['forum/states/DiscussionListState'];
+  const DiscussionListItem = flarum.core.compat['forum/components/DiscussionListItem'];
+  const icon = flarum.core.compat['common/helpers/icon'];
+  const extractText = flarum.core.compat['common/utils/extractText'];
+  const Component = flarum.core.compat['common/Component'];
+  const Button = flarum.core.compat['common/components/Button'];
+  const LogInModal = flarum.core.compat['forum/components/LogInModal'];
+  const classList = flarum.core.compat['common/utils/classList'];
+
+  // 1. VoteButtons Component (fof/gamification integration)
+  class VoteButtons extends Component {
+    oninit(vnode) {
+      super.oninit(vnode);
+      this.saving = false;
+    }
+
+    view() {
+      const model = this.attrs.model;
+      const userVote = model.attribute('userVote') || 0;
+      const votes = model.attribute('votes') || 0;
+
+      return m('div', {
+        className: classList('VoteButtons', {
+          'VoteButtons--saving': this.saving,
+          'VoteButtons--vertical': this.attrs.vertical,
+        }),
+        ontouchstart: (e) => e.stopPropagation(),
+      }, [
+        this.button(1, this.attrs.vertical ? 'fas fa-caret-up' : 'fas fa-arrow-up', userVote === 1, 'up'),
+        m('span', {
+          className: classList('VoteButtons-score', {
+            'VoteButtons-score--positive': userVote === 1,
+            'VoteButtons-score--negative': userVote === -1,
+          }),
+          'aria-live': 'polite',
+          dir: 'ltr',
+        }, votes),
+        this.button(-1, this.attrs.vertical ? 'fas fa-caret-down' : 'fas fa-arrow-down', userVote === -1, 'down'),
+      ]);
+    }
+
+    button(voteValue, iconClass, isActive, type) {
+      const label = extractText(app.translator.trans(`itqan-discussions.forum.vote.${type}`));
+
+      return m(Button, {
+        className: classList('Button Button--icon Button--link VoteButtons-button', `VoteButtons-button--${type}`, {
+          'VoteButtons-button--active': isActive,
+        }),
+        icon: iconClass,
+        'aria-pressed': isActive ? 'true' : 'false',
+        'aria-label': label,
+        onclick: () => this.vote(voteValue),
+      });
+    }
+
+    vote(direction) {
+      const model = this.attrs.model;
+      const postId = this.attrs.postId;
+
+      if (!app.session.user) {
+        app.modal.show(LogInModal);
+        return;
+      }
+
+      if (this.saving || !postId || !model.attribute('canVote')) return;
+
+      const current = {
+        votes: model.attribute('votes') || 0,
+        userVote: model.attribute('userVote') || 0,
+      };
+
+      const newVote = current.userVote === direction ? 0 : direction;
+      const newScore = current.votes - current.userVote + newVote;
+
+      model.pushAttributes({ votes: newScore, userVote: newVote });
+      if (typeof model.discussion === 'function' && model.discussion()) {
+        model.discussion().pushAttributes({ votes: newScore, userVote: newVote });
+      }
+
+      m.redraw();
+      this.saving = true;
+
+      app.request({
+        method: 'PATCH',
+        url: `${app.forum.attribute('apiUrl')}/posts/${postId}/vote`,
+        body: { data: { attributes: { vote: newVote } } },
+      })
+      .then((res) => {
+        app.store.pushPayload(res);
+        const serverVotes = res?.data?.attributes?.votes;
+        if (serverVotes !== undefined) {
+          if (model.data?.type === 'posts') {
+            if (typeof model.discussion === 'function' && model.discussion()) {
+              model.discussion().pushAttributes({ votes: serverVotes, userVote: newVote });
+            }
+          } else {
+            model.pushAttributes({ votes: serverVotes, userVote: newVote });
+          }
+        }
+      })
+      .catch(() => {
+        model.pushAttributes(current);
+        m.redraw();
+      })
+      .finally(() => {
+        this.saving = false;
+        m.redraw();
+      });
+    }
+  }
+
+  // 2. Avatar Dominant Color Extraction
+  const AVATAR_COLOR_CACHE = new Map();
+  const POST_AVATAR_COLOR_CACHE = new Map();
+  const PALETTE = ['#0D9488', '#F97316', '#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#EF4444', '#F59E0B', '#6366F1'];
+
+  function stringToColor(str) {
+    if (!str) return PALETTE[0];
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return PALETTE[Math.abs(hash) % PALETTE.length];
+  }
+
+  function getDominantColorFromImg(img) {
+    try {
+      if (!img.complete || img.naturalWidth === 0) return null;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return null;
+      canvas.width = 16;
+      canvas.height = 16;
+      ctx.drawImage(img, 0, 0, 16, 16);
+      const data = ctx.getImageData(0, 0, 16, 16).data;
+      let r = 0, g = 0, b = 0, count = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] < 128) continue;
+        const pr = data[i], pg = data[i + 1], pb = data[i + 2];
+        if ((pr > 240 && pg > 240 && pb > 240) || (pr < 20 && pg < 20 && pb < 20)) continue;
+        r += pr; g += pg; b += pb; count++;
+      }
+      return count === 0 ? `rgb(${data[544]}, ${data[545]}, ${data[546]})` : `rgb(${Math.round(r / count)}, ${Math.round(g / count)}, ${Math.round(b / count)})`;
+    } catch {
+      return null;
+    }
+  }
+
+  function getAvatarColor(avatarEl, username, onResolved = null) {
+    if (!avatarEl) return stringToColor(username);
+    if (avatarEl.tagName === 'SPAN' || avatarEl.tagName === 'DIV') {
+      const bg = avatarEl.style.backgroundColor || window.getComputedStyle(avatarEl).backgroundColor;
+      if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') return bg;
+    }
+    const img = avatarEl.tagName === 'IMG' ? avatarEl : avatarEl.querySelector('img');
+    if (!img) {
+      const bg = avatarEl.style.backgroundColor || window.getComputedStyle(avatarEl).backgroundColor;
+      return (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') ? bg : stringToColor(username);
+    }
+    const src = img.src || img.getAttribute('src');
+    if (!src) return stringToColor(username);
+    if (AVATAR_COLOR_CACHE.has(src)) return AVATAR_COLOR_CACHE.get(src);
+    if (img.complete && img.naturalWidth > 0) {
+      const color = getDominantColorFromImg(img) || stringToColor(username);
+      AVATAR_COLOR_CACHE.set(src, color);
+      return color;
+    }
+    if (onResolved) {
+      img.addEventListener('load', () => {
+        const color = getDominantColorFromImg(img) || stringToColor(username);
+        AVATAR_COLOR_CACHE.set(src, color);
+        onResolved(color);
+      }, { once: true });
+    }
+    return stringToColor(username);
+  }
+
+  function getPostAvatarColor(post) {
+    if (!post) return PALETTE[0];
+    const postId = typeof post.id === 'function' ? String(post.id()) : String(post.id || '');
+    if (POST_AVATAR_COLOR_CACHE.has(postId)) return POST_AVATAR_COLOR_CACHE.get(postId);
+
+    const user = typeof post.user === 'function' ? post.user() : null;
+    const username = (user && typeof user.displayName === 'function') ? user.displayName() : (user && user.username) ? user.username() : postId;
+    const avatarUrl = (user && typeof user.avatarUrl === 'function') ? user.avatarUrl() : null;
+    if (avatarUrl && AVATAR_COLOR_CACHE.has(avatarUrl)) {
+      const color = AVATAR_COLOR_CACHE.get(avatarUrl);
+      POST_AVATAR_COLOR_CACHE.set(postId, color);
+      return color;
+    }
+
+    const postItem = document.querySelector(`.PostStream-item[data-id="${postId}"]`);
+    const avatarEl = postItem ? postItem.querySelector('.PostUser-avatar, .Avatar') : null;
+    const color = getAvatarColor(avatarEl, username, (resolvedColor) => {
+      POST_AVATAR_COLOR_CACHE.set(postId, resolvedColor);
+      if (window.m) window.m.redraw();
+    });
+
+    POST_AVATAR_COLOR_CACHE.set(postId, color);
+    return color;
+  }
+
+  // 3. Tree Depth & OP Determination
+  function getPostDepth(post, visited = new Set()) {
+    if (!post) return 0;
+    const parentId = typeof post.parentId === 'function' ? post.parentId() : null;
+    if (!parentId) return 0;
+    const postId = typeof post.id === 'function' ? String(post.id()) : '';
+    if (visited.has(postId)) return 0;
+    visited.add(postId);
+
+    const parent = app.store ? app.store.getById('posts', String(parentId)) : null;
+    if (!parent) return 0;
+    if (typeof parent.number === 'function' && parent.number() === 1) return 0;
+    return 1 + getPostDepth(parent, visited);
+  }
+
+  function isMainPost(post) {
+    if (!post) return false;
+    if (typeof post.number === 'function' && post.number() === 1) return true;
+    const disc = typeof post.discussion === 'function' ? post.discussion() : null;
+    if (disc) {
+      const firstId = typeof disc.attribute === 'function' ? disc.attribute('firstPostId') : null;
+      const pId = typeof post.id === 'function' ? post.id() : null;
+      if (firstId && pId && String(firstId) === String(pId)) return true;
+    }
+    return false;
+  }
+
+  function clearActiveReplyTarget() {
+    document.querySelectorAll('.is-reply-target').forEach((el) => el.classList.remove('is-reply-target'));
+  }
+
+  // 4. Ancestor Rails Calculation
+  function getAncestorRails(post) {
+    if (!post || isMainPost(post)) return [];
+    const ancestors = [];
+    const selfId = typeof post.id === 'function' ? String(post.id()) : '';
+    const visited = new Set();
+    visited.add(selfId);
+
+    let curr = post;
+    while (curr) {
+      const pId = typeof curr.parentId === 'function' ? curr.parentId() : null;
+      if (!pId) break;
+      const pIdStr = String(pId);
+      if (visited.has(pIdStr)) break;
+      visited.add(pIdStr);
+
+      const parentPost = app.store ? app.store.getById('posts', pIdStr) : null;
+      if (!parentPost) break;
+      if (typeof parentPost.number === 'function' && parentPost.number() === 1) break;
+
+      ancestors.unshift(parentPost);
+      curr = parentPost;
+    }
+
+    const rails = ancestors.map((anc, colIndex) => ({
+      col: colIndex,
+      postId: String(anc.id()),
+      color: getPostAvatarColor(anc),
+      isSelf: false,
+    }));
+
+    const replyCount = typeof post.replyCount === 'function' ? post.replyCount() || 0 : 0;
+    if (replyCount > 0) {
+      rails.push({
+        col: ancestors.length,
+        postId: selfId,
+        color: getPostAvatarColor(post),
+        isSelf: true,
+      });
+    }
+
+    return rails;
+  }
+
+  // Global State Initialization
+  app.itqanCollapsedThreads = app.itqanCollapsedThreads || new Set();
+  app.itqanDiscussionSort = app.itqanDiscussionSort || 'oldest';
+  app.itqanActiveParentId = null;
+  app.itqanActiveParentUsername = null;
+
+  // Initializer
+  app.initializers.add('itqan-discussions', () => {
+    // Extend DiscussionListState sorts
+    extend(DiscussionListState.prototype, 'sortMap', function (map) {
+      map.top = '-votes';
+      map.hot = '-hotness';
+    });
+
+    // Extend DiscussionListItem
+    DiscussionListItem.prototype.getJumpTo = function () {
+      const discussion = this.attrs.discussion;
+      if (this.attrs.params && this.attrs.params.q) {
+        const mostRelevant = discussion.mostRelevantPost();
+        if (mostRelevant) return mostRelevant.number();
+      }
+      return 1;
+    };
+
+    extend(DiscussionListItem.prototype, 'contentItems', function (items) {
+      const discussion = this.attrs.discussion;
+      if (discussion.attribute('votes') !== undefined) {
+        items.add('itqanVote', m(VoteButtons, {
+          model: discussion,
+          postId: discussion.attribute('firstPostId'),
+          vertical: true,
+        }), 110);
+      }
+    });
+
+    // Register Post Model attributes
+    if (Model && Post && Post.prototype) {
+      Post.prototype.parentId = Model.attribute('parentId');
+      Post.prototype.replyCount = Model.attribute('replyCount');
+    }
+    if (Model && Discussion && Discussion.prototype) {
+      Discussion.prototype.rootCommentCount = Model.attribute('rootCommentCount');
+    }
+
+    // CommentPost element attributes: data-thread-depth & OP marker
+    extend(CommentPost.prototype, 'elementAttrs', function (attrs) {
+      const post = this.attrs ? this.attrs.post : null;
+      if (post) {
+        if (isMainPost(post)) {
+          attrs['data-is-op'] = 'true';
+        }
+        const depth = getPostDepth(post);
+        if (depth > 0) {
+          attrs['data-thread-depth'] = String(depth);
+        }
+      }
+    });
+
+    // Guide Rails in CommentPost
+    extend(CommentPost.prototype, 'contentItems', function (items) {
+      const post = this.attrs ? this.attrs.post : null;
+      if (!post || isMainPost(post)) return;
+
+      const rails = getAncestorRails(post);
+      if (!rails || rails.length === 0) return;
+
+      items.add('itqanThreadRails', m('div', {
+        className: 'itqan-thread-rails',
+        'aria-hidden': 'true',
+      }, rails.map((r) => m('div', {
+        key: `rail-${r.postId}-${r.col}-${r.isSelf ? 's' : 'a'}`,
+        className: `itqan-thread-rail ${r.isSelf ? 'itqan-thread-rail--self' : ''}`,
+        style: {
+          '--rail-col': r.col,
+          '--rail-color': r.color,
+        },
+        title: r.isSelf ? '' : 'طي / فتح المحادثة',
+        onclick: (e) => {
+          if (!r.isSelf) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (app.itqanCollapsedThreads.has(r.postId)) {
+              app.itqanCollapsedThreads.delete(r.postId);
+            } else {
+              app.itqanCollapsedThreads.add(r.postId);
+            }
+            m.redraw();
+          }
+        },
+      }))), 120);
+    });
+
+    // OP Badge and Reply Badge in Post Header
+    extend(CommentPost.prototype, 'headerItems', function (items) {
+      const post = this.attrs ? this.attrs.post : null;
+      if (!post) return;
+
+      const discussion = typeof post.discussion === 'function' ? post.discussion() : null;
+      const opUser = discussion && typeof discussion.user === 'function' ? discussion.user() : null;
+      const postUser = typeof post.user === 'function' ? post.user() : null;
+
+      if (opUser && postUser && opUser.id() && postUser.id() && String(opUser.id()) === String(postUser.id())) {
+        items.add('itqan-op-badge', m('span', { className: 'itqan-op-badge' }, 'OP'), 85);
+      }
+
+      let parentId = typeof post.parentId === 'function' ? post.parentId() : null;
+      let replyToUsername = null;
+
+      if (parentId) {
+        const parentPost = app.store ? app.store.getById('posts', String(parentId)) : null;
+        replyToUsername = parentPost && parentPost.user && parentPost.user() ? parentPost.user().displayName() : null;
+      } else {
+        const html = typeof post.contentHtml === 'function' ? post.contentHtml() : post.attribute && post.attribute('contentHtml');
+        if (html) {
+          const match = html.match(/^\s*<p>\s*<a\s+[^>]*class="[^"]*PostMention[^"]*"[^>]*data-id="(\d+)"[^>]*>([^<]+)<\/a>/i);
+          if (match) {
+            parentId = match[1];
+            replyToUsername = match[2].trim().replace(/^@/, '');
+          }
+        }
+      }
+
+      if (parentId) {
+        items.add('itqan-reply-badge', m('a', {
+          className: 'itqan-reply-badge',
+          href: '#',
+          title: replyToUsername ? extractText(app.translator.trans('itqan-discussions.forum.replied_to', { username: replyToUsername })) : '',
+          onclick: (e) => {
+            e.preventDefault();
+            const parentEl = document.querySelector(`.PostStream-item[data-id="${parentId}"]`);
+            if (parentEl) {
+              parentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              parentEl.classList.add('flash');
+              setTimeout(() => parentEl.classList.remove('flash'), 1500);
+            }
+          },
+        }, [
+          icon ? icon('fas fa-reply') : null,
+          ' ',
+          replyToUsername ? app.translator.trans('itqan-discussions.forum.replied_to', { username: replyToUsername }) : `#${parentId}`,
+        ]), 70);
+      }
+    });
+
+    // Action Items: Vote, Collapse Toggle, and Reply
+    extend(CommentPost.prototype, 'actionItems', function (items) {
+      const post = this.attrs ? this.attrs.post : null;
+      if (!post) return;
+
+      const postIdStr = typeof post.id === 'function' ? String(post.id()) : '';
+      const isOp = isMainPost(post);
+      const replyCount = typeof post.replyCount === 'function' ? post.replyCount() || 0 : 0;
+      const isCollapsed = app.itqanCollapsedThreads.has(postIdStr);
+
+      if (!post.isHidden() && post.attribute('votes') !== undefined) {
+        items.add('itqanVote', m(VoteButtons, {
+          model: post,
+          postId: post.id(),
+          vertical: false,
+        }), 50);
+      }
+
+      if (!isOp && replyCount > 0) {
+        const label = isCollapsed ? `ردود (${replyCount})` : 'طي';
+        const iconName = isCollapsed ? 'fas fa-plus' : 'fas fa-minus';
+
+        items.add('itqan-collapse-thread', m('button', {
+          key: `collapse-btn-${postIdStr}-${isCollapsed ? 'col' : 'exp'}`,
+          className: 'Button Button--link',
+          'data-post-id': postIdStr,
+          onclick: (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (app.itqanCollapsedThreads.has(postIdStr)) {
+              app.itqanCollapsedThreads.delete(postIdStr);
+            } else {
+              app.itqanCollapsedThreads.add(postIdStr);
+            }
+            m.redraw();
+          },
+        }, [
+          icon ? icon(iconName) : null,
+          m('span.thread-collapse-label', ` ${label}`),
+        ]), 15);
+      }
+
+      if (items.has('reply')) items.remove('reply');
+      items.add('reply', m('button', {
+        className: 'Button Button--link',
+        onclick: (e) => {
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+
+          if (isOp) {
+            app.itqanActiveParentId = null;
+            app.itqanActiveParentUsername = null;
+            clearActiveReplyTarget();
+          } else {
+            app.itqanActiveParentId = post.id();
+            app.itqanActiveParentUsername = post.user && post.user() ? post.user().displayName() : `#${post.id()}`;
+            clearActiveReplyTarget();
+            const targetEl = document.querySelector(`.PostStream-item[data-id="${post.id()}"]`);
+            if (targetEl) targetEl.classList.add('is-reply-target');
+          }
+
+          const discussion = post.discussion ? post.discussion() : null;
+          if (discussion && DiscussionControls && DiscussionControls.replyAction) {
+            DiscussionControls.replyAction.call(discussion).then(() => {
+              app.composer.fields = app.composer.fields || {};
+              app.composer.fields.parentId = app.itqanActiveParentId;
+              app.composer.fields.replyToUsername = app.itqanActiveParentUsername;
+              m.redraw();
+            });
+          }
+        },
+      }, [
+        icon ? icon('fas fa-reply') : null,
+        ' ',
+        'رد',
+      ]), 10);
+    });
+
+    // ReplyComposer Context Banner & Data Injection
+    if (ReplyComposer) {
+      extend(ReplyComposer.prototype, 'headerItems', function (items) {
+        const pId = app.itqanActiveParentId || (app.composer.fields && app.composer.fields.parentId);
+        const username = app.itqanActiveParentUsername || (app.composer.fields && app.composer.fields.replyToUsername);
+
+        if (pId) {
+          const targetName = username || `#${pId}`;
+          items.add('itqan-replying-banner', m('div', { className: 'Composer-replyBanner' }, [
+            m('div', { className: 'replyBanner-content' }, [
+              icon ? icon('fas fa-reply') : null,
+              ' ',
+              `الرد على ${targetName}`,
+            ]),
+            m('button', {
+              className: 'replyBanner-close',
+              title: 'إلغاء الرد المتشعب',
+              onclick: (e) => {
+                e.stopPropagation();
+                app.itqanActiveParentId = null;
+                app.itqanActiveParentUsername = null;
+                clearActiveReplyTarget();
+                if (app.composer.fields) {
+                  app.composer.fields.parentId = null;
+                  app.composer.fields.replyToUsername = null;
+                }
+                m.redraw();
+              },
+            }, icon ? icon('fas fa-times') : 'x'),
+          ]), 100);
+        }
+      });
+
+      extend(ReplyComposer.prototype, 'data', function (data) {
+        const pId = app.itqanActiveParentId || (app.composer.fields && app.composer.fields.parentId) || (this.attrs && this.attrs.parentId);
+        if (pId) {
+          data.parentId = pId;
+          data.parent_id = pId;
+        }
+      });
+
+      extend(ReplyComposer.prototype, 'onsubmit', function () {
+        setTimeout(() => {
+          app.itqanActiveParentId = null;
+          app.itqanActiveParentUsername = null;
+          clearActiveReplyTarget();
+          if (app.composer.fields) {
+            app.composer.fields.parentId = null;
+            app.composer.fields.replyToUsername = null;
+          }
+          m.redraw();
+        }, 500);
+      });
+    }
+
+    // Sort Bar in PostStream.afterFirstPostItems
+    if (PostStream) {
+      extend(PostStream.prototype, 'afterFirstPostItems', function (items) {
+        const discussion = this.discussion;
+        if (!discussion) return;
+        const postIds = typeof discussion.postIds === 'function' ? discussion.postIds() : [];
+        if (!postIds || postIds.length <= 1) return;
+
+        const currentSort = app.itqanDiscussionSort || 'oldest';
+
+        items.add('itqan-thread-sort', m('div', { className: 'itqan-stream-sort-bar' }, [
+          m('div', { className: 'itqan-stream-sort-title' }, [
+            m('span', app.translator.trans('itqan-discussions.forum.sort.label') || 'الترتيب:'),
+          ]),
+          m('div', { className: 'itqan-thread-sort-wrapper' }, [
+            m('select', {
+              className: 'itqan-thread-sort-select',
+              value: currentSort,
+              onchange: (e) => {
+                app.itqanDiscussionSort = e.target.value;
+                if (this.stream && this.stream.goToFirst) {
+                  this.stream.goToFirst();
+                }
+                m.redraw();
+              },
+            }, [
+              m('option', { value: 'oldest' }, app.translator.trans('itqan-discussions.forum.sort.oldest') || 'الأقدم (افتراضي)'),
+              m('option', { value: 'top' }, app.translator.trans('itqan-discussions.forum.sort.top') || 'الأعلى تقييماً'),
+              m('option', { value: 'latest' }, app.translator.trans('itqan-discussions.forum.sort.latest') || 'الأحدث'),
+            ]),
+          ]),
+        ]), 50);
+      });
+
+      // Wrap comments inside the unified Reddit card .itqan-comments-card
+      extend(PostStream.prototype, 'view', function (vnode) {
+        if (!vnode || !vnode.children || !Array.isArray(vnode.children)) return;
+
+        const children = vnode.children;
+        if (children.length === 0) return;
+
+        let opVnode = null;
+        let afterFirstPostVnode = null;
+        let commentItems = [];
+
+        const firstChild = children[0];
+        if (firstChild && firstChild.tag === '[') {
+          const fragmentChildren = Array.isArray(firstChild.children) ? firstChild.children : [];
+          opVnode = fragmentChildren[0] || null;
+          afterFirstPostVnode = fragmentChildren[1] || null;
+          commentItems = children.slice(1);
+        } else if (firstChild && firstChild.attrs && (firstChild.attrs['data-number'] === 1 || firstChild.attrs['data-number'] === '1')) {
+          opVnode = firstChild;
+          commentItems = children.slice(1);
+        } else {
+          opVnode = null;
+          commentItems = children;
+        }
+
+        const filteredComments = [];
+        let subsequentRootSeen = false;
+
+        commentItems.forEach((item) => {
+          if (!item || !item.attrs) {
+            filteredComments.push(item);
+            return;
+          }
+
+          const postId = item.attrs['data-id'];
+          if (!postId) {
+            filteredComments.push(item);
+            return;
+          }
+
+          const post = app.store ? app.store.getById('posts', String(postId)) : null;
+          if (!post) {
+            filteredComments.push(item);
+            return;
+          }
+
+          // Check if descendant of any collapsed thread
+          let isHiddenByCollapse = false;
+          let pId = typeof post.parentId === 'function' ? post.parentId() : null;
+          const cycleCheck = new Set();
+          while (pId) {
+            const pIdStr = String(pId);
+            if (cycleCheck.has(pIdStr)) break;
+            cycleCheck.add(pIdStr);
+
+            if (app.itqanCollapsedThreads.has(pIdStr)) {
+              isHiddenByCollapse = true;
+              break;
+            }
+            const pPost = app.store ? app.store.getById('posts', pIdStr) : null;
+            if (!pPost || (typeof pPost.number === 'function' && pPost.number() === 1)) break;
+            pId = typeof pPost.parentId === 'function' ? pPost.parentId() : null;
+          }
+
+          if (isHiddenByCollapse) {
+            return;
+          }
+
+          // Mark subsequent root comments for top border divider
+          const isRoot = !pId || (post.number && post.number() === 1);
+          if (isRoot && post.number && post.number() > 1) {
+            if (subsequentRootSeen) {
+              item.attrs['data-is-subsequent-root'] = 'true';
+            } else {
+              subsequentRootSeen = true;
+              item.attrs['data-is-first-root'] = 'true';
+            }
+          }
+
+          const replyCount = typeof post.replyCount === 'function' ? post.replyCount() || 0 : 0;
+          if (replyCount > 0) {
+            item.attrs['data-has-thread-replies'] = 'true';
+          }
+
+          filteredComments.push(item);
+        });
+
+        const cardContents = [];
+        if (afterFirstPostVnode) cardContents.push(afterFirstPostVnode);
+        cardContents.push(...filteredComments);
+
+        if (cardContents.length > 0) {
+          const commentsCard = m('div', { className: 'itqan-comments-card', key: 'itqan-comments-card' }, cardContents);
+          vnode.children = opVnode ? [opVnode, commentsCard] : [commentsCard];
+        }
+      });
+    }
+  });
+})();
