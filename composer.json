@@ -73,6 +73,7 @@
         "itqan/flarum-composer-tools": "@dev",
         "itqan/flarum-discussions": "@dev",
         "itqan/flarum-mailerlite": "@dev",
+        "itqan/flarum-notifications": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
         "justoverclock/newsletter": "*",
@@ -102,6 +103,10 @@
             "type": "path",
             "url": "packages/itqan-mailerlite"
         },
+        "itqan-notifications": {
+            "type": "path",
+            "url": "packages/itqan-notifications"
+        },
         "itqan-theme": {
             "type": "path",
             "url": "packages/itqan-theme"
@@ -109,11 +114,7 @@
         "itqan-typography": {
             "type": "path",
             "url": "packages/itqan-typography"
-        },
-        "0": {
-            "type": "vcs",
-            "url": "git@github.com:Itqan-community/flarum-lang-arabic.git",
-            "no-api": true
         }
+        
     }
 }

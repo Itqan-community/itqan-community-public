@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "12a2d331cf2425d1baaa1e09868380aa",
+    "content-hash": "d6ba5e3edfb3574a952b5dcbfeb152dc",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -8432,12 +8432,65 @@
             "time": "2024-11-22T21:38:06+00:00"
         },
         {
+            "name": "itqan/flarum-composer-tools",
+            "version": "dev-feat/notifications-dnd-toggle",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-composer-tools",
+                "reference": "d6d1bbbfaf065527c01684e41e1758155d974ffa"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Composer Tools",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fab fa-markdown",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\ComposerTools\\": "src/"
+                }
+            },
+            "scripts": {
+                "build": [
+                    "cd js && npm run build"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Writing and preview tools for the Itqan community composer",
+            "keywords": [
+                "composer",
+                "flarum",
+                "markdown",
+                "preview"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "itqan/flarum-discussions",
-            "version": "dev-main",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-discussions",
-                "reference": "29f3100ca6cb4ac97fc6289bb55af752fd1426dd"
+                "reference": "cdea7d38613d050c08b943c5e8236d5b91f11011"
             },
             "require": {
                 "flarum/core": "^1.8.0"
@@ -8485,11 +8538,11 @@
         },
         {
             "name": "itqan/flarum-mailerlite",
-            "version": "dev-main",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-mailerlite",
-                "reference": "ea7376b0443206fa858514f8f0b041ad453bf5e8"
+                "reference": "9fce2996b0cdf209c39e4ee806487e5befe1a35b"
             },
             "require": {
                 "flarum/core": "^1.8.0",
@@ -8543,12 +8596,54 @@
             }
         },
         {
+            "name": "itqan/flarum-notifications",
+            "version": "dev-feat/notifications-dnd-toggle",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-notifications",
+                "reference": "023bc6866ef2385b701e012d9daa347efdc9da06"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Notifications",
+                    "category": "feature",
+                    "icon": {
+                        "name": "far fa-bell",
+                        "color": "#ffffff",
+                        "backgroundColor": "#0D9488"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Notifications\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Itqan community notifications — do-not-disturb toggle",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "itqan/flarum-theme",
-            "version": "dev-main",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-theme",
-                "reference": "9525586f76ba565feb772fe664d315b0279b76f3"
+                "reference": "0227d077b129fc08276a8e897301d68c4117b6ff"
             },
             "require": {
                 "flarum/core": "^1.8.0"
@@ -8597,11 +8692,11 @@
         },
         {
             "name": "itqan/flarum-typography",
-            "version": "dev-main",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-typography",
-                "reference": "a8df89f86fb3258b263b3a49ff3cef210195eb24"
+                "reference": "0c549114f22b46190a4e52197fd06bbbb6cb47ba"
             },
             "require": {
                 "flarum/core": "^1.8.0"
@@ -17159,8 +17254,10 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "flarum-locale/arabic": 20,
+        "itqan/flarum-composer-tools": 20,
         "itqan/flarum-discussions": 20,
         "itqan/flarum-mailerlite": 20,
+        "itqan/flarum-notifications": 20,
         "itqan/flarum-theme": 20,
         "itqan/flarum-typography": 20
     },
