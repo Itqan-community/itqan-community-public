@@ -1,0 +1,298 @@
+// ---------------------------------------------------------------------------
+// Post page — layout and core resets
+// ---------------------------------------------------------------------------
+//
+// The page is two surfaces: one card for the opening post, and one quiet
+// surface holding every comment. Everything in this file either establishes
+// that split or undoes a core rule that assumes the old single-column,
+// 85px-avatar-gutter layout.
+//
+// Core rules being reset here, for the next reader:
+//   .Post                       padding: 20px; margin: -1px -20px
+//   @tablet-up .Post            padding-left: 105px
+//   @tablet-up .PostUser-avatar position: absolute; left: -85px; 64px
+//   @tablet-up .PostUser-badges float: left; margin-left: -80px; width: 64px
+//   .PostStream-item            border-bottom: 1px solid var(--control-bg)
+//   .Post-actions               float: right; opacity: 0 on .no-touch
+//
+// Each reset is scoped to `.CommentPost` or to the comments surface so nothing
+// leaks onto post types we do not own (EventPost, PostPreview, ReplyPlaceholder).
+
+.PostStream {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+// The OP is the anchor; comments follow as one block. Order is authored, not
+// reshuffled — the server sends the tree in depth-first order.
+.PostStream-item {
+  position: relative;
+  overflow: visible;
+
+  // Core draws a divider between every item. Separation is a property of the
+  // comments surface here, applied to root comments only.
+  &:not(:last-child) {
+    border-bottom: 0;
+  }
+
+  // An open dropdown must escape its neighbours' stacking context.
+  &:has(.open),
+  &:has(.openWithin),
+  &:focus-within {
+    z-index: var(--z-post-raised);
+  }
+}
+
+// Core's "3 months later" divider stays hidden. Tree-aware date separators
+// (`.itqan-date-separator`) are injected between root comments instead.
+.PostStream-timeGap {
+  display: none;
+}
+
+// The scrubber cannot represent a capped tree — position in a flat index is
+// meaningless once replies are grouped under their parents.
+.PostStream-scrubber,
+.DiscussionPage-nav .PostStreamScrubber {
+  display: none;
+}
+
+// ---------------------------------------------------------------------------
+// Shared post-body typography
+// ---------------------------------------------------------------------------
+
+.CommentPost .Post-body {
+  margin: 0;
+  padding: 0;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text-default);
+  // Core sets `overflow: auto` to contain its floated avatar. With the avatar
+  // in flow there is nothing to contain, and a scroll container here would clip
+  // dropdowns opened from inside the body.
+  overflow: visible;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  max-width: 100%;
+
+  // Long lines are the biggest readability cost on a wide screen. The cap is on
+  // the text children rather than on the body, so media, embeds, code and
+  // tables still get the full column width.
+  > p,
+  > ul,
+  > ol,
+  > blockquote,
+  > h1,
+  > h2,
+  > h3,
+  > h4,
+  > h5,
+  > h6 {
+    max-width: var(--measure);
+  }
+
+  > p {
+    margin: 0 0 0.75em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  img,
+  iframe,
+  video,
+  [data-s9e-mediaembed],
+  .PostMention-preview {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  img:not(.emoji) {
+    border-radius: var(--r-md);
+  }
+
+  table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  pre {
+    max-width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Post header — one line, avatar in flow
+// ---------------------------------------------------------------------------
+
+.CommentPost .Post-header {
+  margin: 0 0 var(--sp-10);
+  padding: 0;
+
+  > ul {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sp-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > li {
+      display: inline-flex;
+      align-items: center;
+      // Core spaces header items with `margin-right: 10px`, which fights the
+      // flex gap and is physical.
+      margin: 0;
+      padding: 0;
+      float: none;
+      min-width: 0;
+    }
+  }
+
+  // The avatar belongs in the line, not in an 85px gutter beside the post.
+  .PostUser-avatar,
+  .PostUser-name .Avatar {
+    position: static;
+    inset: auto;
+    float: none;
+    flex: none;
+    width: var(--avatar);
+    height: var(--avatar);
+    min-width: var(--avatar);
+    line-height: var(--avatar);
+    font-size: var(--fs-ui-lg);
+    border-radius: 50%;
+    margin: 0 var(--sp-8) 0 0;
+    box-sizing: border-box;
+    --size: var(--avatar);
+  }
+
+  .PostUser {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-6);
+    margin: 0;
+    position: static;
+    min-width: 0;
+
+    .PostUser-name {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      min-width: 0;
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--sp-6);
+        text-decoration: none;
+        min-width: 0;
+      }
+    }
+
+    .username {
+      font-size: var(--fs-ui-lg);
+      font-weight: var(--fw-bold);
+      color: var(--text-strong);
+      line-height: var(--lh-tight);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 22ch;
+    }
+
+    .UserOnline {
+      margin: 0;
+    }
+  }
+
+  // Core floats the badge list into the avatar gutter and gives it a fixed
+  // width; in flow it is just another item on the line.
+  .PostUser-badges {
+    position: static;
+    inset: auto;
+    float: none;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    text-align: start;
+
+    .Badge {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      line-height: 18px;
+      font-size: var(--fs-ui-xs);
+      margin: 0;
+      border-radius: 50%;
+    }
+  }
+
+  // Metadata reads as one quiet run: time · edited.
+  .item-meta,
+  .PostMeta,
+  .item-edited,
+  .Post-edited,
+  .PostEdited {
+    color: var(--text-muted);
+    font-size: var(--fs-ui-sm);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-tight);
+    margin: 0;
+
+    a,
+    time {
+      color: var(--text-muted);
+      font-size: inherit;
+      text-decoration: none;
+    }
+  }
+
+  // Core adds `margin-left: 5px`, a physical offset that survives the RTL flip
+  // as the wrong side of a flex gap.
+  .PostMeta-time,
+  .PostMeta-ip {
+    margin-left: 0;
+  }
+
+  .item-edited,
+  .Post-edited,
+  .PostEdited {
+    font-style: italic;
+  }
+}
+
+// A dot between the author block and everything after it, so the metadata run
+// reads as one sentence. `::before` on the sibling rather than a character in
+// the markup, so an absent item never leaves a dangling separator.
+.CommentPost .Post-header > ul > li.item-meta::before {
+  content: '·';
+  margin-inline-end: var(--sp-6);
+  color: var(--text-faint);
+}
+
+.CommentPost .Post-footer {
+  margin: 0;
+  padding: 0;
+
+  &:empty {
+    display: none;
+  }
+}
+
+// Hidden / deleted posts stay in the flow, quietly.
+.Post--hidden {
+  opacity: 0.75;
+}
+
+.itqan-deleted-post-notice {
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}

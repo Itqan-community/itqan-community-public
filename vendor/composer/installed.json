@@ -58,7 +58,7 @@
             ],
             "authors": [
                 {
-                    "name": "Rafał Całka",
+                    "name": "Rafa\u0142 Ca\u0142ka",
                     "homepage": "https://github.com/rafaucau",
                     "role": "Developer"
                 }
@@ -2696,7 +2696,7 @@
             ],
             "authors": [
                 {
-                    "name": "Friedrich Große",
+                    "name": "Friedrich Gro\u00dfe",
                     "email": "friedrich.grosse@gmail.com",
                     "homepage": "https://github.com/FGrosse",
                     "role": "Author"
@@ -4663,7 +4663,7 @@
             ],
             "authors": [
                 {
-                    "name": "Daniël Klabbers",
+                    "name": "Dani\u00ebl Klabbers",
                     "email": "daniel+flarum@klabbers.email",
                     "homepage": "http://hyn.io"
                 },
@@ -4845,7 +4845,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Martín",
+                    "name": "David Sevilla Mart\u00edn",
                     "email": "david.s@redevs.org",
                     "role": "Developer"
                 }
@@ -4992,7 +4992,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Martín",
+                    "name": "David Sevilla Mart\u00edn",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 },
@@ -5074,7 +5074,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Martín",
+                    "name": "David Sevilla Mart\u00edn",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 }
@@ -5245,7 +5245,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Martín",
+                    "name": "David Sevilla Mart\u00edn",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 }
@@ -5324,7 +5324,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Martín",
+                    "name": "David Sevilla Mart\u00edn",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 },
@@ -5604,7 +5604,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Martín",
+                    "name": "David Sevilla Mart\u00edn",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 }
@@ -5704,7 +5704,7 @@
                     "homepage": "https://clarkwinkelmann.com/"
                 },
                 {
-                    "name": "Daniël Klabbers",
+                    "name": "Dani\u00ebl Klabbers",
                     "email": "daniel@klabbers.email",
                     "homepage": "http://luceos.com"
                 }
@@ -5787,7 +5787,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Martín",
+                    "name": "David Sevilla Mart\u00edn",
                     "email": "david.s@redevs.org",
                     "role": "Developer"
                 }
@@ -5883,7 +5883,7 @@
             ],
             "authors": [
                 {
-                    "name": "Daniël Klabbers",
+                    "name": "Dani\u00ebl Klabbers",
                     "email": "daniel@klabbers.email",
                     "homepage": "https://luceos.com/"
                 }
@@ -6073,7 +6073,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Martín",
+                    "name": "David Sevilla Mart\u00edn",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 }
@@ -6792,7 +6792,7 @@
                     "homepage": "https://github.com/Nyholm"
                 },
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
                     "email": "mark.sagikazar@gmail.com",
                     "homepage": "https://github.com/sagikazarmark"
                 },
@@ -6989,7 +6989,7 @@
                     "homepage": "https://github.com/Nyholm"
                 },
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
                     "email": "mark.sagikazar@gmail.com",
                     "homepage": "https://github.com/sagikazarmark"
                 },
@@ -6999,7 +6999,7 @@
                     "homepage": "https://github.com/Tobion"
                 },
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
                     "email": "mark.sagikazar@gmail.com",
                     "homepage": "https://sagikazarmark.hu"
                 }
@@ -8943,7 +8943,7 @@
                     "email": "a.abduraghman@itqan.dev"
                 }
             ],
-            "description": "Itqan community theme — per-user light, dark and automatic colour schemes",
+            "description": "Itqan community theme \u2014 per-user light, dark and automatic colour schemes",
             "keywords": [
                 "accessibility",
                 "dark-mode",
@@ -8997,7 +8997,7 @@
                     "email": "a.abduraghman@itqan.dev"
                 }
             ],
-            "description": "Arabic typography for the Itqan community — self-hosted webfonts, preloaded, with matched fallback metrics",
+            "description": "Arabic typography for the Itqan community \u2014 self-hosted webfonts, preloaded, with matched fallback metrics",
             "keywords": [
                 "arabic",
                 "flarum",
@@ -9267,7 +9267,7 @@
                     "email": "igor@wiedler.ch"
                 },
                 {
-                    "name": "Robert Schönthal",
+                    "name": "Robert Sch\u00f6nthal",
                     "email": "seroscho@googlemail.com"
                 }
             ],
@@ -9398,7 +9398,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jérôme Gamez",
+                    "name": "J\u00e9r\u00f4me Gamez",
                     "email": "jerome@gamez.name"
                 }
             ],
@@ -9482,7 +9482,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jérôme Gamez",
+                    "name": "J\u00e9r\u00f4me Gamez",
                     "homepage": "https://github.com/jeromegamez"
                 }
             ],
@@ -9568,7 +9568,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jérôme Gamez",
+                    "name": "J\u00e9r\u00f4me Gamez",
                     "homepage": "https://github.com/jeromegamez"
                 }
             ],
@@ -10009,7 +10009,7 @@
             ],
             "authors": [
                 {
-                    "name": "Luís Cobucci",
+                    "name": "Lu\u00eds Cobucci",
                     "email": "lcobucci@gmail.com"
                 }
             ],
@@ -10081,7 +10081,7 @@
             ],
             "authors": [
                 {
-                    "name": "Luís Cobucci",
+                    "name": "Lu\u00eds Cobucci",
                     "email": "lcobucci@gmail.com",
                     "role": "Developer"
                 }
@@ -11861,7 +11861,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "📐 Nette Schema: validating data structures against a given Schema.",
+            "description": "\ud83d\udcd0 Nette Schema: validating data structures against a given Schema.",
             "homepage": "https://nette.org",
             "keywords": [
                 "config",
@@ -11941,7 +11941,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "🛠  Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
+            "description": "\ud83d\udee0  Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
             "homepage": "https://nette.org",
             "keywords": [
                 "array",
@@ -12152,7 +12152,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -13200,7 +13200,7 @@
                     "homepage": "https://sorgalla.com/"
                 },
                 {
-                    "name": "Christian Lück",
+                    "name": "Christian L\u00fcck",
                     "email": "christian@clue.engineering",
                     "homepage": "https://clue.engineering/"
                 },
@@ -14797,7 +14797,7 @@
                     "email": "fabien@symfony.com"
                 },
                 {
-                    "name": "Jean-François Simon",
+                    "name": "Jean-Fran\u00e7ois Simon",
                     "email": "jeanfrancois.simon@sensiolabs.com"
                 },
                 {
@@ -16880,7 +16880,7 @@
             ],
             "authors": [
                 {
-                    "name": "Hasan Özbey",
+                    "name": "Hasan \u00d6zbey",
                     "email": "hasanoozbey@gmail.com",
                     "homepage": "https://github.com/the-turk"
                 }
@@ -17794,7 +17794,7 @@
                     "homepage": "https://github.com/agar"
                 },
                 {
-                    "name": "Martin Jantošovič",
+                    "name": "Martin Janto\u0161ovi\u010d",
                     "homepage": "https://github.com/Mordred"
                 }
             ],
@@ -17881,6 +17881,30 @@
                 "source": "https://github.com/wohali/oauth2-discord-new/tree/1.2.1"
             },
             "install-path": "../wohali/oauth2-discord-new"
+        },
+        {
+            "name": "itqan/flarum-reactions",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-reactions",
+                "reference": ""
+            },
+            "type": "flarum-extension",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Reactions\\": "src/"
+                }
+            },
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Reactions",
+                    "category": "feature"
+                }
+            },
+            "install-path": "../itqan/flarum-reactions"
         }
     ],
     "dev": true,

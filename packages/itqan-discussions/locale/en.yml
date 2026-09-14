@@ -6,6 +6,10 @@ itqan-discussions:
     replied_to: "replied to {username}"
     collapse_thread: "Collapse"
     expand_thread: "Replies ({count})"
+    op_badge: "OP"
+    permalink: "Copy link"
+    permalink_copied: "Link copied"
+    new_chip: "New"
     list:
       score: "{count} points"
     vote:
@@ -14,11 +18,28 @@ itqan-discussions:
     tree:
       collapse: "Collapse"
       expand: "Replies ({count})"
+      replies: "{count} replies"
+      collapse_rail: "Collapse this thread"
+      expand_rail: "Expand this thread"
+      last_activity: "last {time}"
     sort:
-      label: "Sort by:"
-      oldest: "Oldest (Default)"
+      label: "Sort by"
+      oldest: "Oldest"
       latest: "Newest"
-      top: "Top Voted"
+      top: "Top"
+    meta:
+      replies: "replies"
+      participants: "participants"
+      views: "views"
+    stream:
+      heading: "Comments"
+      heading_count: "{count} comments"
+      load_more: "Load more comments"
+      continue_thread: "Show {count} more replies"
+      loading: "Loading…"
+      empty_title: "No comments yet"
+      empty_body: "Be the first to reply."
+      parent_preview: "Parent comment"
 
 core:
   forum:

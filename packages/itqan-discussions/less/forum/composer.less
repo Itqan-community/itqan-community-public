@@ -1,0 +1,66 @@
+// ---------------------------------------------------------------------------
+// Composer — reply context banner
+// ---------------------------------------------------------------------------
+//
+// Shown above the editor when the reply is aimed at a specific comment rather
+// than at the discussion, so the target is visible while typing.
+
+.Composer-replyBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-8);
+  margin-bottom: var(--sp-10);
+  padding: var(--sp-8) var(--sp-12);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r-md);
+  font-size: var(--fs-ui-sm);
+  font-weight: var(--fw-medium);
+  color: var(--accent);
+
+  .replyBanner-content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-6);
+    min-width: 0;
+
+    .icon {
+      font-size: var(--fs-ui-xs);
+    }
+  }
+
+  .replyBanner-target {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .replyBanner-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--ctl-h-sm);
+    height: var(--ctl-h-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: var(--fs-ui);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+
+    &:hover,
+    &:focus {
+      color: var(--intent-danger);
+      background: var(--intent-danger-soft);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+  }
+}
