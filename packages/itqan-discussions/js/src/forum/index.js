@@ -658,6 +658,22 @@ app.initializers.add('itqan-discussions', () => {
           app.composer.fields = app.composer.fields || {};
           app.composer.fields.parentId = app.itqanActiveParentId;
           app.composer.fields.replyToUsername = app.itqanActiveParentUsername;
+
+          if (!isOP) {
+            const user = post.user && post.user();
+            const username = user ? (typeof user.username === 'function' ? user.username() : user.displayName()) : null;
+            if (username) {
+              const mentionText = `@"${user.displayName()}"#p${post.id()} `;
+              const currentContent = app.composer.fields.content ? app.composer.fields.content() : '';
+              if (!currentContent.includes(`#p${post.id()}`)) {
+                if (app.composer.editor && typeof app.composer.editor.insertAtCursor === 'function') {
+                  app.composer.editor.insertAtCursor(mentionText);
+                } else if (app.composer.fields.content) {
+                  app.composer.fields.content(mentionText + currentContent);
+                }
+              }
+            }
+          }
           m.redraw();
         });
       }
