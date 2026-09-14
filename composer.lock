@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "12a2d331cf2425d1baaa1e09868380aa",
+    "content-hash": "e94c2b3e1875be319a5ef4b20ee6f782",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -8537,6 +8537,58 @@
                 "flarum",
                 "mailerlite",
                 "newsletter"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "itqan/flarum-reactions",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-reactions",
+                "reference": "5850780eed8a1b11bef2d9b6c6df3300799f78be"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Reactions",
+                    "category": "feature",
+                    "icon": {
+                        "name": "far fa-smile",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Reactions\\": "src/"
+                }
+            },
+            "scripts": {
+                "build": [
+                    "cd js && npm run build"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Emoji reactions on posts for the Itqan community (separate from vote ranking)",
+            "keywords": [
+                "flarum",
+                "reactions",
+                "emoji"
             ],
             "transport-options": {
                 "relative": true
@@ -17161,6 +17213,7 @@
         "flarum-locale/arabic": 20,
         "itqan/flarum-discussions": 20,
         "itqan/flarum-mailerlite": 20,
+        "itqan/flarum-reactions": 20,
         "itqan/flarum-theme": 20,
         "itqan/flarum-typography": 20
     },

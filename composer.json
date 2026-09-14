@@ -75,6 +75,7 @@
         "itqan/flarum-mailerlite": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
+        "itqan/flarum-reactions": "@dev",
         "justoverclock/newsletter": "*",
         "michaelbelgium/flarum-discussion-views": "^7.4",
         "pipecraft/flarum-ext-id-slug": "*",
@@ -109,6 +110,10 @@
         "itqan-typography": {
             "type": "path",
             "url": "packages/itqan-typography"
+        },
+        "itqan-reactions": {
+            "type": "path",
+            "url": "packages/itqan-reactions"
         },
         "0": {
             "type": "vcs",

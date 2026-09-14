@@ -1,0 +1,180 @@
+// ---------------------------------------------------------------------------
+// Post page — DiscussionHero
+// ---------------------------------------------------------------------------
+//
+// Quiet page header: title and tags. No card chrome — the OP card below is the
+// sole elevated surface. Fixes audit B14 (title squeezed to ~249px on phone).
+
+.DiscussionPage .DiscussionHero {
+  background: transparent;
+  color: var(--text-strong);
+  margin: 0;
+  padding: var(--sp-24) 0 var(--sp-16);
+  box-shadow: none;
+  border: 0;
+
+  .container {
+    max-width: 100%;
+  }
+
+  @media @phone {
+    padding: var(--sp-16) 0 var(--sp-12);
+  }
+}
+
+.DiscussionPage .DiscussionHero-items {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.DiscussionPage .DiscussionHero-title {
+  margin: 0;
+  padding: 0;
+  font-size: var(--fs-hero);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  color: var(--text-strong);
+  // Full column width — never the ~249px squeeze measured on phone.
+  max-width: var(--measure);
+  width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  @media @phone {
+    font-size: var(--fs-title-lg);
+  }
+
+  @media (max-width: 380px) {
+    font-size: var(--fs-title);
+  }
+}
+
+.DiscussionPage .DiscussionHero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  .Badge,
+  .TagLabel {
+    // Chip grammar (patterns §3): same height/radius as other tokens.
+    display: inline-flex;
+    align-items: center;
+    height: var(--ctl-h-sm);
+    padding: 0 var(--sp-10);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border-subtle);
+    font-size: var(--fs-ui-sm);
+    font-weight: var(--fw-semibold);
+    line-height: 1;
+  }
+}
+
+// Tools that used to live in the scrubber column: follow/share/controls.
+// Desktop: slim sticky strip beside the stream. Phone: row under the hero.
+.DiscussionPage-nav {
+  // When scrubber is gone, the remaining SplitDropdown is the only child.
+  // Restyle it as a quiet tool strip rather than a 150px empty rail (B13).
+  width: auto;
+  float: none;
+  margin: 0;
+  padding: 0;
+  position: sticky;
+  top: var(--header-height, 52px);
+  z-index: var(--z-sticky-toolbar);
+  align-self: flex-start;
+
+  > ul {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .App-primaryControl,
+  .SplitDropdown,
+  .Dropdown {
+    width: 100%;
+  }
+
+  .Button--primary,
+  .Dropdown-toggle {
+    width: 100%;
+    justify-content: center;
+    height: var(--ctl-h-lg);
+    border-radius: var(--r-pill);
+    font-size: var(--fs-ui-sm);
+  }
+
+  // Empty after scrubber removal and no controls → hide entirely.
+  &:not(:has(li)) {
+    display: none;
+  }
+
+  @media @phone {
+    position: static;
+    width: 100%;
+    margin: 0 0 var(--sp-12);
+    order: -1;
+
+    > ul {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--sp-8);
+    }
+
+    .Button--primary,
+    .Dropdown-toggle {
+      width: auto;
+      min-width: var(--ctl-h-lg);
+      padding-inline: var(--sp-12);
+    }
+  }
+}
+
+// Give the stream the full remaining width once the nav is compact.
+.DiscussionPage-stream {
+  min-width: 0;
+  flex: 1;
+}
+
+@media @tablet-up {
+  .DiscussionPage .container {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-24);
+  }
+
+  .DiscussionPage-nav {
+    flex: 0 0 48px;
+    width: 48px;
+
+    // Icon-only on desktop to reclaim the 150px rail.
+    .Button-label,
+    .Button-caret {
+      // Keep accessible name via aria; hide painted label.
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .Dropdown-toggle,
+    .Button--primary {
+      width: var(--ctl-h-lg);
+      min-width: var(--ctl-h-lg);
+      padding: 0;
+    }
+  }
+}

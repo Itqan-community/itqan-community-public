@@ -1,0 +1,117 @@
+// ---------------------------------------------------------------------------
+// Chip grammar
+// ---------------------------------------------------------------------------
+//
+// One recipe shared by everything that reads as a small stateful token: the
+// vote pill, reaction chips, the collapsed-thread summary, filter pills.
+//
+// Two control systems sitting in the same row — votes and reactions — have to
+// share a shape, a height and a border treatment or they compete instead of
+// grouping. That is the whole point of this file: it is imported by the post
+// page and matched by `itqan-reactions`, so neither package owns the look.
+
+.itqan-chip-base() {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  height: var(--ctl-h);
+  box-sizing: border-box;
+  padding: 0 var(--ctl-px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: var(--fs-ui-sm);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--surface-active);
+    border-color: var(--border-default);
+    color: var(--text-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  &[disabled] {
+    cursor: default;
+  }
+}
+
+// Brand-selected: the viewer's own reaction, an active filter.
+.itqan-chip-selected() {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent);
+
+  &:hover {
+    background: var(--accent-strong);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+}
+
+// A control with no tray behind it: reply, overflow, continue-thread. Same
+// height as the chips so the row stays on one baseline, but no fill or border
+// until hovered.
+.itqan-ghost-control() {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  height: var(--ctl-h);
+  box-sizing: border-box;
+  padding: 0 var(--sp-8);
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-ui-sm);
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+
+  &:hover,
+  &:focus {
+    background: var(--surface-hover);
+    color: var(--text-default);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .icon {
+    font-size: var(--ctl-icon);
+    margin: 0;
+    vertical-align: 0;
+  }
+}
+
+// Grows the hit area to `--touch-min` without changing the painted size.
+.itqan-touch-target() {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: var(--touch-min);
+    min-width: var(--touch-min);
+  }
+}

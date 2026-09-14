@@ -117,6 +117,7 @@ return array(
     'Jaybizzle\\CrawlerDetect\\' => array($vendorDir . '/jaybizzle/crawler-detect/src'),
     'Itqan\\Typography\\' => array($vendorDir . '/itqan/flarum-typography/src'),
     'Itqan\\Theme\\' => array($vendorDir . '/itqan/flarum-theme/src'),
+    'Itqan\\Reactions\\' => array($vendorDir . '/itqan/flarum-reactions/src'),
     'Itqan\\MailerLite\\' => array($vendorDir . '/itqan/flarum-mailerlite/src'),
     'Itqan\\Discussions\\' => array($vendorDir . '/itqan/flarum-discussions/src'),
     'Irmmr\\RTLCss\\' => array($vendorDir . '/irmmr/rtlcss/src'),
