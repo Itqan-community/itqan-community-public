@@ -114,7 +114,11 @@
         "itqan-typography": {
             "type": "path",
             "url": "packages/itqan-typography"
+        },
+        "0": {
+            "type": "vcs",
+            "url": "git@github.com:Itqan-community/flarum-lang-arabic.git",
+            "no-api": true
         }
-        
     }
 }

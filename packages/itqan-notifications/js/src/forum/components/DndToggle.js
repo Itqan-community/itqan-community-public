@@ -4,7 +4,10 @@ import Switch from 'flarum/common/components/Switch';
 
 export default class DndToggle extends Component {
   view() {
-    const active = !!app.session.user.preferences().dndEnabled;
+    const user = app.session.user;
+    if (!user) return null;
+
+    const active = !!user.preferences().dndEnabled;
 
     return (
       <div className="DndToggle">
