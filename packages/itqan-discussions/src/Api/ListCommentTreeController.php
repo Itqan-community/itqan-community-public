@@ -51,8 +51,10 @@ class ListCommentTreeController extends AbstractListController
         $limit = (int) Arr::get($queryParams, 'page.limit', ThreadRepository::DEFAULT_ROOT_LIMIT);
         $offset = (int) Arr::get($queryParams, 'page.offset', 0);
         $sort = ThreadRepository::normalizeSort(Arr::get($queryParams, 'sort', 'oldest'));
+        $near = Arr::get($queryParams, 'near') ?? Arr::get($queryParams, 'page.near');
+        $near = $near !== null ? (int) $near : null;
 
-        $tree = $this->threads->loadTreePosts($discussion, $actor, $offset, $limit, $sort, false);
+        $tree = $this->threads->loadTreePosts($discussion, $actor, $offset, $limit, $sort, false, $near);
 
         $document->setMeta([
             'rootCommentCount' => $tree['root_comment_count'],

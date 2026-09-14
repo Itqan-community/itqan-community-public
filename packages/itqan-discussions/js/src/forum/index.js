@@ -190,6 +190,20 @@ app.initializers.add('itqan-discussions', () => {
       });
     });
 
+    // Stream post addition (prevents composer hanging)
+    extend(PostStreamState.prototype, 'addPost', function (returnValue, post) {
+      const discussion = this.discussion;
+      if (discussion && post) {
+        const commentStream = getCommentStream(discussion);
+        if (commentStream) {
+          commentStream.addPost(post);
+        }
+        syncStreamVisibleRange(this);
+        decorateStreamTree();
+        m.redraw();
+      }
+    });
+
     // Never load previous or unload — the stream only grows.
     override(PostStreamState.prototype, '_loadPrevious', function () {});
 
@@ -201,11 +215,41 @@ app.initializers.add('itqan-discussions', () => {
     });
 
     override(PostStreamState.prototype, 'loadNearNumber', function (original, number) {
-      if (this.posts().some((post) => post && Number(post.number()) === Number(number))) {
+      if (!number || Number(number) <= 1) {
+        syncStreamVisibleRange(this);
         return Promise.resolve();
       }
-      // Soft-fail: stay put rather than resetting to a flat near-page.
-      return Promise.resolve();
+
+      const post = (this.posts() || []).find((p) => p && Number(p.number()) === Number(number));
+      if (post) {
+        syncStreamVisibleRange(this);
+        setTimeout(() => {
+          const el = document.querySelector(`.PostStream-item[data-number="${number}"]`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('flash');
+            setTimeout(() => el.classList.remove('flash'), 1800);
+          }
+        }, 150);
+        return Promise.resolve();
+      }
+
+      const commentStream = getCommentStream(this.discussion);
+      if (!commentStream) return Promise.resolve();
+
+      return commentStream.loadNearNumber(number).then(() => {
+        syncStreamVisibleRange(this);
+        decorateStreamTree();
+        m.redraw();
+        setTimeout(() => {
+          const el = document.querySelector(`.PostStream-item[data-number="${number}"]`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('flash');
+            setTimeout(() => el.classList.remove('flash'), 1800);
+          }
+        }, 300);
+      });
     });
   }
 
@@ -213,6 +257,19 @@ app.initializers.add('itqan-discussions', () => {
     extend(PostStream.prototype, 'oncreate', function () {
       decorateStreamTree();
       this.itqanSetupInfiniteScroll();
+      if (this.stream && typeof this.stream.number === 'function') {
+        const num = this.stream.number();
+        if (num > 1) {
+          setTimeout(() => {
+            const el = document.querySelector(`.PostStream-item[data-number="${num}"]`);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.classList.add('flash');
+              setTimeout(() => el.classList.remove('flash'), 1800);
+            }
+          }, 400);
+        }
+      }
     });
 
     extend(PostStream.prototype, 'onupdate', function () {

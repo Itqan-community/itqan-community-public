@@ -220,4 +220,50 @@ export default class CommentStreamState {
       m.redraw();
     }
   }
+
+  addPost(post) {
+    if (!post) return;
+    const posts = this.discussion.posts() || [];
+    const exists = posts.some((p) => p && String(p.id()) === String(post.id()));
+    if (!exists) {
+      this.mergePosts([post]);
+      const parentId = typeof post.parentId === 'function' ? post.parentId() : null;
+      if (!parentId && typeof post.number === 'function' && post.number() > 1) {
+        const count = this.discussion.attribute('rootCommentCount') || 0;
+        this.discussion.pushAttributes({ rootCommentCount: count + 1 });
+      }
+    }
+  }
+
+  async loadNearNumber(number) {
+    if (this.loading || !number) return [];
+    this.loading = true;
+    this.error = null;
+    m.redraw();
+
+    try {
+      const payload = await app.request({
+        method: 'GET',
+        url: `${app.forum.attribute('apiUrl')}/discussions/${this.discussion.id()}/comment-tree`,
+        params: {
+          near: number,
+          'page[limit]': 20,
+          sort: this.sort,
+        },
+      });
+
+      const posts = app.store.pushPayload(payload) || [];
+      this.mergePosts(posts);
+      this.applyMeta(payload.meta || {});
+      this.markTruncatedFromMeta(payload.meta);
+
+      return posts;
+    } catch (e) {
+      this.error = e;
+      throw e;
+    } finally {
+      this.loading = false;
+      m.redraw();
+    }
+  }
 }

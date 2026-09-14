@@ -61,7 +61,8 @@ class ThreadRepository
         int $offset = 0,
         int $limit = self::DEFAULT_ROOT_LIMIT,
         string $sort = 'oldest',
-        bool $includeOp = true
+        bool $includeOp = true,
+        ?int $near = null
     ): array {
         $limit = max(1, min(50, $limit));
         $offset = max(0, $offset);
@@ -81,6 +82,28 @@ class ThreadRepository
             ->whereNull('parent_id');
 
         $this->applySort($rootsQuery, $sort);
+
+        if ($near !== null && $near > 1) {
+            $nearPost = $discussion->posts()->whereVisibleTo($actor)->where('number', $near)->first();
+            if ($nearPost) {
+                $targetRootId = (int) ($nearPost->root_id ?? $nearPost->parent_id ?? $nearPost->id);
+                if ($nearPost->parent_id) {
+                    $curr = $nearPost;
+                    while ($curr && $curr->parent_id && (int) $curr->number > 1) {
+                        $curr = Post::find($curr->parent_id);
+                    }
+                    if ($curr && (int) $curr->number > 1) {
+                        $targetRootId = (int) $curr->id;
+                    }
+                }
+
+                $allRootIds = (clone $rootsQuery)->pluck('id')->map(fn ($id) => (int) $id)->all();
+                $pos = array_search($targetRootId, $allRootIds, true);
+                if ($pos !== false) {
+                    $offset = (int) (floor($pos / $limit) * $limit);
+                }
+            }
+        }
 
         /** @var Collection $rootPosts */
         $rootPosts = $rootsQuery->skip($offset)->take($limit)->get();

@@ -34,8 +34,10 @@ class LoadTreePostsRelationship
         $limit = (int) Arr::get($queryParams, 'page.limit', ThreadRepository::DEFAULT_ROOT_LIMIT);
         $offset = (int) Arr::get($queryParams, 'page.offset', 0);
         $sort = ThreadRepository::normalizeSort(Arr::get($queryParams, 'sort', 'oldest'));
+        $near = Arr::get($queryParams, 'near') ?? Arr::get($queryParams, 'page.near');
+        $near = $near !== null ? (int) $near : null;
 
-        $tree = $this->threads->loadTreePosts($discussion, $actor, $offset, $limit, $sort, true);
+        $tree = $this->threads->loadTreePosts($discussion, $actor, $offset, $limit, $sort, true, $near);
 
         $discussion->root_comment_count = $tree['root_comment_count'];
         $discussion->roots_loaded = $tree['roots_loaded'];
