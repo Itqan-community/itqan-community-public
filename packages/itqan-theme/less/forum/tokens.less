@@ -183,22 +183,22 @@
   --avatar-hero: 44px;
 
   // ---------------------------------
-  // THREADING — envelopes (no rails)
+  // THREADING — envelopes + quiet indent
   //
-  // Each root comment + its DFS descendants sit in one envelope. Replies are
-  // flat cards in a sunken well; lineage is the reply-to chip, not indent.
+  // Each root + descendants sit in one envelope. Replies are flat cards in a
+  // sunken well; a small margin-inline-start per depth (no rails) shows level.
 
   --thread-envelope-gap: 12px;
   --thread-reply-gap: 8px;
   --thread-reply-pad: 8px;
-  // Kept for any leftover references; layout no longer indents by depth.
+  // Cumulative, minimal but readable. Phone overrides shrink further.
   --indent-0: 0px;
-  --indent-1: 0px;
-  --indent-2: 0px;
-  --indent-3: 0px;
-  --indent-4: 0px;
-  --indent-5: 0px;
-  // Legacy rail tokens (unused; harmless if referenced).
+  --indent-1: 12px;
+  --indent-2: 22px;
+  --indent-3: 30px;
+  --indent-4: 36px;
+  --indent-5: 40px;
+  // Legacy rail tokens (unused).
   --thread-rail-w: 2px;
   --thread-rail-hit: 16px;
   --thread-rail-elbow: 8px;
@@ -235,6 +235,12 @@
     --thread-envelope-gap: 10px;
     --thread-reply-gap: 6px;
     --thread-reply-pad: 6px;
+    // Smallest steps that still read as depth on ~390px.
+    --indent-1: 6px;
+    --indent-2: 10px;
+    --indent-3: 14px;
+    --indent-4: 16px;
+    --indent-5: 16px;
 
     --ctl-h: 32px;
     --ctl-h-lg: 36px;
@@ -243,11 +249,16 @@
   }
 }
 
-// Tablet: same flat envelope model; slightly roomier gaps.
+// Tablet: between desktop and phone.
 @media (min-width: 768px) and (max-width: 1023px) {
   :root {
     --thread-envelope-gap: 12px;
     --thread-reply-gap: 8px;
+    --indent-1: 10px;
+    --indent-2: 18px;
+    --indent-3: 24px;
+    --indent-4: 28px;
+    --indent-5: 30px;
   }
 }
 

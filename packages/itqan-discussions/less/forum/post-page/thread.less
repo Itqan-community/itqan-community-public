@@ -1,9 +1,9 @@
 // ---------------------------------------------------------------------------
-// Post page — thread envelopes (no indent rails)
+// Post page — thread envelopes (space indent, no rails)
 // ---------------------------------------------------------------------------
 //
 // One outer block per root comment. Replies are flat cards in a sunken well.
-// Lineage is the reply-to chip — not indent or a vertical rail.
+// Depth is a small margin-inline-start only — no vertical rail.
 
 .itqan-thread-list,
 .itqan-comments-card {
@@ -77,6 +77,17 @@
   }
 }
 
+// Quiet depth: shift the whole reply card. No rails.
+.itqan-reply-indent(@d) when (@d =< 5) {
+  .itqan-thread-replies > .PostStream-item[data-thread-depth='@{d}'] {
+    margin-inline-start: ~"var(--indent-@{d})";
+  }
+
+  .itqan-reply-indent(@d + 1);
+}
+
+.itqan-reply-indent(1);
+
 .itqan-thread-replies > .PostStream-item {
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
@@ -93,7 +104,7 @@
     }
   }
 
-  // Smaller avatars on all replies — buys back measure without indent.
+  // Smaller avatars on all replies — buys back measure.
   .Post-header {
     .PostUser-avatar,
     .PostUser-name .Avatar {
