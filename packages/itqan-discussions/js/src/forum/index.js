@@ -333,9 +333,86 @@ app.initializers.add('itqan-discussions', () => {
       }
     });
 
-    override(PostStreamState.prototype, 'loadNearIndex', function () {
-      syncStreamVisibleRange(this);
+    override(PostStreamState.prototype, 'loadNearIndex', function (original, index) {
+      // Scrubber / goToIndex land here. Keep the windowed stream intact but
+      // ensure the target post is in the store, then scroll by data-id (our
+      // posts() filter means data-index ≠ postIds index).
       return Promise.resolve();
+    });
+
+    override(PostStreamState.prototype, 'goToIndex', function (original, index, noAnimation) {
+      const ids = this.discussion.postIds() || [];
+      const safeIndex = Math.max(0, Math.min(Math.max(ids.length - 1, 0), Math.floor(Number(index) || 0)));
+      const postId = ids[safeIndex];
+
+      this.paused = true;
+      this.index = safeIndex;
+      this.needsScroll = false;
+      this.targetPost = { index: safeIndex };
+      this.animateScroll = !noAnimation;
+      this.forceUpdateScrubber = true;
+
+      const scrollToTarget = (post) => {
+        requestAnimationFrame(() => {
+          let el = null;
+          if (post && typeof post.id === 'function') {
+            el = document.querySelector(`.PostStream-item[data-id="${post.id()}"]`);
+          }
+          if (!el && post && typeof post.number === 'function') {
+            el = document.querySelector(`.PostStream-item[data-number="${post.number()}"]`);
+          }
+          if (!el) {
+            el = document.querySelector(`.PostStream-item[data-index="${safeIndex}"]`);
+          }
+          if (el) {
+            el.scrollIntoView({
+              behavior: noAnimation ? 'auto' : 'smooth',
+              block: 'start',
+            });
+          }
+          this.paused = false;
+          m.redraw();
+        });
+      };
+
+      const finishWithPost = (post) => {
+        syncStreamVisibleRange(this);
+        decorateStreamTree();
+        m.redraw();
+        scrollToTarget(post);
+      };
+
+      if (!postId) {
+        syncStreamVisibleRange(this);
+        m.redraw();
+        this.paused = false;
+        return Promise.resolve();
+      }
+
+      let post = app.store.getById('posts', String(postId));
+      if (post && post.discussion() && typeof post.canEdit() !== 'undefined') {
+        finishWithPost(post);
+        return Promise.resolve();
+      }
+
+      // Unloaded slot in postIds — fetch that post, then scroll.
+      return app.store
+        .find('posts', String(postId))
+        .then((loaded) => {
+          post = Array.isArray(loaded) ? loaded[0] : loaded;
+          if (post) {
+            const commentStream = getCommentStream(this.discussion);
+            if (commentStream && typeof commentStream.insertPost === 'function') {
+              commentStream.insertPost(post);
+            }
+          }
+          finishWithPost(post);
+        })
+        .catch(() => {
+          syncStreamVisibleRange(this);
+          m.redraw();
+          this.paused = false;
+        });
     });
 
     override(PostStreamState.prototype, 'goToNumber', function (original, number, noAnimation) {

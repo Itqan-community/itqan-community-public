@@ -2,45 +2,21 @@
 // Post page — DiscussionHero
 // ---------------------------------------------------------------------------
 //
-// Quiet page header: title and tags. No card chrome — the OP card below is the
-// sole elevated surface. Fixes audit B14 (title squeezed to ~249px on phone).
+// Keep tag-driven hero colours (core sets background/color from the primary
+// tag). Only tighten title wrapping so phone titles are not squeezed (B14).
 
 .DiscussionPage .DiscussionHero {
-  background: transparent;
-  color: var(--text-strong);
   margin: 0;
-  padding: var(--sp-24) 0 var(--sp-16);
-  box-shadow: none;
-  border: 0;
+  // Do not set background/color — production uses the tag's colour + contrast.
 
   .container {
     max-width: 100%;
   }
-
-  @media @phone {
-    padding: var(--sp-16) 0 var(--sp-12);
-  }
-}
-
-.DiscussionPage .DiscussionHero-items {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--sp-12);
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .DiscussionPage .DiscussionHero-title {
-  margin: 0;
-  padding: 0;
-  font-size: var(--fs-hero);
-  font-weight: var(--fw-bold);
-  line-height: var(--lh-tight);
-  color: var(--text-strong);
   // Full column width — never the ~249px squeeze measured on phone.
-  max-width: var(--measure);
+  max-width: 100%;
   width: 100%;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -54,29 +30,6 @@
   }
 }
 
-.DiscussionPage .DiscussionHero-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-6);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  .Badge,
-  .TagLabel {
-    // Chip grammar (patterns §3): same height/radius as other tokens.
-    display: inline-flex;
-    align-items: center;
-    height: var(--ctl-h-sm);
-    padding: 0 var(--sp-10);
-    border-radius: var(--r-pill);
-    border: 1px solid var(--border-subtle);
-    font-size: var(--fs-ui-sm);
-    font-weight: var(--fw-semibold);
-    line-height: 1;
-  }
-}
-
 // DiscussionPage-nav / scrubber: leave core + theme parity layout alone so
-// Reply/Follow and the side scrubber match production. Do not restyle into an
+// Reply/Follow and the scrubber match production. Do not restyle into an
 // icon-only 48px rail.
