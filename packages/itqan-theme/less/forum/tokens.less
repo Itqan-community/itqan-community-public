@@ -183,22 +183,27 @@
   --avatar-hero: 44px;
 
   // ---------------------------------
-  // THREADING
+  // THREADING — envelopes (no rails)
   //
-  // Indentation decays with depth: the first step must be unmistakable, later
-  // steps only need to be distinguishable, and the text measure has to survive
-  // five of them. A flat 36px per level — the previous behaviour — costs 180px
-  // by depth five and collapses the measure on a phone.
+  // Each root comment + its DFS descendants sit in one envelope. Replies are
+  // flat cards in a sunken well; lineage is the reply-to chip, not indent.
 
+  --thread-envelope-gap: 12px;
+  --thread-reply-gap: 8px;
+  --thread-reply-pad: 8px;
+  // Kept for any leftover references; layout no longer indents by depth.
+  --indent-0: 0px;
+  --indent-1: 0px;
+  --indent-2: 0px;
+  --indent-3: 0px;
+  --indent-4: 0px;
+  --indent-5: 0px;
+  // Legacy rail tokens (unused; harmless if referenced).
   --thread-rail-w: 2px;
   --thread-rail-hit: 16px;
-  // Cumulative indent offsets — desktop / tablet default (≥1024): 3 steps × ~20px
-  --indent-0: 0px;
-  --indent-1: 20px;
-  --indent-2: 40px;
-  --indent-3: 60px;
-  --indent-4: 60px;
-  --indent-5: 60px;
+  --thread-rail-elbow: 8px;
+  --thread-rail: color-mix(in srgb, var(--text-color) 22%, transparent);
+  --thread-rail-strong: color-mix(in srgb, var(--primary-color) 60%, transparent);
 
   // ---------------------------------
   // MOTION
@@ -223,16 +228,13 @@
   --z-dropdown: 1070;
 }
 
-// A phone gets a tighter indent scale and larger touch targets. Declared on
-// `:root` so a component never has to restate the breakpoint.
+// A phone gets larger touch targets. Declared on `:root` so a component never
+// has to restate the breakpoint.
 @media @phone {
   :root {
-    // Phone: single indent step (~12px); deeper replies use the reply chip.
-    --indent-1: 12px;
-    --indent-2: 12px;
-    --indent-3: 12px;
-    --indent-4: 12px;
-    --indent-5: 12px;
+    --thread-envelope-gap: 10px;
+    --thread-reply-gap: 6px;
+    --thread-reply-pad: 6px;
 
     --ctl-h: 32px;
     --ctl-h-lg: 36px;
@@ -241,14 +243,11 @@
   }
 }
 
-// Tablet: two indent steps × ~16px
+// Tablet: same flat envelope model; slightly roomier gaps.
 @media (min-width: 768px) and (max-width: 1023px) {
   :root {
-    --indent-1: 16px;
-    --indent-2: 32px;
-    --indent-3: 32px;
-    --indent-4: 32px;
-    --indent-5: 32px;
+    --thread-envelope-gap: 12px;
+    --thread-reply-gap: 8px;
   }
 }
 

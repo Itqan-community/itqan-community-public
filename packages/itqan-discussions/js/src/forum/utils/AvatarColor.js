@@ -1,4 +1,5 @@
 import app from 'flarum/forum/app';
+import { getVisualDepth } from '../components/CommentTree';
 
 /**
  * Avatar dominant color extraction utility.
@@ -216,6 +217,9 @@ export function getPostColor(post) {
 /**
  * Immediate-parent rail only (GitHub-style muted lineage). Multi-ancestor
  * rainbow rails were dropped — they seamed and stole measure on phones.
+ *
+ * Column uses *visual* depth (viewport-clamped), not the raw server depth, so
+ * the painted line stays on the same indent token as `data-thread-depth`.
  */
 export function getPostRails(post) {
   if (!post) return [];
@@ -227,18 +231,21 @@ export function getPostRails(post) {
   if (!parent) return [];
   if (typeof parent.number === 'function' && parent.number() === 1) return [];
 
-  // Visual column = clamped depth of this post minus 1 (the parent level).
-  const depth =
-    typeof post.attribute === 'function' && post.attribute('depth') != null
-      ? Number(post.attribute('depth'))
-      : 1;
-  const col = Math.max(0, Math.min(depth - 1, 4));
+  const visualDepth = getVisualDepth(post);
+  if (visualDepth < 1) return [];
+
+  // Parent sits one visual step above this reply.
+  const col = Math.max(0, visualDepth - 1);
+  // Depth ≥2 parents use --avatar-sm; rail centre must match.
+  const deep = col >= 2;
 
   return [
     {
       col,
+      deep,
       postId: String(parent.id()),
-      color: null, // CSS token --border-default; no avatar sampling
+      color: null,
     },
   ];
 }
+

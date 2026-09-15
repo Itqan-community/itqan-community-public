@@ -2,29 +2,25 @@
 // Post page — the comments surface
 // ---------------------------------------------------------------------------
 //
-// One surface holding every comment, with the sort toolbar at its head and the
-// reply placeholder at its foot. Comments themselves are transparent: a card per
-// comment would nest boxes inside a box, and at depth four the border carries no
-// information the indent and rail have not already given.
+// Quiet list holding the sticky toolbar and thread envelopes. Card chrome lives
+// on each `.itqan-thread-envelope`, not on this outer wrapper.
 
 .itqan-comments-card {
   display: flex;
   flex-direction: column;
-  background: var(--surface-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--r-xl);
-  box-shadow: var(--elev-1);
+  gap: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   margin-bottom: var(--sp-24);
   overflow: visible;
+  padding-inline: 0;
 
   @media @phone {
-    // Edge to edge: on a 390px screen the 15px gutter on each side is 8% of the
-    // width, and a rounded card there buys nothing.
+    // Edge to edge: reclaim the page gutter for text measure.
     margin-inline: -15px;
     margin-bottom: var(--sp-16);
-    border-inline: 0;
-    border-radius: 0;
-    box-shadow: none;
   }
 }
 
@@ -50,15 +46,23 @@
   justify-content: space-between;
   gap: var(--sp-12);
   padding: var(--sp-12) var(--sp-20);
+  margin-block-end: var(--thread-envelope-gap);
   background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-1);
   // Stick under the site header while the comments surface scrolls.
   position: sticky;
   top: var(--header-height, 52px);
   z-index: var(--z-sticky-toolbar);
-  border-bottom: 1px solid var(--hairline);
 
   @media @phone {
     padding: var(--sp-10) var(--sp-12);
+    margin-block-end: var(--sp-10);
+    border-radius: 0;
+    border-inline: 0;
+    box-shadow: none;
+    border-top: 0;
   }
 }
 
@@ -178,9 +182,10 @@
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
-      padding-block: var(--sp-16);
-      padding-inline: var(--sp-20);
       min-height: 0;
+      // Padding comes from envelope / reply-well rules in thread.less
+      padding-block: var(--sp-16);
+      padding-inline: var(--sp-16);
 
       @media @phone {
         padding-block: var(--sp-12);
@@ -189,15 +194,6 @@
     }
   }
 
-  // A hairline above each root comment after the first: separation belongs to
-  // the surface, and only between top-level entries. Replies are already bound
-  // to their parent by the rail.
-  &[data-is-subsequent-root='true'] {
-    border-top: 1px solid var(--hairline);
-  }
-
-  // Hovering a comment lifts it just enough to show which row the action bar
-  // belongs to.
   &:hover > .CommentPost > div {
     background: var(--surface-hover);
   }
@@ -215,13 +211,12 @@
   .ReplyPlaceholder,
   button.Post.ReplyPlaceholder {
     width: 100%;
-    margin: 0;
+    margin-block-start: var(--thread-envelope-gap);
     padding: var(--sp-16) var(--sp-20);
-    background: transparent;
-    border: 0;
-    border-top: 1px solid var(--hairline);
-    border-radius: 0 0 var(--r-xl) var(--r-xl);
-    box-shadow: none;
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-lg);
+    box-shadow: var(--elev-1);
     min-height: 0;
     font-size: var(--fs-body-sm);
     color: var(--text-muted);
@@ -229,7 +224,6 @@
 
     &:hover {
       background: var(--surface-hover);
-      border-color: var(--hairline);
     }
 
     .Post-header {
@@ -245,7 +239,10 @@
 
     @media @phone {
       padding: var(--sp-12);
+      margin-block-start: var(--sp-10);
       border-radius: 0;
+      border-inline: 0;
+      box-shadow: none;
     }
   }
 }

@@ -278,7 +278,11 @@
 }
 
 .CommentPost .Post-footer {
+  // Core sets height:0 + odd vertical margins; reactions/mentions in the footer
+  // need a real box and a single top gap.
+  height: auto;
   margin: 0;
+  margin-top: 16px;
   padding: 0;
 
   &:empty {
