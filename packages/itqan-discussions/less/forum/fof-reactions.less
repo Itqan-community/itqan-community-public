@@ -41,15 +41,27 @@
     padding: 0;
     margin: 0 !important;
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
     box-shadow: none;
     float: none !important;
+    box-sizing: border-box;
+
+    &.active {
+      padding-inline: 10px;
+      background-color: #f7f7f7;
+      border: 1px solid #11111112;
+    }
 
     .Button-label {
       display: inline-flex;
       align-items: center;
       margin: 0 !important;
       padding: 0;
+
+      > span {
+        display: flex;
+        align-items: center;
+      }
     }
 
     img.emoji,

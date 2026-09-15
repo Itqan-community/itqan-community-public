@@ -55,17 +55,35 @@ function isEnvelopeReplyVnode(vnode) {
   return !!parentId;
 }
 
+/**
+ * Persist visual depth on the PostStream-item vnode. decorateStreamTree also
+ * sets this on the DOM, but Mithril redraws wipe attributes that are not in
+ * the vnode — which made indent CSS stop matching.
+ */
+function ensureThreadDepthAttr(vnode) {
+  if (!vnode || !vnode.attrs) return vnode;
+  const post = postFromStreamVnode(vnode);
+  if (!post) return vnode;
+  const depth = getVisualDepth(post);
+  if (depth > 0) {
+    vnode.attrs['data-thread-depth'] = String(depth);
+  } else {
+    delete vnode.attrs['data-thread-depth'];
+  }
+  return vnode;
+}
+
 function groupCommentItemsIntoEnvelopes(items) {
   const out = [];
   let i = 0;
   while (i < items.length) {
-    const item = items[i];
+    const item = ensureThreadDepthAttr(items[i]);
     if (isEnvelopeRootVnode(item)) {
       const rootId = String(item.attrs['data-id']);
       const replies = [];
       i += 1;
       while (i < items.length && isEnvelopeReplyVnode(items[i])) {
-        replies.push(items[i]);
+        replies.push(ensureThreadDepthAttr(items[i]));
         i += 1;
       }
       const children = [item];
