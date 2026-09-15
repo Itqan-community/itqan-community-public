@@ -78,9 +78,13 @@
 }
 
 // Quiet depth: shift the whole reply card. No rails.
+// max-width keeps margin-inline-start from pushing the card outside the well
+// (width:100% + indent was overflowing; width:auto alone needs a cap).
 .itqan-reply-indent(@d) when (@d =< 5) {
   .itqan-thread-replies > .PostStream-item[data-thread-depth='@{d}'] {
     margin-inline-start: ~"var(--indent-@{d})";
+    width: auto;
+    max-width: ~"calc(100% - var(--indent-@{d}))";
   }
 
   .itqan-reply-indent(@d + 1);
@@ -90,6 +94,8 @@
 
 .itqan-thread-replies > .PostStream-item {
   width: auto;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--r-md);
