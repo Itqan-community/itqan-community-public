@@ -26,8 +26,66 @@ import {
   getThreadSummary,
   toggleCollapsed,
 } from './components/CommentTree';
-import { getPostRails } from './utils/AvatarColor';
 import CommentStreamState from './states/CommentStreamState';
+
+/**
+ * Group DFS-ordered comment stream vnodes into one envelope per root:
+ * root card + flat reply cards (no indent rails).
+ */
+function postFromStreamVnode(vnode) {
+  if (!vnode || !vnode.attrs) return null;
+  const id = vnode.attrs['data-id'];
+  if (id == null) return null;
+  return app.store ? app.store.getById('posts', String(id)) : null;
+}
+
+function isEnvelopeRootVnode(vnode) {
+  const post = postFromStreamVnode(vnode);
+  if (!post) return false;
+  if (typeof post.number === 'function' && post.number() === 1) return false;
+  const parentId = typeof post.parentId === 'function' ? post.parentId() : null;
+  return !parentId;
+}
+
+function isEnvelopeReplyVnode(vnode) {
+  const post = postFromStreamVnode(vnode);
+  if (!post) return false;
+  if (typeof post.number === 'function' && post.number() === 1) return false;
+  const parentId = typeof post.parentId === 'function' ? post.parentId() : null;
+  return !!parentId;
+}
+
+function groupCommentItemsIntoEnvelopes(items) {
+  const out = [];
+  let i = 0;
+  while (i < items.length) {
+    const item = items[i];
+    if (isEnvelopeRootVnode(item)) {
+      const rootId = String(item.attrs['data-id']);
+      const replies = [];
+      i += 1;
+      while (i < items.length && isEnvelopeReplyVnode(items[i])) {
+        replies.push(items[i]);
+        i += 1;
+      }
+      const children = [item];
+      if (replies.length) {
+        children.push(m('div.itqan-thread-replies', { key: `replies-${rootId}` }, replies));
+      }
+      out.push(
+        m(
+          'article.itqan-thread-envelope',
+          { key: `envelope-${rootId}`, 'data-root-id': rootId },
+          children
+        )
+      );
+    } else {
+      out.push(item);
+      i += 1;
+    }
+  }
+  return out;
+}
 
 export { default as VoteButtons } from './components/VoteButtons';
 export * from './components/CommentTree';
@@ -563,7 +621,7 @@ app.initializers.add('itqan-discussions', () => {
       if (afterFirstPostVnode) {
         commentCardChildren.push(afterFirstPostVnode);
       }
-      commentCardChildren.push(...rest);
+      commentCardChildren.push(...groupCommentItemsIntoEnvelopes(rest));
       commentCardChildren.push(...footer);
 
       if (commentCardChildren.length > 0) {
@@ -636,13 +694,8 @@ app.initializers.add('itqan-discussions', () => {
   }
 
   if (DiscussionPage) {
-    // The scrubber cannot express position in a capped tree.
-    extend(DiscussionPage.prototype, 'sidebarItems', function (items) {
-      if (items.has('scrubber')) {
-        items.remove('scrubber');
-      }
-    });
-
+    // Drop cached comment-stream state when opening a discussion page so a
+    // previous discussion's window does not leak into the next one.
     extend(DiscussionPage.prototype, 'oninit', function () {
       if (this.discussion) {
         this.discussion.itqanCommentStream = null;
@@ -686,61 +739,7 @@ app.initializers.add('itqan-discussions', () => {
   });
 
   // ==========================================
-  // 3. Thread rails (single muted parent rail)
-  // ==========================================
-  extend(CommentPost.prototype, 'contentItems', function (items) {
-    const post = this.attrs ? this.attrs.post : null;
-    if (!post || isMainPost(post)) return;
-
-    const rails = getPostRails(post);
-    if (!rails.length) return;
-
-    items.add(
-      'itqanThreadRails',
-      <div className="itqan-thread-rails" aria-hidden="true">
-        {rails.map((rail) => (
-          <div
-            key={`rail-${rail.postId}-${rail.col}`}
-            className="itqan-thread-rail"
-            data-rail-ancestor-id={rail.postId}
-            data-rail-col={rail.col}
-          />
-        ))}
-      </div>,
-      120
-    );
-
-    items.add(
-      'itqanThreadRailHits',
-      <div className="itqan-thread-rail-hits">
-        {rails.map((rail) => {
-          const collapsed = app.itqanCollapsedThreads.has(String(rail.postId));
-          return (
-            <button
-              key={`railhit-${rail.postId}-${rail.col}`}
-              type="button"
-              className="itqan-thread-rail-hit"
-              data-rail-ancestor-id={rail.postId}
-              data-rail-col={rail.col}
-              aria-expanded={collapsed ? 'false' : 'true'}
-              aria-controls={`post-${rail.postId}`}
-              aria-label={text(collapsed ? 'tree.expand_rail' : 'tree.collapse_rail')}
-              title={text(collapsed ? 'tree.expand_rail' : 'tree.collapse_rail')}
-              onclick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toggleCollapsed(rail.postId);
-              }}
-            />
-          );
-        })}
-      </div>,
-      119
-    );
-  });
-
-  // ==========================================
-  // 4. Header: OP badge, reply context
+  // 3. Header: OP badge, reply context
   // ==========================================
   extend(CommentPost.prototype, 'headerItems', function (items) {
     const post = this.attrs ? this.attrs.post : null;

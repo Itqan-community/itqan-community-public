@@ -107,9 +107,9 @@ export function getPostDepth(post, visited = new Set()) {
  * for lineage but stop pushing the reading measure.
  */
 export function getMaxVisualDepthForViewport(width = typeof window !== 'undefined' ? window.innerWidth : 1440) {
-  if (width <= 767) return 1;
-  if (width <= 1023) return 2;
-  return Math.min(MAX_VISUAL_DEPTH, 3);
+  if (width <= 767) return 3;
+  if (width <= 1023) return 4;
+  return MAX_VISUAL_DEPTH;
 }
 
 /** Depth used for styling: clamped to the current viewport budget. */
@@ -222,50 +222,10 @@ export function toggleCollapsed(postId) {
 }
 
 /**
- * Highlight a whole subtree while its rail is hovered or focused, so the extent
- * of what a click would collapse is visible first.
+ * Apply depth and collapse attributes to the rendered rows.
  *
- * The descendants are siblings in the DOM, not children, so no selector can
- * express this — hence the classes.
- */
-function setSubtreeHighlight(ancestorId, on) {
-  const container = document.querySelector('.itqan-comments-card');
-  if (!container) return;
-
-  container.querySelectorAll(`.itqan-thread-rail[data-rail-ancestor-id="${ancestorId}"]`).forEach((rail) => {
-    rail.classList.toggle('itqan-thread-rail--active', on);
-    const row = rail.closest('.PostStream-item');
-    if (row) row.classList.toggle('itqan-subtree-hover', on);
-  });
-
-  const parentRow = container.querySelector(`.PostStream-item[data-id="${ancestorId}"]`);
-  if (parentRow) parentRow.classList.toggle('itqan-subtree-hover', on);
-}
-
-let railDelegationBound = false;
-
-function bindRailDelegation() {
-  if (railDelegationBound) return;
-  railDelegationBound = true;
-
-  const handler = (on) => (e) => {
-    const hit = e.target.closest ? e.target.closest('.itqan-thread-rail-hit') : null;
-    if (!hit) return;
-    const ancestorId = hit.getAttribute('data-rail-ancestor-id');
-    if (ancestorId) setSubtreeHighlight(ancestorId, on);
-  };
-
-  document.addEventListener('mouseover', handler(true), true);
-  document.addEventListener('mouseout', handler(false), true);
-  document.addEventListener('focusin', handler(true), true);
-  document.addEventListener('focusout', handler(false), true);
-}
-
-/**
- * Apply depth, collapse and rail attributes to the rendered rows.
- *
- * Tree order comes from the server payload, which is depth-first — nothing here
- * moves a DOM node or reorders with CSS.
+ * Tree order comes from the server payload (depth-first). Envelope wrappers are
+ * built in PostStream.view — this pass only decorates attributes.
  */
 let decorateScheduled = false;
 
@@ -313,7 +273,8 @@ function syncDateSeparators(container, rows) {
       sep.className = 'itqan-date-separator';
       sep.setAttribute('role', 'separator');
       sep.textContent = formatDayLabel(created);
-      row.parentNode.insertBefore(sep, row);
+      const insertBefore = row.closest('.itqan-thread-envelope') || row;
+      insertBefore.parentNode.insertBefore(sep, insertBefore);
     }
     lastDay = key;
   });
@@ -349,7 +310,6 @@ export function decorateStreamTree() {
   requestAnimationFrame(() => {
     decorateScheduled = false;
     invalidateStreamIndex();
-    bindRailDelegation();
 
     const container = document.querySelector('.PostStream');
     if (!container) return;

@@ -3,8 +3,8 @@
 // ---------------------------------------------------------------------------
 //
 // FoF ships a hover picker with float/absolute positioning that fights our
-// action bar. Keep FoF's JS; restyle so chips share --ctl-h and never wrap
-// the phone action row.
+// action bar. Keep FoF's JS; keep chips flat (no border/fill) so they sit
+// quietly next to vote/reply controls.
 
 .itqan-comments-card .Post-actions,
 .CommentPost .Post-actions {
@@ -13,7 +13,7 @@
     display: inline-flex;
     align-items: center;
     margin: 0;
-    margin-inline-end: 0 !important;
+    margin-inline-end: 7px;
     float: none !important;
     vertical-align: middle;
   }
@@ -26,18 +26,30 @@
   .Reactions--reactions {
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-4);
+    gap: 8px;
     vertical-align: middle;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
   .Reactions--reactions .Button-emoji-parent {
-    .itqan-chip-base();
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
     height: var(--ctl-h);
-    padding: 0 var(--ctl-px);
+    padding: 0;
     margin: 0 !important;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    float: none !important;
 
-    &.active {
-      .itqan-chip-selected();
+    .Button-label {
+      display: inline-flex;
+      align-items: center;
+      margin: 0 !important;
+      padding: 0;
     }
 
     img.emoji,
@@ -50,20 +62,35 @@
 
     .count {
       margin: 0;
-      margin-inline-start: var(--sp-4);
       font-variant-numeric: tabular-nums;
     }
   }
 
   .Reactions--ShowReactions {
-    .itqan-ghost-control();
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     float: none !important;
     margin: 0 !important;
-    padding: 0 var(--sp-8);
+    padding: 0;
+    height: var(--ctl-h);
+    min-width: var(--ctl-h);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+    .Button-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 !important;
+      padding: 0;
+    }
 
     .button-react {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
+      display: block;
     }
   }
 
@@ -79,6 +106,7 @@
     inset-inline-end: auto;
     left: auto;
     right: auto;
+    z-index: var(--z-dropdown);
     max-width: ~"min(270px, 80vw)";
     border: 1px solid var(--border-subtle);
     border-radius: var(--r-md);
@@ -90,7 +118,6 @@
 
 @media (max-width: 480px) {
   .itqan-comments-card .Post-actions .Reactions--reactions .Button-emoji-parent .count {
-    // Keep one action line on narrow phones
     font-size: var(--fs-ui-xs);
   }
 }

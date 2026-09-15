@@ -50,13 +50,6 @@
   display: none;
 }
 
-// The scrubber cannot represent a capped tree — position in a flat index is
-// meaningless once replies are grouped under their parents.
-.PostStream-scrubber,
-.DiscussionPage-nav .PostStreamScrubber {
-  display: none;
-}
-
 // ---------------------------------------------------------------------------
 // Shared post-body typography
 // ---------------------------------------------------------------------------
@@ -278,7 +271,11 @@
 }
 
 .CommentPost .Post-footer {
+  // Core sets height:0 + odd vertical margins; reactions/mentions in the footer
+  // need a real box and a single top gap.
+  height: auto;
   margin: 0;
+  margin-top: 16px;
   padding: 0;
 
   &:empty {
