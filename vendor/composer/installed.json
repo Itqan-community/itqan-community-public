@@ -58,7 +58,7 @@
             ],
             "authors": [
                 {
-                    "name": "Rafa\u0142 Ca\u0142ka",
+                    "name": "Rafał Całka",
                     "homepage": "https://github.com/rafaucau",
                     "role": "Developer"
                 }
@@ -2696,7 +2696,7 @@
             ],
             "authors": [
                 {
-                    "name": "Friedrich Gro\u00dfe",
+                    "name": "Friedrich Große",
                     "email": "friedrich.grosse@gmail.com",
                     "homepage": "https://github.com/FGrosse",
                     "role": "Author"
@@ -4663,7 +4663,7 @@
             ],
             "authors": [
                 {
-                    "name": "Dani\u00ebl Klabbers",
+                    "name": "Daniël Klabbers",
                     "email": "daniel+flarum@klabbers.email",
                     "homepage": "http://hyn.io"
                 },
@@ -4845,7 +4845,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Mart\u00edn",
+                    "name": "David Sevilla Martín",
                     "email": "david.s@redevs.org",
                     "role": "Developer"
                 }
@@ -4992,7 +4992,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Mart\u00edn",
+                    "name": "David Sevilla Martín",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 },
@@ -5074,7 +5074,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Mart\u00edn",
+                    "name": "David Sevilla Martín",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 }
@@ -5245,7 +5245,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Mart\u00edn",
+                    "name": "David Sevilla Martín",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 }
@@ -5324,7 +5324,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Mart\u00edn",
+                    "name": "David Sevilla Martín",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 },
@@ -5548,6 +5548,102 @@
             "install-path": "../fof/pretty-mail"
         },
         {
+            "name": "fof/reactions",
+            "version": "1.4.1",
+            "version_normalized": "1.4.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfFlarum/reactions.git",
+                "reference": "87a09add9aeae75cb2ae7eda29f5d74ad271c1c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfFlarum/reactions/zipball/87a09add9aeae75cb2ae7eda29f5d74ad271c1c4",
+                "reference": "87a09add9aeae75cb2ae7eda29f5d74ad271c1c4",
+                "shasum": ""
+            },
+            "require": {
+                "flarum/core": "^1.2.0",
+                "php": "^7.4 | ^8.0"
+            },
+            "replace": {
+                "reflar/reactions": "*"
+            },
+            "require-dev": {
+                "flarum/likes": "*",
+                "flarum/phpstan": "*",
+                "flarum/testing": "^1.0.0",
+                "fof/gamification": "*"
+            },
+            "time": "2024-02-11T21:51:01+00:00",
+            "type": "flarum-extension",
+            "extra": {
+                "flagrow": {
+                    "discuss": "https://discuss.flarum.org/d/20655"
+                },
+                "flarum-cli": {
+                    "modules": {
+                        "githubActions": true,
+                        "backendTesting": true
+                    }
+                },
+                "flarum-extension": {
+                    "icon": {
+                        "name": "far fa-smile",
+                        "color": "#fff",
+                        "backgroundColor": "#e74c3c"
+                    },
+                    "title": "FoF Reactions",
+                    "category": "feature"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "FoF\\Reactions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Sevilla Martín",
+                    "email": "me+reflar@datitisev.me",
+                    "homepage": "https://datitisev.me",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Charlie K",
+                    "email": "issyrocks12@reflar.email",
+                    "homepage": "https://redevs.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Reactions for Flarum",
+            "homepage": "https://friendsofflarum.org",
+            "keywords": [
+                "Settings",
+                "flarum",
+                "misc",
+                "reactions",
+                "reflar"
+            ],
+            "support": {
+                "forum": "https://discuss.flarum.org/d/20655",
+                "issues": "https://github.com/friendsofflarum/reactions/issues",
+                "source": "https://github.com/friendsofflarum/reactions"
+            },
+            "funding": [
+                {
+                    "url": "https://opencollective.com/fof/donate",
+                    "type": "website"
+                }
+            ],
+            "install-path": "../fof/reactions"
+        },
+        {
             "name": "fof/share-social",
             "version": "1.2.0",
             "version_normalized": "1.2.0.0",
@@ -5604,7 +5700,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Mart\u00edn",
+                    "name": "David Sevilla Martín",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 }
@@ -5704,7 +5800,7 @@
                     "homepage": "https://clarkwinkelmann.com/"
                 },
                 {
-                    "name": "Dani\u00ebl Klabbers",
+                    "name": "Daniël Klabbers",
                     "email": "daniel@klabbers.email",
                     "homepage": "http://luceos.com"
                 }
@@ -5787,7 +5883,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Mart\u00edn",
+                    "name": "David Sevilla Martín",
                     "email": "david.s@redevs.org",
                     "role": "Developer"
                 }
@@ -5883,7 +5979,7 @@
             ],
             "authors": [
                 {
-                    "name": "Dani\u00ebl Klabbers",
+                    "name": "Daniël Klabbers",
                     "email": "daniel@klabbers.email",
                     "homepage": "https://luceos.com/"
                 }
@@ -6073,7 +6169,7 @@
             ],
             "authors": [
                 {
-                    "name": "David Sevilla Mart\u00edn",
+                    "name": "David Sevilla Martín",
                     "email": "me+fof@datitisev.me",
                     "role": "Developer"
                 }
@@ -6792,7 +6888,7 @@
                     "homepage": "https://github.com/Nyholm"
                 },
                 {
-                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com",
                     "homepage": "https://github.com/sagikazarmark"
                 },
@@ -6989,7 +7085,7 @@
                     "homepage": "https://github.com/Nyholm"
                 },
                 {
-                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com",
                     "homepage": "https://github.com/sagikazarmark"
                 },
@@ -6999,7 +7095,7 @@
                     "homepage": "https://github.com/Tobion"
                 },
                 {
-                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com",
                     "homepage": "https://sagikazarmark.hu"
                 }
@@ -8783,13 +8879,69 @@
             "install-path": "../irmmr/rtlcss"
         },
         {
+            "name": "itqan/flarum-composer-tools",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-composer-tools",
+                "reference": "d6d1bbbfaf065527c01684e41e1758155d974ffa"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Composer Tools",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fab fa-markdown",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\ComposerTools\\": "src/"
+                }
+            },
+            "scripts": {
+                "build": [
+                    "cd js && npm run build"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Writing and preview tools for the Itqan community composer",
+            "keywords": [
+                "composer",
+                "flarum",
+                "markdown",
+                "preview"
+            ],
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-composer-tools"
+        },
+        {
             "name": "itqan/flarum-discussions",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-discussions",
-                "reference": "29f3100ca6cb4ac97fc6289bb55af752fd1426dd"
+                "reference": "cdea7d38613d050c08b943c5e8236d5b91f11011"
             },
             "require": {
                 "flarum/core": "^1.8.0"
@@ -8839,12 +8991,12 @@
         },
         {
             "name": "itqan/flarum-mailerlite",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-mailerlite",
-                "reference": "ea7376b0443206fa858514f8f0b041ad453bf5e8"
+                "reference": "9fce2996b0cdf209c39e4ee806487e5befe1a35b"
             },
             "require": {
                 "flarum/core": "^1.8.0",
@@ -8901,12 +9053,12 @@
         },
         {
             "name": "itqan/flarum-theme",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-theme",
-                "reference": "9525586f76ba565feb772fe664d315b0279b76f3"
+                "reference": "0227d077b129fc08276a8e897301d68c4117b6ff"
             },
             "require": {
                 "flarum/core": "^1.8.0"
@@ -8943,7 +9095,7 @@
                     "email": "a.abduraghman@itqan.dev"
                 }
             ],
-            "description": "Itqan community theme \u2014 per-user light, dark and automatic colour schemes",
+            "description": "Itqan community theme — per-user light, dark and automatic colour schemes",
             "keywords": [
                 "accessibility",
                 "dark-mode",
@@ -8957,12 +9109,12 @@
         },
         {
             "name": "itqan/flarum-typography",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-typography",
-                "reference": "a8df89f86fb3258b263b3a49ff3cef210195eb24"
+                "reference": "0c549114f22b46190a4e52197fd06bbbb6cb47ba"
             },
             "require": {
                 "flarum/core": "^1.8.0"
@@ -8997,7 +9149,7 @@
                     "email": "a.abduraghman@itqan.dev"
                 }
             ],
-            "description": "Arabic typography for the Itqan community \u2014 self-hosted webfonts, preloaded, with matched fallback metrics",
+            "description": "Arabic typography for the Itqan community — self-hosted webfonts, preloaded, with matched fallback metrics",
             "keywords": [
                 "arabic",
                 "flarum",
@@ -9267,7 +9419,7 @@
                     "email": "igor@wiedler.ch"
                 },
                 {
-                    "name": "Robert Sch\u00f6nthal",
+                    "name": "Robert Schönthal",
                     "email": "seroscho@googlemail.com"
                 }
             ],
@@ -9398,7 +9550,7 @@
             ],
             "authors": [
                 {
-                    "name": "J\u00e9r\u00f4me Gamez",
+                    "name": "Jérôme Gamez",
                     "email": "jerome@gamez.name"
                 }
             ],
@@ -9482,7 +9634,7 @@
             ],
             "authors": [
                 {
-                    "name": "J\u00e9r\u00f4me Gamez",
+                    "name": "Jérôme Gamez",
                     "homepage": "https://github.com/jeromegamez"
                 }
             ],
@@ -9568,7 +9720,7 @@
             ],
             "authors": [
                 {
-                    "name": "J\u00e9r\u00f4me Gamez",
+                    "name": "Jérôme Gamez",
                     "homepage": "https://github.com/jeromegamez"
                 }
             ],
@@ -10009,7 +10161,7 @@
             ],
             "authors": [
                 {
-                    "name": "Lu\u00eds Cobucci",
+                    "name": "Luís Cobucci",
                     "email": "lcobucci@gmail.com"
                 }
             ],
@@ -10081,7 +10233,7 @@
             ],
             "authors": [
                 {
-                    "name": "Lu\u00eds Cobucci",
+                    "name": "Luís Cobucci",
                     "email": "lcobucci@gmail.com",
                     "role": "Developer"
                 }
@@ -11861,7 +12013,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "\ud83d\udcd0 Nette Schema: validating data structures against a given Schema.",
+            "description": "📐 Nette Schema: validating data structures against a given Schema.",
             "homepage": "https://nette.org",
             "keywords": [
                 "config",
@@ -11941,7 +12093,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "\ud83d\udee0  Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
+            "description": "🛠  Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
             "homepage": "https://nette.org",
             "keywords": [
                 "array",
@@ -12152,7 +12304,7 @@
             ],
             "authors": [
                 {
-                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -13200,7 +13352,7 @@
                     "homepage": "https://sorgalla.com/"
                 },
                 {
-                    "name": "Christian L\u00fcck",
+                    "name": "Christian Lück",
                     "email": "christian@clue.engineering",
                     "homepage": "https://clue.engineering/"
                 },
@@ -14797,7 +14949,7 @@
                     "email": "fabien@symfony.com"
                 },
                 {
-                    "name": "Jean-Fran\u00e7ois Simon",
+                    "name": "Jean-François Simon",
                     "email": "jeanfrancois.simon@sensiolabs.com"
                 },
                 {
@@ -16880,7 +17032,7 @@
             ],
             "authors": [
                 {
-                    "name": "Hasan \u00d6zbey",
+                    "name": "Hasan Özbey",
                     "email": "hasanoozbey@gmail.com",
                     "homepage": "https://github.com/the-turk"
                 }
@@ -17794,7 +17946,7 @@
                     "homepage": "https://github.com/agar"
                 },
                 {
-                    "name": "Martin Janto\u0161ovi\u010d",
+                    "name": "Martin Jantošovič",
                     "homepage": "https://github.com/Mordred"
                 }
             ],
@@ -17881,30 +18033,6 @@
                 "source": "https://github.com/wohali/oauth2-discord-new/tree/1.2.1"
             },
             "install-path": "../wohali/oauth2-discord-new"
-        },
-        {
-            "name": "itqan/flarum-reactions",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "packages/itqan-reactions",
-                "reference": ""
-            },
-            "type": "flarum-extension",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Itqan\\Reactions\\": "src/"
-                }
-            },
-            "extra": {
-                "flarum-extension": {
-                    "title": "Itqan Reactions",
-                    "category": "feature"
-                }
-            },
-            "install-path": "../itqan/flarum-reactions"
         }
     ],
     "dev": true,

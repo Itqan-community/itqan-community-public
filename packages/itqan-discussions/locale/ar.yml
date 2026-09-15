@@ -35,11 +35,13 @@ itqan-discussions:
       heading: "التعليقات"
       heading_count: "{count} تعليقًا"
       load_more: "تحميل المزيد من التعليقات"
+      load_previous: "تحميل التعليقات السابقة"
       continue_thread: "عرض {count} ردود أخرى"
       loading: "جاري التحميل…"
       empty_title: "لا تعليقات بعد"
       empty_body: "كن أول من يرد."
       parent_preview: "التعليق الأصلي"
+      reply_posted_elsewhere: "تم نشر ردك. افتح التعليق الأصلي لعرضه في سياقه."
 
 core:
   forum:

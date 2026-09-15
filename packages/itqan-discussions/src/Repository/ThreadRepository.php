@@ -51,6 +51,8 @@ class ThreadRepository
      *   truncated_parent_ids: int[],
      *   roots_loaded: int,
      *   roots_has_more: bool,
+     *   roots_has_previous: bool,
+     *   offset: int,
      *   root_comment_count: int,
      *   sort: string
      * }
@@ -83,30 +85,29 @@ class ThreadRepository
 
         $this->applySort($rootsQuery, $sort);
 
+        $forcePathPost = null;
+        $windowLimit = $limit;
+
         if ($near !== null && $near > 1) {
             $nearPost = $discussion->posts()->whereVisibleTo($actor)->where('number', $near)->first();
             if ($nearPost) {
-                $targetRootId = (int) ($nearPost->root_id ?? $nearPost->parent_id ?? $nearPost->id);
-                if ($nearPost->parent_id) {
-                    $curr = $nearPost;
-                    while ($curr && $curr->parent_id && (int) $curr->number > 1) {
-                        $curr = Post::find($curr->parent_id);
-                    }
-                    if ($curr && (int) $curr->number > 1) {
-                        $targetRootId = (int) $curr->id;
-                    }
-                }
+                $forcePathPost = $nearPost;
+                $targetRootId = $this->resolveRootId($nearPost);
 
                 $allRootIds = (clone $rootsQuery)->pluck('id')->map(fn ($id) => (int) $id)->all();
                 $pos = array_search($targetRootId, $allRootIds, true);
                 if ($pos !== false) {
-                    $offset = (int) (floor($pos / $limit) * $limit);
+                    // Window: one page of roots before the page containing the
+                    // target, so deep links are not a cliff with no "load previous".
+                    $pageStart = (int) (floor($pos / $limit) * $limit);
+                    $offset = max(0, $pageStart - $limit);
+                    $windowLimit = ($pageStart - $offset) + $limit;
                 }
             }
         }
 
         /** @var Collection $rootPosts */
-        $rootPosts = $rootsQuery->skip($offset)->take($limit)->get();
+        $rootPosts = $rootsQuery->skip($offset)->take($windowLimit)->get();
         $rootIds = $rootPosts->pluck('id')->map(fn ($id) => (int) $id)->all();
 
         $orderedPosts = new Collection();
@@ -124,6 +125,8 @@ class ThreadRepository
                 'truncated_parent_ids' => [],
                 'roots_loaded' => 0,
                 'roots_has_more' => false,
+                'roots_has_previous' => $offset > 0,
+                'offset' => $offset,
                 'root_comment_count' => $rootCount,
                 'sort' => $sort,
             ];
@@ -131,6 +134,28 @@ class ThreadRepository
 
         // Prefetch all descendants under these roots (by root_id or parent walk)
         $allDescendants = $this->fetchDescendantsForRoots($discussion, $actor, $rootIds);
+
+        // For deep links, ensure the ancestor path to the target is present even
+        // when the capped tree would otherwise omit it.
+        if ($forcePathPost) {
+            $pathPosts = $this->collectAncestorPath($forcePathPost, $rootIds);
+            foreach ($pathPosts as $pathPost) {
+                $already = $allDescendants->first(function ($p) use ($pathPost) {
+                    return (int) $p->id === (int) $pathPost->id;
+                });
+                if (! $already && ! in_array((int) $pathPost->id, $rootIds, true)) {
+                    $allDescendants->push($pathPost);
+                }
+                // Also ensure the target itself is in the set.
+            }
+            $targetIn = $allDescendants->first(function ($p) use ($forcePathPost) {
+                return (int) $p->id === (int) $forcePathPost->id;
+            });
+            if (! $targetIn && ! in_array((int) $forcePathPost->id, $rootIds, true)) {
+                $allDescendants->push($forcePathPost);
+            }
+        }
+
         $childrenByParent = [];
         foreach ($allDescendants as $child) {
             $pId = (int) $child->parent_id;
@@ -145,6 +170,16 @@ class ThreadRepository
         }
         unset($siblings);
 
+        $forcePathIds = [];
+        if ($forcePathPost) {
+            $forcePathIds = array_map(
+                'intval',
+                $this->collectAncestorPath($forcePathPost, $rootIds)->pluck('id')->all()
+            );
+            $forcePathIds[] = (int) $forcePathPost->id;
+            $forcePathIds = array_values(array_unique($forcePathIds));
+        }
+
         foreach ($rootPosts as $root) {
             $nodesUsed = 0;
             $this->traverseCapped(
@@ -155,7 +190,8 @@ class ThreadRepository
                 $nodesUsed,
                 $maxNodes,
                 $maxDepth,
-                0
+                0,
+                $forcePathIds
             );
         }
 
@@ -166,9 +202,73 @@ class ThreadRepository
             'truncated_parent_ids' => array_values(array_unique($truncatedParentIds)),
             'roots_loaded' => count($rootIds),
             'roots_has_more' => ($offset + count($rootIds)) < $rootCount,
+            'roots_has_previous' => $offset > 0,
+            'offset' => $offset,
             'root_comment_count' => $rootCount,
             'sort' => $sort,
         ];
+    }
+
+    /**
+     * Resolve the root comment id for a post (walk parent_id if root_id missing).
+     */
+    protected function resolveRootId(Post $post): int
+    {
+        if ($post->parent_id === null && (int) $post->number > 1) {
+            return (int) $post->id;
+        }
+
+        if ($post->root_id) {
+            return (int) $post->root_id;
+        }
+
+        $curr = $post;
+        $guard = 0;
+        while ($curr && $curr->parent_id && (int) $curr->number > 1 && $guard < 100) {
+            $curr = Post::find($curr->parent_id);
+            $guard++;
+        }
+
+        if ($curr && (int) $curr->number > 1) {
+            return (int) $curr->id;
+        }
+
+        return (int) $post->id;
+    }
+
+    /**
+     * Ancestors from root (exclusive of OP) down to the parent of $post.
+     * Includes intermediate posts needed to render the path; $post itself is
+     * added by the caller.
+     *
+     * @param int[] $rootIds
+     */
+    protected function collectAncestorPath(Post $post, array $rootIds): Collection
+    {
+        $chain = new Collection();
+        $curr = $post;
+        $guard = 0;
+        $seen = [];
+
+        while ($curr && $curr->parent_id && $guard < 100) {
+            $parent = Post::find($curr->parent_id);
+            if (! $parent || (int) $parent->number === 1) {
+                break;
+            }
+            $id = (int) $parent->id;
+            if (isset($seen[$id])) {
+                break;
+            }
+            $seen[$id] = true;
+            $chain->prepend($parent);
+            if (in_array($id, $rootIds, true)) {
+                break;
+            }
+            $curr = $parent;
+            $guard++;
+        }
+
+        return $chain;
     }
 
     /**
@@ -320,6 +420,7 @@ class ThreadRepository
     /**
      * @param array<int, Post[]> $childrenByParent
      * @param int[] $truncatedParentIds
+     * @param int[] $forceIncludeIds  Posts that must be visited even past depth/node caps
      */
     protected function traverseCapped(
         Post $post,
@@ -329,7 +430,8 @@ class ThreadRepository
         int &$nodesUsed,
         int $maxNodes,
         int $maxDepth,
-        int $relativeDepth
+        int $relativeDepth,
+        array $forceIncludeIds = []
     ): void {
         $orderedPosts->push($post);
         $nodesUsed++;
@@ -341,18 +443,30 @@ class ThreadRepository
             return;
         }
 
-        // At depth budget or node budget: mark truncated if any children remain
-        if ($relativeDepth >= $maxDepth || $nodesUsed >= $maxNodes) {
+        $mustContinue = false;
+        foreach ($children as $child) {
+            if (in_array((int) $child->id, $forceIncludeIds, true)) {
+                $mustContinue = true;
+                break;
+            }
+        }
+
+        // At depth budget or node budget: mark truncated if any children remain,
+        // unless we must keep walking the force-include path.
+        if (! $mustContinue && ($relativeDepth >= $maxDepth || $nodesUsed >= $maxNodes)) {
             $truncatedParentIds[] = $pId;
             return;
         }
 
         foreach ($children as $child) {
-            if ($nodesUsed >= $maxNodes) {
+            $childId = (int) $child->id;
+            $isForced = in_array($childId, $forceIncludeIds, true);
+
+            if (! $isForced && $nodesUsed >= $maxNodes) {
                 $truncatedParentIds[] = $pId;
                 break;
             }
-            if ($relativeDepth + 1 > $maxDepth) {
+            if (! $isForced && $relativeDepth + 1 > $maxDepth) {
                 $truncatedParentIds[] = $pId;
                 break;
             }
@@ -366,18 +480,15 @@ class ThreadRepository
                 $nodesUsed,
                 $maxNodes,
                 $maxDepth,
-                $relativeDepth + 1
+                $relativeDepth + 1,
+                $forceIncludeIds
             );
 
-            // If we couldn't take this child due to budget mid-siblings
-            if ($nodesUsed === $before && $nodesUsed >= $maxNodes) {
+            if ($nodesUsed === $before && $nodesUsed >= $maxNodes && ! $isForced) {
                 $truncatedParentIds[] = $pId;
                 break;
             }
         }
-
-        // If not all siblings were visited due to break, ensure truncated flag
-        // (already handled above)
     }
 
     protected function applySort($query, string $sort): void

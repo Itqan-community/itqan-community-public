@@ -60,9 +60,10 @@ class ListCommentTreeController extends AbstractListController
             'rootCommentCount' => $tree['root_comment_count'],
             'rootsLoaded' => $tree['roots_loaded'],
             'rootsHasMore' => $tree['roots_has_more'],
+            'rootsHasPrevious' => $tree['roots_has_previous'],
             'sort' => $tree['sort'],
             'truncatedParentIds' => $tree['truncated_parent_ids'],
-            'offset' => $offset,
+            'offset' => $tree['offset'],
             'limit' => $limit,
         ]);
 

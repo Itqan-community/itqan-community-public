@@ -19,7 +19,6 @@ import PostControls from 'flarum/forum/utils/PostControls';
 
 import VoteButtons from './components/VoteButtons';
 import {
-  MAX_VISUAL_DEPTH,
   getVisualDepth,
   decorateStreamTree,
   postHasMoreReplies,
@@ -84,6 +83,34 @@ function syncStreamVisibleRange(stream) {
   if (!stream || !stream.discussion) return;
   stream.visibleStart = 0;
   stream.visibleEnd = stream.count();
+}
+
+/**
+ * Scroll to a post by number once. Cancels competing timers; skips if the user
+ * has already scrolled away from the initial landing.
+ */
+function scrollToPostNumber(number, { behavior = 'smooth', block = 'center', flash = true } = {}) {
+  if (!number || Number(number) <= 1) return false;
+  const el = document.querySelector(`.PostStream-item[data-number="${number}"]`);
+  if (!el) return false;
+  el.scrollIntoView({ behavior, block });
+  if (flash) {
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1800);
+  }
+  return true;
+}
+
+function scrollToPostId(postId, { behavior = 'smooth', block = 'nearest', flash = true } = {}) {
+  if (!postId) return false;
+  const el = document.querySelector(`.PostStream-item[data-id="${postId}"]`);
+  if (!el) return false;
+  el.scrollIntoView({ behavior, block });
+  if (flash) {
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1800);
+  }
+  return true;
 }
 
 const SORT_OPTIONS = [
@@ -167,7 +194,7 @@ app.initializers.add('itqan-discussions', () => {
     decorateStreamTree();
   });
 
-  // ---- Append-only root pagination ----
+  // ---- Windowed root pagination (never unload; never use flat posts API) ----
   if (PostStreamState) {
     extend(PostStreamState.prototype, 'show', function () {
       const discussion = this.discussion;
@@ -175,6 +202,25 @@ app.initializers.add('itqan-discussions', () => {
         getCommentStream(discussion);
         syncStreamVisibleRange(this);
       }
+    });
+
+    // Core update() reloads every ID in discussion.posts — which CreatePost used
+    // to dump as the full flat list. With a comment stream we only insert locally.
+    override(PostStreamState.prototype, 'update', function () {
+      syncStreamVisibleRange(this);
+      return Promise.resolve();
+    });
+
+    // Never render LoadingPost for IDs that are not in the store.
+    override(PostStreamState.prototype, 'posts', function () {
+      return this.discussion
+        .postIds()
+        .slice(this.visibleStart, this.visibleEnd)
+        .map((id) => {
+          const post = app.store.getById('posts', id);
+          return post && post.discussion() && typeof post.canEdit() !== 'undefined' ? post : null;
+        })
+        .filter((post) => post !== null);
     });
 
     override(PostStreamState.prototype, '_loadNext', function () {
@@ -190,13 +236,38 @@ app.initializers.add('itqan-discussions', () => {
       });
     });
 
-    // Stream post addition (prevents composer hanging)
-    extend(PostStreamState.prototype, 'addPost', function (returnValue, post) {
+    override(PostStreamState.prototype, '_loadPrevious', function () {
+      const commentStream = getCommentStream(this.discussion);
+      if (!commentStream || !commentStream.hasPreviousRoots || commentStream.loadingPrevious) {
+        return;
+      }
+
+      const anchor = document.querySelector('.itqan-comments-card .PostStream-item[data-id]');
+      const anchorId = anchor && anchor.getAttribute('data-id');
+      const anchorTop = anchor ? anchor.getBoundingClientRect().top : null;
+
+      commentStream.loadPreviousRoots().then(() => {
+        syncStreamVisibleRange(this);
+        decorateStreamTree();
+        m.redraw();
+        requestAnimationFrame(() => {
+          if (anchorId && anchorTop != null) {
+            const el = document.querySelector(`.PostStream-item[data-id="${anchorId}"]`);
+            if (el) {
+              const delta = el.getBoundingClientRect().top - anchorTop;
+              if (delta) window.scrollBy(0, delta);
+            }
+          }
+        });
+      });
+    });
+
+    override(PostStreamState.prototype, 'addPost', function (original, post) {
       const discussion = this.discussion;
       if (discussion && post) {
         const commentStream = getCommentStream(discussion);
         if (commentStream) {
-          commentStream.addPost(post);
+          commentStream.insertPost(post);
         }
         syncStreamVisibleRange(this);
         decorateStreamTree();
@@ -204,14 +275,36 @@ app.initializers.add('itqan-discussions', () => {
       }
     });
 
-    // Never load previous or unload — the stream only grows.
-    override(PostStreamState.prototype, '_loadPrevious', function () {});
-
     override(PostStreamState.prototype, 'loadNearIndex', function () {
-      // Stay on the full loaded range; scrubber window jumps do not apply to a
-      // root-first tree.
       syncStreamVisibleRange(this);
       return Promise.resolve();
+    });
+
+    override(PostStreamState.prototype, 'goToNumber', function (original, number, noAnimation) {
+      if (number === 'reply') {
+        syncStreamVisibleRange(this);
+        this.needsScroll = true;
+        this.targetPost = { index: this.count() - 1, reply: true };
+        this.animateScroll = !noAnimation;
+        m.redraw();
+        return Promise.resolve();
+      }
+
+      this.paused = true;
+      this.needsScroll = true;
+      this.targetPost = { number };
+      this.animateScroll = !noAnimation;
+      this.number = number;
+
+      return this.loadNearNumber(number).then(() => {
+        m.redraw();
+        requestAnimationFrame(() => {
+          scrollToPostNumber(number, {
+            behavior: noAnimation ? 'auto' : 'smooth',
+            block: 'center',
+          });
+        });
+      });
     });
 
     override(PostStreamState.prototype, 'loadNearNumber', function (original, number) {
@@ -220,35 +313,58 @@ app.initializers.add('itqan-discussions', () => {
         return Promise.resolve();
       }
 
-      const post = (this.posts() || []).find((p) => p && Number(p.number()) === Number(number));
-      if (post) {
+      const loaded = (this.discussion.postIds() || [])
+        .map((id) => app.store.getById('posts', id))
+        .find((p) => p && Number(p.number()) === Number(number));
+
+      if (loaded) {
         syncStreamVisibleRange(this);
-        setTimeout(() => {
-          const el = document.querySelector(`.PostStream-item[data-number="${number}"]`);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('flash');
-            setTimeout(() => el.classList.remove('flash'), 1800);
-          }
-        }, 150);
         return Promise.resolve();
       }
 
       const commentStream = getCommentStream(this.discussion);
       if (!commentStream) return Promise.resolve();
 
-      return commentStream.loadNearNumber(number).then(() => {
+      return commentStream.loadNearNumber(number).then(async () => {
         syncStreamVisibleRange(this);
         decorateStreamTree();
-        m.redraw();
-        setTimeout(() => {
-          const el = document.querySelector(`.PostStream-item[data-number="${number}"]`);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('flash');
-            setTimeout(() => el.classList.remove('flash'), 1800);
+
+        // If still missing (capped subtree), expand along parent chain once.
+        let target = (this.discussion.posts() || []).find(
+          (p) => p && Number(p.number()) === Number(number)
+        );
+        if (!target) {
+          // Target may be in the store from the near payload but not yet related;
+          // commentStream already merged. Re-check store by number.
+          target = app.store.all('posts').find(
+            (p) =>
+              p &&
+              Number(p.number()) === Number(number) &&
+              p.discussion() &&
+              String(p.discussion().id()) === String(this.discussion.id())
+          );
+          if (target) {
+            commentStream.insertPost(target);
+            syncStreamVisibleRange(this);
           }
-        }, 300);
+        }
+
+        if (!target) {
+          // Try expandReplies on any truncated ancestors if we know parentId from store.
+          const orphan = app.store.all('posts').find(
+            (p) => p && Number(p.number()) === Number(number)
+          );
+          if (orphan && typeof orphan.parentId === 'function' && orphan.parentId()) {
+            const parent = app.store.getById('posts', String(orphan.parentId()));
+            if (parent && postHasMoreReplies(parent)) {
+              await commentStream.expandReplies(parent, countLoadedChildren(parent));
+              commentStream.insertPost(orphan);
+              syncStreamVisibleRange(this);
+            }
+          }
+        }
+
+        m.redraw();
       });
     });
   }
@@ -257,29 +373,37 @@ app.initializers.add('itqan-discussions', () => {
     extend(PostStream.prototype, 'oncreate', function () {
       decorateStreamTree();
       this.itqanSetupInfiniteScroll();
+      this.itqanSetupPreviousScroll();
       if (this.stream && typeof this.stream.number === 'function') {
         const num = this.stream.number();
-        if (num > 1) {
-          setTimeout(() => {
-            const el = document.querySelector(`.PostStream-item[data-number="${num}"]`);
-            if (el) {
-              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              el.classList.add('flash');
-              setTimeout(() => el.classList.remove('flash'), 1800);
-            }
-          }, 400);
+        if (num > 1 && !this.itqanDidDeepLinkScroll) {
+          this.itqanDidDeepLinkScroll = true;
+          // One scroll after paint — no competing 150/300/400ms timers.
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (!scrollToPostNumber(num, { behavior: 'auto', block: 'center' })) {
+                // Target may still be loading via loadNearNumber; retry once.
+                setTimeout(() => scrollToPostNumber(num, { behavior: 'auto', block: 'center' }), 250);
+              }
+            });
+          });
         }
       }
     });
 
     extend(PostStream.prototype, 'onupdate', function () {
       this.itqanSetupInfiniteScroll();
+      this.itqanSetupPreviousScroll();
     });
 
     extend(PostStream.prototype, 'onremove', function () {
       if (this.itqanObserver) {
         this.itqanObserver.disconnect();
         this.itqanObserver = null;
+      }
+      if (this.itqanPrevObserver) {
+        this.itqanPrevObserver.disconnect();
+        this.itqanPrevObserver = null;
       }
     });
 
@@ -306,6 +430,35 @@ app.initializers.add('itqan-discussions', () => {
         { root: null, rootMargin: '200px', threshold: 0 }
       );
       this.itqanObserver.observe(sentinel);
+    };
+
+    PostStream.prototype.itqanSetupPreviousScroll = function () {
+      const stream = this.stream;
+      const commentStream = getCommentStream(stream && stream.discussion);
+      if (!commentStream) return;
+
+      const sentinel = this.element && this.element.querySelector('.itqan-previous-sentinel');
+      if (!sentinel) return;
+
+      if (this.itqanPrevObserver) {
+        this.itqanPrevObserver.disconnect();
+      }
+
+      this.itqanPrevObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (
+              entry.isIntersecting &&
+              commentStream.hasPreviousRoots &&
+              !commentStream.loadingPrevious
+            ) {
+              stream.loadPrevious();
+            }
+          });
+        },
+        { root: null, rootMargin: '120px', threshold: 0 }
+      );
+      this.itqanPrevObserver.observe(sentinel);
     };
 
     // Core's viewport-driven loading fights the observer above and is what
@@ -345,6 +498,7 @@ app.initializers.add('itqan-discussions', () => {
 
       const commentStream = getCommentStream(this.stream && this.stream.discussion);
 
+      const header = [];
       const footer = [];
 
       // Empty comments: discussion has only the OP (commentCount includes OP).
@@ -363,6 +517,27 @@ app.initializers.add('itqan-discussions', () => {
       }
 
       if (commentStream) {
+        if (commentStream.hasPreviousRoots) {
+          header.push(
+            m('div.itqan-load-previous-roots', { key: 'itqan-load-prev' }, [
+              Button.component(
+                {
+                  className: 'Button',
+                  loading: commentStream.loadingPrevious,
+                  disabled: commentStream.loadingPrevious,
+                  onclick: () => {
+                    this.stream.loadPrevious();
+                  },
+                },
+                trans('stream.load_previous')
+              ),
+            ])
+          );
+          header.push(
+            m('div.itqan-previous-sentinel', { key: 'itqan-prev-sentinel', 'aria-hidden': 'true' })
+          );
+        }
+
         if (commentStream.hasMoreRoots) {
           footer.push(
             m('div.itqan-load-more-roots', { key: 'itqan-load-more' }, [
@@ -384,6 +559,7 @@ app.initializers.add('itqan-discussions', () => {
       }
 
       const commentCardChildren = [];
+      commentCardChildren.push(...header);
       if (afterFirstPostVnode) {
         commentCardChildren.push(afterFirstPostVnode);
       }
@@ -510,13 +686,13 @@ app.initializers.add('itqan-discussions', () => {
   });
 
   // ==========================================
-  // 3. Thread rails
+  // 3. Thread rails (single muted parent rail)
   // ==========================================
   extend(CommentPost.prototype, 'contentItems', function (items) {
     const post = this.attrs ? this.attrs.post : null;
     if (!post || isMainPost(post)) return;
 
-    const rails = getPostRails(post).filter((rail) => rail.col < MAX_VISUAL_DEPTH);
+    const rails = getPostRails(post);
     if (!rails.length) return;
 
     items.add(
@@ -528,15 +704,12 @@ app.initializers.add('itqan-discussions', () => {
             className="itqan-thread-rail"
             data-rail-ancestor-id={rail.postId}
             data-rail-col={rail.col}
-            style={{ '--rail-color': rail.color }}
           />
         ))}
       </div>,
       120
     );
 
-    // The line is 2px; the click target is a wider invisible strip over it, and
-    // a real button so it is reachable by keyboard.
     items.add(
       'itqanThreadRailHits',
       <div className="itqan-thread-rail-hits">
@@ -621,6 +794,7 @@ app.initializers.add('itqan-discussions', () => {
 
     if (parentId) {
       const label = parentUser ? trans('replied_to', { username: parentUser }) : `#${parentId}`;
+      const labelText = extractText(label);
       const previewHtml =
         parentPost && typeof parentPost.contentHtml === 'function' ? parentPost.contentHtml() : null;
       const previewAuthor =
@@ -633,7 +807,8 @@ app.initializers.add('itqan-discussions', () => {
           {
             className: 'itqan-reply-badge',
             href: '#',
-            title: extractText(label),
+            title: labelText,
+            'aria-label': labelText,
             onmouseenter: (e) => {
               if (!previewHtml) return;
               const host = e.currentTarget;
@@ -668,7 +843,7 @@ app.initializers.add('itqan-discussions', () => {
               }
             },
           },
-          [icon('fas fa-reply'), m('span', label)]
+          [icon('fas fa-reply'), m('span.itqan-reply-badge-label', label)]
         ),
         70
       );
@@ -938,17 +1113,83 @@ app.initializers.add('itqan-discussions', () => {
       }
     });
 
-    extend(ReplyComposer.prototype, 'onsubmit', function () {
-      setTimeout(() => {
-        app.itqanActiveParentId = null;
-        app.itqanActiveParentUsername = null;
-        clearActiveReplyTarget();
-        if (app.composer.fields) {
-          app.composer.fields.parentId = null;
-          app.composer.fields.replyToUsername = null;
-        }
-        decorateStreamTree();
-      }, 500);
+    // Own the submit path: snapshot IDs, insert in DFS order, never stream.update()
+    // or core goToNumber (those caused end-of-feed jumps and stuck skeletons).
+    override(ReplyComposer.prototype, 'onsubmit', function () {
+      const discussion = this.attrs.discussion;
+      const commentStream = getCommentStream(discussion);
+      const snapshotIds = (discussion.postIds() || []).map(String);
+
+      this.loading = true;
+      m.redraw();
+
+      const data = this.data();
+
+      app.store
+        .createRecord('posts')
+        .save(data)
+        .then((post) => {
+          if (app.viewingDiscussion(discussion)) {
+            // CreatePost may still push a truncated discussion.posts relation —
+            // restore the pre-submit window, then insert in tree order.
+            if (commentStream) {
+              commentStream.restorePostIds(snapshotIds);
+              const result = commentStream.insertPost(post);
+              const stream = app.current.get('stream');
+              if (stream) {
+                syncStreamVisibleRange(stream);
+              }
+              decorateStreamTree();
+              m.redraw();
+
+              requestAnimationFrame(() => {
+                scrollToPostId(post.id(), { behavior: 'smooth', block: 'nearest' });
+              });
+
+              if (!result.inserted && result.reason === 'parent_not_loaded') {
+                app.alerts.show(
+                  { type: 'success' },
+                  trans('stream.reply_posted_elsewhere')
+                );
+              }
+            } else {
+              const stream = app.current.get('stream');
+              if (stream) {
+                stream.goToNumber(post.number());
+              }
+            }
+          } else {
+            let alert;
+            const viewButton = Button.component(
+              {
+                className: 'Button Button--link',
+                onclick: () => {
+                  m.route.set(app.route.post(post));
+                  app.alerts.dismiss(alert);
+                },
+              },
+              app.translator.trans('core.forum.composer_reply.view_button')
+            );
+            alert = app.alerts.show(
+              {
+                type: 'success',
+                controls: [viewButton],
+              },
+              app.translator.trans('core.forum.composer_reply.posted_message')
+            );
+          }
+
+          this.composer.hide();
+          this.loading = false;
+
+          app.itqanActiveParentId = null;
+          app.itqanActiveParentUsername = null;
+          clearActiveReplyTarget();
+          if (app.composer.fields) {
+            app.composer.fields.parentId = null;
+            app.composer.fields.replyToUsername = null;
+          }
+        }, this.loaded.bind(this));
     });
   }
 });

@@ -42,6 +42,8 @@ class LoadTreePostsRelationship
         $discussion->root_comment_count = $tree['root_comment_count'];
         $discussion->roots_loaded = $tree['roots_loaded'];
         $discussion->roots_has_more = $tree['roots_has_more'];
+        $discussion->roots_has_previous = $tree['roots_has_previous'];
+        $discussion->roots_offset = $tree['offset'];
         $discussion->comment_sort = $tree['sort'];
         $discussion->truncated_parent_ids = $tree['truncated_parent_ids'];
 

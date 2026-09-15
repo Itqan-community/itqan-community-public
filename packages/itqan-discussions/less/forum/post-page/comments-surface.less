@@ -252,11 +252,11 @@
 
 // --- Pagination footer ------------------------------------------------------
 
+.itqan-load-previous-roots,
 .itqan-load-more-roots {
   display: flex;
   justify-content: center;
   padding: var(--sp-16) var(--sp-20);
-  border-top: 1px solid var(--hairline);
 
   .Button {
     height: var(--ctl-h-lg);
@@ -276,6 +276,14 @@
       border-color: var(--accent);
     }
   }
+}
+
+.itqan-load-previous-roots {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.itqan-load-more-roots {
+  border-top: 1px solid var(--hairline);
 }
 
 // Watched by an IntersectionObserver to append the next page of roots.

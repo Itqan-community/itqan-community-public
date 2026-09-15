@@ -1,0 +1,96 @@
+// ---------------------------------------------------------------------------
+// FoF Reactions — fit into the Itqan action row
+// ---------------------------------------------------------------------------
+//
+// FoF ships a hover picker with float/absolute positioning that fights our
+// action bar. Keep FoF's JS; restyle so chips share --ctl-h and never wrap
+// the phone action row.
+
+.itqan-comments-card .Post-actions,
+.CommentPost .Post-actions {
+  .item-react,
+  .Reactions {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    margin-inline-end: 0 !important;
+    float: none !important;
+    vertical-align: middle;
+  }
+
+  .Reactions {
+    gap: var(--sp-4);
+    flex-wrap: nowrap;
+  }
+
+  .Reactions--reactions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-4);
+    vertical-align: middle;
+  }
+
+  .Reactions--reactions .Button-emoji-parent {
+    .itqan-chip-base();
+    height: var(--ctl-h);
+    padding: 0 var(--ctl-px);
+    margin: 0 !important;
+
+    &.active {
+      .itqan-chip-selected();
+    }
+
+    img.emoji,
+    .button-emoji,
+    img {
+      height: 16px;
+      width: 16px;
+      margin: 0 !important;
+    }
+
+    .count {
+      margin: 0;
+      margin-inline-start: var(--sp-4);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .Reactions--ShowReactions {
+    .itqan-ghost-control();
+    float: none !important;
+    margin: 0 !important;
+    padding: 0 var(--sp-8);
+
+    .button-react {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .Reactions--react {
+    display: inline-flex;
+    position: relative;
+    vertical-align: middle;
+  }
+
+  .CommentPost--Reactions {
+    // Logical positioning — avoid LTR-only `left: -28%`
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+    left: auto;
+    right: auto;
+    max-width: ~"min(270px, 80vw)";
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-md);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-md, 0 2px 6px rgba(0, 0, 0, 0.2));
+    color: var(--text-default);
+  }
+}
+
+@media (max-width: 480px) {
+  .itqan-comments-card .Post-actions .Reactions--reactions .Button-emoji-parent .count {
+    // Keep one action line on narrow phones
+    font-size: var(--fs-ui-xs);
+  }
+}

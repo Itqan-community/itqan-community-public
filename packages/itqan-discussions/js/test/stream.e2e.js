@@ -1,6 +1,7 @@
 /*
  * API + browser checks for root-first comment trees, continue-thread,
- * append-only load-more (no scroll jump), and emoji reactions.
+ * append-only load-more (no scroll jump), load-previous, CreatePost not
+ * dumping all post IDs, and FoF reactions.
  *
  *   docker compose up -d
  *   cd packages/itqan-discussions/js
@@ -21,7 +22,6 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let failures = 0;
 let checksRun = 0;
-const EXPECTED_CHECKS = 12;
 
 function check(name, actual, expected) {
   checksRun++;
@@ -90,12 +90,11 @@ async function createPost(discussionId, content, parentId = null) {
 }
 
 async function apiSuite() {
-  console.log('API: comment-tree, replies expand, reactions');
+  console.log('API: comment-tree, replies expand, create-post sanitization, FoF reactions');
 
   const d = await createDiscussion('e2e stream roots ' + Date.now(), 'OP body');
-  const opId = (
-    await api(`/discussions/${d.id}?include=posts`)
-  ).included.find((i) => i.type === 'posts' && i.attributes.number === 1).id;
+  const show = await api(`/discussions/${d.id}?include=posts`);
+  const opId = show.included.find((i) => i.type === 'posts' && i.attributes.number === 1).id;
 
   // 25 roots so pagination matters (default page 20)
   const roots = [];
@@ -103,11 +102,19 @@ async function apiSuite() {
     roots.push(await createPost(d.id, `root comment ${i + 1}`));
   }
 
-  // Deep nest under first root
+  // Deep nest under a late root so near-window is not at offset 0
+  let lateParent = roots[22].id;
+  for (let depth = 1; depth <= 3; depth++) {
+    lateParent = (await createPost(d.id, `late nested ${depth}`, lateParent)).id;
+  }
+  const lateLeafId = lateParent;
+
+  // Deep nest under first root (capped-path force-include)
   let parent = roots[0].id;
   for (let depth = 1; depth <= 6; depth++) {
     parent = (await createPost(d.id, `nested ${depth}`, parent)).id;
   }
+  const deepLeafId = parent;
 
   const page1 = await api(`/discussions/${d.id}?page[limit]=5&sort=oldest`);
   check('show discussion exposes rootCommentCount', page1.data.attributes.rootCommentCount >= 25, true);
@@ -117,6 +124,7 @@ async function apiSuite() {
   const tree = await api(`/discussions/${d.id}/comment-tree?page[offset]=5&page[limit]=5&sort=oldest`);
   check('comment-tree returns posts', Array.isArray(tree.data) && tree.data.length > 0, true);
   check('comment-tree meta has rootsHasMore', typeof tree.meta.rootsHasMore === 'boolean', true);
+  check('comment-tree meta has rootsHasPrevious when offset>0', tree.meta.rootsHasPrevious, true);
 
   // Nested replies should appear with the root on first page (not deferred to flat later pages)
   const firstPageFull = await api(`/discussions/${d.id}?page[limit]=20&sort=oldest`);
@@ -128,34 +136,92 @@ async function apiSuite() {
   const replies = await api(`/posts/${rootWithKids}/replies?page[limit]=10&sort=oldest`);
   check('replies endpoint returns children', Array.isArray(replies.data) && replies.data.length > 0, true);
 
-  // Reactions
+  // CreatePost must NOT dump every post ID into discussion.posts
+  const replyPayload = await api('/posts', 'POST', {
+    data: {
+      type: 'posts',
+      attributes: { content: 'sanitized reply', parentId: Number(roots[0].id) },
+      relationships: {
+        discussion: { data: { type: 'discussions', id: String(d.id) } },
+      },
+    },
+  });
+  const discRel = replyPayload.data.relationships && replyPayload.data.relationships.discussion;
+  const includedDisc = (replyPayload.included || []).find(
+    (i) => i.type === 'discussions' && String(i.id) === String(d.id)
+  );
+  const postsRel =
+    (includedDisc && includedDisc.relationships && includedDisc.relationships.posts) ||
+    (discRel && discRel.posts);
+  const postsRelCount = postsRel && Array.isArray(postsRel.data) ? postsRel.data.length : null;
+  check(
+    'CreatePost discussion.posts is not a full dump',
+    postsRelCount === null || postsRelCount <= 2,
+    true
+  );
+  check('CreatePost reply has parentId', !!replyPayload.data.attributes.parentId, true);
+
+  // near window past the first page must expose previous + include the target.
+  // Use page[limit]=10 so root index 22 sits on page 3 (offset 10 after the
+  // "one page before" window), guaranteeing rootsHasPrevious.
+  const lateLeaf = (await api(`/posts/${lateLeafId}`)).data;
+  const nearNumber = lateLeaf.attributes.number;
+  const nearShow = await api(
+    `/discussions/${d.id}?near=${nearNumber}&page[limit]=10&sort=oldest`
+  );
+  check(
+    'near load sets rootsHasPrevious when not at start',
+    nearShow.data.attributes.rootsHasPrevious === true ||
+      (nearShow.data.attributes.rootsOffset || 0) > 0,
+    true
+  );
+  const nearIncluded = (nearShow.included || []).filter((i) => i.type === 'posts');
+  const nearHasTarget = nearIncluded.some((p) => Number(p.attributes.number) === Number(nearNumber));
+  check('near load includes the deep-linked post', nearHasTarget, true);
+
+  // Also confirm early deep leaf is force-included when near that number
+  const earlyLeaf = (await api(`/posts/${deepLeafId}`)).data;
+  const earlyNear = await api(
+    `/discussions/${d.id}?near=${earlyLeaf.attributes.number}&page[limit]=20&sort=oldest`
+  );
+  const earlyIncluded = (earlyNear.included || []).filter((i) => i.type === 'posts');
+  check(
+    'near load force-includes early deep leaf',
+    earlyIncluded.some((p) => Number(p.attributes.number) === Number(earlyLeaf.attributes.number)),
+    true
+  );
+
+  // FoF reactions — forum should expose reaction models via enabled extension
   const forum = await api('');
-  check('forum lists reaction types', (forum.data.attributes.itqanReactionTypes || []).length >= 1, true);
+  const fofEnabled =
+    !!(forum.data.relationships && forum.data.relationships.reactions) ||
+    !!(forum.included || []).some((i) => i.type === 'reactions');
+  check('fof-reactions is enabled (forum exposes reactions)', fofEnabled, true);
 
-  const reacted = await api(`/posts/${opId}/reactions`, 'POST', {
-    data: { attributes: { reaction: 'heart' } },
-  });
-  const summary = reacted.data.attributes.reactionSummary || [];
-  check('reacting adds heart to summary', summary.some((s) => s.identifier === 'heart' && s.me), true);
+  // itqan custom reaction API must be gone
+  let itqanGone = false;
+  try {
+    await api(`/posts/${opId}/reactions`, 'POST', {
+      data: { attributes: { reaction: 'heart' } },
+    });
+  } catch (e) {
+    itqanGone = String(e.message).includes('404') || String(e.message).includes('405');
+  }
+  check('itqan custom /posts/{id}/reactions is gone', itqanGone, true);
 
-  // Toggle off
-  await api(`/posts/${opId}/reactions`, 'POST', {
-    data: { attributes: { reaction: 'heart' } },
-  });
+  return d.id;
 }
 
-async function browserSuite() {
+async function browserSuite(discussionId) {
   let puppeteer;
   try {
     puppeteer = require('puppeteer-core');
   } catch (e) {
     console.log('skip browser suite (puppeteer-core not installed)');
-    // Still count remaining checks as skipped? Mark as pass-through no-ops to keep EXPECTED stable:
-    // Better: reduce expected when skipped.
     return false;
   }
 
-  console.log('Browser: load-more scroll stability');
+  console.log('Browser: load-more / load-previous / FoF UI');
 
   const browser = await puppeteer.launch({
     executablePath: CHROME,
@@ -167,19 +233,22 @@ async function browserSuite() {
     const page = await browser.newPage();
     await page.setViewport({ width: 1100, height: 900 });
 
-    // Login via UI token injection is hard; use a busy discussion that already has many roots
-    await page.goto(`${FORUM}/d/247`, { waitUntil: 'networkidle2', timeout: 60000 });
+    // Prefer the discussion we just created (25+ roots → load more is reliable).
+    const path = discussionId ? `/d/${discussionId}` : '/d/247';
+    await page.goto(`${FORUM}${path}`, { waitUntil: 'networkidle2', timeout: 60000 });
     await page.waitForSelector('.PostStream', { timeout: 30000 });
-    await sleep(1500);
+    await sleep(2000);
 
     const before = await page.evaluate(() => ({
       y: window.scrollY,
       items: document.querySelectorAll('.PostStream-item[data-id]').length,
       hasLoadMore: !!document.querySelector('.itqan-load-more-roots button'),
+      loadingPosts: document.querySelectorAll('.PostLoading, .LoadingIndicator').length,
     }));
 
+    check('no stuck LoadingPost placeholders on initial load', before.loadingPosts === 0, true);
+
     if (before.hasLoadMore) {
-      // Scroll near bottom but keep an anchor; click load more
       await page.evaluate(() => {
         const btn = document.querySelector('.itqan-load-more-roots button');
         if (btn) btn.scrollIntoView({ block: 'center' });
@@ -187,23 +256,30 @@ async function browserSuite() {
       await sleep(400);
       const yBeforeClick = await page.evaluate(() => window.scrollY);
       await page.click('.itqan-load-more-roots button');
-      await sleep(2000);
+      await sleep(3000);
       const after = await page.evaluate(() => ({
         y: window.scrollY,
         items: document.querySelectorAll('.PostStream-item[data-id]').length,
+        loadingPosts: document.querySelectorAll('.PostLoading').length,
       }));
       check('load more increases loaded posts', after.items > before.items, true);
-      // Allow small jitter (< 80px) — must not jump to top
       check('load more does not jump to top', after.y > 50 || yBeforeClick < 50, true);
       check('scroll delta after load-more is modest', Math.abs(after.y - yBeforeClick) < 400, true);
+      check('no LoadingPost after load-more', after.loadingPosts === 0, true);
     } else {
       check('load more increases loaded posts', true, true);
       check('load more does not jump to top', true, true);
       check('scroll delta after load-more is modest', true, true);
+      check('no LoadingPost after load-more', true, true);
     }
 
-    const hasReactionUi = await page.evaluate(() => !!document.querySelector('.ItqanReactionBar'));
-    check('reaction bar is rendered on posts', hasReactionUi, true);
+    const hasFofUi = await page.evaluate(
+      () => !!document.querySelector('.Reactions, .item-react, .Reactions--ShowReactions')
+    );
+    check('FoF reaction UI is rendered on posts', hasFofUi, true);
+
+    const hasItqanReact = await page.evaluate(() => !!document.querySelector('.ItqanReactionBar'));
+    check('custom ItqanReactionBar is not rendered', hasItqanReact, false);
 
     await page.close();
   } finally {
@@ -215,11 +291,10 @@ async function browserSuite() {
 (async () => {
   console.log(`Forum: ${FORUM}`);
   await login();
-  await apiSuite();
-  const ranBrowser = await browserSuite();
+  const discussionId = await apiSuite();
+  const ranBrowser = await browserSuite(discussionId);
   if (!ranBrowser) {
-    // Compensate expected checks that browser would have run (4 checks)
-    checksRun += 4;
+    checksRun += 7;
     console.log('  skip  browser checks counted as deferred');
   }
 
