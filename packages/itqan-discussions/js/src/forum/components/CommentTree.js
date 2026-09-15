@@ -1,5 +1,4 @@
 import app from 'flarum/forum/app';
-import { getAvatarDominantColor, postColorCache } from '../utils/AvatarColor';
 
 // Deepest level that gets its own indent step. Beyond this the indent would eat
 // the reading measure, so the server's "continue this thread" link takes over.
@@ -103,9 +102,19 @@ export function getPostDepth(post, visited = new Set()) {
   return 1 + getPostDepth(parent, visited);
 }
 
-/** Depth used for styling: clamped, so an unbounded chain cannot break layout. */
+/**
+ * Max visual indent steps by viewport. Deeper replies keep their reply chip
+ * for lineage but stop pushing the reading measure.
+ */
+export function getMaxVisualDepthForViewport(width = typeof window !== 'undefined' ? window.innerWidth : 1440) {
+  if (width <= 767) return 1;
+  if (width <= 1023) return 2;
+  return Math.min(MAX_VISUAL_DEPTH, 3);
+}
+
+/** Depth used for styling: clamped to the current viewport budget. */
 export function getVisualDepth(post) {
-  return Math.min(getPostDepth(post), MAX_VISUAL_DEPTH);
+  return Math.min(getPostDepth(post), getMaxVisualDepthForViewport());
 }
 
 /**
@@ -349,8 +358,6 @@ export function decorateStreamTree() {
     if (!rows.length) return;
 
     const { childrenOf: children } = getStreamIndex();
-    const rowById = new Map();
-    rows.forEach((row) => rowById.set(row.dataset.id, row));
 
     let firstRootSeen = false;
 
@@ -398,32 +405,6 @@ export function decorateStreamTree() {
 
     syncUnreadMarks(rows);
     syncDateSeparators(container, rows);
-
-    // Rail colours, resolved from each ancestor's avatar once it has loaded.
-    rows.forEach((row) => {
-      row.querySelectorAll('.itqan-thread-rail[data-rail-ancestor-id]').forEach((rail) => {
-        const ancestorId = rail.getAttribute('data-rail-ancestor-id');
-        if (!ancestorId) return;
-
-        const ancestorRow = rowById.get(ancestorId);
-        const ancestorAvatar = ancestorRow ? ancestorRow.querySelector('.PostUser-avatar, .Avatar') : null;
-        const ancestorPost = postById(ancestorId);
-        const fallbackKey =
-          ancestorPost && typeof ancestorPost.user === 'function' && ancestorPost.user()
-            ? ancestorPost.user().displayName()
-            : ancestorId;
-
-        const color = getAvatarDominantColor(ancestorAvatar, fallbackKey, (readyColor) => {
-          rail.style.setProperty('--rail-color', readyColor);
-          if (postColorCache) postColorCache.set(ancestorId, readyColor);
-        });
-
-        if (color) {
-          rail.style.setProperty('--rail-color', color);
-          if (postColorCache) postColorCache.set(ancestorId, color);
-        }
-      });
-    });
   });
 }
 

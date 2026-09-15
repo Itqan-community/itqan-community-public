@@ -214,38 +214,31 @@ export function getPostColor(post) {
 }
 
 /**
- * Compute the complete list of active ancestor rails for a post.
- * Rails are only rendered for child replies (depth >= 1) to visually guide them back
- * to their ancestors. Parent/root comments do NOT have a self-rail drawn over their own content.
+ * Immediate-parent rail only (GitHub-style muted lineage). Multi-ancestor
+ * rainbow rails were dropped — they seamed and stole measure on phones.
  */
 export function getPostRails(post) {
   if (!post) return [];
-  const rails = [];
-  const postId = typeof post.id === 'function' ? String(post.id()) : '';
-  const visited = new Set();
-  visited.add(postId);
 
-  let curr = post;
-  while (curr) {
-    const parentId = typeof curr.parentId === 'function' ? curr.parentId() : null;
-    if (!parentId) break;
-    const pIdStr = String(parentId);
-    if (visited.has(pIdStr)) break;
-    visited.add(pIdStr);
+  const parentId = typeof post.parentId === 'function' ? post.parentId() : null;
+  if (!parentId) return [];
 
-    const parent = app.store ? app.store.getById('posts', pIdStr) : null;
-    if (!parent) break;
-    if (typeof parent.number === 'function' && parent.number() === 1) {
-      break;
-    }
+  const parent = app.store ? app.store.getById('posts', String(parentId)) : null;
+  if (!parent) return [];
+  if (typeof parent.number === 'function' && parent.number() === 1) return [];
 
-    rails.unshift(parent);
-    curr = parent;
-  }
+  // Visual column = clamped depth of this post minus 1 (the parent level).
+  const depth =
+    typeof post.attribute === 'function' && post.attribute('depth') != null
+      ? Number(post.attribute('depth'))
+      : 1;
+  const col = Math.max(0, Math.min(depth - 1, 4));
 
-  return rails.map((ancestorPost, colIndex) => ({
-    col: colIndex,
-    postId: String(ancestorPost.id()),
-    color: getPostColor(ancestorPost),
-  }));
+  return [
+    {
+      col,
+      postId: String(parent.id()),
+      color: null, // CSS token --border-default; no avatar sampling
+    },
+  ];
 }

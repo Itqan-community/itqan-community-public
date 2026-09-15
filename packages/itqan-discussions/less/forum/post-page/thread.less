@@ -46,15 +46,8 @@
   inset-block: 0;
   width: var(--thread-rail-w);
   border-radius: var(--thread-rail-w);
-  // The identity colour mixed down: at full strength a long thread of nine
-  // palette hues reads as confetti and fights the brand. Full strength is kept
-  // for hover, where it identifies which subtree is about to collapse.
-  //
-  // 55% rather than a lower value because the mix is against `transparent`, so
-  // it lands on the page background — below about half strength a 2px line on
-  // white stops being visible at all, which was measured.
-  background: color-mix(in srgb, var(--rail-color, var(--accent)) 55%, transparent);
-  // Rails are decorative; the hit area below is the interactive element.
+  // GitHub-style muted lineage — no avatar rainbow.
+  background: var(--border-default);
   pointer-events: none;
   transition: background-color var(--dur-fast) var(--ease-out);
 }
@@ -108,7 +101,7 @@
 }
 
 .itqan-thread-rail.itqan-thread-rail--active {
-  background: var(--rail-color, var(--accent));
+  background: var(--accent);
 }
 
 // --- Collapsed subtrees ------------------------------------------------------
@@ -208,13 +201,14 @@
 
 // --- Reply context badge -----------------------------------------------------
 
-// "replying to X" on a comment whose parent is not the row directly above it.
+// "replying to X" — ellipsis when the name is long; never paint outside the chip.
 .itqan-reply-badge {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--sp-4);
-  max-width: 20ch;
+  max-width: ~"min(100%, 28ch)";
+  min-width: 0;
   padding: 2px var(--sp-8);
   font-size: var(--fs-ui-xs);
   font-weight: var(--fw-medium);
@@ -225,8 +219,7 @@
   border-radius: var(--r-pill);
   text-decoration: none;
   white-space: nowrap;
-  overflow: visible;
-  text-overflow: ellipsis;
+  overflow: hidden;
   transition: background var(--dur-fast) var(--ease-out);
 
   &:hover,
@@ -237,8 +230,27 @@
   }
 
   .icon {
+    flex: 0 0 auto;
     font-size: 9px;
   }
+
+  .itqan-reply-badge-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// Parent header row must allow the badge to shrink.
+.itqan-comments-card .Post-header,
+.itqan-comments-card .PostUser {
+  min-width: 0;
+}
+
+.itqan-comments-card .Post-header > .item-itqan-reply-badge {
+  min-width: 0;
+  max-width: 100%;
 }
 
 // --- Phone -------------------------------------------------------------------

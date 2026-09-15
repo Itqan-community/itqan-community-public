@@ -192,12 +192,13 @@
 
   --thread-rail-w: 2px;
   --thread-rail-hit: 16px;
+  // Cumulative indent offsets — desktop / tablet default (≥1024): 3 steps × ~20px
   --indent-0: 0px;
-  --indent-1: 28px;
-  --indent-2: 52px;
-  --indent-3: 74px;
-  --indent-4: 94px;
-  --indent-5: 112px;
+  --indent-1: 20px;
+  --indent-2: 40px;
+  --indent-3: 60px;
+  --indent-4: 60px;
+  --indent-5: 60px;
 
   // ---------------------------------
   // MOTION
@@ -226,16 +227,28 @@
 // `:root` so a component never has to restate the breakpoint.
 @media @phone {
   :root {
-    --indent-1: 16px;
-    --indent-2: 30px;
-    --indent-3: 42px;
-    --indent-4: 52px;
-    --indent-5: 60px;
+    // Phone: single indent step (~12px); deeper replies use the reply chip.
+    --indent-1: 12px;
+    --indent-2: 12px;
+    --indent-3: 12px;
+    --indent-4: 12px;
+    --indent-5: 12px;
 
     --ctl-h: 32px;
     --ctl-h-lg: 36px;
     --fs-body: 15.5px;
     --measure: 100%;
+  }
+}
+
+// Tablet: two indent steps × ~16px
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --indent-1: 16px;
+    --indent-2: 32px;
+    --indent-3: 32px;
+    --indent-4: 32px;
+    --indent-5: 32px;
   }
 }
 

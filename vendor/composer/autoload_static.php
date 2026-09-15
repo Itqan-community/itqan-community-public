@@ -303,9 +303,9 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         array (
             'Itqan\\Typography\\' => 17,
             'Itqan\\Theme\\' => 12,
-            'Itqan\\Reactions\\' => 16,
             'Itqan\\MailerLite\\' => 17,
             'Itqan\\Discussions\\' => 18,
+            'Itqan\\ComposerTools\\' => 20,
             'Irmmr\\RTLCss\\' => 13,
             'Irmmr\\FlarumRtlSupport\\' => 23,
             'Intervention\\Image\\' => 19,
@@ -378,6 +378,7 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
             'FoF\\SocialProfile\\' => 18,
             'FoF\\Sitemap\\' => 12,
             'FoF\\ShareSocial\\' => 16,
+            'FoF\\Reactions\\' => 14,
             'FoF\\PrettyMail\\' => 15,
             'FoF\\OAuth\\' => 10,
             'FoF\\MergeDiscussions\\' => 21,
@@ -915,10 +916,6 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-theme/src',
         ),
-        'Itqan\\Reactions\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/itqan/flarum-reactions/src',
-        ),
         'Itqan\\MailerLite\\' =>
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-mailerlite/src',
@@ -926,6 +923,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'Itqan\\Discussions\\' =>
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-discussions/src',
+        ),
+        'Itqan\\ComposerTools\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/flarum-composer-tools/src',
         ),
         'Irmmr\\RTLCss\\' =>
         array (
@@ -1180,6 +1181,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'FoF\\ShareSocial\\' =>
         array (
             0 => __DIR__ . '/..' . '/fof/share-social/src',
+        ),
+        'FoF\\Reactions\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/fof/reactions/src',
         ),
         'FoF\\PrettyMail\\' =>
         array (
