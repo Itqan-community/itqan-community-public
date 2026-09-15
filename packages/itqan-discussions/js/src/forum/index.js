@@ -694,13 +694,8 @@ app.initializers.add('itqan-discussions', () => {
   }
 
   if (DiscussionPage) {
-    // The scrubber cannot express position in a capped tree.
-    extend(DiscussionPage.prototype, 'sidebarItems', function (items) {
-      if (items.has('scrubber')) {
-        items.remove('scrubber');
-      }
-    });
-
+    // Drop cached comment-stream state when opening a discussion page so a
+    // previous discussion's window does not leak into the next one.
     extend(DiscussionPage.prototype, 'oninit', function () {
       if (this.discussion) {
         this.discussion.itqanCommentStream = null;

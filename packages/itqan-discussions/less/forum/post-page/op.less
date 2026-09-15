@@ -66,6 +66,21 @@
 
     .Post-body {
       font-size: var(--fs-body-lg);
+
+      // OP fills the card like production — do not apply the comment reading
+      // measure cap here (that stays on nested comments only).
+      > p,
+      > ul,
+      > ol,
+      > blockquote,
+      > h1,
+      > h2,
+      > h3,
+      > h4,
+      > h5,
+      > h6 {
+        max-width: none;
+      }
     }
   }
 
