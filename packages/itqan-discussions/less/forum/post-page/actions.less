@@ -1,0 +1,189 @@
+// ---------------------------------------------------------------------------
+// Post page — action bar
+// ---------------------------------------------------------------------------
+//
+// One row, aligned to the inline-start edge of the body it acts on, with every
+// item exactly `--ctl-h` tall.
+//
+// The audit found this row 855px wide with `justify-content: flex-end`, which put
+// the vote control ~800px away from the comment it belonged to, and four
+// different item heights in it (17 / 20 / 26 / 28px). Both are fixed here: the
+// row starts where the text starts, and the height comes from one token.
+//
+// Core rules being reset:
+//   .Post-actions              float: right; margin-top: -5px
+//   @tablet-up .no-touch &     opacity: 0
+//   .Post-actions > ul > li    margin-left: -5px; display: inline-block
+
+.CommentPost .Post-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  float: none;
+  clear: both;
+  position: relative;
+  overflow: visible;
+  margin: var(--sp-12) 0 0;
+  padding: 0;
+  // Core fades the whole bar out until the post is hovered. Primary actions
+  // must not hide — a vote count is information, not a control — so the bar is
+  // always visible and only the overflow button is revealed on hover.
+  opacity: 1;
+
+  &.openWithin {
+    z-index: var(--z-dropdown);
+  }
+
+  > ul {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--ctl-gap);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: visible;
+
+    > li {
+      display: inline-flex;
+      align-items: center;
+      flex: none;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      vertical-align: baseline;
+      min-width: 0;
+    }
+  }
+
+  // Everything from the overflow button onwards is pushed to the far edge, so
+  // the row has a primary cluster at the start and a single control at the end.
+  > ul > li:has(> .Post-controls) {
+    margin-inline-start: auto;
+  }
+
+  // Any action button that is not one of ours — third-party extensions add
+  // straight to this list — is normalised to the row's height rather than left
+  // to set its own.
+  .Button--link {
+    .itqan-ghost-control();
+  }
+}
+
+// --- Reply -------------------------------------------------------------------
+
+.itqan-reply-action {
+  .itqan-ghost-control();
+
+  font-weight: var(--fw-semibold);
+
+  &:hover,
+  &:focus {
+    color: var(--accent);
+    background: var(--accent-faint);
+  }
+}
+
+// --- Overflow ----------------------------------------------------------------
+
+.CommentPost .Post-actions .Post-controls {
+  position: relative;
+
+  .Dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--ctl-h);
+    height: var(--ctl-h);
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--text-muted);
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+      opacity var(--dur) var(--ease-out);
+
+    .icon {
+      font-size: var(--fs-ui);
+      margin: 0;
+    }
+
+    &:hover,
+    &:focus {
+      background: var(--surface-active);
+      color: var(--text-default);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+  }
+
+  &.open {
+    z-index: var(--z-dropdown);
+
+    .Dropdown-menu {
+      display: block;
+      z-index: ~"calc(var(--z-dropdown) + 1)";
+    }
+  }
+
+  .Dropdown-menu {
+    z-index: ~"calc(var(--z-dropdown) + 1)";
+    border-radius: var(--r-md);
+    box-shadow: var(--elev-menu);
+  }
+}
+
+// A long thread renders hundreds of buttons; on a pointer device the secondary
+// one stays out of the way until the row is actually being used. Touch devices
+// have no hover, so it is always visible there.
+@media (hover: hover) and (pointer: fine) {
+  .itqan-comments-card .PostStream-item .CommentPost .Post-actions .Post-controls .Dropdown-toggle {
+    opacity: 0;
+  }
+
+  .itqan-comments-card .PostStream-item:hover .CommentPost .Post-actions .Post-controls .Dropdown-toggle,
+  .itqan-comments-card .PostStream-item:focus-within .CommentPost .Post-actions .Post-controls .Dropdown-toggle,
+  .itqan-comments-card .PostStream-item .CommentPost .Post-actions .Post-controls.open .Dropdown-toggle {
+    opacity: 1;
+  }
+}
+
+// --- Overflow on narrow screens ---------------------------------------------
+//
+// The audit measured the row wrapping to two lines on a 390px screen: five items
+// totalling 336px in a 318px bar. `flex-wrap: nowrap` above prevents the wrap;
+// these rules make the row fit instead of overflowing, by dropping the labels
+// from the lower-frequency controls and letting their icons stand alone.
+
+@media (max-width: 480px) {
+  .CommentPost .Post-actions {
+    > ul {
+      gap: var(--sp-4);
+    }
+
+    // Anything that is only reachable by scrolling is worse than an icon.
+    .itqan-action-label {
+      display: none;
+    }
+  }
+
+  .itqan-reply-action,
+  .itqan-continue-thread,
+  .CommentPost .Post-actions .Button--link {
+    padding-inline: var(--sp-6);
+  }
+}
+
+// Touch targets grow without the painted control growing.
+@media (pointer: coarse) {
+  .itqan-reply-action,
+  .itqan-thread-toggle,
+  .CommentPost .Post-actions .Post-controls .Dropdown-toggle,
+  .CommentPost .Post-actions .Button--link {
+    .itqan-touch-target();
+  }
+}

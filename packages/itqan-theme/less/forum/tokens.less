@@ -1,0 +1,271 @@
+// ---------------------------------------------------------------------------
+// Design tokens
+// ---------------------------------------------------------------------------
+//
+// `color-schemes.less` redeclares Flarum's palette per scheme. This file adds
+// the layer above it: the spacing, radius, elevation, type and control scales
+// the redesigned pages are built from, plus semantic colours derived from the
+// palette rather than restated as literals.
+//
+// Everything here is a CSS custom property on purpose. LESS variables do not
+// cross extension boundaries — `itqan-discussions` compiles separately — but
+// custom properties are resolved at runtime, so the token contract holds for
+// every extension and for the Custom LESS box in Appearance.
+//
+// The derived colours use `color-mix` against `--text-color` / `--body-bg`
+// instead of fixed greys. That is what makes one declaration correct in both
+// schemes: at 10% of `#111` on white it is a light hairline, at 10% of `#ddd`
+// on `#1a1a1a` it is a dark-scheme hairline. Restating greys per scheme is the
+// bug this layer exists to remove.
+
+:root {
+  // ---------------------------------
+  // SPACING — 4px base, named by step so intent survives a value change
+
+  --sp-0: 0;
+  --sp-2: 2px;
+  --sp-4: 4px;
+  --sp-6: 6px;
+  --sp-8: 8px;
+  --sp-10: 10px;
+  --sp-12: 12px;
+  --sp-16: 16px;
+  --sp-20: 20px;
+  --sp-24: 24px;
+  --sp-32: 32px;
+  --sp-40: 40px;
+  --sp-48: 48px;
+
+  // ---------------------------------
+  // RADIUS
+  //
+  // Core's `--border-radius` is 4px and is used by inputs and buttons we do not
+  // own. These are the surface radii the redesign uses; they are deliberately
+  // larger than core's so a redesigned card reads as a distinct layer.
+
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-pill: 9999px;
+
+  // ---------------------------------
+  // SURFACES
+  //
+  // In the light scheme `--body-bg-light` equals the page background, so a card
+  // is defined by its border and shadow. In the dark scheme it is a genuinely
+  // lighter fill and the border recedes. Both are intentional: light UIs read
+  // depth from outlines, dark UIs read it from luminance.
+
+  --surface-page: var(--body-bg);
+  --surface-card: var(--body-bg-light);
+  --surface-sunken: var(--body-bg-shaded);
+  --surface-hover: color-mix(in srgb, var(--text-color) 4%, transparent);
+  --surface-active: color-mix(in srgb, var(--text-color) 8%, transparent);
+  --surface-selected: color-mix(in srgb, var(--primary-color) 8%, transparent);
+
+  // ---------------------------------
+  // BORDERS
+
+  --hairline: color-mix(in srgb, var(--text-color) 9%, transparent);
+  --border-subtle: color-mix(in srgb, var(--text-color) 7%, transparent);
+  --border-default: color-mix(in srgb, var(--text-color) 13%, transparent);
+  --border-strong: color-mix(in srgb, var(--text-color) 22%, transparent);
+
+  // ---------------------------------
+  // TEXT
+
+  --text-strong: var(--heading-color);
+  --text-default: var(--text-color);
+  --text-muted: var(--muted-color);
+  --text-faint: color-mix(in srgb, var(--muted-color) 72%, transparent);
+  // Set by core's `.Button--color-vars` for the primary fill, and already
+  // corrected per scheme in `color-schemes.less`.
+  --text-on-accent: var(--button-primary-color);
+
+  // ---------------------------------
+  // ACCENT — tints of the admin's primary colour
+
+  --accent: var(--primary-color);
+  --accent-hover: color-mix(in srgb, var(--primary-color) 88%, var(--text-color));
+  --accent-faint: color-mix(in srgb, var(--primary-color) 6%, transparent);
+  --accent-soft: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  --accent-strong: color-mix(in srgb, var(--primary-color) 22%, transparent);
+  --accent-border: color-mix(in srgb, var(--primary-color) 32%, transparent);
+
+  // ---------------------------------
+  // INTENTS
+  //
+  // Agreement and disagreement need different hues, not two shades of one, and
+  // they must be the same two hues the rest of Flarum uses for on/off.
+
+  --intent-up: var(--switch-on-color);
+  --intent-up-soft: color-mix(in srgb, var(--switch-on-color) 14%, transparent);
+  --intent-down: var(--switch-off-color);
+  --intent-down-soft: color-mix(in srgb, var(--switch-off-color) 14%, transparent);
+  --intent-danger: var(--control-danger-color);
+  --intent-danger-soft: var(--control-danger-bg);
+
+  // ---------------------------------
+  // ELEVATION
+  //
+  // `--shadow-color` is already scheme-aware (0.35 light / 0.5 dark), so the
+  // same recipe reads correctly on both. Level 0 is the resting state of a
+  // quiet surface: no shadow at all.
+
+  --elev-0: none;
+  --elev-1: 0 1px 2px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+  --elev-2: 0 2px 8px color-mix(in srgb, var(--shadow-color) 26%, transparent);
+  --elev-3: 0 8px 24px color-mix(in srgb, var(--shadow-color) 32%, transparent);
+  --elev-menu: 0 6px 20px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+
+  // ---------------------------------
+  // TYPE
+  //
+  // Arabic script sits taller than Latin at the same nominal size and needs
+  // more leading before it reads comfortably, so body leading is 1.75 rather
+  // than the 1.5 a Latin-first scale would use.
+
+  --fs-ui-xs: 11px;
+  --fs-ui-sm: 12px;
+  --fs-ui: 13px;
+  --fs-ui-lg: 14px;
+  --fs-body-sm: 14.5px;
+  --fs-body: 15.5px;
+  --fs-body-lg: 17px;
+  --fs-title-sm: 17px;
+  --fs-title: 20px;
+  --fs-title-lg: 24px;
+  --fs-hero: 28px;
+
+  --lh-tight: 1.25;
+  --lh-snug: 1.45;
+  --lh-body: 1.75;
+  --lh-loose: 1.9;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  // Comfortable reading measure. Long lines are the single biggest readability
+  // cost on a wide screen; media inside a post is allowed to exceed this.
+  --measure: 68ch;
+  --measure-tight: 60ch;
+
+  // ---------------------------------
+  // CONTROLS
+  //
+  // One height per density. A row mixing 17px, 20px and 28px controls is the
+  // most visible cause of an unfinished-looking action bar.
+
+  --ctl-h-sm: 24px;
+  --ctl-h: 28px;
+  --ctl-h-lg: 32px;
+  --ctl-h-touch: 40px;
+  --ctl-px: 10px;
+  --ctl-gap: 6px;
+  --ctl-icon: 12px;
+
+  // Minimum tappable area, applied via padding or a pseudo-element rather than
+  // by inflating the visible control.
+  --touch-min: 44px;
+
+  // ---------------------------------
+  // AVATARS
+
+  --avatar-xs: 20px;
+  --avatar-sm: 24px;
+  --avatar: 32px;
+  --avatar-lg: 40px;
+  --avatar-hero: 44px;
+
+  // ---------------------------------
+  // THREADING
+  //
+  // Indentation decays with depth: the first step must be unmistakable, later
+  // steps only need to be distinguishable, and the text measure has to survive
+  // five of them. A flat 36px per level — the previous behaviour — costs 180px
+  // by depth five and collapses the measure on a phone.
+
+  --thread-rail-w: 2px;
+  --thread-rail-hit: 16px;
+  // Cumulative indent offsets — desktop / tablet default (≥1024): 3 steps × ~20px
+  --indent-0: 0px;
+  --indent-1: 20px;
+  --indent-2: 40px;
+  --indent-3: 60px;
+  --indent-4: 60px;
+  --indent-5: 60px;
+
+  // ---------------------------------
+  // MOTION
+  //
+  // One easing curve for everything that enters or settles, one for exits.
+
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --dur-slow: 260ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  // ---------------------------------
+  // Z-INDEX
+  //
+  // Named so the reason for an order is legible. Core's header is 1000 and its
+  // alert manager 1060; anything of ours that must clear those says so here.
+
+  --z-rail: 1;
+  --z-sticky-toolbar: 20;
+  --z-post-raised: 50;
+  --z-dropdown: 1070;
+}
+
+// A phone gets a tighter indent scale and larger touch targets. Declared on
+// `:root` so a component never has to restate the breakpoint.
+@media @phone {
+  :root {
+    // Phone: single indent step (~12px); deeper replies use the reply chip.
+    --indent-1: 12px;
+    --indent-2: 12px;
+    --indent-3: 12px;
+    --indent-4: 12px;
+    --indent-5: 12px;
+
+    --ctl-h: 32px;
+    --ctl-h-lg: 36px;
+    --fs-body: 15.5px;
+    --measure: 100%;
+  }
+}
+
+// Tablet: two indent steps × ~16px
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --indent-1: 16px;
+    --indent-2: 32px;
+    --indent-3: 32px;
+    --indent-4: 32px;
+    --indent-5: 32px;
+  }
+}
+
+// Pointer-coarse devices of any width: the visible control keeps its size, the
+// hit area grows.
+@media (pointer: coarse) {
+  :root {
+    --ctl-h: 32px;
+    --ctl-h-lg: 36px;
+    --thread-rail-hit: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-slow: 0ms;
+  }
+}

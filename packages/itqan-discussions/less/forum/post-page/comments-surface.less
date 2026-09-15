@@ -1,0 +1,479 @@
+// ---------------------------------------------------------------------------
+// Post page — the comments surface
+// ---------------------------------------------------------------------------
+//
+// One surface holding every comment, with the sort toolbar at its head and the
+// reply placeholder at its foot. Comments themselves are transparent: a card per
+// comment would nest boxes inside a box, and at depth four the border carries no
+// information the indent and rail have not already given.
+
+.itqan-comments-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  box-shadow: var(--elev-1);
+  margin-bottom: var(--sp-24);
+  overflow: visible;
+
+  @media @phone {
+    // Edge to edge: on a 390px screen the 15px gutter on each side is 8% of the
+    // width, and a rounded card there buys nothing.
+    margin-inline: -15px;
+    margin-bottom: var(--sp-16);
+    border-inline: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+// --- Toolbar ----------------------------------------------------------------
+
+.itqan-comments-card .PostStream-afterFirstPost {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border-bottom: 0;
+  border-start-start-radius: var(--r-xl);
+  border-start-end-radius: var(--r-xl);
+  overflow: visible;
+
+  @media @phone {
+    border-radius: 0;
+  }
+}
+
+.itqan-stream-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-12);
+  padding: var(--sp-12) var(--sp-20);
+  background: var(--surface-card);
+  // Stick under the site header while the comments surface scrolls.
+  position: sticky;
+  top: var(--header-height, 52px);
+  z-index: var(--z-sticky-toolbar);
+  border-bottom: 1px solid var(--hairline);
+
+  @media @phone {
+    padding: var(--sp-10) var(--sp-12);
+  }
+}
+
+.itqan-stream-toolbar-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  font-size: var(--fs-ui-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--text-strong);
+
+  .icon {
+    font-size: var(--fs-ui);
+    color: var(--text-faint);
+  }
+
+  strong {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// Segmented control, replacing a native select: three mutually exclusive
+// options read better as one control than as a dropdown that hides two of them.
+.itqan-sort-segmented {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 2px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-pill);
+}
+
+.itqan-sort-segment {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  height: var(--ctl-h-sm);
+  padding: 0 var(--sp-10);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-ui-sm);
+  font-weight: var(--fw-medium);
+  font-family: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+
+  &:hover {
+    color: var(--text-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  &[aria-checked='true'] {
+    background: var(--surface-card);
+    box-shadow: var(--elev-1);
+    color: var(--text-strong);
+    font-weight: var(--fw-semibold);
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .icon {
+    font-size: var(--fs-ui-xs);
+  }
+
+  // The labels are short enough to read as icons alone once the control is
+  // familiar, and a phone has no room for three words.
+  @media (max-width: 420px) {
+    padding: 0 var(--sp-8);
+
+    .itqan-sort-segment-label {
+      display: none;
+    }
+  }
+}
+
+// --- Comment rows -----------------------------------------------------------
+
+.itqan-comments-card .PostStream-item {
+  position: relative;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+
+  .CommentPost {
+    position: relative;
+    top: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+    float: none;
+    width: 100%;
+
+    > div {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      padding-block: var(--sp-16);
+      padding-inline: var(--sp-20);
+      min-height: 0;
+
+      @media @phone {
+        padding-block: var(--sp-12);
+        padding-inline: var(--sp-12);
+      }
+    }
+  }
+
+  // A hairline above each root comment after the first: separation belongs to
+  // the surface, and only between top-level entries. Replies are already bound
+  // to their parent by the rail.
+  &[data-is-subsequent-root='true'] {
+    border-top: 1px solid var(--hairline);
+  }
+
+  // Hovering a comment lifts it just enough to show which row the action bar
+  // belongs to.
+  &:hover > .CommentPost > div {
+    background: var(--surface-hover);
+  }
+
+  &.is-reply-target > .CommentPost > div,
+  &:has(> .CommentPost.is-reply-target) > .CommentPost > div {
+    background: var(--surface-selected);
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+}
+
+// --- Reply placeholder ------------------------------------------------------
+
+.itqan-comments-card {
+  .ReplyPlaceholder,
+  button.Post.ReplyPlaceholder {
+    width: 100%;
+    margin: 0;
+    padding: var(--sp-16) var(--sp-20);
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--hairline);
+    border-radius: 0 0 var(--r-xl) var(--r-xl);
+    box-shadow: none;
+    min-height: 0;
+    font-size: var(--fs-body-sm);
+    color: var(--text-muted);
+    transition: background var(--dur-fast) var(--ease-out);
+
+    &:hover {
+      background: var(--surface-hover);
+      border-color: var(--hairline);
+    }
+
+    .Post-header {
+      margin: 0;
+    }
+
+    .Avatar {
+      margin-top: 0;
+      width: var(--avatar-sm);
+      height: var(--avatar-sm);
+      --size: var(--avatar-sm);
+    }
+
+    @media @phone {
+      padding: var(--sp-12);
+      border-radius: 0;
+    }
+  }
+}
+
+// --- Pagination footer ------------------------------------------------------
+
+.itqan-load-previous-roots,
+.itqan-load-more-roots {
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-16) var(--sp-20);
+
+  .Button {
+    height: var(--ctl-h-lg);
+    padding: 0 var(--sp-20);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--accent-border);
+    background: var(--accent-faint);
+    color: var(--accent);
+    font-size: var(--fs-ui-sm);
+    font-weight: var(--fw-semibold);
+    transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
+
+    &:hover,
+    &:focus {
+      background: var(--accent);
+      color: var(--text-on-accent);
+      border-color: var(--accent);
+    }
+  }
+}
+
+.itqan-load-previous-roots {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.itqan-load-more-roots {
+  border-top: 1px solid var(--hairline);
+}
+
+// Watched by an IntersectionObserver to append the next page of roots.
+.itqan-infinite-sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+}
+
+// Core's own load buttons have no role once pagination is root-first and
+// append-only.
+.PostStream-loadMore,
+.PostStream-loadPrevious {
+  display: none;
+}
+
+// --- Empty comments ---------------------------------------------------------
+
+.itqan-comments-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  padding: var(--sp-24) var(--sp-20);
+  color: var(--text-muted);
+  font-size: var(--fs-body-sm);
+  border-top: 1px solid var(--hairline);
+
+  @media @phone {
+    padding: var(--sp-16) var(--sp-12);
+  }
+}
+
+.itqan-comments-empty-title {
+  font-size: var(--fs-ui-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--text-default);
+}
+
+// --- Date separators (tree-aware, root comments only) -----------------------
+
+.itqan-date-separator {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-12);
+  padding: var(--sp-12) var(--sp-20) var(--sp-4);
+  color: var(--text-faint);
+  font-size: var(--fs-ui-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--hairline);
+  }
+
+  @media @phone {
+    padding-inline: var(--sp-12);
+  }
+}
+
+// --- Unread / new-since-visit -----------------------------------------------
+
+.PostStream-item[data-unread='true'] > .CommentPost > div {
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.itqan-unread-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--sp-6);
+  font-size: var(--fs-ui-xs);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--r-pill);
+}
+
+// --- Continue-thread skeletons ----------------------------------------------
+
+.itqan-continue-skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-12);
+  padding: var(--sp-12) var(--sp-20) var(--sp-16);
+  padding-inline-start: ~"calc(var(--comment-pad-inline, var(--sp-20)) + var(--indent-1))";
+}
+
+.itqan-skeleton-row {
+  display: flex;
+  gap: var(--sp-10);
+  align-items: flex-start;
+}
+
+.itqan-skeleton-avatar {
+  flex: none;
+  width: var(--avatar-sm);
+  height: var(--avatar-sm);
+  border-radius: 50%;
+  background: var(--surface-sunken);
+}
+
+.itqan-skeleton-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  max-width: var(--measure);
+}
+
+.itqan-skeleton-line {
+  height: 10px;
+  border-radius: var(--r-xs);
+  background: var(--surface-sunken);
+  animation: itqan-skeleton-pulse 1.2s var(--ease-in-out) infinite;
+
+  &--short {
+    width: 40%;
+  }
+
+  &--mid {
+    width: 72%;
+  }
+
+  &--long {
+    width: 92%;
+  }
+}
+
+@keyframes itqan-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .itqan-skeleton-line {
+    animation: none;
+  }
+}
+
+// --- Parent preview popover -------------------------------------------------
+
+.itqan-parent-preview {
+  position: absolute;
+  z-index: var(--z-dropdown);
+  inset-inline-start: 0;
+  top: ~"calc(100% + var(--sp-6))";
+  width: ~"min(360px, 80vw)";
+  max-height: 200px;
+  overflow: hidden;
+  padding: var(--sp-12);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-menu);
+  color: var(--text-default);
+  font-size: var(--fs-ui-sm);
+  line-height: var(--lh-snug);
+  pointer-events: none;
+}
+
+.itqan-parent-preview-author {
+  font-weight: var(--fw-semibold);
+  color: var(--text-strong);
+  margin-bottom: var(--sp-4);
+}
+
+.itqan-parent-preview-body {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--text-muted);
+
+  p {
+    margin: 0 0 0.4em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

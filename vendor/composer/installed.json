@@ -5548,6 +5548,102 @@
             "install-path": "../fof/pretty-mail"
         },
         {
+            "name": "fof/reactions",
+            "version": "1.4.1",
+            "version_normalized": "1.4.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfFlarum/reactions.git",
+                "reference": "87a09add9aeae75cb2ae7eda29f5d74ad271c1c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfFlarum/reactions/zipball/87a09add9aeae75cb2ae7eda29f5d74ad271c1c4",
+                "reference": "87a09add9aeae75cb2ae7eda29f5d74ad271c1c4",
+                "shasum": ""
+            },
+            "require": {
+                "flarum/core": "^1.2.0",
+                "php": "^7.4 | ^8.0"
+            },
+            "replace": {
+                "reflar/reactions": "*"
+            },
+            "require-dev": {
+                "flarum/likes": "*",
+                "flarum/phpstan": "*",
+                "flarum/testing": "^1.0.0",
+                "fof/gamification": "*"
+            },
+            "time": "2024-02-11T21:51:01+00:00",
+            "type": "flarum-extension",
+            "extra": {
+                "flagrow": {
+                    "discuss": "https://discuss.flarum.org/d/20655"
+                },
+                "flarum-cli": {
+                    "modules": {
+                        "githubActions": true,
+                        "backendTesting": true
+                    }
+                },
+                "flarum-extension": {
+                    "icon": {
+                        "name": "far fa-smile",
+                        "color": "#fff",
+                        "backgroundColor": "#e74c3c"
+                    },
+                    "title": "FoF Reactions",
+                    "category": "feature"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "FoF\\Reactions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Sevilla Martín",
+                    "email": "me+reflar@datitisev.me",
+                    "homepage": "https://datitisev.me",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Charlie K",
+                    "email": "issyrocks12@reflar.email",
+                    "homepage": "https://redevs.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Reactions for Flarum",
+            "homepage": "https://friendsofflarum.org",
+            "keywords": [
+                "Settings",
+                "flarum",
+                "misc",
+                "reactions",
+                "reflar"
+            ],
+            "support": {
+                "forum": "https://discuss.flarum.org/d/20655",
+                "issues": "https://github.com/friendsofflarum/reactions/issues",
+                "source": "https://github.com/friendsofflarum/reactions"
+            },
+            "funding": [
+                {
+                    "url": "https://opencollective.com/fof/donate",
+                    "type": "website"
+                }
+            ],
+            "install-path": "../fof/reactions"
+        },
+        {
             "name": "fof/share-social",
             "version": "1.2.0",
             "version_normalized": "1.2.0.0",
@@ -8783,13 +8879,69 @@
             "install-path": "../irmmr/rtlcss"
         },
         {
+            "name": "itqan/flarum-composer-tools",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-composer-tools",
+                "reference": "d6d1bbbfaf065527c01684e41e1758155d974ffa"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Composer Tools",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fab fa-markdown",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\ComposerTools\\": "src/"
+                }
+            },
+            "scripts": {
+                "build": [
+                    "cd js && npm run build"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Writing and preview tools for the Itqan community composer",
+            "keywords": [
+                "composer",
+                "flarum",
+                "markdown",
+                "preview"
+            ],
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-composer-tools"
+        },
+        {
             "name": "itqan/flarum-discussions",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-discussions",
-                "reference": "29f3100ca6cb4ac97fc6289bb55af752fd1426dd"
+                "reference": "cdea7d38613d050c08b943c5e8236d5b91f11011"
             },
             "require": {
                 "flarum/core": "^1.8.0"
@@ -8839,12 +8991,12 @@
         },
         {
             "name": "itqan/flarum-mailerlite",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-mailerlite",
-                "reference": "ea7376b0443206fa858514f8f0b041ad453bf5e8"
+                "reference": "9fce2996b0cdf209c39e4ee806487e5befe1a35b"
             },
             "require": {
                 "flarum/core": "^1.8.0",
@@ -8901,12 +9053,12 @@
         },
         {
             "name": "itqan/flarum-theme",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-theme",
-                "reference": "9525586f76ba565feb772fe664d315b0279b76f3"
+                "reference": "0227d077b129fc08276a8e897301d68c4117b6ff"
             },
             "require": {
                 "flarum/core": "^1.8.0"
@@ -8957,12 +9109,12 @@
         },
         {
             "name": "itqan/flarum-typography",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "dev-feat/comment-feed-window",
+            "version_normalized": "dev-feat/comment-feed-window",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-typography",
-                "reference": "a8df89f86fb3258b263b3a49ff3cef210195eb24"
+                "reference": "0c549114f22b46190a4e52197fd06bbbb6cb47ba"
             },
             "require": {
                 "flarum/core": "^1.8.0"

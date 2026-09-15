@@ -5341,6 +5341,99 @@
             "time": "2023-11-12T16:56:33+00:00"
         },
         {
+            "name": "fof/reactions",
+            "version": "1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfFlarum/reactions.git",
+                "reference": "87a09add9aeae75cb2ae7eda29f5d74ad271c1c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfFlarum/reactions/zipball/87a09add9aeae75cb2ae7eda29f5d74ad271c1c4",
+                "reference": "87a09add9aeae75cb2ae7eda29f5d74ad271c1c4",
+                "shasum": ""
+            },
+            "require": {
+                "flarum/core": "^1.2.0",
+                "php": "^7.4 | ^8.0"
+            },
+            "replace": {
+                "reflar/reactions": "*"
+            },
+            "require-dev": {
+                "flarum/likes": "*",
+                "flarum/phpstan": "*",
+                "flarum/testing": "^1.0.0",
+                "fof/gamification": "*"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flagrow": {
+                    "discuss": "https://discuss.flarum.org/d/20655"
+                },
+                "flarum-cli": {
+                    "modules": {
+                        "githubActions": true,
+                        "backendTesting": true
+                    }
+                },
+                "flarum-extension": {
+                    "icon": {
+                        "name": "far fa-smile",
+                        "color": "#fff",
+                        "backgroundColor": "#e74c3c"
+                    },
+                    "title": "FoF Reactions",
+                    "category": "feature"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FoF\\Reactions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Sevilla Martín",
+                    "email": "me+reflar@datitisev.me",
+                    "homepage": "https://datitisev.me",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Charlie K",
+                    "email": "issyrocks12@reflar.email",
+                    "homepage": "https://redevs.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Reactions for Flarum",
+            "homepage": "https://friendsofflarum.org",
+            "keywords": [
+                "Settings",
+                "flarum",
+                "misc",
+                "reactions",
+                "reflar"
+            ],
+            "support": {
+                "forum": "https://discuss.flarum.org/d/20655",
+                "issues": "https://github.com/friendsofflarum/reactions/issues",
+                "source": "https://github.com/friendsofflarum/reactions"
+            },
+            "funding": [
+                {
+                    "url": "https://opencollective.com/fof/donate",
+                    "type": "website"
+                }
+            ],
+            "time": "2024-02-11T21:51:01+00:00"
+        },
+        {
             "name": "fof/share-social",
             "version": "1.2.0",
             "source": {

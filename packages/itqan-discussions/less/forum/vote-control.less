@@ -1,0 +1,168 @@
+// ---------------------------------------------------------------------------
+// Vote control
+// ---------------------------------------------------------------------------
+//
+// Two shapes, one component: a horizontal segmented pill in a post's action bar,
+// and a narrow vertical column at the head of a discussion-list row.
+//
+// Agreement and disagreement get different hues rather than two shades of one,
+// and they are the same two hues the rest of Flarum uses for on/off — so a theme
+// that retunes `--switch-on-color` retunes this.
+
+.VoteButtons {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+// --- Horizontal pill: the action-bar form -----------------------------------
+
+.VoteButtons:not(.VoteButtons--vertical) {
+  gap: var(--sp-2);
+  height: var(--ctl-h);
+  box-sizing: border-box;
+  padding: 0 var(--sp-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+  transition: border-color var(--dur-fast) var(--ease-out);
+
+  &:hover {
+    border-color: var(--border-default);
+  }
+
+  .VoteButtons-button {
+    width: auto;
+    // Escaped: less.php evaluates arithmetic inside `calc()` and cannot reason
+    // about a `var()`, which aborts the whole compile. Same reason everywhere
+    // below and in thread.less / actions.less.
+    min-width: ~"calc(var(--ctl-h) - 8px)";
+    height: ~"calc(var(--ctl-h) - 8px)";
+    padding: 0 var(--sp-4);
+    border-radius: var(--r-pill);
+    color: var(--text-muted);
+    background: transparent;
+
+    .Button-icon {
+      font-size: var(--fs-ui-xs);
+      margin: 0;
+      vertical-align: 0;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--text-default);
+      background: var(--surface-active);
+    }
+  }
+
+  .VoteButtons-score {
+    min-width: 20px;
+    padding: 0 var(--sp-4);
+    font-size: var(--fs-ui-sm);
+    font-weight: var(--fw-bold);
+    color: var(--text-default);
+  }
+}
+
+// --- Shared button behaviour ------------------------------------------------
+
+.VoteButtons-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  &--up.VoteButtons-button--active {
+    color: var(--intent-up);
+    background: var(--intent-up-soft);
+  }
+
+  &--down.VoteButtons-button--active {
+    color: var(--intent-down);
+    background: var(--intent-down-soft);
+  }
+}
+
+.VoteButtons-score {
+  text-align: center;
+  font-weight: var(--fw-bold);
+  color: var(--text-default);
+  // Digits must not shuffle the arrows sideways as the score changes.
+  font-variant-numeric: tabular-nums;
+  // A signed number must read left to right whatever the page direction: in an
+  // RTL paragraph a leading minus is a neutral character and bidi moves it to
+  // the other end, so -2 would render as 2-. The `dir` attribute on the element
+  // sets the direction; only the isolation belongs here.
+  unicode-bidi: isolate;
+
+  &--positive {
+    color: var(--intent-up);
+  }
+
+  &--negative {
+    color: var(--intent-down);
+  }
+}
+
+// While a vote is in flight the control stays legible but stops inviting a
+// second click.
+.VoteButtons--saving {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+// --- Vertical column: the discussion-list form ------------------------------
+
+.VoteButtons--vertical {
+  flex-direction: column;
+  gap: 0;
+
+  .VoteButtons-button {
+    width: 26px;
+    height: 20px;
+
+    .Button-icon {
+      font-size: var(--fs-ui);
+      margin: 0;
+    }
+  }
+
+  .VoteButtons-score {
+    min-width: 0;
+    font-size: var(--fs-ui-sm);
+    line-height: 1.2;
+  }
+}
+
+@media (pointer: coarse) {
+  .VoteButtons--vertical .VoteButtons-button {
+    width: 32px;
+    height: 28px;
+  }
+
+  .VoteButtons-button {
+    touch-action: manipulation;
+  }
+}
+
+// A post never shows the vertical form; the action bar carries the pill.
+.CommentPost .VoteButtons--vertical {
+  display: none;
+}
+
+.Post--hidden .VoteButtons--vertical {
+  display: none;
+}

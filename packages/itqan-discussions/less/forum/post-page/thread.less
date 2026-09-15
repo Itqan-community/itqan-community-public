@@ -1,0 +1,291 @@
+// ---------------------------------------------------------------------------
+// Post page — threading
+// ---------------------------------------------------------------------------
+//
+// Depth is carried by two things and nothing else: an indent, and a rail
+// descending from the parent's avatar centre. The rail is what turns an indent
+// into lineage — "this came from that person" rather than "this is nested".
+//
+// Indents and rails read from the same tokens (`--indent-0 … --indent-5`), which
+// is why the scale is expressed as cumulative offsets from the content edge: a
+// rail belonging to an ancestor at depth c sits at `--indent-c` plus half an
+// avatar, so the two cannot drift apart.
+
+.itqan-comments-card {
+  // The comment row's own inline padding, named once so the depth and rail
+  // formulas below can both refer to it. Re-declared for phones by the media
+  // query at the foot of this file.
+  --comment-pad-inline: var(--sp-20);
+}
+
+// Indentation is applied as padding on the inner wrapper rather than as a margin
+// on the row, so the hover tint and the reply-target highlight still span the
+// full width of the surface.
+.itqan-depth-indent(@d) when (@d =< 5) {
+  .itqan-comments-card .PostStream-item[data-thread-depth='@{d}'] > .CommentPost > div {
+    padding-inline-start: ~"calc(var(--comment-pad-inline) + var(--indent-@{d}))";
+  }
+
+  .itqan-depth-indent(@d + 1);
+}
+
+.itqan-depth-indent(1);
+
+// --- Rails ------------------------------------------------------------------
+
+.itqan-thread-rails {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-rail);
+  overflow: visible;
+}
+
+.itqan-thread-rail {
+  position: absolute;
+  inset-block: 0;
+  width: var(--thread-rail-w);
+  border-radius: var(--thread-rail-w);
+  // GitHub-style muted lineage — no avatar rainbow.
+  background: var(--border-default);
+  pointer-events: none;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.itqan-rail-offset(@c) when (@c =< 4) {
+  .itqan-thread-rail[data-rail-col='@{c}'],
+  .itqan-thread-rail-hit[data-rail-col='@{c}'] {
+    inset-inline-start: ~"calc(var(--comment-pad-inline) + var(--indent-@{c}) + var(--avatar) / 2)";
+  }
+
+  .itqan-rail-offset(@c + 1);
+}
+
+.itqan-rail-offset(0);
+
+// The rail itself is 2px, which is not a click target. An invisible strip
+// centred on it is, and it is a real button so it is reachable by keyboard.
+.itqan-thread-rail-hits {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: ~"calc(var(--z-rail) + 1)";
+}
+
+.itqan-thread-rail-hit {
+  position: absolute;
+  inset-block: 0;
+  width: var(--thread-rail-hit);
+  // Centres the strip on the 2px line. A logical margin rather than a
+  // `translateX`, because the right-to-left build rewrites transform functions
+  // and would flip the shift a second time.
+  margin-inline-start: ~"calc(var(--thread-rail-hit) / -2)";
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    border-radius: var(--r-xs);
+  }
+}
+
+// Hovering the hit area has to light up rows other than the one the pointer is
+// over, which no selector can express — the descendants are siblings, not
+// children. JS adds these two classes across the subtree instead.
+.PostStream-item.itqan-subtree-hover > .CommentPost > div {
+  background: var(--surface-hover);
+}
+
+.itqan-thread-rail.itqan-thread-rail--active {
+  background: var(--accent);
+}
+
+// --- Collapsed subtrees ------------------------------------------------------
+
+// `hidden` rather than a class, so a collapsed reply leaves the accessibility
+// tree as well as the layout.
+.PostStream-item[hidden],
+.PostStream-item.thread-item-hidden {
+  display: none;
+}
+
+// The collapse toggle in the action bar. Collapsed, it summarises what is behind
+// it — participants, count, last activity — so the reader can decide whether to
+// open it without opening it.
+.itqan-thread-toggle {
+  .itqan-ghost-control();
+
+  font-weight: var(--fw-semibold);
+
+  &[aria-expanded='false'] {
+    background: var(--surface-sunken);
+    border-color: var(--border-subtle);
+    color: var(--text-default);
+
+    &:hover {
+      background: var(--surface-active);
+      border-color: var(--border-default);
+    }
+  }
+
+  .itqan-thread-toggle-chevron {
+    font-size: var(--fs-ui-xs);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  &[aria-expanded='true'] .itqan-thread-toggle-chevron {
+    transform: rotate(90deg);
+  }
+}
+
+.itqan-thread-toggle-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.itqan-thread-toggle-time {
+  color: var(--text-faint);
+  font-weight: var(--fw-regular);
+
+  &::before {
+    content: '·';
+    margin-inline-end: var(--sp-4);
+  }
+}
+
+// Overlapping avatars of up to three distinct repliers.
+.itqan-avatar-stack {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: row;
+
+  .Avatar {
+    width: var(--avatar-xs);
+    height: var(--avatar-xs);
+    min-width: var(--avatar-xs);
+    line-height: var(--avatar-xs);
+    font-size: 9px;
+    --size: var(--avatar-xs);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--surface-card);
+
+    & + .Avatar {
+      margin-inline-start: -6px;
+    }
+  }
+}
+
+// --- Continue thread ---------------------------------------------------------
+
+// Sits at the child's indent, not the parent's: it stands in for the replies it
+// will load, so it belongs where they will appear.
+.itqan-continue-thread {
+  .itqan-ghost-control();
+
+  color: var(--accent);
+  font-weight: var(--fw-semibold);
+
+  &:hover,
+  &:focus {
+    color: var(--accent);
+    background: var(--accent-faint);
+  }
+
+  .icon {
+    font-size: var(--fs-ui-xs);
+  }
+}
+
+// --- Reply context badge -----------------------------------------------------
+
+// "replying to X" — ellipsis when the name is long; never paint outside the chip.
+.itqan-reply-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  max-width: ~"min(100%, 28ch)";
+  min-width: 0;
+  padding: 2px var(--sp-8);
+  font-size: var(--fs-ui-xs);
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 0;
+  border-radius: var(--r-pill);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background var(--dur-fast) var(--ease-out);
+
+  &:hover,
+  &:focus {
+    background: var(--accent-strong);
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .icon {
+    flex: 0 0 auto;
+    font-size: 9px;
+  }
+
+  .itqan-reply-badge-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// Parent header row must allow the badge to shrink.
+.itqan-comments-card .Post-header,
+.itqan-comments-card .PostUser {
+  min-width: 0;
+}
+
+.itqan-comments-card .Post-header > .item-itqan-reply-badge {
+  min-width: 0;
+  max-width: 100%;
+}
+
+// --- Phone -------------------------------------------------------------------
+
+@media @phone {
+  .itqan-comments-card {
+    --comment-pad-inline: var(--sp-12);
+  }
+}
+
+// Deeper replies use a smaller avatar so indent survives (spec §2).
+.itqan-comments-card .PostStream-item[data-thread-depth='2'] .Post-header,
+.itqan-comments-card .PostStream-item[data-thread-depth='3'] .Post-header,
+.itqan-comments-card .PostStream-item[data-thread-depth='4'] .Post-header,
+.itqan-comments-card .PostStream-item[data-thread-depth='5'] .Post-header {
+  .PostUser-avatar,
+  .PostUser-name .Avatar {
+    width: var(--avatar-sm);
+    height: var(--avatar-sm);
+    min-width: var(--avatar-sm);
+    line-height: var(--avatar-sm);
+    font-size: var(--fs-ui-sm);
+    --size: var(--avatar-sm);
+  }
+}
+
+@media (max-width: 380px) {
+  .itqan-comments-card .PostStream-item .Post-header {
+    .PostUser-avatar,
+    .PostUser-name .Avatar {
+      width: var(--avatar-sm);
+      height: var(--avatar-sm);
+      min-width: var(--avatar-sm);
+      line-height: var(--avatar-sm);
+      --size: var(--avatar-sm);
+    }
+  }
+}
