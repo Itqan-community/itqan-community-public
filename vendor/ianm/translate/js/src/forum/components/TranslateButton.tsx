@@ -10,11 +10,12 @@ interface ITranslateButtonAttrs extends ComponentAttrs {
   detectedLang: string;
   onTranslate: (code: string) => void;
   iconOnly?: boolean;
+  loading?: boolean;
 }
 
 export default class TranslateButton extends Component<ITranslateButtonAttrs> {
   view(vnode: Mithril.Vnode<ITranslateButtonAttrs>) {
-    const { languages, detectedLang, onTranslate, iconOnly } = vnode.attrs;
+    const { languages, detectedLang, onTranslate, iconOnly, loading } = vnode.attrs;
 
     // Filter out the detected language from the list of languages
     const availableLanguages = languages.filter((code: string) => code !== detectedLang);
@@ -22,10 +23,13 @@ export default class TranslateButton extends Component<ITranslateButtonAttrs> {
     if (availableLanguages.length === 0) {
       return null;
     }
+
+    const icon = loading ? 'fas fa-spinner fa-spin' : 'fas fa-language';
+
     if (availableLanguages.length === 1) {
       const code = availableLanguages[0];
       return (
-        <Button className="Button Button--link" icon="fas fa-language" onclick={() => onTranslate(code)}>
+        <Button className="Button Button--link" icon={icon} disabled={loading} onclick={() => onTranslate(code)}>
           {iconOnly ? null : LangDisplayName(code)}
         </Button>
       );
@@ -34,10 +38,11 @@ export default class TranslateButton extends Component<ITranslateButtonAttrs> {
         <Dropdown
           label={iconOnly ? null : app.translator.trans('ianm-translate.forum.translate-button-label')}
           buttonClassName="Button Button--link"
-          icon="fas fa-language"
+          icon={icon}
+          disabled={loading}
         >
           {availableLanguages.map((code: string) => (
-            <Button icon="fas fa-language" onclick={() => onTranslate(code)}>
+            <Button icon="fas fa-language" disabled={loading} onclick={() => onTranslate(code)}>
               {LangDisplayName(code)}
             </Button>
           ))}
