@@ -1,0 +1,261 @@
+// ---------------------------------------------------------------------------
+// Post page — thread envelopes (space indent, no rails)
+// ---------------------------------------------------------------------------
+//
+// One outer block per root comment. Replies are flat cards in a sunken well.
+// Depth is a small margin-inline-start only — no vertical rail.
+
+.itqan-thread-list,
+.itqan-comments-card {
+  --comment-pad-inline: var(--sp-16);
+  --thread-avatar: var(--avatar);
+  --thread-avatar-deep: var(--avatar-sm);
+}
+
+@media @phone {
+  .itqan-comments-card {
+    --comment-pad-inline: var(--sp-12);
+  }
+}
+
+// --- Envelope ---------------------------------------------------------------
+
+.itqan-thread-envelope {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-block-end: var(--thread-envelope-gap);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-1);
+  // Visible so FoF's .CommentPost--Reactions picker is not clipped.
+  overflow: visible;
+
+  &:last-of-type {
+    margin-block-end: 0;
+  }
+
+  @media @phone {
+    border-radius: 0;
+    border-inline: 0;
+    box-shadow: none;
+  }
+}
+
+// Root comment inside the envelope
+.itqan-thread-envelope > .PostStream-item {
+  .CommentPost > div {
+    padding-block: var(--sp-16);
+    padding-inline: var(--comment-pad-inline);
+
+    @media @phone {
+      padding-block: var(--sp-12);
+      padding-inline: var(--sp-12);
+    }
+  }
+}
+
+// --- Reply well -------------------------------------------------------------
+
+.itqan-thread-replies {
+  display: flex;
+  flex-direction: column;
+  gap: var(--thread-reply-gap);
+  padding: var(--thread-reply-pad);
+  background: var(--surface-sunken);
+  border-top: 1px solid var(--hairline);
+
+  // Collapse hides rows with [hidden]; don't leave an empty sunken slab.
+  &:not(:has(.PostStream-item:not([hidden]))) {
+    display: none;
+  }
+
+  @media @phone {
+    padding: var(--sp-6);
+    gap: var(--sp-6);
+  }
+}
+
+// Quiet depth: shift the whole reply card. No rails.
+// max-width keeps margin-inline-start from pushing the card outside the well
+// (width:100% + indent was overflowing; width:auto alone needs a cap).
+.itqan-reply-indent(@d) when (@d =< 5) {
+  .itqan-thread-replies > .PostStream-item[data-thread-depth='@{d}'] {
+    margin-inline-start: ~"var(--indent-@{d})";
+    width: auto;
+    max-width: ~"calc(100% - var(--indent-@{d}))";
+  }
+
+  .itqan-reply-indent(@d + 1);
+}
+
+.itqan-reply-indent(1);
+
+.itqan-thread-replies > .PostStream-item {
+  width: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  overflow: visible;
+
+  .CommentPost > div {
+    padding-block: var(--sp-12);
+    padding-inline: var(--sp-12);
+
+    @media @phone {
+      padding-block: var(--sp-10);
+      padding-inline: var(--sp-10);
+    }
+  }
+
+  // Smaller avatars on all replies — buys back measure.
+  .Post-header {
+    .PostUser-avatar,
+    .PostUser-name .Avatar {
+      width: var(--avatar-sm);
+      height: var(--avatar-sm);
+      min-width: var(--avatar-sm);
+      line-height: var(--avatar-sm);
+      font-size: var(--fs-ui-sm);
+      --size: var(--avatar-sm);
+    }
+  }
+}
+
+// --- Collapse / continue / reply chip (unchanged affordances) ---------------
+
+.PostStream-item[hidden],
+.PostStream-item.thread-item-hidden {
+  display: none;
+}
+
+.itqan-thread-toggle {
+  .itqan-ghost-control();
+
+  font-weight: var(--fw-semibold);
+
+  &[aria-expanded='false'] {
+    background: var(--surface-sunken);
+    border-color: var(--border-subtle);
+    color: var(--text-default);
+
+    &:hover {
+      background: var(--surface-active);
+      border-color: var(--border-default);
+    }
+  }
+
+  .itqan-thread-toggle-chevron {
+    font-size: var(--fs-ui-xs);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  &[aria-expanded='true'] .itqan-thread-toggle-chevron {
+    transform: rotate(90deg);
+  }
+}
+
+.itqan-thread-toggle-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.itqan-thread-toggle-time {
+  color: var(--text-faint);
+  font-weight: var(--fw-regular);
+
+  &::before {
+    content: '·';
+    margin-inline-end: var(--sp-4);
+  }
+}
+
+.itqan-avatar-stack {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: row;
+
+  .Avatar {
+    width: var(--avatar-xs);
+    height: var(--avatar-xs);
+    min-width: var(--avatar-xs);
+    line-height: var(--avatar-xs);
+    font-size: 9px;
+    --size: var(--avatar-xs);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--surface-card);
+
+    & + .Avatar {
+      margin-inline-start: -6px;
+    }
+  }
+}
+
+.itqan-continue-thread {
+  .itqan-ghost-control();
+
+  color: var(--accent);
+  font-weight: var(--fw-semibold);
+
+  &:hover,
+  &:focus {
+    color: var(--accent);
+    background: var(--accent-faint);
+  }
+
+  .icon {
+    font-size: var(--fs-ui-xs);
+  }
+}
+
+.itqan-reply-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  max-width: ~"min(100%, 28ch)";
+  min-width: 0;
+  padding: 2px var(--sp-8);
+  font-size: var(--fs-ui-xs);
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 0;
+  border-radius: var(--r-pill);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background var(--dur-fast) var(--ease-out);
+
+  &:hover,
+  &:focus {
+    background: var(--accent-strong);
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .icon {
+    flex: 0 0 auto;
+    font-size: 9px;
+  }
+
+  .itqan-reply-badge-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.itqan-comments-card .Post-header,
+.itqan-comments-card .PostUser {
+  min-width: 0;
+}
+
+.itqan-comments-card .Post-header > .item-itqan-reply-badge {
+  min-width: 0;
+  max-width: 100%;
+}

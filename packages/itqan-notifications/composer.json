@@ -1,10 +1,11 @@
 {
     "name": "itqan/flarum-notifications",
-    "description": "Notify discussion authors of new replies with the reply text as the preview",
+    "description": "Itqan community notifications — do-not-disturb toggle and discussion-author reply alerts",
     "keywords": [
         "flarum",
         "notifications",
-        "replies"
+        "replies",
+        "dnd"
     ],
     "type": "flarum-extension",
     "license": "MIT",
@@ -28,9 +29,9 @@
             "title": "Itqan Notifications",
             "category": "feature",
             "icon": {
-                "name": "fas fa-bell",
+                "name": "far fa-bell",
                 "color": "#ffffff",
-                "backgroundColor": "#064e3b"
+                "backgroundColor": "#0D9488"
             }
         }
     },

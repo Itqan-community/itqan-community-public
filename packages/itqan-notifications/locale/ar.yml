@@ -1,5 +1,8 @@
 itqan-notifications:
   forum:
+    dnd:
+      enable: تفعيل عدم الإزعاج
+      disable: إيقاف عدم الإزعاج
     notifications:
       discussion_replied_text: "رد {username} على نقاشك"
     settings:

@@ -1,5 +1,6 @@
 <?php
 
+use Flarum\Api\Controller\CreatePostController;
 use Flarum\Api\Controller\ListDiscussionsController;
 use Flarum\Api\Controller\ShowDiscussionController;
 use Flarum\Api\Serializer\BasicPostSerializer;
@@ -12,9 +13,13 @@ use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
 use Flarum\User\User;
 use Itqan\Discussions\Access\PostPolicy;
+use Itqan\Discussions\Api\ListCommentTreeController;
+use Itqan\Discussions\Api\ListPostRepliesController;
 use Itqan\Discussions\Api\LoadTreePostsRelationship;
+use Itqan\Discussions\Api\SanitizeCreatePostPosts;
 use Itqan\Discussions\Api\VoteController;
 use Itqan\Discussions\Console\BackfillParentIdsCommand;
+use Itqan\Discussions\Console\BackfillRootDepthCommand;
 use Itqan\Discussions\Listener\SaveParentIdToPost;
 use Itqan\Discussions\Listener\UpdateReplyCountOnDelete;
 use Itqan\Discussions\Provider\SortMapProvider;
@@ -28,7 +33,14 @@ return [
     new Extend\Locales(__DIR__.'/locale'),
 
     (new Extend\Routes('api'))
-        ->patch('/posts/{id}/vote', 'itqan-discussions.vote', VoteController::class),
+        ->patch('/posts/{id}/vote', 'itqan-discussions.vote', VoteController::class)
+        ->get('/discussions/{id}/comment-tree', 'itqan-discussions.comment-tree', ListCommentTreeController::class)
+        ->get('/posts/{id}/replies', 'itqan-discussions.post-replies', ListPostRepliesController::class),
+
+    (new Extend\Settings())
+        ->default('itqan-discussions.maxDepth', '4')
+        ->default('itqan-discussions.maxNodesPerRoot', '20')
+        ->default('itqan-discussions.rootPageSize', '20'),
 
     // Relationships
     (new Extend\Model(Post::class))
@@ -75,6 +87,18 @@ return [
         })
         ->attribute('replyCount', function (BasicPostSerializer $serializer, Post $post) {
             return (int) ($post->reply_count ?? 0);
+        })
+        ->attribute('rootId', function (BasicPostSerializer $serializer, Post $post) {
+            return $post->root_id ? (int) $post->root_id : null;
+        })
+        ->attribute('depth', function (BasicPostSerializer $serializer, Post $post) {
+            return (int) ($post->depth ?? 0);
+        })
+        ->attribute('hasMoreReplies', function (BasicPostSerializer $serializer, Post $post) {
+            if (isset($post->has_more_replies)) {
+                return (bool) $post->has_more_replies;
+            }
+            return false;
         }),
 
     (new Extend\ApiSerializer(PostSerializer::class))
@@ -123,6 +147,21 @@ return [
         })
         ->attribute('rootCommentCount', function (DiscussionSerializer $serializer, Discussion $discussion) {
             return isset($discussion->root_comment_count) ? (int) $discussion->root_comment_count : null;
+        })
+        ->attribute('rootsLoaded', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            return isset($discussion->roots_loaded) ? (int) $discussion->roots_loaded : null;
+        })
+        ->attribute('rootsHasMore', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            return isset($discussion->roots_has_more) ? (bool) $discussion->roots_has_more : null;
+        })
+        ->attribute('rootsHasPrevious', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            return isset($discussion->roots_has_previous) ? (bool) $discussion->roots_has_previous : null;
+        })
+        ->attribute('rootsOffset', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            return isset($discussion->roots_offset) ? (int) $discussion->roots_offset : null;
+        })
+        ->attribute('commentSort', function (DiscussionSerializer $serializer, Discussion $discussion) {
+            return $discussion->comment_sort ?? null;
         }),
 
     // Event listeners for parent_id persistence and reply_count synchronization
@@ -145,6 +184,11 @@ return [
         ->load(['posts.postVotes'])
         ->prepareDataForSerialization(LoadTreePostsRelationship::class),
 
+    // Prevent CreatePost from dumping every post ID into the client payload.
+    (new Extend\ApiController(CreatePostController::class))
+        ->prepareDataForSerialization(SanitizeCreatePostPosts::class),
+
     (new Extend\Console())
-        ->command(BackfillParentIdsCommand::class),
+        ->command(BackfillParentIdsCommand::class)
+        ->command(BackfillRootDepthCommand::class),
 ];

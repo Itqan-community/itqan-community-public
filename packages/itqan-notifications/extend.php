@@ -13,6 +13,9 @@ return [
 
     new Extend\Locales(__DIR__.'/locale'),
 
+    (new Extend\User())
+        ->registerPreference('dndEnabled', 'boolval', false),
+
     (new Extend\View)
         ->namespace('itqan-notifications', __DIR__.'/views'),
 

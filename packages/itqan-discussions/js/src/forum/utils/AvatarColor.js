@@ -1,4 +1,5 @@
 import app from 'flarum/forum/app';
+import { getVisualDepth } from '../components/CommentTree';
 
 /**
  * Avatar dominant color extraction utility.
@@ -214,38 +215,37 @@ export function getPostColor(post) {
 }
 
 /**
- * Compute the complete list of active ancestor rails for a post.
- * Rails are only rendered for child replies (depth >= 1) to visually guide them back
- * to their ancestors. Parent/root comments do NOT have a self-rail drawn over their own content.
+ * Immediate-parent rail only (GitHub-style muted lineage). Multi-ancestor
+ * rainbow rails were dropped — they seamed and stole measure on phones.
+ *
+ * Column uses *visual* depth (viewport-clamped), not the raw server depth, so
+ * the painted line stays on the same indent token as `data-thread-depth`.
  */
 export function getPostRails(post) {
   if (!post) return [];
-  const rails = [];
-  const postId = typeof post.id === 'function' ? String(post.id()) : '';
-  const visited = new Set();
-  visited.add(postId);
 
-  let curr = post;
-  while (curr) {
-    const parentId = typeof curr.parentId === 'function' ? curr.parentId() : null;
-    if (!parentId) break;
-    const pIdStr = String(parentId);
-    if (visited.has(pIdStr)) break;
-    visited.add(pIdStr);
+  const parentId = typeof post.parentId === 'function' ? post.parentId() : null;
+  if (!parentId) return [];
 
-    const parent = app.store ? app.store.getById('posts', pIdStr) : null;
-    if (!parent) break;
-    if (typeof parent.number === 'function' && parent.number() === 1) {
-      break;
-    }
+  const parent = app.store ? app.store.getById('posts', String(parentId)) : null;
+  if (!parent) return [];
+  if (typeof parent.number === 'function' && parent.number() === 1) return [];
 
-    rails.unshift(parent);
-    curr = parent;
-  }
+  const visualDepth = getVisualDepth(post);
+  if (visualDepth < 1) return [];
 
-  return rails.map((ancestorPost, colIndex) => ({
-    col: colIndex,
-    postId: String(ancestorPost.id()),
-    color: getPostColor(ancestorPost),
-  }));
+  // Parent sits one visual step above this reply.
+  const col = Math.max(0, visualDepth - 1);
+  // Depth ≥2 parents use --avatar-sm; rail centre must match.
+  const deep = col >= 2;
+
+  return [
+    {
+      col,
+      deep,
+      postId: String(parent.id()),
+      color: null,
+    },
+  ];
 }
+

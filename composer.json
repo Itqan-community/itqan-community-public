@@ -60,6 +60,7 @@
         "fof/merge-discussions": "*",
         "fof/oauth": "*",
         "fof/pretty-mail": "*",
+        "fof/reactions": "^1.4",
         "fof/share-social": "*",
         "fof/sitemap": "*",
         "fof/socialprofile": "*",
@@ -114,6 +115,10 @@
         "itqan-typography": {
             "type": "path",
             "url": "packages/itqan-typography"
+        },
+        "itqan-reactions": {
+            "type": "path",
+            "url": "packages/itqan-reactions"
         },
         "0": {
             "type": "vcs",

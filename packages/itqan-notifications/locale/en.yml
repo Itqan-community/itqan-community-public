@@ -1,5 +1,8 @@
 itqan-notifications:
   forum:
+    dnd:
+      enable: Turn on Do Not Disturb
+      disable: Turn off Do Not Disturb
     notifications:
       discussion_replied_text: "{username} replied to your discussion"
     settings:
