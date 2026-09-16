@@ -1,0 +1,23 @@
+itqan-notifications:
+  forum:
+    notifications:
+      discussion_replied_text: "{username} replied to your discussion"
+    settings:
+      notify_discussion_replied_label: Someone replies to a discussion I started
+
+  email:
+    discussion_replied:
+      subject: "[New Reply] {title}"
+      body: |
+        Hey {recipient_display_name}!
+
+        {poster_display_name} replied to your discussion: {title}.
+
+        To view the new reply, check out the following link:
+        {url}
+
+        ---
+
+        {content}
+
+        ---

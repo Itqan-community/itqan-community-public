@@ -1,0 +1,23 @@
+itqan-notifications:
+  forum:
+    notifications:
+      discussion_replied_text: "رد {username} على نقاشك"
+    settings:
+      notify_discussion_replied_label: يرد أحد على نقاش بدأته
+
+  email:
+    discussion_replied:
+      subject: "[رد جديد] {title}"
+      body: |
+        مرحبًا {recipient_display_name}!
+
+        رد {poster_display_name} على نقاشك: {title}.
+
+        لمشاهدة الرد الجديد، اتبع الرابط:
+        {url}
+
+        ---
+
+        {content}
+
+        ---
