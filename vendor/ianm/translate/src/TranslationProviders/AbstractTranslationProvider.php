@@ -86,28 +86,17 @@ abstract class AbstractTranslationProvider
     public function supportedLanguages(User $actor): array
     {
         try {
-            $providerLangs = $this->languages();
-            $browserLang = (bool) $this->settings->get('ianm-translate.bind-browser-language');
-
             $currentLocale = $this->manager->getLocale();
-            $locales = $this->adjustLocales($this->manager->getLocales());
+            $baseLocale = strtolower(explode('-', $currentLocale)[0]);
 
-            if ($browserLang) {
-                $locales = $this->mergeBrowserLanguages($locales);
+            if ($baseLocale === 'ar') {
+                return ['ar', 'en'];
             }
 
-            if ($actor->can('translateAnyForumLanguage')) {
-                return $this->getAllLanguages($locales, $providerLangs, $currentLocale);
-            }
-
-            if ($browserLang) {
-                return $locales;
-            }
-
-            return [$currentLocale];
+            return ['en', 'ar'];
         } catch (Throwable $e) {
             resolve('log')->error("[ianm-translate] {$this->name()} failed to get supported languages: {$e->getMessage()}");
-            return [];
+            return ['en', 'ar'];
         }
     }
 
