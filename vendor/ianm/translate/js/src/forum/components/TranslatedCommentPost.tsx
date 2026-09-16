@@ -39,7 +39,8 @@ export default class TranslatedCommentPost extends Component<ITranslatedCommentP
 
   headerItems(item: Post, translation: Translation): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
-    const from = item.detectedLang() ? LangDisplayName(item.detectedLang()) : app.translator.trans('ianm-translate.forum.unknown-language');
+    const detected = item.detectedLang?.() || translation.attribute<string>('detectedLang') || (item.discussion?.() as any)?.detectedLang?.();
+    const from = detected && detected !== 'unknown' ? LangDisplayName(detected) : app.translator.trans('ianm-translate.forum.unknown-language');
     const to = LangDisplayName(translation.language());
 
     items.add('translation-ai', <TranslationSourceLabel from={from} to={to} />, 50);
