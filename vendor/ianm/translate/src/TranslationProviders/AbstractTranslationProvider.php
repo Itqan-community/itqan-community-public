@@ -130,11 +130,22 @@ abstract class AbstractTranslationProvider
 
     private function getAllLanguages(array $locales, array $providerLangs, string $currentLocale): array
     {
-        // Filter locales based on provider languages and remove duplicates
-        $all = array_unique(array_intersect_key($locales, $providerLangs));
+        $all = [];
+        foreach ($locales as $code => $name) {
+            $langCode = is_string($code) ? $code : $name;
+            $baseLang = strtolower(explode('-', $langCode)[0]);
+            if (in_array($langCode, $providerLangs) || in_array($baseLang, $providerLangs)) {
+                $all[] = $langCode;
+            }
+        }
+        foreach ($providerLangs as $lang) {
+            $all[] = $lang;
+        }
+
+        $all = array_values(array_unique($all));
 
         // If the current locale is in provider languages, move it to the front
-        if (in_array($currentLocale, $providerLangs)) {
+        if (in_array($currentLocale, $all)) {
             // Remove existing instance of current locale
             $all = array_diff($all, [$currentLocale]);
             // Add current locale at the beginning
