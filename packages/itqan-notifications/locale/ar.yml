@@ -1,0 +1,5 @@
+itqan-notifications:
+  forum:
+    dnd:
+      enable: تفعيل عدم الإزعاج
+      disable: إيقاف عدم الإزعاج

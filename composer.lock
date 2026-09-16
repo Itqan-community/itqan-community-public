@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4cf6b9d104d41d7a2126af39210b68d",
+    "content-hash": "d6ba5e3edfb3574a952b5dcbfeb152dc",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -8526,7 +8526,7 @@
         },
         {
             "name": "itqan/flarum-composer-tools",
-            "version": "dev-feat/comment-feed-window",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-composer-tools",
@@ -8579,7 +8579,7 @@
         },
         {
             "name": "itqan/flarum-discussions",
-            "version": "dev-feat/comment-feed-window",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-discussions",
@@ -8631,7 +8631,7 @@
         },
         {
             "name": "itqan/flarum-mailerlite",
-            "version": "dev-feat/comment-feed-window",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-mailerlite",
@@ -8689,8 +8689,50 @@
             }
         },
         {
+            "name": "itqan/flarum-notifications",
+            "version": "dev-feat/notifications-dnd-toggle",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-notifications",
+                "reference": "023bc6866ef2385b701e012d9daa347efdc9da06"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Notifications",
+                    "category": "feature",
+                    "icon": {
+                        "name": "far fa-bell",
+                        "color": "#ffffff",
+                        "backgroundColor": "#0D9488"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Notifications\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Itqan community notifications — do-not-disturb toggle",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "itqan/flarum-theme",
-            "version": "dev-feat/comment-feed-window",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-theme",
@@ -8743,7 +8785,7 @@
         },
         {
             "name": "itqan/flarum-typography",
-            "version": "dev-feat/comment-feed-window",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-typography",
@@ -17308,6 +17350,7 @@
         "itqan/flarum-composer-tools": 20,
         "itqan/flarum-discussions": 20,
         "itqan/flarum-mailerlite": 20,
+        "itqan/flarum-notifications": 20,
         "itqan/flarum-theme": 20,
         "itqan/flarum-typography": 20
     },

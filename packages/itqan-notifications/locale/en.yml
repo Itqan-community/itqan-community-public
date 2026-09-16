@@ -1,0 +1,5 @@
+itqan-notifications:
+  forum:
+    dnd:
+      enable: Turn on Do Not Disturb
+      disable: Turn off Do Not Disturb
