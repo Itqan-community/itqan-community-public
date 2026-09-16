@@ -64,43 +64,90 @@ class GoogleFree extends AbstractTranslationProvider implements TranslationProvi
         $targetLang = $this->normalizeLanguageCode($toLanguage);
         $sourceLang = ($from !== null && $from !== 'auto') ? $this->normalizeLanguageCode($from) : 'auto';
 
-        // 1. Try Google Translate via Stichoza configured with googleapis.com & User-Agent
+        // 1. Primary: clients5.google.com dict-chrome-ex (Chrome extension endpoint)
         try {
-            $stichoza = new GoogleTranslate($targetLang, $sourceLang, [
-                'headers' => [
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                ],
-                'timeout' => 5,
-            ]);
-            $stichoza->setUrl('https://translate.googleapis.com/translate_a/single');
-            $stichoza->setClient('client6');
-
-            $res = $stichoza->translate($content);
-            if (!empty($res)) {
-                return $res;
+            $translated = $this->translateViaClients5($content, $targetLang, $sourceLang);
+            if (!empty(trim($translated))) {
+                return $translated;
             }
         } catch (Throwable $e) {
-            $this->logger->warning("[ianm-translate] GoogleFree Stichoza googleapis endpoint failed: " . $e->getMessage());
+            $this->logger->warning("[ianm-translate] GoogleFree clients5 translation failed: " . $e->getMessage());
         }
 
-        // 2. Try direct Google Translate API query with chunking for long text
+        // 2. Secondary: direct Google Translate API query (translate.googleapis.com)
         try {
             $translated = $this->translateViaGoogle($content, $targetLang, $sourceLang);
-            if (!empty($translated)) {
+            if (!empty(trim($translated))) {
                 return $translated;
             }
         } catch (Throwable $e) {
             $this->logger->warning("[ianm-translate] GoogleFree direct googleapis GET failed: " . $e->getMessage());
         }
 
-        // 3. Fallback to MyMemory Free Translation API with intelligent 450-char chunking
+        // 3. Fallback: MyMemory Free Translation API with intelligent 450-char chunking
         try {
             $translated = $this->translateViaMyMemory($content, $targetLang, $sourceLang);
-            if (!empty($translated)) {
+            if (!empty(trim($translated))) {
                 return $translated;
             }
         } catch (Throwable $e) {
             $this->logger->error("[ianm-translate] GoogleFree MyMemory fallback failed: " . $e->getMessage());
+        }
+
+        throw new \Exception("All translation engines returned empty result for text length " . mb_strlen($content));
+    }
+
+    private function translateViaClients5(string $content, string $toLanguage, string $from): string
+    {
+        if (mb_strlen($content) <= 1500) {
+            return $this->queryClients5Chunk($content, $toLanguage, $from);
+        }
+
+        $lines = explode("\n", $content);
+        $translatedLines = [];
+
+        foreach ($lines as $line) {
+            if (mb_strlen($line) <= 1500) {
+                if (trim($line) !== '') {
+                    $translatedLines[] = $this->queryClients5Chunk($line, $toLanguage, $from);
+                } else {
+                    $translatedLines[] = '';
+                }
+            } else {
+                $chunks = $this->splitTextIntoChunks($line, 1500);
+                $translatedChunks = [];
+                foreach ($chunks as $chunk) {
+                    if (trim($chunk) !== '') {
+                        $translatedChunks[] = $this->queryClients5Chunk($chunk, $toLanguage, $from);
+                    }
+                }
+                $translatedLines[] = implode(' ', $translatedChunks);
+            }
+        }
+
+        return implode("\n", $translatedLines);
+    }
+
+    private function queryClients5Chunk(string $chunk, string $toLanguage, string $from): string
+    {
+        $url = 'https://clients5.google.com/translate_a/t';
+        $response = $this->httpClient->get($url, [
+            'query' => [
+                'client' => 'dict-chrome-ex',
+                'sl' => $from,
+                'tl' => $toLanguage,
+                'q' => $chunk,
+            ],
+        ]);
+
+        $data = json_decode((string) $response->getBody(), true);
+        if (is_array($data) && isset($data[0])) {
+            $item = $data[0];
+            if (is_array($item)) {
+                return (string) ($item[0] ?? '');
+            } elseif (is_string($item)) {
+                return $item;
+            }
         }
 
         return '';
@@ -250,7 +297,30 @@ class GoogleFree extends AbstractTranslationProvider implements TranslationProvi
     {
         $this->ensureInitialized();
 
-        // 1. Direct query to translate.googleapis.com with client6
+        // 1. Direct query to clients5.google.com with dict-chrome-ex
+        try {
+            $url = 'https://clients5.google.com/translate_a/t';
+            $response = $this->httpClient->get($url, [
+                'query' => [
+                    'client' => 'dict-chrome-ex',
+                    'sl' => 'auto',
+                    'tl' => 'en',
+                    'q' => mb_substr($content, 0, 300),
+                ],
+            ]);
+
+            $data = json_decode((string) $response->getBody(), true);
+            if (is_array($data) && isset($data[0][1]) && is_string($data[0][1])) {
+                $lang = strtolower(explode('-', $data[0][1])[0]);
+                if (!empty($lang) && $lang !== 'unknown' && $lang !== 'auto') {
+                    return $lang;
+                }
+            }
+        } catch (Throwable $e) {
+            $this->logger->warning("[ianm-translate] GoogleFree clients5 identify failed: " . $e->getMessage());
+        }
+
+        // 2. Direct query to translate.googleapis.com with client6
         try {
             $url = 'https://translate.googleapis.com/translate_a/single';
             $response = $this->httpClient->get($url, [
@@ -272,26 +342,6 @@ class GoogleFree extends AbstractTranslationProvider implements TranslationProvi
             }
         } catch (Throwable $e) {
             $this->logger->warning("[ianm-translate] GoogleFree direct identify failed: " . $e->getMessage());
-        }
-
-        // 2. Try Stichoza
-        try {
-            $stichoza = new GoogleTranslate('en', 'auto', [
-                'headers' => [
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                ],
-                'timeout' => 5,
-            ]);
-            $stichoza->setUrl('https://translate.googleapis.com/translate_a/single');
-            $stichoza->setClient('client6');
-
-            $stichoza->translate(mb_substr($content, 0, 300));
-            $detected = $stichoza->getLastDetectedSource();
-            if ($detected) {
-                return strtolower(explode('-', $detected)[0]);
-            }
-        } catch (Throwable $e) {
-            $this->logger->warning("[ianm-translate] GoogleFree identify failed via Stichoza: " . $e->getMessage());
         }
 
         // 3. Fallback identification via MyMemory

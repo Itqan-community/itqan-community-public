@@ -169,6 +169,11 @@ abstract class AbstractTranslationProvider
 
         $cached = $this->getCachedTranslation($post, $toLanguage);
 
+        // Force re-translation if cached entry is empty or empty XML (<r></r>)
+        if ($cached && (empty($cached->content) || trim($cached->content) === '<r></r>' || trim($cached->content) === '<r/>')) {
+            $force = true;
+        }
+
         if (!$cached || $force) {
             try {
                 return $this->performTranslation($post, $toLanguage, $user);
@@ -201,9 +206,17 @@ abstract class AbstractTranslationProvider
 
         $cached = $this->getCachedTitleTranslation($discussion, $toLanguage);
 
+        // Force re-translation if cached entry is empty
+        if ($cached && empty(trim($cached->translation))) {
+            $force = true;
+        }
+
         if (!$cached || $force) {
             try {
                 $translatedTitle = $this->translate($discussion->title, $toLanguage);
+                if (empty(trim($translatedTitle))) {
+                    throw new Exception("Translation engine returned empty title for discussion {$discussion->id}");
+                }
                 return DiscussionTranslation::buildOrUpdate($discussion->id, $toLanguage, $translatedTitle, $this->name());
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
@@ -225,8 +238,15 @@ abstract class AbstractTranslationProvider
     private function performTranslation(CommentPost $post, string $toLanguage, User $user): PostTranslation
     {
         $formatter = $post->getFormatter();
-        $translated = $formatter->parse($this->translate($formatter->unparse($post->getParsedContentAttribute(), $post), $toLanguage), $post, $user);
-        return PostTranslation::buildOrUpdate($post->id, $toLanguage, $translated, $this->name());
+        $unparsed = $formatter->unparse($post->getParsedContentAttribute(), $post);
+        $translatedText = $this->translate($unparsed, $toLanguage);
+
+        if (empty(trim($translatedText))) {
+            throw new Exception("Translation engine returned empty result for post {$post->id}");
+        }
+
+        $translatedXml = $formatter->parse($translatedText, $post, $user);
+        return PostTranslation::buildOrUpdate($post->id, $toLanguage, $translatedXml, $this->name());
     }
 
 
