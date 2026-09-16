@@ -71,56 +71,167 @@ class GoogleFree extends AbstractTranslationProvider implements TranslationProvi
             $this->logger->warning("[ianm-translate] GoogleFree Stichoza googleapis endpoint failed: " . $e->getMessage());
         }
 
-        // 2. Try direct Google Translate API query via Guzzle HTTP client
+        // 2. Try direct Google Translate API query with chunking for long text
         try {
-            $url = 'https://translate.googleapis.com/translate_a/single';
-            $response = $this->httpClient->get($url, [
-                'query' => [
-                    'client' => 'client6',
-                    'sl' => $from,
-                    'tl' => $toLanguage,
-                    'dt' => 't',
-                    'q' => $content,
-                ],
-            ]);
-
-            $bodyArray = json_decode((string) $response->getBody(), true);
-            if (is_array($bodyArray) && isset($bodyArray[0]) && is_array($bodyArray[0])) {
-                $translated = '';
-                foreach ($bodyArray[0] as $segment) {
-                    if (isset($segment[0]) && is_string($segment[0])) {
-                        $translated .= $segment[0];
-                    }
-                }
-                if (!empty($translated)) {
-                    return $translated;
-                }
+            $translated = $this->translateViaGoogle($content, $toLanguage, $from);
+            if (!empty($translated)) {
+                return $translated;
             }
         } catch (Throwable $e) {
             $this->logger->warning("[ianm-translate] GoogleFree direct googleapis GET failed: " . $e->getMessage());
         }
 
-        // 3. Fallback to MyMemory Free Translation API
+        // 3. Fallback to MyMemory Free Translation API with intelligent 450-char chunking
         try {
-            $sourceLang = ($from === 'auto' || empty($from)) ? 'autodetect' : $from;
-            $langPair = $sourceLang . '|' . $toLanguage;
-
-            $response = $this->httpClient->get('https://api.mymemory.translated.net/get', [
-                'query' => [
-                    'q' => $content,
-                    'langpair' => $langPair,
-                ],
-            ]);
-
-            $data = json_decode((string) $response->getBody(), true);
-            if (isset($data['responseData']['translatedText']) && !empty($data['responseData']['translatedText'])) {
-                return $data['responseData']['translatedText'];
+            $translated = $this->translateViaMyMemory($content, $toLanguage, $from);
+            if (!empty($translated)) {
+                return $translated;
             }
         } catch (Throwable $e) {
             $this->logger->error("[ianm-translate] GoogleFree MyMemory fallback failed: " . $e->getMessage());
         }
 
         return '';
+    }
+
+    private function translateViaGoogle(string $content, string $toLanguage, string $from): string
+    {
+        if (mb_strlen($content) <= 1500) {
+            return $this->queryGoogleChunk($content, $toLanguage, $from);
+        }
+
+        $lines = explode("\n", $content);
+        $translatedLines = [];
+
+        foreach ($lines as $line) {
+            if (mb_strlen($line) <= 1500) {
+                if (trim($line) !== '') {
+                    $translatedLines[] = $this->queryGoogleChunk($line, $toLanguage, $from);
+                } else {
+                    $translatedLines[] = '';
+                }
+            } else {
+                $chunks = $this->splitTextIntoChunks($line, 1500);
+                $translatedChunks = [];
+                foreach ($chunks as $chunk) {
+                    if (trim($chunk) !== '') {
+                        $translatedChunks[] = $this->queryGoogleChunk($chunk, $toLanguage, $from);
+                    }
+                }
+                $translatedLines[] = implode(' ', $translatedChunks);
+            }
+        }
+
+        return implode("\n", $translatedLines);
+    }
+
+    private function queryGoogleChunk(string $chunk, string $toLanguage, string $from): string
+    {
+        $url = 'https://translate.googleapis.com/translate_a/single';
+        $response = $this->httpClient->get($url, [
+            'query' => [
+                'client' => 'client6',
+                'sl' => $from,
+                'tl' => $toLanguage,
+                'dt' => 't',
+                'q' => $chunk,
+            ],
+        ]);
+
+        $bodyArray = json_decode((string) $response->getBody(), true);
+        if (is_array($bodyArray) && isset($bodyArray[0]) && is_array($bodyArray[0])) {
+            $translated = '';
+            foreach ($bodyArray[0] as $segment) {
+                if (isset($segment[0]) && is_string($segment[0])) {
+                    $translated .= $segment[0];
+                }
+            }
+            if (!empty($translated)) {
+                return $translated;
+            }
+        }
+
+        return '';
+    }
+
+    private function translateViaMyMemory(string $content, string $toLanguage, string $from): string
+    {
+        $sourceLang = ($from === 'auto' || empty($from)) ? 'autodetect' : $from;
+        $langPair = $sourceLang . '|' . $toLanguage;
+
+        $lines = explode("\n", $content);
+        $translatedLines = [];
+
+        foreach ($lines as $line) {
+            if (mb_strlen($line) <= 450) {
+                if (trim($line) !== '') {
+                    $translatedLines[] = $this->queryMyMemoryChunk($line, $langPair);
+                } else {
+                    $translatedLines[] = '';
+                }
+            } else {
+                $chunks = $this->splitTextIntoChunks($line, 450);
+                $translatedChunks = [];
+                foreach ($chunks as $chunk) {
+                    if (trim($chunk) !== '') {
+                        $translatedChunks[] = $this->queryMyMemoryChunk($chunk, $langPair);
+                    }
+                }
+                $translatedLines[] = implode(' ', $translatedChunks);
+            }
+        }
+
+        return implode("\n", $translatedLines);
+    }
+
+    private function queryMyMemoryChunk(string $chunk, string $langPair): string
+    {
+        $response = $this->httpClient->get('https://api.mymemory.translated.net/get', [
+            'query' => [
+                'q' => $chunk,
+                'langpair' => $langPair,
+            ],
+        ]);
+
+        $data = json_decode((string) $response->getBody(), true);
+        if (isset($data['responseData']['translatedText']) && !empty($data['responseData']['translatedText'])) {
+            $text = $data['responseData']['translatedText'];
+            if (str_contains($text, 'QUERY LENGTH LIMIT EXCEEDED')) {
+                return $chunk;
+            }
+            return $text;
+        }
+
+        return $chunk;
+    }
+
+    private function splitTextIntoChunks(string $text, int $maxLength): array
+    {
+        $words = explode(' ', $text);
+        $chunks = [];
+        $currentChunk = '';
+
+        foreach ($words as $word) {
+            if (mb_strlen($currentChunk . ' ' . $word) <= $maxLength) {
+                $currentChunk = $currentChunk === '' ? $word : $currentChunk . ' ' . $word;
+            } else {
+                if ($currentChunk !== '') {
+                    $chunks[] = $currentChunk;
+                }
+                if (mb_strlen($word) > $maxLength) {
+                    $chunks[] = mb_substr($word, 0, $maxLength);
+                    $currentChunk = mb_substr($word, $maxLength);
+                } else {
+                    $currentChunk = $word;
+                }
+            }
+        }
+
+        if ($currentChunk !== '') {
+            $chunks[] = $currentChunk;
+        }
+
+        return $chunks;
     }
 
     protected function identify(string $content): string
@@ -130,7 +241,7 @@ class GoogleFree extends AbstractTranslationProvider implements TranslationProvi
         try {
             $this->translator
                 ->setTarget('en')
-                ->translate($content);
+                ->translate(mb_substr($content, 0, 500));
 
             $detected = $this->translator->getLastDetectedSource();
             if ($detected) {
@@ -165,7 +276,6 @@ class GoogleFree extends AbstractTranslationProvider implements TranslationProvi
 
     protected function languages(): array
     {
-        // Return supported languages list
         return [
             'af', 'sq', 'am', 'ar', 'hy', 'as', 'az', 'eu', 'bm', 'be', 'bn', 'bs', 'bg', 'ca', 'zh', 'zh-CN', 'zh-TW', 'co', 'hr', 'cs',
             'da', 'dv', 'nl', 'en', 'eo', 'et', 'fi', 'fr', 'fy', 'gl', 'ka', 'de', 'el', 'gn', 'gu', 'ht', 'ha', 'he', 'iw', 'hi', 'hu', 'is',
@@ -176,4 +286,5 @@ class GoogleFree extends AbstractTranslationProvider implements TranslationProvi
         ];
     }
 }
+
 
