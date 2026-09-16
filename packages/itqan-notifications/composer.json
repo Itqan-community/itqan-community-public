@@ -1,7 +1,12 @@
 {
     "name": "itqan/flarum-notifications",
-    "description": "Per-tag notification channel preferences for the Itqan community",
-    "keywords": ["flarum", "notifications", "tags", "email"],
+    "description": "Itqan community notifications — do-not-disturb toggle and per-tag notification channel preferences",
+    "keywords": [
+        "flarum",
+        "notifications",
+        "tags",
+        "email"
+    ],
     "type": "flarum-extension",
     "license": "MIT",
     "authors": [
@@ -24,9 +29,9 @@
             "title": "Itqan Notifications",
             "category": "feature",
             "icon": {
-                "name": "fas fa-bell",
+                "name": "far fa-bell",
                 "color": "#ffffff",
-                "backgroundColor": "#064e3b"
+                "backgroundColor": "#0D9488"
             },
             "optional-dependencies": [
                 "fof-follow-tags",

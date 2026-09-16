@@ -26,6 +26,9 @@ return [
 
     new Extend\Locales(__DIR__.'/locale'),
 
+    (new Extend\User())
+        ->registerPreference('dndEnabled', 'boolval', false),
+
     (new Extend\Routes('api'))
         ->post('/tags/{id}/notification-channel', 'itqan-notifications.tag-notification-channel', SetTagNotificationChannelController::class)
         ->delete('/tags/{id}/notification-channel', 'itqan-notifications.tag-notification-channel.delete', DeleteTagNotificationChannelController::class),

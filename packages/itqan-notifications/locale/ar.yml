@@ -4,6 +4,10 @@ itqan-notifications:
     channel_required: اختر تفضيل الإشعارات لهذا الوسم.
 
   forum:
+    dnd:
+      enable: تفعيل عدم الإزعاج
+      disable: إيقاف عدم الإزعاج
+
     channel:
       email: بريد فوري
       alert: داخل المنتدى فقط

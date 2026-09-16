@@ -4,6 +4,10 @@ itqan-notifications:
     channel_required: Choose a notification preference for this tag.
 
   forum:
+    dnd:
+      enable: Turn on Do Not Disturb
+      disable: Turn off Do Not Disturb
+
     channel:
       email: Immediate Email
       alert: In-App Only
