@@ -138,9 +138,6 @@ abstract class AbstractTranslationProvider
                 $all[] = $langCode;
             }
         }
-        foreach ($providerLangs as $lang) {
-            $all[] = $lang;
-        }
 
         $all = array_values(array_unique($all));
 
