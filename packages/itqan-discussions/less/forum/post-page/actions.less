@@ -15,7 +15,9 @@
 //   @tablet-up .no-touch &     opacity: 0
 //   .Post-actions > ul > li    margin-left: -5px; display: inline-block
 
-.CommentPost .Post-actions {
+.CommentPost .Post-actions,
+.EventPost .Post-actions,
+.Post--hidden:not(.revealContent) .Post-actions {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -24,6 +26,8 @@
   position: relative;
   overflow: visible;
   margin: var(--sp-12) 0 0;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
   padding: 0;
   // Core fades the whole bar out until the post is hovered. Primary actions
   // must not hide — a vote count is information, not a control — so the bar is
