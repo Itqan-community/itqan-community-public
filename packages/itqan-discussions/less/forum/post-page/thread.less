@@ -80,11 +80,14 @@
 // Quiet depth: shift the whole reply card. No rails.
 // max-width keeps margin-inline-start from pushing the card outside the well
 // (width:100% + indent was overflowing; width:auto alone needs a cap).
+// Depth 1 (first nested reply level) has 0 indent (var(--indent-0)) as it is already
+// inside the reply well. Depth 2 starts at var(--indent-1), etc.
 .itqan-reply-indent(@d) when (@d =< 5) {
+  @indent: @d - 1;
   .itqan-thread-replies > .PostStream-item[data-thread-depth='@{d}'] {
-    margin-inline-start: ~"var(--indent-@{d})";
+    margin-inline-start: ~"var(--indent-@{indent})";
     width: auto;
-    max-width: ~"calc(100% - var(--indent-@{d}))";
+    max-width: ~"calc(100% - var(--indent-@{indent}))";
   }
 
   .itqan-reply-indent(@d + 1);
