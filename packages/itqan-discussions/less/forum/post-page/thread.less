@@ -101,6 +101,24 @@
   border-radius: var(--r-md);
   overflow: visible;
 
+  &::before {
+    content: "";
+    width: 12px;
+    border-inline-start: 2px solid #7d7d7d;
+    position: absolute;
+    border-end-start-radius: 8px;
+    border-bottom-start-radius: 8px;
+    inset-inline-start: 0;
+    top: -10px;
+    bottom: 0px;
+    height: auto;
+    z-index: 1;
+
+    @media @phone {
+      top: -8px;
+    }
+  }
+
   .CommentPost > div {
     padding-block: var(--sp-12);
     padding-inline: var(--sp-12);
