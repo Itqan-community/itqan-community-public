@@ -35,6 +35,7 @@ class PostTranslationSerializer extends AbstractSerializer
             'translation' => $model->content,
             'translationHtml' => $formatter->render($model->content, $model->post, $this->request),
             'provider' => $model->provider,
+            'detectedLang' => $model->post ? $model->post->detected_lang : null,
             'createdAt' => $this->formatDate($model->created_at),
             'updatedAt' => $this->formatDate($model->updated_at)
         ];
