@@ -27,7 +27,7 @@ html[data-itqan-theme='dark'] {
   // S2: Logo Dark Mode contrast
   .Header-title img,
   .Header-logo {
-    filter: brightness(1.25) contrast(1.1);
+    filter: brightness(2) contrast(1.2);
   }
 
   // S4: Strip color artifact between header/sort and first post
@@ -196,4 +196,32 @@ html[data-itqan-theme='dark'] {
   .Post-body tr {
     color: var(--text-color);
   }
+}
+
+// -----------------------------------------------------------------------------
+// Scrubber & Side log layout safeguards
+// -----------------------------------------------------------------------------
+.Scrubber {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.Scrubber-first {
+  margin-bottom: 12px !important;
+  display: block;
+}
+
+.Scrubber-last {
+  margin-top: 12px !important;
+  display: block;
+}
+
+.Scrubber-scrollbar {
+  min-height: 80px;
+  position: relative;
+}
+
+.Scrubber-info {
+  white-space: nowrap;
 }

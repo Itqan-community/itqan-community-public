@@ -11,13 +11,18 @@
   justify-content: space-between;
   gap: var(--sp-8);
   margin-bottom: var(--sp-10);
-  padding: var(--sp-8) var(--sp-12);
+  margin-inline-end: var(--sp-12);
+  padding: var(--sp-2) var(--sp-12);
   background: var(--accent-soft);
   border: 1px solid var(--accent-border);
   border-radius: var(--r-md);
   font-size: var(--fs-ui-sm);
   font-weight: var(--fw-medium);
   color: var(--accent);
+
+  @media @phone {
+    margin-inline-end: 0;
+  }
 
   .replyBanner-content {
     display: inline-flex;
@@ -63,4 +68,22 @@
       outline-offset: 1px;
     }
   }
+}
+
+// --- Comment Preview / Editing ----------------------------------------------
+
+.Post.editing {
+  top: 5px;
+  opacity: .5;
+  padding: 16px !important;
+  border: 3px dashed #909090 !important;
+  border-radius: 10px !important;
+  corner-shape: superellipse(1);
+  margin-top: 16px !important;
+}
+
+// --- Minimized Composer Content ---------------------------------------------
+
+.minimized .ComposerBody-content {
+  padding: 6px;
 }
