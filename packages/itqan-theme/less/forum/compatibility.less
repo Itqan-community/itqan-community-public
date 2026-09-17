@@ -24,6 +24,25 @@ html[data-itqan-theme='dark'] {
   // extension eventually; until then, they are corrected here.
   // -------------------------------------------------------------------------
 
+  // S2: Logo Dark Mode contrast
+  .Header-title img,
+  .Header-logo {
+    filter: brightness(1.25) contrast(1.1);
+  }
+
+  // S4: Strip color artifact between header/sort and first post
+  .itqan-stream-toolbar {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  // S10: Solid divider above composer
+  .DiscussionPage-reply,
+  .PostStream-reply,
+  .ReplyPlaceholder {
+    border-top: none !important;
+  }
+
   .DiscussionListItem,
   .PostStream-item {
     background: var(--body-bg-light);

@@ -1023,6 +1023,42 @@ app.initializers.add('itqan-discussions', () => {
       40
     );
 
+    // Standalone Share Button (S7 Fix)
+    items.add(
+      'itqan-share',
+      m(
+        'button',
+        {
+          type: 'button',
+          className: 'itqan-share-action',
+          title: text('permalink'),
+          onclick: (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const discussion = typeof post.discussion === 'function' ? post.discussion() : null;
+            if (!discussion) return;
+            const path = app.route.discussion(discussion, post.number());
+            const url = new URL(path, window.location.origin).href;
+            const done = () => {
+              app.alerts.show(
+                { type: 'success', controls: [] },
+                text('permalink_copied')
+              );
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(url).then(done).catch(() => {
+                window.prompt(text('permalink'), url);
+              });
+            } else {
+              window.prompt(text('permalink'), url);
+            }
+          },
+        },
+        [icon('fas fa-share-alt'), m('span.itqan-action-label', trans('permalink'))]
+      ),
+      35
+    );
+
     // Collapse toggle. Collapsed, it summarises the subtree behind it —
     // participants, count, last activity — so it can be judged unopened.
     const loadedChildren = countLoadedChildren(post);
@@ -1153,6 +1189,14 @@ app.initializers.add('itqan-discussions', () => {
   // ==========================================
   // 6. Composer integration
   // ==========================================
+  if (app.composer) {
+    extend(app.composer, 'hide', function () {
+      app.itqanActiveParentId = null;
+      app.itqanActiveParentUsername = null;
+      clearActiveReplyTarget();
+    });
+  }
+
   if (ReplyComposer) {
     extend(ReplyComposer.prototype, 'headerItems', function (items) {
       const pId = app.itqanActiveParentId || (app.composer.fields && app.composer.fields.parentId);

@@ -33,7 +33,7 @@ itqan-discussions:
       views: "مشاهدة"
     stream:
       heading: "التعليقات"
-      heading_count: "{count} تعليقًا"
+      heading_count: "{count} ردود"
       load_more: "تحميل المزيد من التعليقات"
       load_previous: "تحميل التعليقات السابقة"
       continue_thread: "عرض {count} ردود أخرى"
