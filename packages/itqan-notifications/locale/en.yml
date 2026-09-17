@@ -1,5 +1,25 @@
 itqan-notifications:
+  api:
+    invalid_channel: Choose Immediate Email, In-App Only, or Mute.
+    channel_required: Choose a notification preference for this tag.
+
   forum:
     dnd:
       enable: Turn on Do Not Disturb
       disable: Turn off Do Not Disturb
+
+    channel:
+      email: Immediate Email
+      alert: In-App Only
+      mute: Mute
+      default: Default notification behavior
+
+    modal:
+      title: Notification delivery
+      help: These choices only change how Follow Tags notifies you. They do not follow or unfollow this tag.
+      follow_to_choose: Follow or lurk this tag to choose how Follow Tags notifies you.
+      email_help: In-app and email. Email is still sent only if you have email enabled in your notification settings.
+      alert_help: In-app only. No email or push for this tag.
+      mute_help: Stop Follow Tags notifications for this tag. Direct mentions are not muted.
+      default_help: Use Follow Tags and your global notification settings.
+      save_failed: Could not save the notification preference for this tag.
