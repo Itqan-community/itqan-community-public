@@ -71,9 +71,10 @@
   }
 }
 
-// --- Reply -------------------------------------------------------------------
+// --- Reply & Share -----------------------------------------------------------
 
-.itqan-reply-action {
+.itqan-reply-action,
+.itqan-share-action {
   .itqan-ghost-control();
 
   font-weight: var(--fw-semibold);
@@ -89,6 +90,7 @@
 
 .CommentPost .Post-actions .Post-controls {
   position: relative;
+  z-index: 100;
 
   .Dropdown-toggle {
     display: inline-flex;
@@ -122,16 +124,16 @@
   }
 
   &.open {
-    z-index: var(--z-dropdown);
+    z-index: 1050 !important;
 
     .Dropdown-menu {
       display: block;
-      z-index: ~"calc(var(--z-dropdown) + 1)";
+      z-index: 1060 !important;
     }
   }
 
   .Dropdown-menu {
-    z-index: ~"calc(var(--z-dropdown) + 1)";
+    z-index: 1060 !important;
     border-radius: var(--r-md);
     box-shadow: var(--elev-menu);
   }
