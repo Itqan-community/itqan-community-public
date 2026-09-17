@@ -10,6 +10,7 @@ import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
+import PostStreamScrubber from 'flarum/forum/components/PostStreamScrubber';
 import icon from 'flarum/common/helpers/icon';
 import avatar from 'flarum/common/helpers/avatar';
 import humanTime from 'flarum/common/helpers/humanTime';
@@ -522,6 +523,19 @@ app.initializers.add('itqan-discussions', () => {
     });
   }
 
+  if (PostStreamScrubber) {
+    extend(PostStreamScrubber.prototype, 'oncreate', function () {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (this.element && this.stream) {
+            this.onresize();
+            this.updateScrubberValues({ animate: false, forceHeightChange: true });
+          }
+        });
+      });
+    });
+  }
+
   if (PostStream) {
     extend(PostStream.prototype, 'oncreate', function () {
       decorateStreamTree();
@@ -614,9 +628,52 @@ app.initializers.add('itqan-discussions', () => {
       this.itqanPrevObserver.observe(sentinel);
     };
 
-    // Core's viewport-driven loading fights the observer above and is what
-    // produced the scroll jumps.
-    PostStream.prototype.loadPostsIfNeeded = function () {};
+    // Monotonic visual scroll tracking across tree envelopes (eliminates jump to bottom glitch)
+    PostStream.prototype.loadPostsIfNeeded = function () {
+      if (!this.stream || this.stream.paused || !this.element) return;
+
+      const container = this.element;
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      const items = Array.from(container.querySelectorAll('.PostStream-item[data-number]'));
+      if (!items.length) return;
+
+      let highestIndexInViewport = 0;
+      let lastVisibleNumber = 1;
+
+      items.forEach((item, idx) => {
+        const rect = item.getBoundingClientRect();
+        if (rect.top < windowHeight * 0.8 && rect.bottom > 0) {
+          highestIndexInViewport = idx;
+          const num = Number(item.getAttribute('data-number'));
+          if (num > lastVisibleNumber) {
+            lastVisibleNumber = num;
+          }
+        }
+      });
+
+      const totalItems = items.length;
+      if (totalItems > 0) {
+        const visualFraction = Math.min(1, Math.max(0, highestIndexInViewport / (totalItems - 1 || 1)));
+        const totalCount = this.stream.count() || totalItems;
+        const targetIndex = Math.round(visualFraction * (totalCount - 1));
+
+        if (targetIndex !== this.stream.index) {
+          this.stream.index = targetIndex;
+          if (this.stream.forceUpdateScrubber !== undefined) {
+            this.stream.forceUpdateScrubber = true;
+          }
+        }
+      }
+
+      // Sync lastReadPostNumber when scrolling reaches new posts
+      const discussion = this.stream.discussion;
+      if (discussion && typeof discussion.lastReadPostNumber === 'function') {
+        const lastRead = discussion.lastReadPostNumber() || 0;
+        if (lastVisibleNumber > lastRead) {
+          discussion.save({ lastReadPostNumber: lastVisibleNumber });
+        }
+      }
+    };
 
     // Split the stream into the OP and one surface holding every comment.
     extend(PostStream.prototype, 'view', function (vnode) {
@@ -1176,7 +1233,6 @@ app.initializers.add('itqan-discussions', () => {
     const viewCount = discussion.attribute ? discussion.attribute('views') : null;
 
     const stats = [
-      commentCount != null ? stat('far fa-comment', Math.max(0, commentCount - 1), 'replies') : null,
       participantCount != null ? stat('far fa-user', participantCount, 'participants') : null,
       viewCount != null ? stat('far fa-eye', viewCount, 'views') : null,
     ].filter(Boolean);

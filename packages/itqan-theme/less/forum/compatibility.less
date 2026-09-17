@@ -197,3 +197,31 @@ html[data-itqan-theme='dark'] {
     color: var(--text-color);
   }
 }
+
+// -----------------------------------------------------------------------------
+// Scrubber & Side log layout safeguards
+// -----------------------------------------------------------------------------
+.Scrubber {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.Scrubber-first {
+  margin-bottom: 12px !important;
+  display: block;
+}
+
+.Scrubber-last {
+  margin-top: 12px !important;
+  display: block;
+}
+
+.Scrubber-scrollbar {
+  min-height: 80px;
+  position: relative;
+}
+
+.Scrubber-info {
+  white-space: nowrap;
+}

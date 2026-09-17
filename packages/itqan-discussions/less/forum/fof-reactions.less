@@ -75,6 +75,13 @@
       height: 16px;
       width: 16px;
       margin: 0 !important;
+      object-fit: contain;
+
+      &:not([src]),
+      &[src=''] {
+        opacity: 0;
+        visibility: hidden;
+      }
     }
 
     .count {
