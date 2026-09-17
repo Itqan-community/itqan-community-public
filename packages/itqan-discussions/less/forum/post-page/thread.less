@@ -28,6 +28,8 @@
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--r-lg);
+  border-end-start-radius: 0;
+  border-bottom-start-radius: 0;
   box-shadow: var(--elev-1);
   // Visible so FoF's .CommentPost--Reactions picker is not clipped.
   overflow: visible;
@@ -65,6 +67,8 @@
   padding: var(--thread-reply-pad);
   background: var(--surface-sunken);
   border-top: 1px solid var(--hairline);
+  border-end-end-radius: 12px;
+  border-bottom-end-radius: 12px;
 
   // Collapse hides rows with [hidden]; don't leave an empty sunken slab.
   &:not(:has(.PostStream-item:not([hidden]))) {
@@ -101,24 +105,27 @@
   box-sizing: border-box;
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--r-md);
+  border-start-end-radius: 6px;
+  border-end-end-radius: 6px;
   overflow: visible;
 
   &::before {
     content: "";
     width: 12px;
-    border-inline-start: 2px solid #7d7d7d;
+    border-inline-start: 2px solid #bcbcbc;
     position: absolute;
-    border-end-start-radius: 8px;
-    border-bottom-start-radius: 8px;
-    inset-inline-start: 0;
-    top: -10px;
-    bottom: 0px;
+    inset-inline-start: -1px;
+    top: -9px;
+    bottom: -1px;
     height: auto;
     z-index: 1;
 
+    html[data-itqan-theme='dark'] & {
+      border-inline-start-color: #656565;
+    }
+
     @media @phone {
-      top: -8px;
+      top: -7px;
     }
   }
 
