@@ -54,6 +54,7 @@
 // Shared post-body typography
 // ---------------------------------------------------------------------------
 
+.Post-body,
 .CommentPost .Post-body {
   margin: 0;
   padding: 0;
@@ -65,12 +66,10 @@
   // dropdowns opened from inside the body.
   overflow: visible;
   overflow-wrap: anywhere;
-  min-width: 0;
+  min-width: 100%;
+  width: 100%;
   max-width: 100%;
 
-  // Long lines are the biggest readability cost on a wide screen. The cap is on
-  // the text children rather than on the body, so media, embeds, code and
-  // tables still get the full column width.
   > p,
   > ul,
   > ol,
@@ -81,7 +80,9 @@
   > h4,
   > h5,
   > h6 {
-    max-width: var(--measure);
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
   }
 
   > p {
