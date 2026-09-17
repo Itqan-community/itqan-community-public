@@ -30,6 +30,7 @@ class DiscussionTranslationSerializer extends AbstractSerializer
             'language' => $model->language,
             'translation' => $model->translation,
             'provider' => $model->provider,
+            'detectedLang' => $model->discussion ? $model->discussion->detected_lang : null,
             'createdAt' => $this->formatDate($model->created_at),
             'updatedAt' => $this->formatDate($model->updated_at)
         ];
