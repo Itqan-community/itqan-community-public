@@ -195,7 +195,12 @@
   }
 
   &:hover > .CommentPost > div {
-    background: var(--surface-hover);
+    background: #e1e9e7c4;
+    border-radius: 8px;
+
+    html[data-itqan-theme='dark'] & {
+      background: #cbddd914;
+    }
   }
 
   &.is-reply-target > .CommentPost > div,
