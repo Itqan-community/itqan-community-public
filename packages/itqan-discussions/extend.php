@@ -1,6 +1,5 @@
 <?php
 
-use Flarum\Api\Controller\CreatePostController;
 use Flarum\Api\Controller\ListDiscussionsController;
 use Flarum\Api\Controller\ShowDiscussionController;
 use Flarum\Api\Serializer\BasicPostSerializer;
@@ -16,7 +15,6 @@ use Itqan\Discussions\Access\PostPolicy;
 use Itqan\Discussions\Api\ListCommentTreeController;
 use Itqan\Discussions\Api\ListPostRepliesController;
 use Itqan\Discussions\Api\LoadTreePostsRelationship;
-use Itqan\Discussions\Api\SanitizeCreatePostPosts;
 use Itqan\Discussions\Api\VoteController;
 use Itqan\Discussions\Console\BackfillParentIdsCommand;
 use Itqan\Discussions\Console\BackfillRootDepthCommand;
@@ -154,14 +152,17 @@ return [
         ->attribute('rootsHasMore', function (DiscussionSerializer $serializer, Discussion $discussion) {
             return isset($discussion->roots_has_more) ? (bool) $discussion->roots_has_more : null;
         })
-        ->attribute('rootsHasPrevious', function (DiscussionSerializer $serializer, Discussion $discussion) {
-            return isset($discussion->roots_has_previous) ? (bool) $discussion->roots_has_previous : null;
-        })
-        ->attribute('rootsOffset', function (DiscussionSerializer $serializer, Discussion $discussion) {
-            return isset($discussion->roots_offset) ? (int) $discussion->roots_offset : null;
-        })
         ->attribute('commentSort', function (DiscussionSerializer $serializer, Discussion $discussion) {
             return $discussion->comment_sort ?? null;
+        }),
+
+    (new Extend\ApiSerializer(\Flarum\Api\Serializer\BasicDiscussionSerializer::class))
+        ->attributes(function (\Flarum\Api\Serializer\BasicDiscussionSerializer $serializer, Discussion $discussion, array $attributes) {
+            if (class_exists(\IanM\Translate\AddDiscussionAttributes::class)) {
+                $invoker = resolve(\IanM\Translate\AddDiscussionAttributes::class);
+                return $invoker($serializer, $discussion, $attributes);
+            }
+            return $attributes;
         }),
 
     // Event listeners for parent_id persistence and reply_count synchronization
@@ -183,10 +184,6 @@ return [
     (new Extend\ApiController(ShowDiscussionController::class))
         ->load(['posts.postVotes'])
         ->prepareDataForSerialization(LoadTreePostsRelationship::class),
-
-    // Prevent CreatePost from dumping every post ID into the client payload.
-    (new Extend\ApiController(CreatePostController::class))
-        ->prepareDataForSerialization(SanitizeCreatePostPosts::class),
 
     (new Extend\Console())
         ->command(BackfillParentIdsCommand::class)
