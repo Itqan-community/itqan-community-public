@@ -97,6 +97,8 @@ jobs:
           nginx -t
           systemctl reload nginx
           systemctl reload php8.1-fpm
+
+          bash scripts/check-flarum-assets.sh staging.community.itqan.dev
           REMOTE
 
       - name: Health check
