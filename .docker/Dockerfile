@@ -16,6 +16,17 @@ RUN set -eux; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
+# Headless Chromium draws the preview cards: it is the only text stack in the
+# image that runs bidi, per-glyph font fallback and joined-glyph measurement
+# correctly. The Noto fonts are the fallback for scripts the bundled woff2
+# subsets do not cover, and for emoji in excerpts.
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        chromium fonts-noto-core fonts-noto-color-emoji; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
+
 # Flarum's .htaccess needs rewriting, and the document root is public/ — the
 # rest of the tree, config.php included, must stay unreachable.
 RUN a2enmod rewrite headers \

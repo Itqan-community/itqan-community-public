@@ -1,0 +1,33 @@
+{
+    "name": "itqan/flarum-preview-cards",
+    "description": "Generated Open Graph preview cards for discussions, built to typeset Arabic correctly",
+    "keywords": ["flarum", "opengraph", "preview", "arabic", "rtl"],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0",
+        "v17development/flarum-seo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\PreviewCards\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Preview Cards",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-image",
+                "color": "#ffffff",
+                "backgroundColor": "#064e3b"
+            }
+        }
+    }
+}

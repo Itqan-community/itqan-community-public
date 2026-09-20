@@ -1,0 +1,57 @@
+itqan-preview-cards:
+  admin:
+    title: Preview Cards
+    help: Generate an Open Graph preview card for every visible discussion.
+
+    elements:
+      heading: Card elements
+      help: Choose what appears on the generated card.
+      logo: Forum logo or uploaded card logo
+      brand: Forum name when there is no logo
+      tagline: Tagline under the logo
+      tag: Category tag
+      excerpt: Excerpt of the first post
+      author: Author name
+      avatar: Author avatar
+      date: Original post date
+      replies: Reply count
+      last_reply: Last reply date
+
+    images:
+      heading: Images
+      help: Uploads are stored on the forum's assets disk and inlined into the generated card.
+      logo: Card logo
+      logo_help: Replaces the wordmark on the card. Remove it to fall back to the wordmark. PNG, JPEG, WebP, GIF or SVG, up to 2 MB.
+      upload_logo: Upload card logo
+      remove_logo: Remove card logo
+      background: Background
+      background_help: PNG, JPEG, WebP, GIF or SVG, up to 5 MB. A dark overlay in the background colour keeps the text readable.
+      upload_background: Upload background
+      remove_background: Remove background
+
+    colors:
+      heading: Colors
+      help: Leave the accent empty to follow the forum theme colour.
+      background: Background
+      accent: Accent
+      title: Title
+      text: Excerpt
+      meta: Meta (author, dates, replies)
+      tag: Category tag
+
+    branding:
+      heading: Branding and language
+      brand_ar: Arabic wordmark
+      brand_en: English wordmark
+      brand_help: Used when no card logo or forum logo is shown.
+      tagline_ar: Tagline (Arabic)
+      tagline_en: Tagline (English)
+      tagline_help: Shown next to the logo when the tagline element is enabled.
+      language: Card language
+      language_auto: Automatic (discussion language, then forum default)
+
+    maintenance:
+      heading: Maintenance
+      clear: Clear generated cards
+      clear_help: Deletes every rendered card. The next request to a discussion page regenerates it.
+      cleared: "Deleted {count} card(s) and freed {size} KB."

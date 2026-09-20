@@ -73,6 +73,7 @@
         "itqan/flarum-composer-tools": "@dev",
         "itqan/flarum-discussions": "@dev",
         "itqan/flarum-mailerlite": "@dev",
+        "itqan/flarum-preview-cards": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
         "justoverclock/newsletter": "*",
@@ -101,6 +102,10 @@
         "itqan-mailerlite": {
             "type": "path",
             "url": "packages/itqan-mailerlite"
+        },
+        "itqan-preview-cards": {
+            "type": "path",
+            "url": "packages/itqan-preview-cards"
         },
         "itqan-theme": {
             "type": "path",
