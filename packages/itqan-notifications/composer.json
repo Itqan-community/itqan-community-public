@@ -1,22 +1,41 @@
 {
     "name": "itqan/flarum-notifications",
-    "description": "Itqan community notifications — do-not-disturb toggle",
+    "description": "Itqan community notifications — do-not-disturb toggle and discussion-author reply alerts",
+    "keywords": [
+        "flarum",
+        "notifications",
+        "replies",
+        "dnd"
+    ],
     "type": "flarum-extension",
     "license": "MIT",
     "authors": [
-        { "name": "Itqan Community", "email": "a.abduraghman@itqan.dev" }
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
     ],
     "require": {
-        "flarum/core": "^1.8.0"
+        "flarum/core": "^1.8.0",
+        "flarum/subscriptions": "*"
     },
     "autoload": {
-        "psr-4": { "Itqan\\Notifications\\": "src/" }
+        "psr-4": {
+            "Itqan\\Notifications\\": "src/"
+        }
     },
     "extra": {
         "flarum-extension": {
             "title": "Itqan Notifications",
             "category": "feature",
-            "icon": { "name": "far fa-bell", "color": "#ffffff", "backgroundColor": "#0D9488" }
+            "icon": {
+                "name": "far fa-bell",
+                "color": "#ffffff",
+                "backgroundColor": "#0D9488"
+            }
         }
+    },
+    "scripts": {
+        "build": "cd js && npm run build"
     }
 }
