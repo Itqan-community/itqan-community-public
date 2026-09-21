@@ -11,10 +11,13 @@ import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import icon from 'flarum/common/helpers/icon';
 import extractText from 'flarum/common/utils/extractText';
 
+import PostMeta from 'flarum/forum/components/PostMeta';
 import VoteButtons from './components/VoteButtons';
 import { getPostDepth, isDescendantOfCollapsed, reorderStreamTree } from './components/CommentTree';
+import AbsoluteDateBadge from './components/AbsoluteDateBadge';
 
 export { default as VoteButtons } from './components/VoteButtons';
+export { default as AbsoluteDateBadge } from './components/AbsoluteDateBadge';
 export * from './components/CommentTree';
 
 function clearActiveReplyTarget() {
@@ -369,4 +372,22 @@ app.initializers.add('itqan-discussions', () => {
       }, 500);
     });
   }
+
+  // ==========================================
+  // 3. Archival Post Absolute Timestamps (PR #20)
+  // ==========================================
+  extend(PostMeta.prototype, 'viewItems', function (items) {
+    const post = this.attrs.post;
+    if (!post || !post.createdAt()) return;
+    const time = post.createdAt();
+
+    items.replace(
+      'time',
+      <a className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
+        <AbsoluteDateBadge time={time} />
+      </a>,
+      100
+    );
+  });
 });
+
