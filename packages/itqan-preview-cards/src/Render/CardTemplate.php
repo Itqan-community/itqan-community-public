@@ -9,8 +9,8 @@ class CardTemplate
     public const WIDTH = 1200;
     public const HEIGHT = 630;
 
-    private const EN_SIZES = [43, 39, 35];
-    private const AR_SIZES = [39, 35, 31];
+    private const EN_SIZES = [52, 47, 42];
+    private const AR_SIZES = [47, 42, 37];
 
     private const ICON_CALENDAR = '<svg class="icon" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="7" y="10" width="34" height="31" rx="4" stroke="currentColor" stroke-width="3"/><path d="M14 6v9M34 6v9M8 20h32" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
     private const ICON_BUBBLE = '<svg class="icon" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M40 22.5c0 9.1-7.3 16.5-16.4 16.5-2.8 0-5.4-.7-7.7-1.9L8 40l2.6-7.6A16.4 16.4 0 0 1 7 22.5C7 13.4 14.4 6 23.6 6S40 13.4 40 22.5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>';
@@ -40,9 +40,6 @@ class CardTemplate
         $bgEnd = $this->shade($bg, 0.94);
         $accentSoft = $this->rgba($accent, 0.22);
         $bgGlow = $this->rgba($this->shade($bg, 0.62), 0.38);
-        $motif = $this->rgba($accent, 0.55);
-        $railTop = $this->rgba($accent, 0.38);
-        $railBottom = $this->rgba($accent, 0.28);
         $divider = $this->rgba($this->shade($accent, 0.85), 0.55);
         $accentDark = $this->shade($accent, 0.72);
         $accentDeep = $this->shade($accent, 0.55);
@@ -91,30 +88,25 @@ body{font-family:'Itqan Cards',system-ui,-apple-system,'Segoe UI',sans-serif;-we
 .frame::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.04),rgba(0,0,0,0) 45%,rgba(255,255,255,.01))}
 .bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
 .shade{position:absolute;inset:0}
-.motif-top,.motif-bottom{position:absolute;inset-inline-end:-41px;border:50px solid {$motif};border-right-color:transparent;border-bottom-color:transparent;border-radius:90px 0 0 0;transform:rotate(-45deg);z-index:1}
-.motif-top{top:5px;width:259px;height:259px}
-.motif-bottom{bottom:-105px;width:285px;height:285px;opacity:.92}
-.rail{position:absolute;inset-inline-end:146px;top:143px;width:60px;height:420px;background:linear-gradient(180deg,{$railTop},{$railBottom});border-radius:0 0 5px 5px;z-index:1}
-.diamond{position:absolute;inset-inline-end:168px;top:59px;width:84px;height:84px;transform:rotate(45deg);background:linear-gradient(135deg,{$accent},{$accentDark});opacity:.78;z-index:1}
-.logo-box{position:absolute;top:44px;inset-inline-start:68px;width:188px;height:143px;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;z-index:2}
+.logo-box{position:absolute;top:29px;inset-inline-start:57px;width:244px;height:185px;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;z-index:2}
 .logo-box img{width:100%;height:100%;object-fit:contain;display:block}
-.brand{font-size:34px;font-weight:700;color:{$titleColor}}
-.accent{position:absolute;top:185px;inset-inline-start:83px;width:63px;height:4px;background:{$accent};z-index:2}
-.tagline{position:absolute;top:206px;inset-inline-start:80px;width:420px;text-align:start;font-size:22px;line-height:1.4;font-weight:400;color:{$textColor};display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;z-index:2}
-.tag{position:absolute;top:44px;inset-inline-end:79px;font-size:20px;font-weight:400;color:{$tagColor};border:2px solid {$tagBorder};border-radius:999px;padding:7px 18px;white-space:nowrap;z-index:2}
-.title{position:absolute;top:278px;inset-inline-start:81px;width:953px;text-align:start;font-size:39px;line-height:1.35;font-weight:700;letter-spacing:-.19px;color:{$titleColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
-html[lang="ar"] .title{font-size:39px}
-html[lang="en"] .title{font-size:43px}
-.description{position:absolute;top:365px;inset-inline-start:81px;width:990px;text-align:start;font-size:23px;line-height:1.65;font-weight:400;color:{$textColor};display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word;z-index:2}
-.divider{position:absolute;inset-inline:79px;top:506px;height:2px;background:{$divider};z-index:2}
-.meta{position:absolute;bottom:54px;inset-inline:79px;display:flex;direction:ltr;align-items:center;justify-content:space-between;color:{$metaColor};z-index:2}
-.meta-items{display:flex;direction:ltr;align-items:center;gap:20px;font-size:21px}
+.brand{font-size:38px;font-weight:700;color:{$titleColor}}
+.accent{position:absolute;top:218px;inset-inline-start:79px;width:82px;height:5px;background:{$accent};z-index:2}
+.tagline{position:absolute;top:233px;inset-inline-start:80px;width:525px;text-align:start;font-size:26px;line-height:1.4;font-weight:400;color:{$textColor};display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;z-index:2}
+.tag{position:absolute;top:29px;inset-inline-end:79px;font-size:20px;font-weight:400;color:{$tagColor};border:2px solid {$tagBorder};border-radius:999px;padding:7px 18px;white-space:nowrap;z-index:2}
+.title{position:absolute;top:294px;inset-inline-start:81px;width:1035px;text-align:start;font-size:47px;line-height:1.35;font-weight:700;letter-spacing:-.19px;color:{$titleColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
+html[lang="ar"] .title{font-size:47px}
+html[lang="en"] .title{font-size:52px}
+.description{position:absolute;top:375px;inset-inline-start:81px;width:1035px;text-align:start;font-size:28px;line-height:1.55;font-weight:400;color:{$textColor};display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word;z-index:2}
+.divider{position:absolute;inset-inline:79px;top:518px;height:2px;background:{$divider};z-index:2}
+.meta{position:absolute;bottom:40px;inset-inline:79px;display:flex;direction:ltr;align-items:center;justify-content:space-between;color:{$metaColor};z-index:2}
+.meta-items{display:flex;direction:ltr;align-items:center;gap:20px;font-size:25px}
 .meta-item{display:flex;direction:ltr;align-items:center;gap:12px}
 html[dir="rtl"] .meta-item{direction:rtl}
 html[dir="ltr"] .meta,html[dir="ltr"] .meta-items{flex-direction:row-reverse}
 .icon{width:29px;height:29px;display:block;flex:0 0 auto}
 .bullet{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8;flex:0 0 auto}
-.admin{display:flex;direction:ltr;align-items:center;gap:17px;font-size:22px;font-weight:700;color:{$titleColor}}
+.admin{display:flex;direction:ltr;align-items:center;gap:17px;font-size:26px;font-weight:700;color:{$titleColor}}
 html[dir="ltr"] .admin{flex-direction:row-reverse}
 .admin-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
 .avatar{width:58px;height:58px;border-radius:50%;background:conic-gradient(from 20deg,{$accent},{$accentDark},{$accentDeep},{$accent});display:grid;place-items:center;overflow:hidden;flex:0 0 auto}
@@ -125,10 +117,6 @@ html[dir="ltr"] .admin{flex-direction:row-reverse}
 <body>
 {$background}
 <main class="frame" role="img" aria-label="{$title}">
-<div class="motif-top" aria-hidden="true"></div>
-<div class="motif-bottom" aria-hidden="true"></div>
-<div class="rail" aria-hidden="true"></div>
-<div class="diamond" aria-hidden="true"></div>
 {$brandBox}
 <div class="accent" aria-hidden="true"></div>
 {$taglineBlock}

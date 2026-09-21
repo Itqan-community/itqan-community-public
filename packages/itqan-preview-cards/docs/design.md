@@ -401,8 +401,8 @@ Operational rules:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  [tag]                                        [logo 188×143] │  logo at inline-start
-│                                                    ────      │  accent bar under logo
+│  [tag]                                       [logo 244×185]  │  logo at inline-start
+│                                                   ──────     │  accent bar under logo
 │                                     النص التعريفي            │  tagline, aligned to logo
 │  ──────────────────────────────────────────────────────────  │
 │                     عنوان النقاش في سطر واحد …               │  title (1 line, ellipsis)
@@ -412,7 +412,7 @@ Operational rules:
 └──────────────────────────────────────────────────────────────┘
 ```
 
-The reference file (`Itqan Article Card.html`) is 1600×840 — the same 1.905 aspect as the OG canvas — so every coordinate was multiplied by 0.75: logo box 188×143 at 44/68, accent 63×4 at 185/83, tagline at 206 (22 px, 2-line clamp), title at 278 (39 px ar / 43 px en, nowrap, ellipsis, 953 px wide), description at 365 (23 px, 2-line clamp, 990 px), divider at 506, meta at bottom 54 with 29 px icons and a 58 px avatar (32 px inner circle with the initial). Decorative motifs sit at the inline-end edge: two rotated chevrons, a rail (60×420) and a diamond (84×84). Background is a layered gradient — two radial glows plus a 120deg linear gradient — all derived from the configured background colour, with the accent colour feeding the motifs, rail, divider and avatar ring.
+The current reference (`itqan_article_card_text20_logo30_no_left_decor.html`) is 1600×840 — the same 1.905 aspect as the OG canvas — so every coordinate was multiplied by 0.75: logo box 244×185 at 29/57, accent 82×5 at 218/79, tagline at 233 (26 px, 2-line clamp), title at 294 (47 px ar / 52 px en, nowrap, ellipsis, 1035 px wide), description at 375 (28 px, 1.55 line-height, 2-line clamp, 1035 px), divider at 518, meta at bottom 40 (25 px items, 26 px author, 29 px icons, 58 px avatar with a 32 px inner circle). There is **no left decor**: the earlier chevrons, rail and diamond were removed in this iteration; the background remains a layered gradient (two radial glows plus a 120deg linear gradient) derived from the configured background colour, with the accent colour feeding the bar, divider and avatar ring.
 
 The brand block is the uploaded card logo (`itqan-preview-cards.logo_path`) when present, otherwise the forum logo (`logo_path`), otherwise the `forum_title` wordmark (or the per-language `brand_ar` / `brand_en` override); `show_logo` and `show_brand` gate the two. A settable tagline (`tagline_ar` / `tagline_en`, falling back to the other language) is right-aligned under the accent bar and gated by `show_tagline`. The author element is the real avatar when uploaded (read from the local avatars disk and inlined as a `data:` URI), otherwise a ring with the first letter of the display name; the name sits inside the avatar, matching the reference. The reply count excludes the opening post (`comment_count - 1`); date, replies and the optional last-reply date form the inline-end meta group, separated by bullets, while the author group sits at the inline-start. A background image, if uploaded, is drawn full-bleed under a gradient derived from the configured background colour, six element colours are configurable, and every element can be toggled off from the admin page.
 
@@ -420,7 +420,7 @@ Layout requirements:
 
 - Single `dir` value on `<html>`; all coordinates use logical insets (`inset-inline-start/end`) plus a few direction overrides in the meta row, so the English card is the mirror image of the Arabic card and the stylesheet is one file.
 - `* { margin: 0; box-sizing: border-box }`, a fixed 1200×630 frame with absolute-positioned elements (the reference is absolute too), and overflow hidden at the frame as the final safety net.
-- The title is clamped to one line and the excerpt to two. The in-page script steps the title size down through `{ar:[39,35,31], en:[43,39,35]}` while `scrollWidth > clientWidth`, so as much of the title as possible fits before the ellipsis is applied; shrinking the type before abbreviating keeps the article's keep-priority for the one line that remains.
+- The title is clamped to one line and the excerpt to two. The in-page script steps the title size down through `{ar:[47,42,37], en:[52,47,42]}` while `scrollWidth > clientWidth`, so as much of the title as possible fits before the ellipsis is applied; shrinking the type before abbreviating keeps the article's keep-priority for the one line that remains.
 - Fitting algorithm, run in the page before screenshot:
 
 ```js
@@ -429,7 +429,7 @@ Layout requirements:
   await document.fonts.ready;
   const title = document.querySelector('.title');
 
-  const sizes = FONT_SIZES[document.documentElement.lang]; // {ar:[39,35,31], en:[43,39,35]}
+  const sizes = FONT_SIZES[document.documentElement.lang]; // {ar:[47,42,37], en:[52,47,42]}
 
   for (const size of sizes) {
     title.style.fontSize = size + 'px';
@@ -522,7 +522,7 @@ A dedicated admin page (Flarum admin JS: `js/admin.js` → `PreviewCardsPage`, `
 | `itqan-preview-cards.logo_path` | empty | Uploaded card logo path; takes precedence over the forum logo |
 | `itqan-preview-cards.background_path` | empty | Uploaded background path on the `flarum-assets` disk |
 | `itqan-preview-cards.color_background` | `#004638` | Card background; gradients and the image overlay are derived from it |
-| `itqan-preview-cards.color_accent` | `#00ad83` | Accent (bar, divider, motifs, avatar ring); empty follows `theme_primary_color` |
+| `itqan-preview-cards.color_accent` | `#00ad83` | Accent (bar, divider, avatar ring); empty follows `theme_primary_color` |
 | `itqan-preview-cards.color_title` | `#ffffff` | Title and author name colour |
 | `itqan-preview-cards.color_text` | `#cbd7d4` | Excerpt and tagline colour |
 | `itqan-preview-cards.color_meta` | `#d7e1de` | Dates/replies colour |
@@ -771,6 +771,7 @@ The v1 backend is implemented in `packages/itqan-preview-cards` and running on t
 - The meta row follows the reference's physical arrangement for Arabic (author and avatar at the outer inline-start edge, name inside the avatar; date/replies group at inline-end with icons on the text's outer side) and mirrors both groups for English. The reference's own DOM order was measured with `getBoundingClientRect()` before implementing.
 - Background layers, motifs, rail, diamond, divider, avatar ring and accent bar are all derived from the two colour settings (`shade()`/`rgba()` helpers), so a palette change restyles the whole decoration.
 - The reference logo uploaded through the admin page (the Itqan calligraphy) is what the verification cards above use.
+- Second iteration (`itqan_article_card_text20_logo30_no_left_decor.html`): +20% text sizes, +30% logo, and the left decor removed; the template was rescaled to the new coordinates and the motif CSS/HTML deleted. Verified against a Chromium screenshot of the new reference for both Arabic and English.
 
 **Deviations from this document**
 

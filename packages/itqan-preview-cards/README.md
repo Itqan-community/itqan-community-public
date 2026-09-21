@@ -74,7 +74,7 @@
 | `itqan-preview-cards.logo_path` | فارغ | مسار شعار البطاقة المرفوع؛ وإن وُجد قُدِّم على شعار المنتدى. |
 | `itqan-preview-cards.background_path` | فارغ | مسار صورة الخلفية المرفوعة. |
 | `itqan-preview-cards.color_background` | `#004638` | لون خلفية البطاقة، ومنه تُشتق تدرّجاتها وطبقة التعتيم فوق صورة الخلفية. |
-| `itqan-preview-cards.color_accent` | `#00ad83` | لون التمييز: الشريط تحت الشعار، والخط الفاصل، والزخارف؛ وإن تُرك فارغًا اتبع لون قالب المنتدى. |
+| `itqan-preview-cards.color_accent` | `#00ad83` | لون التمييز: الشريط تحت الشعار، والخط الفاصل، وحلقة صورة الكاتب؛ وإن تُرك فارغًا اتبع لون قالب المنتدى. |
 | `itqan-preview-cards.color_title` | `#ffffff` | لون العنوان واسم الكاتب. |
 | `itqan-preview-cards.color_text` | `#cbd7d4` | لون المقتطف والنص التعريفي. |
 | `itqan-preview-cards.color_meta` | `#d7e1de` | لون التواريخ وعدد الردود. |

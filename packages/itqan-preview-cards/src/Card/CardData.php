@@ -4,7 +4,7 @@ namespace Itqan\PreviewCards\Card;
 
 class CardData
 {
-    public const TEMPLATE_VERSION = '7';
+    public const TEMPLATE_VERSION = '8';
 
     public function __construct(
         public readonly int $discussionId,
