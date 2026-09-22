@@ -18,7 +18,7 @@ export default class AbsoluteDateBadge extends Component {
 
     // Posts older than 30 days display explicit calendar dates
     if (diffDays > 30) {
-      const formattedDate = d.format('MMMM D, YYYY');
+      const formattedDate = d.format('LL');
       const isoTimestamp = d.toISOString();
       const fullTimeStr = d.format('LLLL');
 
