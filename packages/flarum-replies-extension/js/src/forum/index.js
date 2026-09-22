@@ -390,6 +390,46 @@ app.initializers.add('mtareq-nested-replies', () => {
     });
   }
 
+  // Render vertical voting rail on discussion listing cards (start side of card)
+  if (settings.showVotes) {
+    extend(DiscussionListItem.prototype, 'view', function (vnode) {
+      if (!vnode || !vnode.children) return;
+
+      const discussion = this.attrs.discussion;
+      const firstPost = discussion ? discussion.firstPost() : null;
+
+      if (!firstPost) return;
+
+      const voteRail = m('.DiscussionListItem-vote', m(VoteRail, { post: firstPost, adapter: voteAdapter }));
+
+      let contentVnode = null;
+      if (Array.isArray(vnode.children)) {
+        contentVnode = vnode.children.find(
+          (child) =>
+            child &&
+            child.attrs &&
+            child.attrs.className &&
+            typeof child.attrs.className === 'string' &&
+            child.attrs.className.includes('DiscussionListItem-content')
+        );
+      }
+
+      if (contentVnode && Array.isArray(contentVnode.children)) {
+        const exists = contentVnode.children.some(
+          (child) =>
+            child &&
+            child.attrs &&
+            child.attrs.className &&
+            typeof child.attrs.className === 'string' &&
+            child.attrs.className.includes('DiscussionListItem-vote')
+        );
+        if (!exists) {
+          contentVnode.children.unshift(voteRail);
+        }
+      }
+    });
+  }
+
   function isLikedByMe(post) {
     if (!app.session.user || typeof post.likes !== 'function') return false;
 

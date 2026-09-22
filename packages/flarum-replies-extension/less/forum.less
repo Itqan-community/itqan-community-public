@@ -79,12 +79,9 @@
   background-size: 2px 100%;
 
   > .NestedRepliesPost-container {
-    margin-inline-start: ~"calc(var(--depth) * var(--indent))";
-    // A guide gutter on the inline-start holds the thread line and the
-    // fold/unfold button, both centred on it, so the line runs through the
-    // middle of the button and the text starts clear of them.
+    margin-inline-start: 0;
     padding-block: 4px 14px;
-    padding-inline: var(--gutter) 0;
+    padding-inline: ~"calc(var(--depth) * var(--indent))";
     border-radius: 4px;
     background: transparent;
     transition: background 0.15s ease;
@@ -1390,4 +1387,88 @@ body.dark-mode {
     }
   }
 }
+
+/* ==========================================================================
+   DiscussionListItem Vertical Voting Rail (Listing Page)
+   ========================================================================== */
+.DiscussionListItem-vote {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 12px;
+  flex-shrink: 0;
+
+  .NestedRepliesVoteRail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    background: var(--control-bg, rgba(0, 0, 0, 0.04));
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    .NestedRepliesVoteButton {
+      padding: 3px 5px;
+      font-size: 0.8rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--muted-color, #71717a);
+      transition: color 0.15s ease, transform 0.15s ease;
+
+      &:hover:not(:disabled) {
+        color: var(--text-color, #0f172a);
+      }
+
+      &--up.is-active {
+        color: var(--nested-replies-upvote-color, #16a34a) !important;
+      }
+
+      &--down.is-active {
+        color: var(--nested-replies-downvote-color, #dc2626) !important;
+      }
+    }
+
+    .NestedRepliesVoteScore {
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1;
+      margin: 2px 0;
+      color: var(--heading-color, #0f172a);
+    }
+  }
+}
+
+html[data-itqan-theme="dark"],
+body.dark-mode {
+  .DiscussionListItem-vote {
+    .NestedRepliesVoteRail {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.08);
+
+      .NestedRepliesVoteButton {
+        color: var(--muted-color, #a0a0a0);
+
+        &:hover:not(:disabled) {
+          color: #ffffff;
+        }
+
+        &--up.is-active {
+          color: var(--nested-replies-upvote-color-dark, #4ade80) !important;
+        }
+
+        &--down.is-active {
+          color: var(--nested-replies-downvote-color-dark, #f87171) !important;
+        }
+      }
+
+      .NestedRepliesVoteScore {
+        color: var(--text-color, #f8fafc);
+      }
+    }
+  }
+}
+
 
