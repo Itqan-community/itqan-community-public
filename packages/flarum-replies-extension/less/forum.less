@@ -1009,6 +1009,15 @@ a.NestedRepliesReplyTag {
   font-size: 12px;
   color: var(--muted-color, #878a8c);
 
+  .icon {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 400;
+
+    &::before {
+      content: "\f004" !important;
+    }
+  }
+
   .username {
     font-weight: 600;
     color: var(--text-color, #1c1c1e);
@@ -1062,6 +1071,10 @@ body.dark,
 
   .NestedRepliesPost .Post-likedBy {
     color: var(--muted-color, #a0a0a0);
+
+    .icon {
+      color: var(--nested-replies-like-color, #ff5252);
+    }
 
     .username {
       color: var(--text-color, #e0e0e0) !important;
