@@ -8,6 +8,10 @@ use Flarum\User\User;
 
 class PostPolicy extends AbstractPolicy
 {
+    public function __construct(private PostVisibility $visibility)
+    {
+    }
+
     /**
      * Nobody votes on their own post. Reddit auto-upvotes the author's, which
      * makes every post start at one and so means nothing; leaving the author
@@ -20,8 +24,10 @@ class PostPolicy extends AbstractPolicy
         }
 
         // Voting on a post the actor cannot see would leak its existence
-        // through the score.
-        if (! $post->isVisibleTo($actor)) {
+        // through the score. Answered from a per-request memo that the list
+        // and show controllers fill in one query for the whole page, rather
+        // than one `isVisibleTo` query per discussion or post.
+        if (! $this->visibility->isVisible($actor, $post)) {
             return $this->deny();
         }
 

@@ -1,6 +1,7 @@
 <?php
 
 use Flarum\Api\Controller\ListDiscussionsController;
+use Flarum\Api\Controller\ListPostsController;
 use Flarum\Api\Controller\ShowDiscussionController;
 use Flarum\Api\Serializer\BasicPostSerializer;
 use Flarum\Api\Serializer\DiscussionSerializer;
@@ -11,15 +12,16 @@ use Flarum\Post\Event\Deleted;
 use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
 use Flarum\User\User;
-use Itqan\Discussions\Access\PostPolicy;
 use Itqan\Discussions\Api\ListCommentTreeController;
 use Itqan\Discussions\Api\ListPostRepliesController;
 use Itqan\Discussions\Api\LoadTreePostsRelationship;
+use Itqan\Discussions\Api\PrefetchPostVisibility;
 use Itqan\Discussions\Api\VoteController;
 use Itqan\Discussions\Console\BackfillParentIdsCommand;
 use Itqan\Discussions\Console\BackfillRootDepthCommand;
 use Itqan\Discussions\Listener\SaveParentIdToPost;
 use Itqan\Discussions\Listener\UpdateReplyCountOnDelete;
+use Itqan\Discussions\Provider\PostVisibilityProvider;
 use Itqan\Discussions\Provider\SortMapProvider;
 use Itqan\Discussions\Vote\Vote;
 
@@ -174,16 +176,26 @@ return [
     (new Extend\ApiController(ListDiscussionsController::class))
         ->addSortField('votes')
         ->addSortField('hotness')
-        ->load(['firstPost', 'firstPost.postVotes']),
+        ->load(['firstPost', 'firstPost.postVotes'])
+        ->prepareDataForSerialization(PrefetchPostVisibility::class),
 
     // SortMap provider
     (new Extend\ServiceProvider())
         ->register(SortMapProvider::class),
 
+    // One shared PostVisibility per request: the hooks below fill it, PostPolicy::vote reads it.
+    (new Extend\ServiceProvider())
+        ->register(PostVisibilityProvider::class),
+
     // Load post votes and tree posts for discussions
     (new Extend\ApiController(ShowDiscussionController::class))
         ->load(['posts.postVotes'])
-        ->prepareDataForSerialization(LoadTreePostsRelationship::class),
+        ->prepareDataForSerialization(LoadTreePostsRelationship::class)
+        ->prepareDataForSerialization(PrefetchPostVisibility::class),
+
+    // The post list ("load more replies") also serializes canVote per post.
+    (new Extend\ApiController(ListPostsController::class))
+        ->prepareDataForSerialization(PrefetchPostVisibility::class),
 
     (new Extend\Console())
         ->command(BackfillParentIdsCommand::class)
