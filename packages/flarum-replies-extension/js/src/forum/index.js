@@ -117,14 +117,43 @@ app.initializers.add('mtareq-nested-replies', () => {
     forceRedraw();
   }
 
-  // Override PostControls.deleteAction to use custom DeleteConfirmModal
+  // Override PostControls.hideAction & deleteAction to use custom DeleteConfirmModal
   // and instantly remove deleted posts from local stream tree without page reload.
   if (PostControls) {
+    override(PostControls, 'hideAction', function (original, context) {
+      const post = this;
+
+      app.modal.show(DeleteConfirmModal, {
+        post,
+        title: app.translator.trans('core.forum.post_controls.hide_confirmation'),
+        message: app.translator.trans('core.forum.post_controls.hide_confirmation'),
+        confirmLabel: app.translator.trans('core.forum.post_controls.hide_button'),
+        onconfirm: () => {
+          if (context) context.loading = true;
+          const postId = String(post.id());
+
+          post
+            .save({ isHidden: true })
+            .then(() => {
+              removePostFromTree(postId);
+            })
+            .catch(() => {})
+            .then(() => {
+              if (context) context.loading = false;
+              m.redraw();
+            });
+        },
+      });
+    });
+
     override(PostControls, 'deleteAction', function (original, context) {
       const post = this;
 
       app.modal.show(DeleteConfirmModal, {
         post,
+        title: app.translator.trans('core.forum.post_controls.delete_confirmation'),
+        message: app.translator.trans('core.forum.post_controls.delete_confirmation'),
+        confirmLabel: app.translator.trans('core.forum.post_controls.delete_button'),
         onconfirm: () => {
           if (context) context.loading = true;
           const discussion = post.discussion();
@@ -843,7 +872,16 @@ app.initializers.add('mtareq-nested-replies', () => {
     const id = String(post.id());
 
     if (inlineReply && inlineReply.postId !== id && String(inlineDraft() || '').trim()) {
-      if (!confirm(app.translator.trans('mtareq-nested-replies.forum.reply_form_discard'))) return;
+      app.modal.show(DeleteConfirmModal, {
+        title: app.translator.trans('mtareq-nested-replies.forum.reply_form_discard_title'),
+        message: app.translator.trans('mtareq-nested-replies.forum.reply_form_discard'),
+        confirmLabel: app.translator.trans('core.lib.continue'),
+        onconfirm: () => {
+          inlineDraft('');
+          openInlineReply(post);
+        },
+      });
+      return;
     }
 
     const discussion = post.discussion();
