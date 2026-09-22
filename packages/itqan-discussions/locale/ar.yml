@@ -6,6 +6,10 @@ itqan-discussions:
     replied_to: "رد على {username}"
     collapse_thread: "طي"
     expand_thread: "ردود ({count})"
+    op_badge: "الكاتب"
+    permalink: "نسخ الرابط"
+    permalink_copied: "تم نسخ الرابط"
+    new_chip: "جديد"
     list:
       score: "{count} نقطة"
     vote:
@@ -14,6 +18,30 @@ itqan-discussions:
     tree:
       collapse: "طي"
       expand: "ردود ({count})"
+      replies: "{count} ردود"
+      collapse_rail: "طي هذا النقاش"
+      expand_rail: "توسيع هذا النقاش"
+      last_activity: "آخرها {time}"
+    sort:
+      label: "الترتيب"
+      oldest: "الأقدم"
+      latest: "الأحدث"
+      top: "الأعلى"
+    meta:
+      replies: "ردًا"
+      participants: "مشاركًا"
+      views: "مشاهدة"
+    stream:
+      heading: "التعليقات"
+      heading_count: "{count} ردود"
+      load_more: "تحميل المزيد من التعليقات"
+      load_previous: "تحميل التعليقات السابقة"
+      continue_thread: "عرض {count} ردود أخرى"
+      loading: "جاري التحميل…"
+      empty_title: "لا تعليقات بعد"
+      empty_body: "كن أول من يرد."
+      parent_preview: "التعليق الأصلي"
+      reply_posted_elsewhere: "تم نشر ردك. افتح التعليق الأصلي لعرضه في سياقه."
 
 core:
   forum:

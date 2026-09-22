@@ -12,3 +12,6 @@ node_modules/
 packages/*/build/
 
 .DS_Store
+
+# Package manager lockfile for this extension's JS toolchain.
+packages/itqan-notifications/js/package-lock.json

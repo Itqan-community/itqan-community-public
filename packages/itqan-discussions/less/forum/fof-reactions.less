@@ -1,0 +1,147 @@
+// ---------------------------------------------------------------------------
+// FoF Reactions — fit into the Itqan action row
+// ---------------------------------------------------------------------------
+//
+// FoF ships a hover picker with float/absolute positioning that fights our
+// action bar. Keep FoF's JS; keep chips flat (no border/fill) so they sit
+// quietly next to vote/reply controls.
+
+.itqan-comments-card .Post-actions,
+.CommentPost .Post-actions {
+  .item-react,
+  .Reactions {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    margin-inline-end: 7px;
+    float: none !important;
+    vertical-align: middle;
+  }
+
+  .Reactions {
+    gap: var(--sp-4);
+    flex-wrap: nowrap;
+  }
+
+  .Reactions--reactions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    vertical-align: middle;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .Reactions--reactions .Button-emoji-parent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--ctl-h);
+    padding: 0;
+    margin: 0 !important;
+    background: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+    float: none !important;
+    box-sizing: border-box;
+
+    &.active {
+      padding-inline: 10px;
+      background-color: #f7f7f7;
+      border: 1px solid #11111112;
+
+      html[data-itqan-theme='dark'] & {
+        background-color: #121212 !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+    }
+
+    .Button-label {
+      display: inline-flex;
+      align-items: center;
+      margin: 0 !important;
+      padding: 0;
+
+      > span {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    img.emoji,
+    .button-emoji,
+    img {
+      height: 16px;
+      width: 16px;
+      margin: 0 !important;
+      object-fit: contain;
+
+      &:not([src]),
+      &[src=''] {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .count {
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .Reactions--ShowReactions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    float: none !important;
+    margin: 0 !important;
+    padding: 0;
+    height: var(--ctl-h);
+    min-width: var(--ctl-h);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+    .Button-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 !important;
+      padding: 0;
+    }
+
+    .button-react {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+  }
+
+  .Reactions--react {
+    display: inline-flex;
+    position: relative;
+    vertical-align: middle;
+  }
+
+  .CommentPost--Reactions {
+    // Logical positioning — avoid LTR-only `left: -28%`
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+    left: auto;
+    right: auto;
+    z-index: var(--z-dropdown);
+    max-width: ~"min(270px, 80vw)";
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-md);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-md, 0 2px 6px rgba(0, 0, 0, 0.2));
+    color: var(--text-default);
+  }
+}
+
+@media (max-width: 480px) {
+  .itqan-comments-card .Post-actions .Reactions--reactions .Button-emoji-parent .count {
+    font-size: var(--fs-ui-xs);
+  }
+}

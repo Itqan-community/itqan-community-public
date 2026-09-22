@@ -112,14 +112,28 @@ jobs:
           nginx -t
           systemctl reload nginx
           systemctl reload php8.1-fpm
+
+          bash scripts/check-flarum-assets.sh
+
+          # Origin check from the box itself: keeps working when 80/443 only accept
+          # Cloudflare, and cannot be masked by an edge cache hit. Retries because a
+          # request right after the reload can race it.
+          for i in $(seq 1 10); do
+            code=$(curl -sk -m 10 -o /dev/null -w "%{http_code}" -H "Host: community.itqan.dev" https://127.0.0.1/ || true)
+            if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
+              echo "Origin responded with $code"
+              break
+            fi
+            echo "Origin attempt $i: got $code, retrying..."
+            [ "$i" = 10 ] && { echo "Origin did not respond as expected"; exit 1; }
+            sleep 3
+          done
           REMOTE
 
-      - name: Health check
-        env:
-          SSH_HOST: ${{ secrets.BETA_SSH_HOST }}
+      - name: Health check (public, via Cloudflare)
         run: |
           for i in $(seq 1 10); do
-            code=$(curl -k -s -o /dev/null -w "%{http_code}" "https://community.itqan.dev" --resolve community.itqan.dev:443:"$SSH_HOST" || true)
+            code=$(curl -s -m 15 -o /dev/null -w "%{http_code}" "https://community.itqan.dev" || true)
             if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
               echo "Production responded with $code"
               exit 0

@@ -60,6 +60,7 @@
         "fof/merge-discussions": "*",
         "fof/oauth": "*",
         "fof/pretty-mail": "*",
+        "fof/reactions": "^1.4",
         "fof/share-social": "*",
         "fof/sitemap": "*",
         "fof/socialprofile": "*",
@@ -73,6 +74,7 @@
         "itqan/flarum-composer-tools": "@dev",
         "itqan/flarum-discussions": "@dev",
         "itqan/flarum-mailerlite": "@dev",
+        "itqan/flarum-notifications": "@dev",
         "itqan/flarum-preview-cards": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
@@ -103,6 +105,10 @@
             "type": "path",
             "url": "packages/itqan-mailerlite"
         },
+        "itqan-notifications": {
+            "type": "path",
+            "url": "packages/itqan-notifications"
+        },
         "itqan-preview-cards": {
             "type": "path",
             "url": "packages/itqan-preview-cards"
@@ -114,6 +120,10 @@
         "itqan-typography": {
             "type": "path",
             "url": "packages/itqan-typography"
+        },
+        "itqan-reactions": {
+            "type": "path",
+            "url": "packages/itqan-reactions"
         },
         "0": {
             "type": "vcs",
