@@ -346,8 +346,12 @@
     color: var(--text-color, #1c1c1c);
   }
 
-  &.is-active {
-    color: #ff4500;
+  &--up.is-active {
+    color: var(--nested-replies-upvote-color, #16a34a);
+  }
+
+  &--down.is-active {
+    color: var(--nested-replies-downvote-color, #dc2626);
   }
 }
 
@@ -1011,6 +1015,20 @@ a.NestedRepliesReplyTag {
   }
 }
 
+// EventPost styling (tag changes, title changes, pin/lock event items)
+.EventPost {
+  .EventPost-icon {
+    float: none;
+    position: static;
+    display: block;
+    max-width: max-content;
+    margin: 0;
+    margin-bottom: 8px;
+    width: auto;
+    text-align: start;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Dark mode overrides
 // ---------------------------------------------------------------------------
@@ -1050,6 +1068,12 @@ body.dark,
     }
   }
 
+  .NestedRepliesPost .item-like.is-liked .Button,
+  .NestedRepliesPost .item-like.is-liked .Button:hover,
+  .NestedRepliesPost .item-like.is-liked .Button:focus {
+    color: var(--nested-replies-like-color, #ff5252) !important;
+  }
+
   .NestedRepliesPost .Post-actions {
     .Button:not(.NestedRepliesCollapseToggle) {
       background: var(--control-bg, rgba(255, 255, 255, 0.08)) !important;
@@ -1062,6 +1086,10 @@ body.dark,
         background: rgba(255, 255, 255, 0.16) !important;
         color: var(--text-color, #ffffff) !important;
       }
+    }
+
+    .item-like.is-liked .Button {
+      color: var(--nested-replies-like-color, #ff5252) !important;
     }
   }
 
@@ -1078,6 +1106,14 @@ body.dark,
   .NestedRepliesVoteButton {
     &:hover:not(:disabled) {
       color: var(--text-color, #ffffff);
+    }
+
+    &--up.is-active {
+      color: var(--nested-replies-upvote-color-dark, #4ade80) !important;
+    }
+
+    &--down.is-active {
+      color: var(--nested-replies-downvote-color-dark, #f87171) !important;
     }
   }
 

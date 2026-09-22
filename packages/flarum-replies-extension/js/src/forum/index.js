@@ -6,6 +6,7 @@ import Button from 'flarum/common/components/Button';
 import Post from 'flarum/forum/components/Post';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
+import PostControls from 'flarum/forum/utils/PostControls';
 import Composer from 'flarum/forum/components/Composer';
 import PostStream from 'flarum/forum/components/PostStream';
 import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
@@ -17,6 +18,7 @@ import VoteRail from './components/VoteRail';
 import CollapseToggle from './components/CollapseToggle';
 import MoreReplies from './components/MoreReplies';
 import NestedRepliesInlineReply from './components/NestedRepliesInlineReply';
+import DeleteConfirmModal from './components/DeleteConfirmModal';
 
 app.initializers.add('mtareq-nested-replies', () => {
   const settings = readSettings(app);
@@ -103,6 +105,56 @@ app.initializers.add('mtareq-nested-replies', () => {
       openInlineReply(op);
       return undefined;
     };
+  }
+
+  function removePostFromTree(postId) {
+    const id = String(postId);
+    if (allPosts && Array.isArray(allPosts)) {
+      allPosts = allPosts.filter((post) => String(post.id()) !== id);
+    }
+    collapsed.delete(id);
+    expandedGroups.delete(id);
+    forceRedraw();
+  }
+
+  // Override PostControls.deleteAction to use custom DeleteConfirmModal
+  // and instantly remove deleted posts from local stream tree without page reload.
+  if (PostControls) {
+    override(PostControls, 'deleteAction', function (original, context) {
+      const post = this;
+
+      app.modal.show(DeleteConfirmModal, {
+        post,
+        onconfirm: () => {
+          if (context) context.loading = true;
+          const discussion = post.discussion();
+          const postId = String(post.id());
+
+          post
+            .delete()
+            .then(() => {
+              if (discussion && typeof discussion.removePost === 'function') {
+                discussion.removePost(postId);
+                if (typeof discussion.postIds === 'function' && !discussion.postIds().length) {
+                  if (app.discussions && typeof app.discussions.removeDiscussion === 'function') {
+                    app.discussions.removeDiscussion(discussion);
+                  }
+                  if (app.viewingDiscussion && app.viewingDiscussion(discussion)) {
+                    app.history.back();
+                  }
+                }
+              }
+
+              removePostFromTree(postId);
+            })
+            .catch(() => {})
+            .then(() => {
+              if (context) context.loading = false;
+              m.redraw();
+            });
+        },
+      });
+    });
   }
 
   // Keep the @ autocomplete to users only. Flarum's post mentionable offers the
@@ -844,8 +896,15 @@ app.initializers.add('mtareq-nested-replies', () => {
     // Scroll the reply form into view after it renders.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        const element = document.querySelector(`.PostStream-item[data-id="${id}"]`);
-        if (element && element.scrollIntoView) element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        const targetEl =
+          document.querySelector(`.PostStream-item[data-id="${id}"] .NestedRepliesInlineReply`) ||
+          document.querySelector(`.PostStream-item[data-id="${id}"] .item-nestedRepliesInlineReply`) ||
+          document.querySelector(`.PostStream-item[data-id="${id}"] .Post-footer`) ||
+          document.querySelector(`.PostStream-item[data-id="${id}"]`);
+
+        if (targetEl && targetEl.scrollIntoView) {
+          targetEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
       });
     });
   }
@@ -867,8 +926,17 @@ app.initializers.add('mtareq-nested-replies', () => {
 
     // Scroll the post into view so the edit form is visible.
     requestAnimationFrame(() => {
-      const element = document.querySelector(`.PostStream-item[data-id="${editingPostId}"]`);
-      if (element && element.scrollIntoView) element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      requestAnimationFrame(() => {
+        const targetEl =
+          document.querySelector(`.PostStream-item[data-id="${editingPostId}"] .NestedRepliesInlineEdit`) ||
+          document.querySelector(`.PostStream-item[data-id="${editingPostId}"] .item-nestedRepliesInlineEdit`) ||
+          document.querySelector(`.PostStream-item[data-id="${editingPostId}"] .Post-footer`) ||
+          document.querySelector(`.PostStream-item[data-id="${editingPostId}"]`);
+
+        if (targetEl && targetEl.scrollIntoView) {
+          targetEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+      });
     });
   }
 
