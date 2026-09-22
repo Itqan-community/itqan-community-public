@@ -400,7 +400,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
       if (!firstPost) return;
 
-      const voteRail = m('.DiscussionListItem-vote', m(VoteRail, { post: firstPost, adapter: voteAdapter }));
+      const voteRail = m('.DiscussionListItem-vote', m(VoteRail, { post: firstPost, adapter: votes }));
 
       let contentVnode = null;
       if (Array.isArray(vnode.children)) {
