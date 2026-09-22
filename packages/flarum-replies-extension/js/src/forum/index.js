@@ -117,14 +117,43 @@ app.initializers.add('mtareq-nested-replies', () => {
     forceRedraw();
   }
 
-  // Override PostControls.deleteAction to use custom DeleteConfirmModal
+  // Override PostControls.hideAction & deleteAction to use custom DeleteConfirmModal
   // and instantly remove deleted posts from local stream tree without page reload.
   if (PostControls) {
+    override(PostControls, 'hideAction', function (original, context) {
+      const post = this;
+
+      app.modal.show(DeleteConfirmModal, {
+        post,
+        title: extractText(app.translator.trans('core.forum.post_controls.hide_confirmation')) || 'حذف المشاركة',
+        message: extractText(app.translator.trans('core.forum.post_controls.hide_confirmation')) || 'هل أنت تأكد من حذف هذا التعليق؟',
+        confirmLabel: extractText(app.translator.trans('core.forum.post_controls.hide_button')) || 'حذف',
+        onconfirm: () => {
+          if (context) context.loading = true;
+          const postId = String(post.id());
+
+          post
+            .save({ isHidden: true })
+            .then(() => {
+              removePostFromTree(postId);
+            })
+            .catch(() => {})
+            .then(() => {
+              if (context) context.loading = false;
+              m.redraw();
+            });
+        },
+      });
+    });
+
     override(PostControls, 'deleteAction', function (original, context) {
       const post = this;
 
       app.modal.show(DeleteConfirmModal, {
         post,
+        title: extractText(app.translator.trans('core.forum.post_controls.delete_confirmation')) || 'حذف نهائي',
+        message: extractText(app.translator.trans('core.forum.post_controls.delete_confirmation')) || 'هل أنت تأكد من حذف هذا التعليق نهائياً؟ هذا الإجراء لا يمكن التراجع عنه.',
+        confirmLabel: extractText(app.translator.trans('core.forum.post_controls.delete_button')) || 'حذف نهائياً',
         onconfirm: () => {
           if (context) context.loading = true;
           const discussion = post.discussion();
@@ -843,7 +872,16 @@ app.initializers.add('mtareq-nested-replies', () => {
     const id = String(post.id());
 
     if (inlineReply && inlineReply.postId !== id && String(inlineDraft() || '').trim()) {
-      if (!confirm(app.translator.trans('mtareq-nested-replies.forum.reply_form_discard'))) return;
+      app.modal.show(DeleteConfirmModal, {
+        title: extractText(app.translator.trans('mtareq-nested-replies.forum.reply_form_discard_title')) || 'تجاهل التغييرات؟',
+        message: extractText(app.translator.trans('mtareq-nested-replies.forum.reply_form_discard')) || 'لديك مسودة غير محفوظة، هل تريد تجاهلها ومتابعة الرد على مشاركة أخرى؟',
+        confirmLabel: extractText(app.translator.trans('core.lib.continue')) || 'تجاهل ومتابعة',
+        onconfirm: () => {
+          inlineDraft('');
+          openInlineReply(post);
+        },
+      });
+      return;
     }
 
     const discussion = post.discussion();

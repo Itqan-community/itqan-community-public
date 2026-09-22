@@ -1223,3 +1223,171 @@ body.dark,
     }
   }
 }
+
+/* ==========================================================================
+   DeleteConfirmModal - Custom confirmation modal styling
+   ========================================================================== */
+.DeleteConfirmModal {
+  .Modal-content {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+    border: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .Modal-header {
+    padding: 20px 24px 12px 24px;
+    border-bottom: none;
+
+    .Modal-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.4;
+    }
+
+    .close {
+      top: 16px;
+      left: 16px;
+      opacity: 0.6;
+      transition: opacity 0.15s ease;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .Modal-body {
+    padding: 0 24px 24px 24px;
+    background: transparent !important;
+  }
+
+  .DeleteConfirmModal-bodyText {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #475569;
+    margin-bottom: 24px;
+  }
+
+  .Modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+    background: transparent !important;
+    border: none !important;
+
+    .Button {
+      height: 40px;
+      padding: 0 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .DeleteConfirmModal-buttonConfirm {
+      background: #ef4444;
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+
+      &:hover,
+      &:focus {
+        background: #dc2626;
+        color: #ffffff;
+        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .DeleteConfirmModal-buttonCancel {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+
+      &:hover,
+      &:focus {
+        background: #e2e8f0;
+        color: #0f172a;
+        border-color: #94a3b8;
+      }
+
+      &:active {
+        background: #cbd5e1;
+      }
+    }
+  }
+}
+
+/* Dark mode adjustments for DeleteConfirmModal */
+html[data-itqan-theme="dark"],
+body.dark-mode {
+  .DeleteConfirmModal {
+    .Modal-content {
+      background: #1e293b;
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .Modal-header {
+      .Modal-title {
+        color: #f8fafc;
+      }
+
+      .close {
+        color: #94a3b8;
+
+        &:hover {
+          color: #f8fafc;
+        }
+      }
+    }
+
+    .DeleteConfirmModal-bodyText {
+      color: #94a3b8;
+    }
+
+    .Modal-footer {
+      .DeleteConfirmModal-buttonConfirm {
+        background: #dc2626;
+        color: #ffffff;
+
+        &:hover,
+        &:focus {
+          background: #b91c1c;
+        }
+      }
+
+      .DeleteConfirmModal-buttonCancel {
+        background: #334155;
+        color: #f1f5f9;
+        border: 1px solid #475569;
+
+        &:hover,
+        &:focus {
+          background: #475569;
+          color: #ffffff;
+          border-color: #64748b;
+        }
+
+        &:active {
+          background: #1e293b;
+        }
+      }
+    }
+  }
+}
+
