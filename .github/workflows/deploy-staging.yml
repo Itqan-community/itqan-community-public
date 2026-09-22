@@ -89,7 +89,6 @@ jobs:
 
           chown -R www-data:www-data /var/www/flarum
 
-          sudo -u www-data php flarum extension:enable mtareq-nested-replies || true
           sudo -u www-data php flarum migrate
           sudo -u www-data php flarum cache:clear
 

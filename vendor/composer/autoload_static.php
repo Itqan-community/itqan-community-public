@@ -253,6 +253,7 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         ),
         'M' =>
         array (
+            'Mtareq\\NestedReplies\\' => 21,
             'Monolog\\' => 8,
             'Minishlink\\WebPush\\' => 19,
             'Middlewares\\Utils\\' => 18,
@@ -758,6 +759,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         array (
             0 => __DIR__ . '/..' . '/nette/schema/src',
             1 => __DIR__ . '/..' . '/nette/utils/src',
+        ),
+        'Mtareq\\NestedReplies\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/mtareq/flarum-nested-replies/src',
         ),
         'Monolog\\' =>
         array (

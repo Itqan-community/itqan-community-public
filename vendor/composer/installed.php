@@ -1218,6 +1218,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'mtareq/flarum-nested-replies' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => 'master',
+            'type' => 'flarum-extension',
+            'install_path' => __DIR__ . '/../mtareq/flarum-nested-replies',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'jaybizzle/crawler-detect' => array(
             'pretty_version' => 'v1.3.6',
             'version' => '1.3.6.0',

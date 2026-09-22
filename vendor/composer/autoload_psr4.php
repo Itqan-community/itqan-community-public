@@ -79,6 +79,7 @@ return array(
     'Opis\\Closure\\' => array($vendorDir . '/charescape/serialize-closure/src'),
     'Omines\\OAuth2\\Client\\' => array($vendorDir . '/omines/oauth2-gitlab/src'),
     'Nette\\' => array($vendorDir . '/nette/schema/src', $vendorDir . '/nette/utils/src'),
+    'Mtareq\\NestedReplies\\' => array($vendorDir . '/mtareq/flarum-nested-replies/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Minishlink\\WebPush\\' => array($vendorDir . '/minishlink/web-push/src'),
     'Middlewares\\Utils\\' => array($vendorDir . '/middlewares/utils/src'),

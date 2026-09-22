@@ -127,7 +127,7 @@
         },
         "0": {
             "type": "vcs",
-            "url": "git@github.com:Itqan-community/flarum-lang-arabic.git",
+            "url": "https://github.com/Itqan-community/flarum-lang-arabic.git",
             "no-api": true
         }
     }
