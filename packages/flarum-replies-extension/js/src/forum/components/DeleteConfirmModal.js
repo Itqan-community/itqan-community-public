@@ -5,7 +5,13 @@ import app from 'flarum/forum/app';
 
 function resolveText(val, fallback) {
   if (!val) return fallback;
-  if (typeof val === 'string') return val;
+  if (typeof val === 'string') {
+    if (val.includes('.') && app.translator && typeof app.translator.trans === 'function') {
+      const translated = extractText(app.translator.trans(val));
+      if (translated && translated !== val) return translated;
+    }
+    return val;
+  }
   try {
     const extracted = extractText(val);
     if (extracted && typeof extracted === 'string' && extracted.trim()) {
@@ -45,7 +51,7 @@ export default class DeleteConfirmModal extends Modal {
         m(
           Button,
           {
-            className: 'Button Button--primary Button--danger DeleteConfirmModal-buttonConfirm',
+            className: 'Button Button--danger DeleteConfirmModal-buttonConfirm',
             onclick: () => {
               this.hide();
               if (onconfirm) onconfirm();
@@ -56,7 +62,7 @@ export default class DeleteConfirmModal extends Modal {
         m(
           Button,
           {
-            className: 'Button Button--cancel DeleteConfirmModal-buttonCancel',
+            className: 'Button Button--default DeleteConfirmModal-buttonCancel',
             onclick: () => this.hide(),
           },
           cancelText
@@ -65,4 +71,5 @@ export default class DeleteConfirmModal extends Modal {
     ]);
   }
 }
+
 

@@ -117,6 +117,40 @@ app.initializers.add('mtareq-nested-replies', () => {
     forceRedraw();
   }
 
+  function purgePostElement(postId) {
+    const selector = `.PostStream-item[data-id="${postId}"], .NestedRepliesPost[data-id="${postId}"]`;
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((el) => {
+      el.style.display = 'none';
+      if (el.parentNode) el.parentNode.removeChild(el);
+    });
+  }
+
+  // Override DiscussionControls.deleteAction to use custom DeleteConfirmModal
+  if (DiscussionControls) {
+    override(DiscussionControls, 'deleteAction', function (original) {
+      const discussion = this;
+
+      app.modal.show(DeleteConfirmModal, {
+        title: app.translator.trans('core.forum.discussion_controls.delete_confirmation'),
+        message: app.translator.trans('core.forum.discussion_controls.delete_confirmation'),
+        confirmLabel: app.translator.trans('core.forum.discussion_controls.delete_button'),
+        onconfirm: () => {
+          discussion.delete().then(() => {
+            if (app.discussions && typeof app.discussions.removeDiscussion === 'function') {
+              app.discussions.removeDiscussion(discussion);
+            }
+            if (app.viewingDiscussion && app.viewingDiscussion(discussion)) {
+              app.history.back();
+            } else {
+              m.redraw();
+            }
+          });
+        },
+      });
+    });
+  }
+
   // Override PostControls.hideAction & deleteAction to use custom DeleteConfirmModal
   // and instantly remove deleted posts from local stream tree without page reload.
   if (PostControls) {
@@ -136,6 +170,7 @@ app.initializers.add('mtareq-nested-replies', () => {
             .save({ isHidden: true })
             .then(() => {
               removePostFromTree(postId);
+              purgePostElement(postId);
             })
             .catch(() => {})
             .then(() => {
@@ -175,6 +210,7 @@ app.initializers.add('mtareq-nested-replies', () => {
               }
 
               removePostFromTree(postId);
+              purgePostElement(postId);
             })
             .catch(() => {})
             .then(() => {

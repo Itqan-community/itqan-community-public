@@ -100,7 +100,7 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
     // Flarum 1.x
     $extenders[] = (new Extend\ApiSerializer(PostSerializer::class))
         ->attribute('votes', function ($serializer, $post) {
-            return (int) PostVote::query()->where('post_id', $post->id)->sum('value');
+            return (int) (PostVote::query()->where('post_id', $post->id)->sum('value') ?? 0);
         })
         ->attribute('userVote', function ($serializer, $post) {
             $actor = $serializer->getActor();

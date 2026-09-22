@@ -1,7 +1,10 @@
 export function createVoteAdapter(app) {
   const readNumber = (post, key) => {
-    const value = post && typeof post.attribute === 'function' ? post.attribute(key) : null;
-    return typeof value === 'number' ? value : null;
+    if (!post || typeof post.attribute !== 'function') return 0;
+    const value = post.attribute(key);
+    if (value === null || value === undefined) return 0;
+    const parsed = Number(value);
+    return isNaN(parsed) ? 0 : parsed;
   };
 
   const readVote = (post) => {
@@ -43,3 +46,4 @@ export function createVoteAdapter(app) {
     },
   };
 }
+
