@@ -1,0 +1,1225 @@
+// Nested reply thread theme.
+
+// Indent-guide colours, matching the Figma thread lines (green / orange
+// alternating by depth).
+@nested-thread-a: rgba(12, 166, 120, 0.19);
+@nested-thread-b: rgba(253, 126, 20, 0.19);
+
+// Hide Flarum's discussion scrubber (Original Post / N of M / unread / Now) when
+// the admin turns the setting off. Root class is set by the forum initializer.
+.NestedRepliesHideScrubber .PostStreamScrubber {
+  display: none !important;
+}
+
+// Core draws a 1px separator between every stream item. The reply card below
+// draws its own dividers between top-level replies only, so remove the core
+// one.
+.PostStream .PostStream-item:not(:last-child) {
+  border-bottom: 0;
+}
+
+// Card shared by the original post and the reply tree.
+.NestedRepliesThreadCard,
+.NestedRepliesReplyCard {
+  background: var(--body-bg-light, #fff);
+  border: 1px solid var(--control-bg-shaded, #edeff1);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+
+  // Flarum bleeds posts into the stream container with negative margins and its
+  // own padding. Reset that so each card owns its spacing and background.
+  .Post {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+  }
+}
+
+.NestedRepliesThreadCard {
+  padding-bottom: 20px;
+}
+
+.NestedRepliesReplyCard {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+// Divider between top-level replies only. Nested replies are separated by
+// their indentation thread line instead, so they never get a divider.
+.NestedRepliesReplyCard > .PostStream-item.is-top-level {
+  border-top: 1px solid var(--control-bg-shaded, #edeff1);
+  margin-top: 16px;
+  padding-top: 16px;
+
+  &:first-child {
+    border-top: 0;
+    margin-top: 0;
+    padding-top: 12px;
+  }
+}
+
+// First top-level reply sits right under the sort header, so no divider.
+.NestedRepliesReplyCard > .NestedRepliesReplySort + .PostStream-item.is-top-level {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 12px;
+}
+
+.NestedRepliesPost {
+  --depth: 0;
+  --indent: 24px;
+  --gutter: 24px;
+
+  // Every nested reply paints one guide line per ancestor level. Stream items
+  // stack with no vertical gaps, so the lines join into a continuous thread the
+  // reader can follow from a reply up to its original reply.
+  background-repeat: no-repeat;
+  background-size: 2px 100%;
+
+  > .NestedRepliesPost-container {
+    margin-inline-start: ~"calc(var(--depth) * var(--indent))";
+    // A guide gutter on the inline-start holds the thread line and the
+    // fold/unfold button, both centred on it, so the line runs through the
+    // middle of the button and the text starts clear of them.
+    padding-block: 4px 14px;
+    padding-inline: var(--gutter) 0;
+    border-radius: 4px;
+    background: transparent;
+    transition: background 0.15s ease;
+  }
+
+  // Core renders a 64px avatar, absolutely positioned 85px left of the content
+  // to sit in the page gutter. Inline it at 28px instead so replies get the
+  // maximum reading width.
+  .PostUser .PostUser-avatar {
+    position: static;
+    left: auto;
+    top: auto;
+    --size: 28px;
+    margin-inline-end: 6px;
+    vertical-align: middle;
+  }
+
+  // The badges overlay the avatars in core's gutter layout; flow them inline
+  // after the username to match the smaller avatar.
+  .PostUser-badges {
+    float: none;
+    position: static;
+    margin-inline: 4px 0;
+    width: auto;
+    display: inline-block;
+    text-align: start;
+    vertical-align: middle;
+
+    .Badge {
+      --size: 16px;
+      margin-left: 0;
+    }
+  }
+
+  &:hover > .NestedRepliesPost-container {
+    background: rgba(0, 0, 0, 0.025);
+  }
+
+  // Briefly highlight the reply the reader just posted so they can spot it.
+  // The tint is a pseudo-element that starts after the thread gutter, so it
+  // never paints over the depth guide line.
+  &--new > .NestedRepliesPost-container {
+    position: relative;
+    border-radius: 6px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: var(--gutter);
+      inset-inline-end: 0;
+      border-radius: 6px;
+      background-color: transparent;
+      animation: NestedRepliesNewReply 3s ease-out 1;
+      pointer-events: none;
+    }
+  }
+
+  // A post holding a folded sibling group ends at the control, so the thread
+  // guide lines stop there rather than running past it. An opaque, indented
+  // footer fill covers every thread column this post paints from the moment
+  // the fold zone begins, so the folded group's guide lines run down to the
+  // control and end at its top edge (the control is opaque itself).
+  &--hasMore > .NestedRepliesPost-container {
+    padding-bottom: 0;
+
+    .Post-footer {
+      background: #fff;
+      // Stretch the fill from the shallowest thread column (gutter in, minus
+      // the line's own 2px) to the inline-end, so no guide line pokes out below
+      // the control; an equal inline-start padding returns the content to its
+      // normal spot.
+      margin-inline-start: ~"calc((var(--gutter) - 9px) * -1 - (var(--depth) - 1) * var(--indent))";
+      padding-inline-start: ~"calc((var(--gutter) - 9px) + (var(--depth) - 1) * var(--indent))";
+    }
+  }
+
+  &[data-depth="1"] {
+    background-image: linear-gradient(@nested-thread-a, @nested-thread-a);
+    background-position: ~"calc(var(--indent) * 1 + 11px) 0";
+  }
+
+  &[data-depth="2"] {
+    background-image: linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b);
+    background-position: ~"calc(var(--indent) * 1 + 11px) 0", ~"calc(var(--indent) * 2 + 11px) 0";
+  }
+
+  &[data-depth="3"] {
+    background-image: linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a);
+    background-position: ~"calc(var(--indent) * 1 + 11px) 0", ~"calc(var(--indent) * 2 + 11px) 0", ~"calc(var(--indent) * 3 + 11px) 0";
+  }
+
+  &[data-depth="4"] {
+    background-image: linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b);
+    background-position: ~"calc(var(--indent) * 1 + 11px) 0", ~"calc(var(--indent) * 2 + 11px) 0", ~"calc(var(--indent) * 3 + 11px) 0", ~"calc(var(--indent) * 4 + 11px) 0";
+  }
+
+  &[data-depth="5"] {
+    background-image: linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a);
+    background-position: ~"calc(var(--indent) * 1 + 11px) 0", ~"calc(var(--indent) * 2 + 11px) 0", ~"calc(var(--indent) * 3 + 11px) 0", ~"calc(var(--indent) * 4 + 11px) 0", ~"calc(var(--indent) * 5 + 11px) 0";
+  }
+
+  &[data-depth="6"] {
+    background-image: linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b);
+    background-position: ~"calc(var(--indent) * 1 + 11px) 0", ~"calc(var(--indent) * 2 + 11px) 0", ~"calc(var(--indent) * 3 + 11px) 0", ~"calc(var(--indent) * 4 + 11px) 0", ~"calc(var(--indent) * 5 + 11px) 0", ~"calc(var(--indent) * 6 + 11px) 0";
+  }
+
+  &[data-depth="7"] {
+    background-image: linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a);
+    background-position: ~"calc(var(--indent) * 1 + 11px) 0", ~"calc(var(--indent) * 2 + 11px) 0", ~"calc(var(--indent) * 3 + 11px) 0", ~"calc(var(--indent) * 4 + 11px) 0", ~"calc(var(--indent) * 5 + 11px) 0", ~"calc(var(--indent) * 6 + 11px) 0", ~"calc(var(--indent) * 7 + 11px) 0";
+  }
+
+  &[data-depth="8"] {
+    background-image: linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b), linear-gradient(@nested-thread-a, @nested-thread-a), linear-gradient(@nested-thread-b, @nested-thread-b);
+    background-position: ~"calc(var(--indent) * 1 + 11px) 0", ~"calc(var(--indent) * 2 + 11px) 0", ~"calc(var(--indent) * 3 + 11px) 0", ~"calc(var(--indent) * 4 + 11px) 0", ~"calc(var(--indent) * 5 + 11px) 0", ~"calc(var(--indent) * 6 + 11px) 0", ~"calc(var(--indent) * 7 + 11px) 0", ~"calc(var(--indent) * 8 + 11px) 0";
+  }
+
+  &[data-hidden="true"] {
+    display: none;
+  }
+
+  &[data-collapsed="true"] > .NestedRepliesPost-container {
+    .Post-body,
+    .Post-content {
+      display: none;
+    }
+  }
+}
+
+// Fade the "just posted" highlight out over three seconds. Only the background
+// is animated so nothing is drawn over the thread guide lines. The colour comes
+// from the admin setting via --nested-replies-highlight-rgb.
+@keyframes NestedRepliesNewReply {
+  0% {
+    background-color: ~"rgba(var(--nested-replies-highlight-rgb, 0, 200, 83), 0.18)";
+  }
+  60% {
+    background-color: ~"rgba(var(--nested-replies-highlight-rgb, 0, 200, 83), 0.11)";
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+// Right-to-left locales are handled by Flarum's own RTL stylesheet, which
+// mirrors the physical guide-line background positions and translateX offsets
+// below. Do not add `[dir="rtl"]` overrides for them: Flarum mirrors them once
+// already, and a second mirror shifts the lines and controls off-centre.
+
+// Always-visible, inline action bar: vote, fold, Like, Reply and controls.
+.NestedRepliesPost {
+  > .NestedRepliesPost-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Keep the "replied to this" summary above the always-visible action row.
+  .Post-header { order: 0; }
+  .Post-body,
+  .Post-content { order: 1; }
+  .Post-footer {
+    order: 4;
+    display: block;
+    height: auto;
+    margin: 8px 0 0;
+  }
+  .Post-footer:empty { display: none; }
+
+  .Post-actions {
+    order: 3;
+    float: none;
+    opacity: 1;
+    margin: 8px 0 0;
+
+    > ul {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    > ul > li {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      vertical-align: middle;
+    }
+
+    .Button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-height: 28px;
+      box-sizing: border-box;
+      padding: 3px 10px;
+      border: 1px solid var(--control-bg-shaded, #edeff1);
+      border-radius: 999px;
+      background: var(--control-bg, #f6f7f8) !important;
+      color: var(--muted-color, #878a8c);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 20px;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background: var(--control-bg-hover, #eef1f3) !important;
+        color: var(--text-color, #1c1c1c);
+        box-shadow: none;
+      }
+    }
+
+    .Button-icon { margin-right: 0; }
+    .Button-caret { display: none; }
+
+    // Core renders Like/Reply as text-only; give them an icon.
+    .item-reply .Button::before,
+    .item-like .Button::before {
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+      font-style: normal;
+    }
+    .item-reply .Button::before { content: "\f3e5"; }
+    .item-like .Button::before { content: "\f004"; }
+  }
+}
+
+.NestedRepliesVoteRail {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  box-sizing: border-box;
+  padding: 2px 10px;
+  border: 1px solid var(--control-bg-shaded, #edeff1);
+  border-radius: 999px;
+  background: var(--control-bg, #f6f7f8);
+  color: var(--muted-color, #878a8c);
+
+  &.is-disabled {
+    opacity: 0.5;
+  }
+}
+
+.NestedRepliesVoteButton {
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  line-height: 1;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:hover:not(:disabled) {
+    color: var(--text-color, #1c1c1c);
+  }
+
+  &--up.is-active {
+    color: var(--nested-replies-upvote-color, #16a34a);
+  }
+
+  &--down.is-active {
+    color: var(--nested-replies-downvote-color, #dc2626);
+  }
+}
+
+.NestedRepliesVoteScore {
+  min-width: 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color, #1c1c1c);
+}
+
+// Reddit-style circular fold/unfold button on a comment.
+.NestedRepliesCollapseToggle {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  // The button sits at the top of its replies' guide, so centre it on the
+  // child-depth line (one indent in), not on the post's own depth. Transform
+  // keeps it out of layout, so the rest of the action bar stays put.
+  transform: ~"translateX(calc(var(--indent) - var(--gutter) + 1px))";
+
+  .icon {
+    font-size: 10px;
+  }
+
+  &:hover,
+  &:focus {
+    border-color: rgba(0, 0, 0, 0.45);
+  }
+}
+
+// Flarum compiles a dedicated RTL stylesheet that mirrors `translateX` and
+// `background-position` for us, so no `[dir="rtl"]` overrides are needed here:
+// adding them would mirror a second time and shift the control off the line.
+
+// "+ N more replies" line shown under a folded comment.
+.NestedRepliesMoreReplies {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  background: var(--control-bg, rgba(77, 105, 142, 0.1));
+  color: var(--text-color, #1c1c1e);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+
+  .icon {
+    font-size: 10px;
+  }
+
+  &:hover,
+  &:focus {
+    background: rgba(77, 105, 142, 0.18);
+    text-decoration: none;
+  }
+}
+
+// "Show more replies" control for a folded sibling group. The component sets a
+// gutter-aware negative margin-inline-start so the + badge (16px wide) lands
+// centred on the hidden replies' guide line at any --gutter value (equal to a
+// -29px offset at the desktop 24px gutter).
+.NestedRepliesShowMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  // Flush with the fold zone's top (the thread guide line ends at the same
+  // height, capped by this control) while the footer's fill below finishes the
+  // group.
+  margin-top: 0;
+  padding: 3px 8px;
+  border: none;
+  border-radius: 4px;
+  // Opaque so the control masks the guide lines running behind it, ending the
+  // thread at its top edge. `!important` beats core's
+  // `.Button--link { background: transparent !important; }`.
+  background: #fff !important;
+  color: #4470e6;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+
+  &-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    border: 1px solid #edeff1;
+    border-radius: 8px;
+    background: #f6f7f8;
+    color: #878a8c;
+    font-size: 9px;
+    line-height: 1;
+  }
+
+  // Core sizes `.Post-footer .icon` at 14px with a 5px trailing margin for its
+  // inline "meta" icons; the control's icons have their own compact sizes and
+  // rely on the flex gap for spacing, so reset those core defaults.
+  &-toggle .icon {
+    display: block;
+    font-size: 9px;
+    line-height: 1;
+    margin-right: 0;
+  }
+
+  &-label {
+    color: #4470e6;
+  }
+
+  &-icon {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+
+    .icon {
+      color: #4470e6;
+      font-size: 11px;
+      line-height: 1;
+      margin-right: 0;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    background: #f6f7f8 !important;
+    color: #2a54c4;
+    text-decoration: none;
+  }
+
+  &:hover &-label,
+  &:focus &-label,
+  &:hover &-icon .icon,
+  &:focus &-icon .icon {
+    color: #2a54c4;
+  }
+}
+
+// Configurable colour for the Like action once the post is liked.
+.NestedRepliesPost .item-like.is-liked .Button,
+.NestedRepliesPost .item-like.is-liked .Button:hover,
+.NestedRepliesPost .item-like.is-liked .Button:focus {
+  color: var(--nested-replies-like-color, #ff4500);
+}
+
+// "Reply to X" tag shown in the post header, replacing the inline mention.
+// `a.` keeps it above core's `.Post-header a` colour rule.
+a.NestedRepliesReplyTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e6f4ea;
+  color: #1c1c1c;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  .icon {
+    font-size: 11px;
+    color: #2e7d32;
+  }
+}
+
+// The inline post mention is hidden now that its header tag is shown.
+.NestedRepliesReplyTag-source {
+  display: none;
+}
+
+// Optional: hide core mentions' "You replied to this." summary.
+.NestedRepliesHideMentionedBy .Post-mentionedBy {
+  display: none;
+}
+
+// flarum-likes' "You liked this." summary is restyled above in the
+// deleted-post section. Keep it visible so users see who liked a post.
+.NestedRepliesPost .Post-likedBy {
+  // display: block is set in the deleted-post section below; nothing to hide.
+}
+
+// Reply card header: sort control.
+.NestedRepliesReplySort {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--control-bg-shaded, #edeff1);
+  font-size: 13px;
+  color: var(--muted-color, #878a8c);
+
+  select {
+    padding: 2px 6px;
+    border: 1px solid var(--control-bg-shaded, #edeff1);
+    border-radius: 6px;
+    background: var(--control-bg, #f6f7f8);
+    color: var(--text-color, #1c1c1c);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  &-loading {
+    font-size: 12px;
+  }
+}
+
+// In-card reply form. It sits inside the replied-to post's own indented
+// content column, so an equal inline margin on both sides centres it within
+// that column; the column (and therefore the centring) follows the post depth.
+// --form-indent is 1 (child level) or 0 (at the depth cap).
+.NestedRepliesInlineReply {
+  margin-inline: ~"calc(var(--form-indent, 1) * var(--indent))";
+  margin-top: 8px;
+}
+
+// The fixed composer shell is emptied while a reply form is inline; keep the
+// reused root node out of the layout.
+.Composer.Composer--nestedInlineHidden {
+  display: none !important;
+}
+
+.NestedRepliesQuickReply {
+  border: 1px solid var(--control-bg-shaded, #dfe3e6);
+  border-radius: 8px;
+  background: var(--body-bg-light, #fff);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  &-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 6px 8px 0;
+  }
+
+  &-tab {
+    padding: 3px 6px 5px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--muted-color, #878a8c);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &.is-active {
+      color: var(--primary-color, #4470e6);
+      border-bottom-color: var(--primary-color, #4470e6);
+    }
+  }
+
+  &-input {
+    display: block;
+    width: 100%;
+    min-height: 72px;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 0;
+    outline: none;
+    resize: vertical;
+    background: transparent;
+    color: var(--text-color, #1c1c1e);
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  &-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 8px 6px;
+    border-top: 1px solid var(--control-bg-shaded, #f0f1f2);
+  }
+
+  &-format {
+    padding: 3px 8px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--muted-color, #878a8c);
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background: var(--control-bg, #f0f1f2);
+      color: var(--text-color, #1c1c1e);
+    }
+  }
+
+  &-error {
+    padding: 0 10px 6px;
+    color: #d0021b;
+    font-size: 12px;
+  }
+
+  &-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px 8px;
+    border-top: 1px solid var(--control-bg-shaded, #f0f1f2);
+    background: var(--body-bg-shaded, #fafbfc);
+  }
+
+  &-preview {
+    min-height: 72px;
+    padding: 10px;
+    font-size: 14px;
+    color: var(--text-color, #1c1c1e);
+  }
+}
+
+.NestedRepliesInlineComposer {
+  border: 1px solid var(--control-bg-shaded, #dfe3e6);
+  border-radius: 8px;
+  background: var(--body-bg-light, #fff);
+  overflow: hidden;
+
+  &-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--control-bg-shaded, #f0f1f2);
+  }
+
+  &-title {
+    color: var(--muted-color, #878a8c);
+    font-size: 12px;
+  }
+
+  &-loading {
+    padding: 14px 12px;
+    color: var(--muted-color, #878a8c);
+    font-size: 13px;
+  }
+
+  // Core's fixed-composer body expects a large floated avatar and a flexing
+  // content column. Inline, use a compact flex row so a small avatar sits
+  // beside the editor and the submit button never overlaps it.
+  .ComposerBody {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px 12px;
+  }
+
+  .ComposerBody-avatar {
+    float: none;
+    flex: 0 0 auto;
+    --size: 28px;
+    width: 28px;
+    height: 28px;
+    margin-top: 2px;
+  }
+
+  .ComposerBody-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    // Core reserves space for the floated avatar; with a small flex avatar that
+    // margin only pushes the content away from it.
+    margin: 0;
+  }
+
+  // The editor's preview (eye) control sits slightly off-centre because core's
+  // `.Button .icon` carries a trailing margin.
+  .TextEditor-controls .Button--icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon {
+      margin: 0;
+    }
+  }
+
+  // Core's composer footer assumes the fixed composer's 64px avatar gutter:
+  // its negative margins overflow the card and its submit button is absolutely
+  // positioned. Keep both inside the inline body.
+  .ComposerBody-editor .TextEditor-controls {
+    margin: 0 -12px;
+    padding: 10px 12px;
+    overflow: visible;
+  }
+
+  .ComposerBody-editor .TextEditor-controls .item-submit {
+    position: static !important;
+  }
+
+  &-preview {
+    padding: 10px 12px;
+    min-height: 60px;
+    color: #1c1c1e;
+    font-size: 14px;
+  }
+
+  // While previewing, show the rendered post in place of the editor textarea.
+  // The avatar is hidden too: with the editor gone the flex row collapses to
+  // the toolbar height, which would drop the avatar down beside the submit.
+  &-body.is-previewing {
+    .ComposerBody-header,
+    .ComposerBody-avatar,
+    .TextEditor-editorContainer {
+      display: none;
+    }
+  }
+}
+
+@media @phone {
+  // Core's page container keeps 15px side padding on phones. Tighten it on
+  // discussion pages so the thread cards get the maximum reading width, while
+  // keeping enough air that the layout never feels cramped.
+  .DiscussionPage .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .NestedRepliesThreadCard,
+  .NestedRepliesReplyCard {
+    padding-inline: 8px;
+    border-radius: 6px;
+  }
+
+  .NestedRepliesThreadCard {
+    padding-block: 12px 14px;
+    margin-bottom: 10px;
+  }
+
+  .NestedRepliesReplyCard {
+    padding-block: 6px 8px;
+    margin-bottom: 10px;
+  }
+
+  // Core bleeds stream items edge-to-edge on phones with negative margins and
+  // matching padding. Inside the cards that bleed breaks out of the card
+  // border and doubles the side spacing, so neutralise it here.
+  .NestedRepliesThreadCard .PostStream-item,
+  .NestedRepliesReplyCard > .PostStream-item {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .NestedRepliesReplyCard > .PostStream-item.is-top-level {
+    margin-top: 10px;
+    padding-top: 12px;
+
+    &:first-child {
+      margin-top: 0;
+      padding-top: 10px;
+    }
+  }
+
+  // First top-level reply sits right under the sort header, so no divider.
+  .NestedRepliesReplyCard > .NestedRepliesReplySort + .PostStream-item.is-top-level {
+    margin-top: 0;
+    padding-top: 10px;
+  }
+
+  .NestedRepliesPost {
+    --indent: 12px;
+    // The gutter holds the thread lines plus the breathing room between the
+    // deepest line and the text/avatar/action column. At 14px the text sat
+    // only 1px off the line (desktop gives 11px); 20px restores a ~7px gap.
+    // All line-relative positioning (toggle, Show More, footer fill) derives
+    // from --gutter, so they track this automatically.
+    --gutter: 20px;
+
+    > .NestedRepliesPost-container {
+      padding-block: 3px 8px;
+    }
+
+    // The folded-group footer fill must reach the container's bottom edge so
+    // no thread-line stubs poke out below the "Show more" control. This has to
+    // re-assert the base `padding-bottom: 0` because the rule above ties with
+    // it on specificity and comes later in source order.
+    &--hasMore > .NestedRepliesPost-container {
+      padding-bottom: 0;
+    }
+
+    .Post-header {
+      margin-bottom: 8px;
+    }
+
+    .PostUser .PostUser-avatar {
+      --size: 24px;
+    }
+
+    .Post-footer {
+      margin: 8px 0 0;
+    }
+
+    .Post-actions {
+      margin: 8px 0 0;
+
+      > ul {
+        gap: 4px;
+      }
+
+      // Compact icon-only chips free up reading width on narrow screens; leave
+      // dropdown menu labels alone. The fold toggle is excluded: it has its
+      // own exact sizing so the thread line stays centred on it.
+      .Button:not(.NestedRepliesCollapseToggle) {
+        min-height: 24px;
+        padding: 2px 8px;
+        font-size: 11px;
+      }
+
+      // Icon-only chips on small screens; leave dropdown menu labels alone.
+      > ul > li > .Button .Button-label,
+      > ul > li > .Dropdown > .Button .Button-label {
+        display: none;
+      }
+    }
+  }
+
+  // Compact vote rail to match the smaller action chips.
+  .NestedRepliesVoteRail {
+    min-height: 24px;
+    padding: 2px 8px;
+    gap: 4px;
+  }
+
+  .NestedRepliesVoteScore {
+    font-size: 11px;
+  }
+
+  // Smaller fold button so it clears the neighbouring thread lines: at the
+  // mobile indent the 22px desktop button is wider than the line spacing, so
+  // adjacent lines would show through it. The shifted centring transform keeps
+  // the thread line running through this button's middle, and the opaque fill
+  // masks the line behind it, exactly like the desktop button does.
+  // Triple-class specificity beats both core `.Button.Button--icon` sizing and
+  // our own base `.Post-actions .Button` pill sizing, so the small toggle size
+  // below truly applies.
+  .NestedRepliesPost .Post-actions .NestedRepliesCollapseToggle {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    padding: 0;
+    // `!important` beats our own base `.Post-actions .Button` background, so
+    // the opaque fill truly masks neighbouring thread lines behind it.
+    background: #fff !important;
+    transform: ~"translateX(calc(var(--indent) - var(--gutter) + 4px))";
+
+    .icon {
+      font-size: 8px;
+    }
+  }
+
+  .NestedRepliesMoreReplies {
+    margin-top: 6px;
+  }
+
+  // Compact reply tag so header (avatar + name + tag + time) fits one row.
+  a.NestedRepliesReplyTag {
+    font-size: 11px;
+    padding: 1px 6px;
+  }
+
+  .NestedRepliesReplySort {
+    padding: 8px 0 10px;
+  }
+
+  .NestedRepliesInlineReply {
+    margin-top: 6px;
+  }
+
+  .NestedRepliesQuickReply {
+    &-input,
+    &-preview {
+      font-size: 13px;
+      min-height: 64px;
+    }
+
+    &-actions .Button {
+      min-height: 30px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Deleted post styling
+// ---------------------------------------------------------------------------
+// Deleted posts shown to admins get a subtle red tint and the action bar is
+// simplified: no vote rail, no like, no reply — just the restore/delete
+// controls Flarum already provides.
+.NestedRepliesPost {
+  &.is-deleted,
+  &.is-hidden,
+  &.Post--hidden:not(.revealContent) {
+    opacity: 0.55;
+
+    > .NestedRepliesPost-container {
+      background: rgba(220, 53, 69, 0.04);
+      border-left: 3px solid rgba(220, 53, 69, 0.35);
+      min-height: 30px !important;
+    }
+
+    // Hide the action bar entirely — vote, like, reply, and collapse are
+    // meaningless on a deleted post. The three-dot dropdown with
+    // Restore / Delete permanently stays visible.
+    .Post-actions {
+      margin-inline-start: auto;
+      padding-top: 3px;
+
+      > ul > li:not(.Dropdown):not(.item-dropdown-trigger) {
+        display: none;
+      }
+    }
+
+    // The "This post was deleted" placeholder in the body should use the
+    // normal text colour so it stays readable against the tinted card.
+    .Post-body {
+      color: #666;
+      font-style: italic;
+    }
+  }
+}
+
+.NestedRepliesPost.is-deleted > .NestedRepliesPost-container, .NestedRepliesPost.is-hidden > .NestedRepliesPost-container, .NestedRepliesPost.Post--hidden:not(.revealContent) > .NestedRepliesPost-container {
+  border-left: none !important;
+}
+
+// Ensure the three-dot dropdown menu is not clipped by the card overflow and
+// positions itself correctly even at high nesting depths.
+.NestedRepliesPost .Dropdown-menu {
+  z-index: 100;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+// The like-by summary line (users who liked the post).
+.NestedRepliesPost .Post-likedBy {
+  display: block;
+  padding: 4px 0 0;
+  font-size: 12px;
+  color: var(--muted-color, #878a8c);
+
+  .icon {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 400;
+
+    &::before {
+      content: "\f004" !important;
+    }
+  }
+
+  .username {
+    font-weight: 600;
+    color: var(--text-color, #1c1c1e);
+  }
+}
+
+// EventPost styling (tag changes, title changes, pin/lock event items)
+.EventPost {
+  .EventPost-icon {
+    float: none;
+    position: static;
+    display: block;
+    max-width: max-content;
+    margin: 0;
+    margin-bottom: 8px;
+    width: auto;
+    text-align: start;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dark mode overrides
+// ---------------------------------------------------------------------------
+html[data-itqan-theme='dark'],
+body.dark,
+[data-theme='dark'] {
+  .NestedRepliesThreadCard,
+  .NestedRepliesReplyCard {
+    background: var(--body-bg-light, #1d1e22);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .NestedRepliesReplyCard > .PostStream-item.is-top-level {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .NestedRepliesPost--hasMore > .NestedRepliesPost-container .Post-footer {
+    background: var(--body-bg-light, #1d1e22);
+  }
+
+  .NestedRepliesReplySort {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    color: var(--muted-color, #a0a0a0);
+
+    select {
+      background: var(--control-bg, #2a2b30);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: var(--text-color, #e0e0e0);
+    }
+  }
+
+  .NestedRepliesPost .Post-likedBy {
+    color: var(--muted-color, #a0a0a0);
+
+    .icon {
+      color: var(--muted-color, #a0a0a0);
+    }
+
+    .username {
+      color: var(--text-color, #e0e0e0) !important;
+    }
+  }
+
+  .NestedRepliesPost .item-like.is-liked .Button,
+  .NestedRepliesPost .item-like.is-liked .Button:hover,
+  .NestedRepliesPost .item-like.is-liked .Button:focus {
+    color: var(--nested-replies-like-color, #ff5252) !important;
+  }
+
+  .NestedRepliesPost .Post-actions {
+    .Button:not(.NestedRepliesCollapseToggle) {
+      background: var(--control-bg, rgba(255, 255, 255, 0.08)) !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+      color: var(--muted-color, #a0a0a0) !important;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background: rgba(255, 255, 255, 0.16) !important;
+        color: var(--text-color, #ffffff) !important;
+      }
+    }
+
+    .item-like.is-liked .Button {
+      color: var(--nested-replies-like-color, #ff5252) !important;
+    }
+  }
+
+  .NestedRepliesVoteRail {
+    background: var(--control-bg, rgba(255, 255, 255, 0.08));
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--muted-color, #a0a0a0);
+  }
+
+  .NestedRepliesVoteScore {
+    color: var(--text-color, #e0e0e0);
+  }
+
+  .NestedRepliesVoteButton {
+    &:hover:not(:disabled) {
+      color: var(--text-color, #ffffff);
+    }
+
+    &--up.is-active {
+      color: var(--nested-replies-upvote-color-dark, #4ade80) !important;
+    }
+
+    &--down.is-active {
+      color: var(--nested-replies-downvote-color-dark, #f87171) !important;
+    }
+  }
+
+  .NestedRepliesMoreReplies {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--primary-color, #8ab4f8) !important;
+
+    &:hover,
+    &:focus {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--primary-color, #a8c7fa) !important;
+    }
+  }
+
+  .NestedRepliesShowMore {
+    background: var(--body-bg-light, #1d1e22) !important;
+    color: var(--primary-color, #8ab4f8);
+
+    &-label,
+    &-icon .icon {
+      color: var(--primary-color, #8ab4f8);
+    }
+
+    &-toggle {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: var(--muted-color, #a0a0a0);
+    }
+
+    &:hover,
+    &:focus {
+      background: rgba(255, 255, 255, 0.12) !important;
+      color: var(--primary-color, #a8c7fa);
+
+      .NestedRepliesShowMore-label,
+      .NestedRepliesShowMore-icon .icon {
+        color: var(--primary-color, #a8c7fa);
+      }
+    }
+  }
+
+  a.NestedRepliesReplyTag {
+    background: rgba(46, 125, 50, 0.25);
+    color: #a5d6a7;
+
+    .icon {
+      color: #81c784;
+    }
+  }
+
+  .NestedRepliesQuickReply,
+  .NestedRepliesInlineComposer {
+    background: var(--body-bg-light, #222327);
+    border-color: rgba(255, 255, 255, 0.12);
+
+    .NestedRepliesQuickReply-input,
+    .NestedRepliesQuickReply-preview,
+    .NestedRepliesInlineComposer-preview {
+      color: var(--text-color, #e0e0e0);
+    }
+
+    .NestedRepliesQuickReply-toolbar,
+    .NestedRepliesQuickReply-actions,
+    .NestedRepliesInlineComposer-head {
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .NestedRepliesQuickReply-actions {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .NestedRepliesQuickReply-format {
+      color: var(--muted-color, #a0a0a0);
+
+      &:hover,
+      &:focus {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-color, #ffffff);
+      }
+    }
+
+    .NestedRepliesQuickReply-tab {
+      color: var(--muted-color, #a0a0a0);
+
+      &.is-active {
+        color: var(--primary-color, #8ab4f8);
+        border-bottom-color: var(--primary-color, #8ab4f8);
+      }
+    }
+
+    .NestedRepliesInlineComposer-title,
+    .NestedRepliesInlineComposer-loading {
+      color: var(--muted-color, #a0a0a0);
+    }
+  }
+}
