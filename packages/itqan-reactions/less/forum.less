@@ -1,0 +1,188 @@
+// ---------------------------------------------------------------------------
+// Reactions
+// ---------------------------------------------------------------------------
+//
+// Reaction chips sit in the same action row as the vote pill, so they take the
+// same height, radius, border and fill. Two control systems in one row that do
+// not share a shape compete instead of grouping — the audit measured the old
+// chips at 17px tall next to a 28px vote pill, which is what made the row look
+// ragged.
+//
+// The grammar is documented in knowledge/design-system/patterns.md §3. It is
+// restated here rather than imported because LESS does not cross the extension
+// boundary; the tokens do, so the values stay in sync.
+
+.ItqanReactionBar {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ItqanReactionBar-chips {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--ctl-gap, 6px);
+}
+
+.ItqanReactionChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4, 4px);
+  height: var(--ctl-h, 28px);
+  box-sizing: border-box;
+  padding: 0 var(--sp-10, 10px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-pill, 9999px);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: var(--fs-ui-sm, 12px);
+  font-weight: var(--fw-semibold, 600);
+  font-family: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-fast, 120ms) var(--ease-out), border-color var(--dur-fast, 120ms) var(--ease-out),
+    color var(--dur-fast, 120ms) var(--ease-out);
+
+  &:hover {
+    background: var(--surface-active);
+    border-color: var(--border-default);
+    color: var(--text-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  // The viewer's own reaction, in the brand tint shared with every other
+  // selected chip on the page.
+  &--me {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
+
+    &:hover {
+      background: var(--accent-strong);
+      border-color: var(--accent-border);
+      color: var(--accent);
+    }
+  }
+
+  &--saving {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.ItqanReactionChip-emoji {
+  font-size: var(--fs-ui-lg, 14px);
+  line-height: 1;
+}
+
+.ItqanReactionChip-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.ItqanReactionBar-pickerWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+// A dashed edge marks it as "add one" rather than "one that exists", which is
+// what separates it from the chips beside it at a glance.
+.ItqanReactionBar-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  height: var(--ctl-h, 28px);
+  box-sizing: border-box;
+  padding: 0 var(--sp-8, 8px);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--r-pill, 9999px);
+  background: transparent;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--dur-fast, 120ms) var(--ease-out), border-color var(--dur-fast, 120ms) var(--ease-out);
+
+  &:hover,
+  &--open {
+    border-style: solid;
+    border-color: var(--accent-border);
+    background: var(--accent-faint);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.ItqanReactionBar-addGlyph {
+  font-size: var(--fs-ui-lg, 14px);
+  line-height: 1;
+  // Emoji render slightly high in the line box against a flex centre.
+  transform: translateY(-0.5px);
+}
+
+.ItqanReactionBar-addPlus {
+  font-size: var(--fs-ui-xs, 11px);
+  font-weight: var(--fw-bold, 700);
+  line-height: 1;
+  color: var(--text-muted);
+}
+
+// --- Picker ------------------------------------------------------------------
+
+.ItqanReactionPicker {
+  position: absolute;
+  // Escaped: less.php evaluates arithmetic inside `calc()` and cannot reason
+  // about a `var()`, which aborts the whole compile.
+  bottom: ~"calc(100% + var(--sp-6, 6px))";
+  inset-inline-start: 0;
+  display: flex;
+  gap: var(--sp-2, 2px);
+  padding: var(--sp-6, 6px);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-lg, 12px);
+  box-shadow: var(--elev-menu);
+  // Must clear core's header (1000) and alert manager (1060).
+  z-index: var(--z-dropdown, 1070);
+}
+
+.ItqanReactionPicker-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-md, 8px);
+  background: transparent;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--dur-fast, 120ms) var(--ease-out), transform var(--dur-fast, 120ms) var(--ease-out);
+
+  &:hover {
+    background: var(--surface-active);
+    transform: scale(1.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+}
+
+@media (pointer: coarse) {
+  .ItqanReactionPicker-item {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+}

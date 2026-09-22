@@ -1,0 +1,40 @@
+// ---------------------------------------------------------------------------
+// Inline pills — mentions
+// ---------------------------------------------------------------------------
+//
+// A mention inside a post body reads as a token, not as a link, so it takes the
+// chip shape at text size. The tint is the brand colour rather than the previous
+// literal pair (`#E6F4EA` on `#137333`), which was invisible in the dark scheme
+// and ignored the admin's chosen colours.
+
+.Post-body .PostMention {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: 1px var(--sp-8);
+  font-size: 0.86em;
+  font-weight: var(--fw-medium);
+  line-height: 1.5;
+  vertical-align: baseline;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 0;
+  border-radius: var(--r-pill);
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-out);
+
+  &:hover,
+  &:focus {
+    background: var(--accent-strong);
+    color: var(--accent);
+    border-color: transparent;
+    text-decoration: none;
+  }
+}
+
+// A reply's first line is usually a mention of the parent's author, which the
+// header's "replying to" badge already says. Two copies of the same fact is
+// noise, so the in-body one goes.
+.CommentPost .Post-body > p:first-child > .PostMention:first-child {
+  display: none;
+}

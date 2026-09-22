@@ -9,16 +9,20 @@
   .Dropdown-toggle {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    text-align: start;
+    width: 100%;
 
     .Button-label {
-      margin-left: 7px;
+      margin-inline-start: 7px;
     }
   }
 }
 
 @media @tablet-up {
   .ThemeSwitcher .Dropdown-toggle {
+    justify-content: center;
+    width: auto;
     .Button--icon();
   }
 }
