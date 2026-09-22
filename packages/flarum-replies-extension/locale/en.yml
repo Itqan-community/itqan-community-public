@@ -1,0 +1,46 @@
+mtareq-nested-replies:
+  admin:
+    settings:
+      enabled_label: Enable nested replies
+      max_depth_label: Maximum indent depth
+      show_votes_label: Show vote rail
+      show_reply_tag_label: Show "Reply to" tag
+      show_replied_indicator_label: Show "replied to this" indicator
+      like_color_label: Like color (active)
+      start_at_first_post_label: Start discussions at the first post
+      visible_replies_label: Replies shown per level before folding the rest
+      show_scrubber_label: Show discussion scrubber
+      reply_form_label: Reply form
+      reply_form_quick: Quick reply (basic formatting + preview)
+      reply_form_composer: Full composer (embedded in card)
+      highlight_color_label: New reply highlight color
+      legacy_mentions_label: Nest legacy replies from their leading post mention
+  forum:
+    collapse: Collapse replies
+    expand: Expand replies
+    upvote: Upvote
+    downvote: Downvote
+    reply_to: "Reply to {username}"
+    more_replies: "{count} more replies"
+    show_more_replies: Show more replies
+    reply_link: Reply
+    sort_by: "Sort by:"
+    sort_oldest: Oldest
+    sort_newest: Newest
+    sort_top: Top voted
+    sort_replies: Most replies
+    sort_loading: Loading...
+    reply_form_placeholder: "Reply to {username}…"
+    reply_form_placeholder_op: "Write a reply…"
+    reply_form_write: Write
+    reply_form_preview: Preview
+    reply_form_bold: Bold
+    reply_form_italic: Italic
+    reply_form_quote: Quote
+    reply_form_link: Link
+    reply_form_submit: Post reply
+    edit_form_submit: Save edit
+    reply_form_cancel: Cancel
+    reply_form_replying: "Replying to {username}"
+    reply_form_error: Could not post your reply. Please try again.
+    reply_form_discard: Discard your draft reply?

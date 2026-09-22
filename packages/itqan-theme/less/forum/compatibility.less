@@ -196,6 +196,49 @@ html[data-itqan-theme='dark'] {
   .Post-body tr {
     color: var(--text-color);
   }
+
+  // -------------------------------------------------------------------------
+  // mtareq/flarum-nested-replies (Nested Replies Extension) Dark Mode
+  // -------------------------------------------------------------------------
+  .NestedRepliesThreadCard,
+  .NestedRepliesReplyCard {
+    background: var(--body-bg-light, #23272e) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+    color: var(--text-color, #e0e0e0) !important;
+  }
+
+  .NestedRepliesReplyCard > .PostStream-item.is-top-level {
+    border-top-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .NestedRepliesPost--hasMore > .NestedRepliesPost-container .Post-footer {
+    background: var(--body-bg-light, #23272e) !important;
+  }
+
+  .NestedRepliesPost:hover > .NestedRepliesPost-container {
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
+
+  .NestedRepliesPost .Post-body,
+  .NestedRepliesPost .Post-content,
+  .NestedRepliesPost .PostUser-name {
+    color: var(--text-color, #e0e0e0) !important;
+  }
+
+  .NestedRepliesPost .Post-header,
+  .NestedRepliesPost .Post-meta,
+  .NestedRepliesPost .Post-meta a {
+    color: var(--muted-color, #9e9e9e) !important;
+  }
+
+  .NestedRepliesFoldButton,
+  .NestedRepliesReplySort select,
+  .NestedRepliesVoteControl {
+    background: var(--control-bg, #2c313a) !important;
+    color: var(--text-color, #e0e0e0) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+  }
 }
 
 // -----------------------------------------------------------------------------

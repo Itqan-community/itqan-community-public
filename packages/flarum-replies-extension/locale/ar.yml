@@ -1,0 +1,45 @@
+mtareq-nested-replies:
+  admin:
+    settings:
+      enabled_label: تفعيل الردود المتداخلة
+      max_depth_label: أقصى عمق للإزاحة
+      show_votes_label: إظهار شريط التصويت
+      show_reply_tag_label: 'إظهار وسم "الرد على"'
+      show_replied_indicator_label: 'إظهار مؤشر "ردّ على هذا"'
+      like_color_label: لون الإعجاب (عند التفعيل)
+      start_at_first_post_label: بدء المناقشات من المشاركة الأولى
+      visible_replies_label: عدد الردود الظاهرة لكل مستوى قبل طي الباقي
+      show_scrubber_label: إظهار شريط تصفح المناقشة
+      reply_form_label: نموذج الرد
+      reply_form_quick: رد سريع (تنسيق أساسي ومعاينة)
+      reply_form_composer: المحرر الكامل (داخل البطاقة)
+      highlight_color_label: لون تمييز الرد الجديد
+      legacy_mentions_label: تجميع الردود القديمة من إشارة المنشور في بدايتها
+  forum:
+    collapse: طيّ الردود
+    expand: توسيع الردود
+    upvote: تصويت إيجابي
+    downvote: تصويت سلبي
+    reply_to: "الرد على {username}"
+    more_replies: "{count} ردود أخرى"
+    show_more_replies: إظهار المزيد من الردود
+    reply_link: رد
+    sort_by: "ترتيب حسب:"
+    sort_oldest: الأقدم
+    sort_newest: الأحدث
+    sort_top: الأعلى تصويتًا
+    sort_replies: الأكثر ردودًا
+    sort_loading: جارٍ التحميل...
+    reply_form_placeholder: "الرد على {username}…"
+    reply_form_placeholder_op: "اكتب ردًا…"
+    reply_form_write: كتابة
+    reply_form_preview: معاينة
+    reply_form_bold: عريض
+    reply_form_italic: مائل
+    reply_form_quote: اقتباس
+    reply_form_link: رابط
+    reply_form_submit: نشر الرد
+    reply_form_cancel: إلغاء
+    reply_form_replying: "جارٍ الرد على {username}"
+    reply_form_error: تعذّر نشر ردك. حاول مرة أخرى.
+    reply_form_discard: هل تريد تجاهل مسودة الرد؟
