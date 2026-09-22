@@ -1,0 +1,7 @@
+itqan-reactions:
+  forum:
+    react: "React"
+    add_reaction: "Add reaction"
+  admin:
+    permissions:
+      react_posts_label: "React to posts"

@@ -1,0 +1,69 @@
+// ---------------------------------------------------------------------------
+// Discussion list — vote column
+// ---------------------------------------------------------------------------
+//
+// A column at the leading edge of each row.
+//
+// Core reserves a gutter there for the avatar: `.DiscussionListItem-content`
+// carries a left padding and the floated avatar is pulled back into it by a
+// matching negative margin. Both values differ per breakpoint.
+//
+// The trick is that floats resolve against the content box. Widening the padding
+// by one column moves the avatar, badges, main and count along with it
+// automatically — so only two things need stating: the wider padding, and how far
+// the control itself is pulled back.
+//
+// Written with physical properties on purpose. Flarum compiles a separate
+// right-to-left stylesheet by flipping `left` to `right`, and core's own rules
+// here are physical; matching them keeps this flipping in step rather than
+// half-logical and half-mirrored.
+
+@itqan-vote-column: 34px;
+
+.DiscussionListItem-content > .VoteButtons--vertical {
+  float: left;
+  margin-top: 12px;
+}
+
+@media @phone {
+  // 15px outer gutter + 45px avatar gutter, plus the new column.
+  .DiscussionListItem-content {
+    padding-left: 15px + 45px + @itqan-vote-column;
+  }
+
+  // Pulled back to the outer gutter, not to the row edge: the 15px belongs to
+  // the row and the control should respect it.
+  .DiscussionListItem-content > .VoteButtons--vertical {
+    margin-left: -(45px + @itqan-vote-column);
+  }
+}
+
+@media @tablet-up {
+  .DiscussionListItem-content {
+    padding-left: 52px + @itqan-vote-column;
+  }
+
+  .DiscussionListItem-content > .VoteButtons--vertical {
+    margin-left: -(52px + @itqan-vote-column);
+  }
+
+  // The list also appears in the pane beside an open discussion, where core
+  // scopes a wider gutter — 52px plus the 15px it folds in when it cancels the
+  // row's bleed — at a specificity the rule above cannot reach. Left unhandled
+  // the column lands 19px outside the pane, where its `overflow` clips it away.
+  .DiscussionPage-list .DiscussionListItem-content {
+    padding-left: 52px + 15px + @itqan-vote-column;
+  }
+
+  // Pulled back to the pane's own 15px gutter rather than to its edge.
+  .DiscussionPage-list .DiscussionListItem-content > .VoteButtons--vertical {
+    margin-left: -(52px + @itqan-vote-column);
+  }
+}
+
+// The score beside a discussion in the list, so an ordering by score can be read
+// rather than trusted.
+.DiscussionListItem-votes {
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+}

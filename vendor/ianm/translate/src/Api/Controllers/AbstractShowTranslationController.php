@@ -22,8 +22,12 @@ abstract class AbstractShowTranslationController extends AbstractShowController
 
     protected function validateLanguageSupported(string $lang, User $actor): void
     {
-        if (!in_array($lang, $this->translator->supportedLanguages($actor))) {
-            throw new ValidationException([$lang => 'Language not supported by the current configuration.']);
+        $supported = $this->translator->supportedLanguages($actor);
+        if (!in_array($lang, $supported)) {
+            $baseLang = strtolower(explode('-', $lang)[0]);
+            if (!in_array($baseLang, $supported)) {
+                throw new ValidationException([$lang => 'Language not supported by the current configuration.']);
+            }
         }
     }
 

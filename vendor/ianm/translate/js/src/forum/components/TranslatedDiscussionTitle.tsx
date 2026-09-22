@@ -39,8 +39,9 @@ export default class TranslatedDiscussionTitle extends Component<ITranslatedDisc
 
   headerItems(discussion: Discussion, translation: DiscussionTranslation): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
-    const from = discussion.detectedLang()
-      ? LangDisplayName(discussion.detectedLang())
+    const detected = discussion.detectedLang?.() || translation.attribute<string>('detectedLang');
+    const from = detected && detected !== 'unknown'
+      ? LangDisplayName(detected)
       : app.translator.trans('ianm-translate.forum.unknown-language');
     const to = LangDisplayName(translation.language());
 
