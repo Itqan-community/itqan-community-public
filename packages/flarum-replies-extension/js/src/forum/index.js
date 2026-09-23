@@ -1389,4 +1389,18 @@ app.initializers.add('mtareq-nested-replies', () => {
       50 // ItemList priorities sort high-to-low: the rail (110) leads, chip follows
     );
   });
+
+  // Discussion-row vote rail: contentItems, no vnode surgery. Guard on the
+  // serializer actually shipping firstPostId (itqan-discussions' rows won't).
+  extend(DiscussionListItem.prototype, 'contentItems', function (items) {
+    if (!settings.showVotes) return;
+    const discussion = this.attrs.discussion;
+    if (!discussion || discussion.attribute('firstPostId') == null) return;
+
+    items.add(
+      'nestedRepliesVoteRail',
+      m(VoteRail, { model: discussion, postId: discussion.attribute('firstPostId'), adapter: votes }),
+      110 // leads the row content
+    );
+  });
 });
