@@ -19,6 +19,7 @@ import { getDepth, isHidden, isOriginalPost, getReplyTarget, getParentId, isDeri
 import { unreadReplyCount } from './utils/unread';
 import { buildDayLabelMap } from './utils/dayLabel';
 import { firstChildOfMissingParent } from './utils/tombstones';
+import { summarizeThread } from './utils/threadSummary';
 import VoteRail from './components/VoteRail';
 import CollapseToggle from './components/CollapseToggle';
 import MoreReplies from './components/MoreReplies';
@@ -1017,7 +1018,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       app.modal.show(DeleteConfirmModal, {
         title: app.translator.trans('mtareq-nested-replies.forum.reply_form_discard_title'),
         message: app.translator.trans('mtareq-nested-replies.forum.reply_form_discard'),
-        confirmLabel: app.translator.trans('core.lib.continue'),
+        confirmLabel: app.translator.trans('mtareq-nested-replies.forum.action_continue'),
         onconfirm: () => {
           inlineDraft('');
           openInlineReply(post);
@@ -1269,6 +1270,8 @@ app.initializers.add('mtareq-nested-replies', () => {
       [...groups]
         .sort((a, b) => b.targetDepth - a.targetDepth)
         .forEach((group, index) => {
+          const groupSummary = group.members ? summarizeThread(group.members, lookup) : null;
+
           items.add(
             'nestedRepliesShowMore' + index,
             m(MoreReplies, {
@@ -1279,6 +1282,7 @@ app.initializers.add('mtareq-nested-replies', () => {
               // branch, so the control may sit beside or to the right of the
               // anchor's content column.
               indent: group.targetDepth - actualDepth,
+              summary: groupSummary,
               onclick: () => expandGroup(group.parentId),
             }),
             20
