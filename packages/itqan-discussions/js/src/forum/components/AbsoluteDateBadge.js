@@ -1,6 +1,9 @@
 import Component from 'flarum/common/Component';
 import humanTime from 'flarum/common/helpers/humanTime';
 import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+
+dayjs.extend(localizedFormat);
 
 /**
  * The `AbsoluteDateBadge` component displays explicit calendar-date timestamps

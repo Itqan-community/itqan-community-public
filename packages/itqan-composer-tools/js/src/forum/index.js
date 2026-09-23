@@ -42,6 +42,10 @@ app.initializers.add('itqan-composer-tools', () => {
    </Tooltip>,
    8
 );
+  });
+
+  extend(TextEditor.prototype, 'controlItems', function (items) {
+    if (!isDiscussionComposer(this.attrs.composer)) return;
 
     const open = this.itqanMarkdownPreviewOpen;
     const label = app.translator.trans(
