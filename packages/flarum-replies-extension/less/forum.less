@@ -1284,7 +1284,10 @@ a.NestedRepliesReplyTag {
   .NestedRepliesSummary-avatar {
     width: var(--avatar-xs);
     height: var(--avatar-xs);
-    margin-inline-start: calc(var(--sp-6) * -1);
+    // Escaped: less.php evaluates arithmetic inside `calc()` and cannot reason
+    // about CSS custom properties — an unescaped `var() * -1` throws
+    // "Operation on an invalid type", which silently empties forum.css.
+    margin-inline-start: ~"calc(var(--sp-6) * -1)";
     border: 1px solid var(--surface-card);
     border-radius: var(--r-pill);
     background: var(--surface-active) center / cover no-repeat;
