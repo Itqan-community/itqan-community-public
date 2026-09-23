@@ -33,10 +33,12 @@ describe('createVoteAdapter', () => {
     expect(adapter.getUserVote(post)).toBe('down');
   });
 
-  it('returns null for missing data', () => {
+  it('defaults a missing score to 0 and missing/invalid votes to null', () => {
     const adapter = createVoteAdapter(fakeApp());
 
-    expect(adapter.getScore(fakePost())).toBeNull();
+    // Score defaults to a numeric 0 (contract from 4d916764 "default numeric
+    // score") so consumers can render it directly without null checks.
+    expect(adapter.getScore(fakePost())).toBe(0);
     expect(adapter.getUserVote(fakePost({ userVote: 'sideways' }))).toBeNull();
   });
 
