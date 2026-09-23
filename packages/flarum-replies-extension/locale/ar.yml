@@ -39,7 +39,23 @@ mtareq-nested-replies:
     reply_form_quote: اقتباس
     reply_form_link: رابط
     reply_form_submit: نشر الرد
+    edit_form_submit: حفظ التعديلات
     reply_form_cancel: إلغاء
     reply_form_replying: "جارٍ الرد على {username}"
     reply_form_error: تعذّر نشر ردك. حاول مرة أخرى.
     reply_form_discard: هل تريد تجاهل مسودة الرد؟
+    date_today: اليوم
+    tombstone: "[تم حذف هذا التعليق]"
+    unread_chip: "{count} جديد"
+    summary_replies: "{count} ردود"
+    summary_last_activity: "آخر نشاط {time}"
+    vote_rail_label: التصويت
+    # Task-15 additions (defects #22/#24):
+    action_cancel: إلغاء
+    action_continue: متابعة
+    reply_form_discard_title: تجاهل الرد؟
+
+core:
+  forum:
+    index_sort:
+      hot_button: الأكثر تفاعلًا
