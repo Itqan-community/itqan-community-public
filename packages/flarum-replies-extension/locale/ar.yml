@@ -46,6 +46,7 @@ mtareq-nested-replies:
     reply_form_discard: هل تريد تجاهل مسودة الرد؟
     date_today: اليوم
     tombstone: "[تم حذف هذا التعليق]"
+    unread_badge: جديد
     unread_chip: "{count} جديد"
     summary_replies: "{count} ردود"
     summary_last_activity: "آخر نشاط {time}"

@@ -46,6 +46,7 @@ mtareq-nested-replies:
     reply_form_discard: Discard your draft reply?
     date_today: Today
     tombstone: "[deleted]"
+    unread_badge: New
     unread_chip: "{count} new"
     summary_replies: "{count} replies"
     summary_last_activity: "last activity {time}"

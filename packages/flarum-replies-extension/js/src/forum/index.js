@@ -83,7 +83,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   if (typeof document !== 'undefined' && document.documentElement) {
     document.documentElement.classList.toggle('NestedRepliesHideMentionedBy', !settings.showRepliedIndicator);
-    document.documentElement.style.setProperty('--nested-replies-like-color', settings.likeColor || '#ff4500');
+    document.documentElement.style.setProperty('--nested-replies-like', settings.likeColor || '#ff4500');
     document.documentElement.style.setProperty('--nested-replies-highlight-rgb', hexToRgbTriplet(settings.highlightColor, '0, 200, 83'));
   }
 
@@ -475,11 +475,18 @@ app.initializers.add('mtareq-nested-replies', () => {
     // Brief highlight on the reply the reader just posted.
     element.classList.toggle('NestedRepliesPost--new', highlightedPostId != null && id === highlightedPostId);
 
-    // --- Unread chip (spec §3): dataset drives a CSS pseudo-element --------
-    const unread = typeof post.discussion === 'function' && post.discussion()
-      ? unreadReplyCount(post.discussion())
-      : null;
-    element.dataset.unread = unread == null ? '' : String(unread);
+    // --- Unread badge (spec §6.3): tag on unread ROOTS; the localized label
+    // rides the attribute so CSS renders it via content: attr() (decorative —
+    // the counted version lives on the list-row chip). Same per-post
+    // number > lastRead test itqan runs on every row, narrowed to roots; the
+    // OP (number 1) is excluded for itqan parity. ---
+    const unreadDiscussion = typeof post.discussion === 'function' ? post.discussion() : null;
+    const lastRead = unreadDiscussion ? unreadDiscussion.attribute('lastReadPostNumber') : null;
+    const postNumber = Number(post.number());
+    element.dataset.unread =
+      lastRead != null && depth === 0 && postNumber > 1 && postNumber > Number(lastRead)
+        ? trans('unread_badge')
+        : '';
 
     // --- Tombstone anchor (spec §5.3): first child of a missing parent -----
     // data-missing-parent marks the gap; data-tombstone carries the localized
