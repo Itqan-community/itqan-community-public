@@ -21,6 +21,29 @@ app.initializers.add('itqan-composer-tools', () => {
     this.itqanMarkdownPreviewOpen = false;
   });
 
+  extend(TextEditor.prototype, 'toolbarItems', function (items) {
+    if (!isDiscussionComposer(this.attrs.composer)) return;
+
+    items.add(
+      'itqanTableInsert',
+      <Tooltip text="Insert Table">
+       <Button
+         className="Button Button--icon"
+         icon="fas fa-table"
+         aria-label="Insert Table"
+         onclick={() => {
+           const tableMarkdown = `| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Cell 1   | Cell 2   | Cell 3   |`;
+          this.attrs.composer.editor.insertAtCursor(tableMarkdown);
+          m.redraw();
+       }}
+     />
+   </Tooltip>,
+   8
+);
+  });
+
   extend(TextEditor.prototype, 'controlItems', function (items) {
     if (!isDiscussionComposer(this.attrs.composer)) return;
 
@@ -51,7 +74,7 @@ app.initializers.add('itqan-composer-tools', () => {
 
   extend(TextEditor.prototype, 'view', function (vdom) {
     if (!isDiscussionComposer(this.attrs.composer)) return;
-
+      
     vdom.attrs.className = classList(vdom.attrs.className, {
       'TextEditor--markdownPreview': this.itqanMarkdownPreviewOpen,
     });

@@ -18,6 +18,7 @@ import extractText from 'flarum/common/utils/extractText';
 import Button from 'flarum/common/components/Button';
 import PostControls from 'flarum/forum/utils/PostControls';
 
+import PostMeta from 'flarum/forum/components/PostMeta';
 import VoteButtons from './components/VoteButtons';
 import {
   getVisualDepth,
@@ -28,6 +29,7 @@ import {
   toggleCollapsed,
 } from './components/CommentTree';
 import CommentStreamState from './states/CommentStreamState';
+import AbsoluteDateBadge from './components/AbsoluteDateBadge';
 
 /**
  * Group DFS-ordered comment stream vnodes into one envelope per root:
@@ -107,6 +109,7 @@ function groupCommentItemsIntoEnvelopes(items) {
 }
 
 export { default as VoteButtons } from './components/VoteButtons';
+export { default as AbsoluteDateBadge } from './components/AbsoluteDateBadge';
 export * from './components/CommentTree';
 export { default as CommentStreamState } from './states/CommentStreamState';
 
@@ -1386,6 +1389,23 @@ app.initializers.add('itqan-discussions', () => {
         }, this.loaded.bind(this));
     });
   }
+
+  // ==========================================
+  // 3. Archival Post Absolute Timestamps (PR #20)
+  // ==========================================
+  extend(PostMeta.prototype, 'viewItems', function (items) {
+    const post = this.attrs.post;
+    if (!post || !post.createdAt()) return;
+    const time = post.createdAt();
+
+    items.replace(
+      'time',
+      <a className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
+        <AbsoluteDateBadge time={time} />
+      </a>,
+      100
+    );
+  });
 });
 
 // Runs after third-party actionItems (e.g. ianm-translate) so Translate leaves the
