@@ -21,9 +21,11 @@ class DiscussionScore
         // Carbon (Flarum's created_at) implements DateTimeInterface, which is
         // all Ranking::hotness takes. Callers clear VoteCounts first so this
         // SUM is read fresh, not from a stale memo.
-        $discussion->update([
-            'votes' => $sum,
-            'hotness' => Ranking::hotness($sum, $discussion->created_at),
-        ]);
+        // Direct attribute assignment + save, never ->update([...]): core's
+        // Discussion is mass-assignment guarded (fillable is empty), so a
+        // mass update throws MassAssignmentException at runtime.
+        $discussion->votes = $sum;
+        $discussion->hotness = Ranking::hotness($sum, $discussion->created_at);
+        $discussion->save();
     }
 }

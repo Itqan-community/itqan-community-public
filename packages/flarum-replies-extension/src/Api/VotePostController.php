@@ -7,7 +7,6 @@ use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Http\RequestUtil;
 use Flarum\Post\PostRepository;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Mtareq\NestedReplies\PostVote;
 use Mtareq\NestedReplies\Vote\DiscussionScore;
 use Mtareq\NestedReplies\Vote\VoteCounts;
@@ -42,7 +41,9 @@ class VotePostController extends AbstractShowController
 
         $value = $direction === 'up' ? 1 : ($direction === 'down' ? -1 : null);
 
-        DB::transaction(function () use ($post, $actor, $value) {
+        // The model's own connection, not the DB facade: Flarum 1.8 never
+        // sets a facade root, so Facade::__callStatic throws at runtime.
+        $post->getConnection()->transaction(function () use ($post, $actor, $value) {
             if ($value === null) {
                 PostVote::query()
                     ->where('post_id', $post->id)
