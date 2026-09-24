@@ -1,22 +1,42 @@
 {
     "name": "itqan/flarum-notifications",
-    "description": "Itqan community notifications — do-not-disturb toggle",
+    "description": "Itqan community notifications — do-not-disturb toggle and per-tag notification channel preferences",
+    "keywords": [
+        "flarum",
+        "notifications",
+        "tags",
+        "email"
+    ],
     "type": "flarum-extension",
     "license": "MIT",
     "authors": [
-        { "name": "Itqan Community", "email": "a.abduraghman@itqan.dev" }
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
     ],
     "require": {
-        "flarum/core": "^1.8.0"
+        "flarum/core": "^1.8.0",
+        "flarum/tags": "^1.8.0"
     },
     "autoload": {
-        "psr-4": { "Itqan\\Notifications\\": "src/" }
+        "psr-4": {
+            "Itqan\\Notifications\\": "src/"
+        }
     },
     "extra": {
         "flarum-extension": {
             "title": "Itqan Notifications",
             "category": "feature",
-            "icon": { "name": "far fa-bell", "color": "#ffffff", "backgroundColor": "#0D9488" }
+            "icon": {
+                "name": "far fa-bell",
+                "color": "#ffffff",
+                "backgroundColor": "#0D9488"
+            },
+            "optional-dependencies": [
+                "fof-follow-tags",
+                "askvortsov-pwa"
+            ]
         }
     }
 }
