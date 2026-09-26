@@ -152,7 +152,7 @@
     padding-bottom: 0;
 
     .Post-footer {
-      background: #fff;
+      background: var(--body-bg-light, #fff);
       // Stretch the fill from the shallowest thread column (gutter in, minus
       // the line's own 2px) to the inline-end, so no guide line pokes out below
       // the control; an equal inline-start padding returns the content to its
@@ -292,7 +292,7 @@
       &:hover,
       &:focus,
       &:active {
-        background: var(--control-bg-hover, #eef1f3) !important;
+        background: var(--control-bg-shaded, #eef1f3) !important;
         color: var(--text-color, #1c1c1c);
         box-shadow: none;
       }
@@ -301,10 +301,12 @@
     .Button-icon { margin-right: 0; }
     .Button-caret { display: none; }
 
-    // Core renders Like/Reply as text-only; give them an icon.
+    // Core renders Like/Reply as text-only; give them an icon. Flarum 1.8 ships
+    // Font Awesome 5 and 2.0 ships Font Awesome 6, so list both families and let
+    // the browser pick whichever is installed.
     .item-reply .Button::before,
     .item-like .Button::before {
-      font-family: "Font Awesome 5 Free";
+      font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 5 Pro";
       font-weight: 900;
       font-style: normal;
     }
@@ -347,11 +349,11 @@
   }
 
   &--up.is-active {
-    color: var(--nested-replies-upvote-color, #16a34a);
+    color: #16a34a;
   }
 
   &--down.is-active {
-    color: var(--nested-replies-downvote-color, #dc2626);
+    color: #dc2626;
   }
 }
 
@@ -437,8 +439,8 @@
   // Opaque so the control masks the guide lines running behind it, ending the
   // thread at its top edge. `!important` beats core's
   // `.Button--link { background: transparent !important; }`.
-  background: #fff !important;
-  color: #4470e6;
+  background: var(--body-bg-light, #fff) !important;
+  color: var(--link-color, #4470e6);
   font-size: 12px;
   font-weight: 700;
   line-height: 1.4;
@@ -453,10 +455,10 @@
     width: 16px;
     height: 16px;
     box-sizing: border-box;
-    border: 1px solid #edeff1;
+    border: 1px solid var(--control-bg-shaded, #edeff1);
     border-radius: 8px;
-    background: #f6f7f8;
-    color: #878a8c;
+    background: var(--control-bg, #f6f7f8);
+    color: var(--muted-color, #878a8c);
     font-size: 9px;
     line-height: 1;
   }
@@ -472,7 +474,7 @@
   }
 
   &-label {
-    color: #4470e6;
+    color: var(--link-color, #4470e6);
   }
 
   &-icon {
@@ -481,7 +483,7 @@
     font-size: 11px;
 
     .icon {
-      color: #4470e6;
+      color: var(--link-color, #4470e6);
       font-size: 11px;
       line-height: 1;
       margin-right: 0;
@@ -490,8 +492,8 @@
 
   &:hover,
   &:focus {
-    background: #f6f7f8 !important;
-    color: #2a54c4;
+    background: var(--control-bg, #f6f7f8) !important;
+    color: var(--link-color, #2a54c4);
     text-decoration: none;
   }
 
@@ -499,7 +501,7 @@
   &:focus &-label,
   &:hover &-icon .icon,
   &:focus &-icon .icon {
-    color: #2a54c4;
+    color: var(--link-color, #2a54c4);
   }
 }
 
@@ -660,7 +662,7 @@ a.NestedRepliesReplyTag {
 
   &-error {
     padding: 0 10px 6px;
-    color: #d0021b;
+    color: var(--error-color, #d0021b);
     font-size: 12px;
   }
 
@@ -762,7 +764,7 @@ a.NestedRepliesReplyTag {
   &-preview {
     padding: 10px 12px;
     min-height: 60px;
-    color: #1c1c1e;
+    color: var(--text-color, #1c1c1e);
     font-size: 14px;
   }
 
@@ -912,7 +914,7 @@ a.NestedRepliesReplyTag {
     padding: 0;
     // `!important` beats our own base `.Post-actions .Button` background, so
     // the opaque fill truly masks neighbouring thread lines behind it.
-    background: #fff !important;
+    background: var(--body-bg-light, #fff) !important;
     transform: ~"translateX(calc(var(--indent) - var(--gutter) + 4px))";
 
     .icon {
@@ -984,7 +986,7 @@ a.NestedRepliesReplyTag {
     // The "This post was deleted" placeholder in the body should use the
     // normal text colour so it stays readable against the tinted card.
     .Post-body {
-      color: #666;
+      color: var(--muted-color, #666);
       font-style: italic;
     }
   }
@@ -1010,7 +1012,8 @@ a.NestedRepliesReplyTag {
   color: var(--muted-color, #878a8c);
 
   .icon {
-    font-family: "Font Awesome 5 Free";
+    // Same version-agnostic stack as the action buttons above.
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 5 Pro";
     font-weight: 400;
 
     &::before {
@@ -1024,9 +1027,12 @@ a.NestedRepliesReplyTag {
   }
 }
 
-// EventPost styling (tag changes, title changes, pin/lock event items)
-.EventPost {
-  .EventPost-icon {
+// EventPost styling (tag changes, title changes, pin/lock event items). Scoped
+// to the nested-reply cards so event posts elsewhere on the forum are not
+// affected.
+.NestedRepliesThreadCard,
+.NestedRepliesReplyCard {
+  .EventPost .EventPost-icon {
     float: none;
     position: static;
     display: block;
@@ -1038,225 +1044,41 @@ a.NestedRepliesReplyTag {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Dark mode overrides
-// ---------------------------------------------------------------------------
-html[data-itqan-theme='dark'],
-body.dark,
-[data-theme='dark'] {
-  .NestedRepliesThreadCard,
-  .NestedRepliesReplyCard {
-    background: var(--body-bg-light, #1d1e22);
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .NestedRepliesReplyCard > .PostStream-item.is-top-level {
-    border-top-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .NestedRepliesPost--hasMore > .NestedRepliesPost-container .Post-footer {
-    background: var(--body-bg-light, #1d1e22);
-  }
-
-  .NestedRepliesReplySort {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-    color: var(--muted-color, #a0a0a0);
-
-    select {
-      background: var(--control-bg, #2a2b30);
-      border-color: rgba(255, 255, 255, 0.12);
-      color: var(--text-color, #e0e0e0);
-    }
-  }
-
-  .NestedRepliesPost .Post-likedBy {
-    color: var(--muted-color, #a0a0a0);
-
-    .icon {
-      color: var(--muted-color, #a0a0a0);
-    }
-
-    .username {
-      color: var(--text-color, #e0e0e0) !important;
-    }
-  }
-
-  .NestedRepliesPost .item-like.is-liked .Button,
-  .NestedRepliesPost .item-like.is-liked .Button:hover,
-  .NestedRepliesPost .item-like.is-liked .Button:focus {
-    color: var(--nested-replies-like-color, #ff5252) !important;
-  }
-
-  .NestedRepliesPost .Post-actions {
-    .Button:not(.NestedRepliesCollapseToggle) {
-      background: var(--control-bg, rgba(255, 255, 255, 0.08)) !important;
-      border-color: rgba(255, 255, 255, 0.1) !important;
-      color: var(--muted-color, #a0a0a0) !important;
-
-      &:hover,
-      &:focus,
-      &:active {
-        background: rgba(255, 255, 255, 0.16) !important;
-        color: var(--text-color, #ffffff) !important;
-      }
-    }
-
-    .item-like.is-liked .Button {
-      color: var(--nested-replies-like-color, #ff5252) !important;
-    }
-  }
-
-  .NestedRepliesVoteRail {
-    background: var(--control-bg, rgba(255, 255, 255, 0.08));
-    border-color: rgba(255, 255, 255, 0.1);
-    color: var(--muted-color, #a0a0a0);
-  }
-
-  .NestedRepliesVoteScore {
-    color: var(--text-color, #e0e0e0);
-  }
-
-  .NestedRepliesVoteButton {
-    &:hover:not(:disabled) {
-      color: var(--text-color, #ffffff);
-    }
-
-    &--up.is-active {
-      color: var(--nested-replies-upvote-color-dark, #4ade80) !important;
-    }
-
-    &--down.is-active {
-      color: var(--nested-replies-downvote-color-dark, #f87171) !important;
-    }
-  }
-
-  .NestedRepliesMoreReplies {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--primary-color, #8ab4f8) !important;
-
-    &:hover,
-    &:focus {
-      background: rgba(255, 255, 255, 0.15);
-      color: var(--primary-color, #a8c7fa) !important;
-    }
-  }
-
-  .NestedRepliesShowMore {
-    background: var(--body-bg-light, #1d1e22) !important;
-    color: var(--primary-color, #8ab4f8);
-
-    &-label,
-    &-icon .icon {
-      color: var(--primary-color, #8ab4f8);
-    }
-
-    &-toggle {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.12);
-      color: var(--muted-color, #a0a0a0);
-    }
-
-    &:hover,
-    &:focus {
-      background: rgba(255, 255, 255, 0.12) !important;
-      color: var(--primary-color, #a8c7fa);
-
-      .NestedRepliesShowMore-label,
-      .NestedRepliesShowMore-icon .icon {
-        color: var(--primary-color, #a8c7fa);
-      }
-    }
-  }
-
-  a.NestedRepliesReplyTag {
-    background: rgba(46, 125, 50, 0.25);
-    color: #a5d6a7;
-
-    .icon {
-      color: #81c784;
-    }
-  }
-
-  .NestedRepliesQuickReply,
-  .NestedRepliesInlineComposer {
-    background: var(--body-bg-light, #222327);
-    border-color: rgba(255, 255, 255, 0.12);
-
-    .NestedRepliesQuickReply-input,
-    .NestedRepliesQuickReply-preview,
-    .NestedRepliesInlineComposer-preview {
-      color: var(--text-color, #e0e0e0);
-    }
-
-    .NestedRepliesQuickReply-toolbar,
-    .NestedRepliesQuickReply-actions,
-    .NestedRepliesInlineComposer-head {
-      border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .NestedRepliesQuickReply-actions {
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    .NestedRepliesQuickReply-format {
-      color: var(--muted-color, #a0a0a0);
-
-      &:hover,
-      &:focus {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--text-color, #ffffff);
-      }
-    }
-
-    .NestedRepliesQuickReply-tab {
-      color: var(--muted-color, #a0a0a0);
-
-      &.is-active {
-        color: var(--primary-color, #8ab4f8);
-        border-bottom-color: var(--primary-color, #8ab4f8);
-      }
-    }
-
-    .NestedRepliesInlineComposer-title,
-    .NestedRepliesInlineComposer-loading {
-      color: var(--muted-color, #a0a0a0);
-    }
-  }
-}
-
 /* ==========================================================================
    DeleteConfirmModal - Custom confirmation modal styling
+   --------------------------------------------------------------------------
+   Colours are taken from Flarum's CSS variables (--body-bg, --heading-color,
+   --text-color, ...), which already flip with the compile-time dark mode, so
+   this block needs no separate dark-mode override.
    ========================================================================== */
 .DeleteConfirmModal {
   .Modal-content {
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
-    background: #ffffff;
+    background: var(--body-bg);
     border: none;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
   }
 
   .Modal-header {
     padding: 20px 24px 12px 24px;
     border-bottom: none;
 
-    .Modal-title {
+    // Core renders the title as a h3 inside .Modal-header, not .Modal-title.
+    h3 {
       font-size: 1.125rem;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--heading-color);
       line-height: 1.4;
     }
+  }
 
-    .close {
-      top: 16px;
-      left: 16px;
-      opacity: 0.6;
-      transition: opacity 0.15s ease;
+  // Core renders the close control as .Modal-close, not .Modal-header .close.
+  .Modal-close {
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
 
-      &:hover {
-        opacity: 1;
-      }
+    &:hover {
+      opacity: 1;
     }
   }
 
@@ -1268,7 +1090,7 @@ body.dark,
   .DeleteConfirmModal-bodyText {
     font-size: 0.95rem;
     line-height: 1.6;
-    color: #475569;
+    color: var(--text-color);
     margin-bottom: 24px;
   }
 
@@ -1283,7 +1105,7 @@ body.dark,
     border: none !important;
 
     .Button {
-      height: 40px;
+      min-height: 40px;
       padding: 0 20px;
       border-radius: 10px;
       font-weight: 600;
@@ -1291,103 +1113,74 @@ body.dark,
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s ease;
       cursor: pointer;
     }
+  }
+}
 
-    .DeleteConfirmModal-buttonConfirm {
-      background: #ef4444;
-      color: #ffffff;
-      border: none;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+// ---------------------------------------------------------------------------
+// Discussion list — vote column (leading edge, top-aligned)
+// ---------------------------------------------------------------------------
+// NOTE: gutter math matches Flarum 1.x's floated `.DiscussionListItem-content`
+// and will need revisiting for 2.x's flex layout.
+// Core reserves the leading gutter on `.DiscussionListItem-content` for the
+// floated avatar. Widening that padding by one column moves the avatar, badges,
+// main and count along with it, so only the wider padding and the control's
+// negative margin need stating. Physical properties on purpose: Flarum compiles
+// a separate RTL stylesheet by flipping `left` to `right`, matching core's own
+// physical rules here. All rules below are gated on `.NestedRepliesShowVotes`
+// so the wider gutter disappears when votes are turned off.
+.NestedRepliesShowVotes {
+  @nested-vote-column: 34px;
 
-      &:hover,
-      &:focus {
-        background: #dc2626;
-        color: #ffffff;
-        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
-        transform: translateY(-1px);
-      }
+  // Floats do not contribute to their container's height unless it establishes a
+  // block formatting context. Without this, a rail taller than the row content
+  // spills out below the card. `flow-root` contains the float and lets the card
+  // grow to fit it (no clipping, so dropdowns still escape).
+  .DiscussionListItem-content {
+    display: flow-root;
+  }
 
-      &:active {
-        transform: translateY(0);
-      }
+  .DiscussionListItem-content > .NestedRepliesVoteRail {
+    float: left;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 6px;
+    // The row has no vertical padding of its own, so inset the rail equally on
+    // both sides (flow-root makes the card grow to include the bottom margin).
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  @media @phone {
+    .DiscussionListItem-content {
+      padding-left: 15px + 45px + @nested-vote-column;
     }
 
-    .DeleteConfirmModal-buttonCancel {
-      background: #f1f5f9;
-      color: #334155;
-      border: 1px solid #cbd5e1;
+    .DiscussionListItem-content > .NestedRepliesVoteRail {
+      margin-left: -(45px + @nested-vote-column);
+    }
+  }
 
-      &:hover,
-      &:focus {
-        background: #e2e8f0;
-        color: #0f172a;
-        border-color: #94a3b8;
-      }
+  @media @tablet-up {
+    .DiscussionListItem-content {
+      padding-left: 52px + @nested-vote-column;
+    }
 
-      &:active {
-        background: #cbd5e1;
-      }
+    .DiscussionListItem-content > .NestedRepliesVoteRail {
+      margin-left: -(52px + @nested-vote-column);
+    }
+
+    // The list also renders in the pane beside an open discussion, where core
+    // scopes a wider leading gutter (52px + the 15px row bleed).
+    .DiscussionPage-list .DiscussionListItem-content {
+      padding-left: 52px + 15px + @nested-vote-column;
+    }
+
+    .DiscussionPage-list .DiscussionListItem-content > .NestedRepliesVoteRail {
+      margin-left: -(52px + @nested-vote-column);
     }
   }
 }
 
-/* Dark mode adjustments for DeleteConfirmModal */
-html[data-itqan-theme="dark"],
-body.dark-mode {
-  .DeleteConfirmModal {
-    .Modal-content {
-      background: #1e293b;
-      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    }
-
-    .Modal-header {
-      .Modal-title {
-        color: #f8fafc;
-      }
-
-      .close {
-        color: #94a3b8;
-
-        &:hover {
-          color: #f8fafc;
-        }
-      }
-    }
-
-    .DeleteConfirmModal-bodyText {
-      color: #94a3b8;
-    }
-
-    .Modal-footer {
-      .DeleteConfirmModal-buttonConfirm {
-        background: #dc2626;
-        color: #ffffff;
-
-        &:hover,
-        &:focus {
-          background: #b91c1c;
-        }
-      }
-
-      .DeleteConfirmModal-buttonCancel {
-        background: #334155;
-        color: #f1f5f9;
-        border: 1px solid #475569;
-
-        &:hover,
-        &:focus {
-          background: #475569;
-          color: #ffffff;
-          border-color: #64748b;
-        }
-
-        &:active {
-          background: #1e293b;
-        }
-      }
-    }
-  }
-}
 

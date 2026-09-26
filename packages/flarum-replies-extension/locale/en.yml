@@ -44,3 +44,10 @@ mtareq-nested-replies:
     reply_form_replying: "Replying to {username}"
     reply_form_error: Could not post your reply. Please try again.
     reply_form_discard: Discard your draft reply?
+    reply_form_discard_title: Discard draft
+    reply_form_discard_confirm: Discard and continue
+    delete_post_title: Delete post
+    delete_post_forever_title: Delete forever
+    delete_discussion_title: Delete discussion
+    delete_discussion_forever_title: Delete discussion forever
+    hide_discussion_confirmation: Hide this discussion?

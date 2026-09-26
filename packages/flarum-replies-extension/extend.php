@@ -1,5 +1,6 @@
 <?php
 
+use Flarum\Api\Serializer\BasicPostSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving;
@@ -98,7 +99,11 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
         });
 } else {
     // Flarum 1.x
-    $extenders[] = (new Extend\ApiSerializer(PostSerializer::class))
+    // Post attributes that must be present wherever a post is serialized,
+    // including includes (firstPost/lastPost/mostRelevantPost use
+    // BasicPostSerializer). PostSerializer extends this, so the details page
+    // is unaffected.
+    $extenders[] = (new Extend\ApiSerializer(BasicPostSerializer::class))
         ->attribute('votes', function ($serializer, $post) {
             return (int) PostVote::query()->where('post_id', $post->id)->sum('value');
         })
@@ -119,7 +124,9 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
             }
 
             return $vote->value > 0 ? 'up' : 'down';
-        })
+        });
+
+    $extenders[] = (new Extend\ApiSerializer(PostSerializer::class))
         ->attribute('replyToPostId', function ($serializer, $post) {
             $link = PostReply::query()->where('post_id', $post->id)->first();
 

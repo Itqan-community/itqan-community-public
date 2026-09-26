@@ -43,3 +43,10 @@ mtareq-nested-replies:
     reply_form_replying: "جارٍ الرد على {username}"
     reply_form_error: تعذّر نشر ردك. حاول مرة أخرى.
     reply_form_discard: هل تريد تجاهل مسودة الرد؟
+    reply_form_discard_title: تجاهل المسودة
+    reply_form_discard_confirm: تجاهل والمتابعة
+    delete_post_title: حذف المشاركة
+    delete_post_forever_title: حذف نهائي
+    delete_discussion_title: حذف الموضوع
+    delete_discussion_forever_title: حذف الموضوع نهائيًا
+    hide_discussion_confirmation: إخفاء هذا الموضوع؟
