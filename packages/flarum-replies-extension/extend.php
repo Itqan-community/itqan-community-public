@@ -1,12 +1,18 @@
 <?php
 
+use Flarum\Api\Controller\ListDiscussionsController;
+use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving;
+use Flarum\Post\Post;
+use Mtareq\NestedReplies\Access\PostPolicy;
 use Mtareq\NestedReplies\Api\VotePostController;
 use Mtareq\NestedReplies\Listener\StoreReplyParent;
 use Mtareq\NestedReplies\PostReply;
 use Mtareq\NestedReplies\PostVote;
+use Mtareq\NestedReplies\Provider\SortMapProvider;
+use Mtareq\NestedReplies\Vote\VoteCounts;
 
 $extenders = [
     (new Extend\Frontend('forum'))
@@ -42,6 +48,40 @@ $extenders = [
         ->serializeToForum('nestedRepliesHighlightColor', 'mtareq-nested-replies.highlight_color')
         ->serializeToForum('nestedRepliesLegacyMentions', 'mtareq-nested-replies.legacy_mentions', 'boolval'),
 
+    // --- Vote authorization (canVote + controller assert) -------------------
+    (new Extend\Policy())
+        ->modelPolicy(Post::class, PostPolicy::class),
+
+    // --- Discussion list sorts: votes / hotness ------------------------------
+    (new Extend\ApiController(ListDiscussionsController::class))
+        ->addSortField('votes')
+        ->addSortField('hotness'),
+
+    // --- Frontend+server sort map (dropdown labels come from sortMap keys) ---
+    (new Extend\ServiceProvider())
+        ->register(SortMapProvider::class),
+
+    // --- Batch-prime the list page's firstPost scores (actor-independent) ---
+    // Core invokes serialization-prep callbacks as ($controller, $data, $request,
+    // $document) — $data is the SECOND argument (AbstractSerializeController).
+    (new Extend\ApiController(ListDiscussionsController::class))
+        ->prepareDataForSerialization(function ($controller, $data) {
+            $ids = [];
+            foreach ($data as $discussion) {
+                if ($discussion && $discussion->first_post_id) {
+                    $ids[] = (int) $discussion->first_post_id;
+                }
+            }
+            if ($ids) {
+                VoteCounts::prime($ids);
+            }
+        }),
+
+    // --- Batch-prime own votes per discussion (stream serialization) --------
+    // The PostSerializer attributes closure below calls primeOwnForDiscussion()
+    // itself — one line per post, one query per discussion thanks to its memo.
+    // No controller hook needed here; listed for discoverability.
+
     (new Extend\Routes('api'))
         ->post('/mtareq-nested-replies/posts/{id}/vote', 'mtareq-nested-replies.vote', VotePostController::class),
 
@@ -58,7 +98,9 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
             return [
                 \Flarum\Api\Schema\Integer::make('votes')
                     ->get(function ($post) {
-                        return (int) PostVote::query()->where('post_id', $post->id)->sum('value');
+                        // Batched request-scoped loader — same contract as the
+                        // v1 serializer branch (spec §2).
+                        return VoteCounts::forPosts([(int) $post->id], null)[(int) $post->id] ?? 0;
                     }),
 
                 \Flarum\Api\Schema\Str::make('userVote')
@@ -70,12 +112,9 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
                             return null;
                         }
 
-                        $vote = PostVote::query()
-                            ->where('post_id', $post->id)
-                            ->where('user_id', $actor->id)
-                            ->first();
+                        VoteCounts::primeOwnForDiscussion((int) $post->discussion_id, $actor);
 
-                        return $vote ? ($vote->value > 0 ? 'up' : 'down') : null;
+                        return VoteCounts::userVotes([(int) $post->id], $actor)[(int) $post->id] ?? null;
                     }),
 
                 \Flarum\Api\Schema\Integer::make('replyToPostId')
@@ -99,26 +138,20 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
 } else {
     // Flarum 1.x
     $extenders[] = (new Extend\ApiSerializer(PostSerializer::class))
-        ->attribute('votes', function ($serializer, $post) {
-            return (int) PostVote::query()->where('post_id', $post->id)->sum('value');
-        })
-        ->attribute('userVote', function ($serializer, $post) {
+        ->attributes(function ($serializer, $post) {
             $actor = $serializer->getActor();
 
-            if (! $actor || ! $actor->exists) {
-                return null;
-            }
+            // One own-vote query per discussion per request (memoized), then
+            // everything below is served from the loader's memo.
+            VoteCounts::primeOwnForDiscussion((int) $post->discussion_id, $actor);
 
-            $vote = PostVote::query()
-                ->where('post_id', $post->id)
-                ->where('user_id', $actor->id)
-                ->first();
+            $sum = VoteCounts::forPosts([(int) $post->id], $actor)[(int) $post->id] ?? 0;
 
-            if (! $vote) {
-                return null;
-            }
-
-            return $vote->value > 0 ? 'up' : 'down';
+            return [
+                'votes' => $sum,
+                'userVote' => VoteCounts::userVotes([(int) $post->id], $actor)[(int) $post->id] ?? null,
+                'canVote' => (bool) $actor->can('vote', $post),
+            ];
         })
         ->attribute('replyToPostId', function ($serializer, $post) {
             $link = PostReply::query()->where('post_id', $post->id)->first();
@@ -128,6 +161,42 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
         ->attribute('nestedRepliesReplyCount', function ($serializer, $post) {
             return PostReply::subtreeCount($post->discussion_id, $post->id);
         });
+
+    $extenders[] = (new Extend\ApiSerializer(DiscussionSerializer::class))
+        ->attributes(function ($serializer, $discussion) {
+            $actor = $serializer->getActor();
+            $firstPostId = (int) $discussion->first_post_id;
+
+            return [
+                'votes' => $firstPostId
+                    ? (VoteCounts::forPosts([$firstPostId], $actor)[$firstPostId] ?? 0)
+                    : 0,
+                'firstPostId' => $firstPostId,
+                'userVote' => $firstPostId
+                    ? (VoteCounts::userVotes([$firstPostId], $actor)[$firstPostId] ?? null)
+                    : null,
+                // canVote on a list row is a display hint only, decided from
+                // the session (guests can't; your own first post can't — the
+                // client knows the author). The full PostPolicy still gates the
+                // actual POST. No Post::find() here: 20 rows = 20 queries.
+                'canVote' => (bool) $actor->exists,
+            ];
+        });
 }
+
+/*
+ * Flarum 2.0 upgrade note (spec §10 risk register):
+ * - addSortField / AddSortField exists in v1; v2's sort extension point must be
+ *   re-verified (candidate: Extend\Sort on the Discussion resource).
+ * - ApiSerializer extenders become Resource fields; PostSerializer/DiscussionSerializer
+ *   attributes closures map to PostResource/DiscussionResource::fields(...).
+ * - SortMapProvider's container binding name (flarum.forum.discussions.sortmap)
+ *   may change; verify at upgrade.
+ * - canVote is v1-serializer-only today: add it as a Boolean field on the v2
+ *   PostResource/DiscussionResource at upgrade (the v2 branch above ships
+ *   votes/userVote through VoteCounts, but not canVote).
+ * - Verify prepareDataForSerialization's callback arity on v2 (v1 calls
+ *   ($controller, $data, $request, $document)).
+ */
 
 return $extenders;

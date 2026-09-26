@@ -14,6 +14,6 @@
     "build": "webpack --mode production",
     "format": "prettier --write src",
     "format-check": "prettier --check src",
-    "test": "vitest run"
+    "test": "vitest run && node scripts/check-locales.js && node scripts/check-less-contract.js"
   }
 }

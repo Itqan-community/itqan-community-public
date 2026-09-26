@@ -13,7 +13,13 @@ import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import Stream from 'flarum/common/utils/Stream';
 import { readSettings } from '../common/settings';
 import { createVoteAdapter } from '../common/voteAdapter';
+import DiscussionListState from 'flarum/forum/states/DiscussionListState';
+import { readSortPreference, writeSortPreference } from '../common/sortPreference';
 import { getDepth, isHidden, isOriginalPost, getReplyTarget, getParentId, isDerivedParent, planSiblingFolding } from './utils/threadDepths';
+import { unreadReplyCount } from './utils/unread';
+import { buildDayLabelMap } from './utils/dayLabel';
+import { firstChildOfMissingParent } from './utils/tombstones';
+import { summarizeThread } from './utils/threadSummary';
 import VoteRail from './components/VoteRail';
 import CollapseToggle from './components/CollapseToggle';
 import MoreReplies from './components/MoreReplies';
@@ -43,12 +49,20 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   // Reply-card sorting. `oldest` uses Flarum's native stream; the other modes
   // fetch every page first so pagination can't leave posts out of the order.
-  let sortMode = 'oldest';
+  let sortMode = readSortPreference();
   let allPosts = null;
   let loadingAll = false;
   let refreshing = false;
   let currentDiscussion = null;
   let pendingParentId = null;
+
+  // Root-day divider memo: {key, map}; key = discussion id + loaded-post count.
+  let dayLabelCache = null;
+  // First child of each missing parent (spec §5.3 tombstones); rebuilt with the tree.
+  let tombstoneRoots = new Set();
+
+  // Shorthand for this extension's forum translation keys.
+  const trans = (key) => app.translator.trans(`mtareq-nested-replies.forum.${key}`);
 
   // The open in-card reply form, and the draft it holds (shared so a target
   // switch can warn before discarding).
@@ -69,7 +83,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   if (typeof document !== 'undefined' && document.documentElement) {
     document.documentElement.classList.toggle('NestedRepliesHideMentionedBy', !settings.showRepliedIndicator);
-    document.documentElement.style.setProperty('--nested-replies-like-color', settings.likeColor || '#ff4500');
+    document.documentElement.style.setProperty('--nested-replies-like', settings.likeColor || '#ff4500');
     document.documentElement.style.setProperty('--nested-replies-highlight-rgb', hexToRgbTriplet(settings.highlightColor, '0, 200, 83'));
   }
 
@@ -117,6 +131,40 @@ app.initializers.add('mtareq-nested-replies', () => {
     forceRedraw();
   }
 
+  function purgePostElement(postId) {
+    const selector = `.PostStream-item[data-id="${postId}"], .NestedRepliesPost[data-id="${postId}"]`;
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((el) => {
+      el.style.display = 'none';
+      if (el.parentNode) el.parentNode.removeChild(el);
+    });
+  }
+
+  // Override DiscussionControls.deleteAction to use custom DeleteConfirmModal
+  if (DiscussionControls) {
+    override(DiscussionControls, 'deleteAction', function (original) {
+      const discussion = this;
+
+      app.modal.show(DeleteConfirmModal, {
+        title: app.translator.trans('core.forum.discussion_controls.delete_confirmation'),
+        message: app.translator.trans('core.forum.discussion_controls.delete_confirmation'),
+        confirmLabel: app.translator.trans('core.forum.discussion_controls.delete_button'),
+        onconfirm: () => {
+          discussion.delete().then(() => {
+            if (app.discussions && typeof app.discussions.removeDiscussion === 'function') {
+              app.discussions.removeDiscussion(discussion);
+            }
+            if (app.viewingDiscussion && app.viewingDiscussion(discussion)) {
+              app.history.back();
+            } else {
+              m.redraw();
+            }
+          });
+        },
+      });
+    });
+  }
+
   // Override PostControls.hideAction & deleteAction to use custom DeleteConfirmModal
   // and instantly remove deleted posts from local stream tree without page reload.
   if (PostControls) {
@@ -125,9 +173,9 @@ app.initializers.add('mtareq-nested-replies', () => {
 
       app.modal.show(DeleteConfirmModal, {
         post,
-        title: extractText(app.translator.trans('core.forum.post_controls.hide_confirmation')) || 'حذف المشاركة',
-        message: extractText(app.translator.trans('core.forum.post_controls.hide_confirmation')) || 'هل أنت تأكد من حذف هذا التعليق؟',
-        confirmLabel: extractText(app.translator.trans('core.forum.post_controls.hide_button')) || 'حذف',
+        title: app.translator.trans('core.forum.post_controls.hide_confirmation'),
+        message: app.translator.trans('core.forum.post_controls.hide_confirmation'),
+        confirmLabel: app.translator.trans('core.forum.post_controls.hide_button'),
         onconfirm: () => {
           if (context) context.loading = true;
           const postId = String(post.id());
@@ -136,6 +184,7 @@ app.initializers.add('mtareq-nested-replies', () => {
             .save({ isHidden: true })
             .then(() => {
               removePostFromTree(postId);
+              purgePostElement(postId);
             })
             .catch(() => {})
             .then(() => {
@@ -151,9 +200,9 @@ app.initializers.add('mtareq-nested-replies', () => {
 
       app.modal.show(DeleteConfirmModal, {
         post,
-        title: extractText(app.translator.trans('core.forum.post_controls.delete_confirmation')) || 'حذف نهائي',
-        message: extractText(app.translator.trans('core.forum.post_controls.delete_confirmation')) || 'هل أنت تأكد من حذف هذا التعليق نهائياً؟ هذا الإجراء لا يمكن التراجع عنه.',
-        confirmLabel: extractText(app.translator.trans('core.forum.post_controls.delete_button')) || 'حذف نهائياً',
+        title: app.translator.trans('core.forum.post_controls.delete_confirmation'),
+        message: app.translator.trans('core.forum.post_controls.delete_confirmation'),
+        confirmLabel: app.translator.trans('core.forum.post_controls.delete_button'),
         onconfirm: () => {
           if (context) context.loading = true;
           const discussion = post.discussion();
@@ -175,6 +224,7 @@ app.initializers.add('mtareq-nested-replies', () => {
               }
 
               removePostFromTree(postId);
+              purgePostElement(postId);
             })
             .catch(() => {})
             .then(() => {
@@ -390,6 +440,8 @@ app.initializers.add('mtareq-nested-replies', () => {
     });
   }
 
+
+
   function isLikedByMe(post) {
     if (!app.session.user || typeof post.likes !== 'function') return false;
 
@@ -422,6 +474,29 @@ app.initializers.add('mtareq-nested-replies', () => {
     element.classList.toggle('NestedRepliesPost--op', op);
     // Brief highlight on the reply the reader just posted.
     element.classList.toggle('NestedRepliesPost--new', highlightedPostId != null && id === highlightedPostId);
+
+    // --- Unread badge (spec §6.3): tag on unread ROOTS; the localized label
+    // rides the attribute so CSS renders it via content: attr() (decorative —
+    // the counted version lives on the list-row chip). Same per-post
+    // number > lastRead test itqan runs on every row, narrowed to roots; the
+    // OP (number 1) is excluded for itqan parity. ---
+    const unreadDiscussion = typeof post.discussion === 'function' ? post.discussion() : null;
+    const lastRead = unreadDiscussion ? unreadDiscussion.attribute('lastReadPostNumber') : null;
+    const postNumber = Number(post.number());
+    element.dataset.unread =
+      lastRead != null && depth === 0 && postNumber > 1 && postNumber > Number(lastRead)
+        ? trans('unread_badge')
+        : '';
+
+    // --- Tombstone anchor (spec §5.3): first child of a missing parent -----
+    // data-missing-parent marks the gap; data-tombstone carries the localized
+    // label CSS renders as the stub card's content.
+    element.dataset.missingParent = tombstoneRoots.has(id) ? String(post.attribute('replyToPostId')) : '';
+    element.dataset.tombstone = tombstoneRoots.has(id) ? trans('tombstone') : '';
+
+    // --- Day divider: only the first post of a UTC day carries the label ----
+    const dayLabels = dayLabelsFor(component.attrs.discussion || currentDiscussion);
+    element.dataset.dayLabel = dayLabels[id] || '';
 
     // Flarum 2.x ships a `.Post-container` wrapper; 1.x has an unnamed div.
     // Tag it ourselves so the LESS works on both.
@@ -585,7 +660,6 @@ app.initializers.add('mtareq-nested-replies', () => {
   }
 
   function replySortVNode() {
-    const trans = (key) => app.translator.trans(`mtareq-nested-replies.forum.${key}`);
     const options = [
       ['oldest', trans('sort_oldest')],
       ['newest', trans('sort_newest')],
@@ -626,12 +700,14 @@ app.initializers.add('mtareq-nested-replies', () => {
       })
       .then(() => {
         loadingAll = false;
+        rebuildTombstoneRoots();
         m.redraw();
       });
   }
 
   function setSortMode(mode) {
     sortMode = mode;
+    writeSortPreference(mode);
     loadAllPosts();
     m.redraw();
   }
@@ -662,6 +738,10 @@ app.initializers.add('mtareq-nested-replies', () => {
       loadingAll = false;
       refreshing = false;
       foldPlan = { hidden: new Set(), moreAfter: new Map() };
+      dayLabelCache = null;
+      tombstoneRoots = new Set();
+      lastRevealedNear = null;
+      rebuildTombstoneRoots();
     }
 
     // Kick off loading every page so the tree can be ordered. The flat native
@@ -739,6 +819,18 @@ app.initializers.add('mtareq-nested-replies', () => {
     return m('div.PostStream', vnode.attrs, grouped);
   });
 
+  // Deep link (?near=N): core scrolls to the anchor post, but a folded ancestor
+  // or unexpanded sibling group can hide it — unfold the chain and highlight it.
+  let lastRevealedNear = null;
+  extend(PostStream.prototype, 'oncreate', function () {
+    const params = (m.route && typeof m.route.get === 'function' && m.route.get()) || '';
+    const near = new URLSearchParams(String(params)).get('near');
+    if (!near || near === lastRevealedNear) return;
+    lastRevealedNear = near;
+    revealReply(near); // walk ancestors: clear collapsed + expand groups
+    flashHighlight(near);
+  });
+
   // Flarum 1.x skips a Post's redraw unless its SubtreeRetainer says a rebuild
   // is needed, so invalidate the mounted posts ourselves before redrawing.
   function forceRedraw() {
@@ -813,6 +905,74 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   // The newest loaded post in a discussion. Used to focus a reply just posted
   // through the native composer, whose id we never receive.
+  // Briefly highlight a post and scroll it into view (used by both
+  // just-posted replies and ?near deep links). Order mirrors the original
+  // refreshTree block: invalidate + redraw first, then scroll on the frame
+  // that follows so the target exists in the DOM.
+  function flashHighlight(postId) {
+    const id = postId == null ? null : String(postId);
+    if (!id) return;
+
+    highlightedPostId = id;
+    if (highlightTimer) clearTimeout(highlightTimer);
+    highlightTimer = setTimeout(() => {
+      highlightedPostId = null;
+      forceRedraw();
+    }, HIGHLIGHT_DURATION);
+
+    forceRedraw();
+    requestAnimationFrame(() => {
+      const el = document.querySelector(`.PostStream-item[data-id="${id}"]`);
+      if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+  }
+
+  // Root-day divider labels for the loaded window of the current discussion.
+  // Rebuilt only when the number of loaded posts changes.
+  function dayLabelsFor(discussion) {
+    if (!discussion || !app.store || typeof app.store.all !== 'function') return {};
+    const discId = String(discussion.id());
+    const all = app.store.all('posts');
+    const key = `${discId}:${all.length}`;
+    if (dayLabelCache && dayLabelCache.key === key) return dayLabelCache.map;
+
+    const mine = all
+      .filter((post) => {
+        if (!post || typeof post.id !== 'function') return false;
+        const related = post.discussion && post.discussion();
+        if (related) return String(related.id()) === discId;
+        const attr = post.attribute ? post.attribute('discussionId') : null;
+        return attr != null && String(attr) === discId;
+      })
+      .sort((a, b) => Number(a.number()) - Number(b.number()));
+
+    const now = new Date().toISOString().slice(0, 10);
+    const map = buildDayLabelMap(mine, now, formatDayLabel);
+    dayLabelCache = { key, map };
+    return map;
+  }
+
+  // Caller-owned formatter: today -> translated "Today", otherwise a localized
+  // full date via Intl (locale falls back gracefully when translator exposes none).
+  function formatDayLabel(dayKey, today) {
+    if (dayKey === today) return trans('date_today');
+    try {
+      const locale = (app.translator && app.translator.locale) || (typeof navigator !== 'undefined' && navigator.language) || 'en';
+      return new Date(`${dayKey}T00:00:00Z`).toLocaleDateString(locale, {
+        year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
+      });
+    } catch (e) {
+      return dayKey;
+    }
+  }
+
+  // First child of every reply whose stored parent is missing from the store
+  // (spec §5.3): decorate() tags those with the tombstone datasets.
+  function rebuildTombstoneRoots() {
+    const source = (allPosts && allPosts.length ? allPosts : app.store.all('posts')) || [];
+    tombstoneRoots = firstChildOfMissingParent(source, (parentId) => Boolean(lookup(String(parentId))));
+  }
+
   function latestPostIn(discussion) {
     if (!discussion || !app.store || typeof app.store.all !== 'function') return null;
 
@@ -841,29 +1001,19 @@ app.initializers.add('mtareq-nested-replies', () => {
 
     fetchAllPosts()
       .then((posts) => {
-        if (posts && posts.length) allPosts = posts;
+        if (posts && posts.length) {
+          allPosts = posts;
+          rebuildTombstoneRoots();
+        }
       })
       .catch(() => {})
       .then(() => {
         refreshing = false;
 
         if (focusPostId != null) {
-          highlightedPostId = String(focusPostId);
-
-          if (highlightTimer) clearTimeout(highlightTimer);
-          highlightTimer = setTimeout(() => {
-            highlightedPostId = null;
-            forceRedraw();
-          }, HIGHLIGHT_DURATION);
-        }
-
-        forceRedraw();
-
-        if (focusPostId != null) {
-          requestAnimationFrame(() => {
-            const element = document.querySelector(`.PostStream-item[data-id="${focusPostId}"]`);
-            if (element && element.scrollIntoView) element.scrollIntoView({ block: 'center', behavior: 'smooth' });
-          });
+          flashHighlight(focusPostId);
+        } else {
+          forceRedraw();
         }
       });
   }
@@ -873,9 +1023,9 @@ app.initializers.add('mtareq-nested-replies', () => {
 
     if (inlineReply && inlineReply.postId !== id && String(inlineDraft() || '').trim()) {
       app.modal.show(DeleteConfirmModal, {
-        title: extractText(app.translator.trans('mtareq-nested-replies.forum.reply_form_discard_title')) || 'تجاهل التغييرات؟',
-        message: extractText(app.translator.trans('mtareq-nested-replies.forum.reply_form_discard')) || 'لديك مسودة غير محفوظة، هل تريد تجاهلها ومتابعة الرد على مشاركة أخرى؟',
-        confirmLabel: extractText(app.translator.trans('core.lib.continue')) || 'تجاهل ومتابعة',
+        title: app.translator.trans('mtareq-nested-replies.forum.reply_form_discard_title'),
+        message: app.translator.trans('mtareq-nested-replies.forum.reply_form_discard'),
+        confirmLabel: app.translator.trans('mtareq-nested-replies.forum.action_continue'),
         onconfirm: () => {
           inlineDraft('');
           openInlineReply(post);
@@ -1127,6 +1277,8 @@ app.initializers.add('mtareq-nested-replies', () => {
       [...groups]
         .sort((a, b) => b.targetDepth - a.targetDepth)
         .forEach((group, index) => {
+          const groupSummary = group.members ? summarizeThread(group.members, lookup) : null;
+
           items.add(
             'nestedRepliesShowMore' + index,
             m(MoreReplies, {
@@ -1137,6 +1289,7 @@ app.initializers.add('mtareq-nested-replies', () => {
               // branch, so the control may sit beside or to the right of the
               // anchor's content column.
               indent: group.targetDepth - actualDepth,
+              summary: groupSummary,
               onclick: () => expandGroup(group.parentId),
             }),
             20
@@ -1217,5 +1370,48 @@ app.initializers.add('mtareq-nested-replies', () => {
         10
       );
     }
+  });
+
+  // Discussion-list sort dropdown: core iterates sortMap keys to build the
+  // dropdown, so these two keys surface the server-side votes/hotness sorts.
+  // The preloaded first-page document is handled by SortMapProvider (server).
+  extend(DiscussionListState.prototype, 'sortMap', function (map) {
+    map.top = '-votes';
+    map.hot = '-hotness';
+    return map;
+  });
+
+  // Unread chip on discussion rows (spec §3): count of replies after the
+  // reader's marker. Absent marker (guests / never read) -> no chip (utils/unread).
+  extend(DiscussionListItem.prototype, 'contentItems', function (items) {
+    const discussion = this.attrs.discussion;
+    const unread = unreadReplyCount(discussion);
+    if (unread == null) return;
+
+    items.add(
+      'nestedRepliesUnread',
+      m(
+        'span.NestedRepliesUnreadChip',
+        {
+          title: app.translator.trans('mtareq-nested-replies.forum.unread_chip', { count: unread }),
+        },
+        String(unread)
+      ),
+      50 // ItemList priorities sort high-to-low: the rail (110) leads, chip follows
+    );
+  });
+
+  // Discussion-row vote rail: contentItems, no vnode surgery. Guard on the
+  // serializer actually shipping firstPostId (itqan-discussions' rows won't).
+  extend(DiscussionListItem.prototype, 'contentItems', function (items) {
+    if (!settings.showVotes) return;
+    const discussion = this.attrs.discussion;
+    if (!discussion || discussion.attribute('firstPostId') == null) return;
+
+    items.add(
+      'nestedRepliesVoteRail',
+      m(VoteRail, { model: discussion, postId: discussion.attribute('firstPostId'), adapter: votes }),
+      110 // leads the row content
+    );
   });
 });

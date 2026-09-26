@@ -179,7 +179,7 @@ rebuilds without a full page reload.
 
 Cards, depth-colored guide lines (drawn as stacked background gradients per
 `data-depth`), the inline action bar, the vote rail, the reply tag, and RTL
-mirroring. The active Like color is driven by the `--nested-replies-like-color`
+mirroring. The active Like color is driven by the `--nested-replies-like`
 CSS variable, set from the `like_color` setting. When the scrubber setting is off,
 `index.js` adds `NestedRepliesHideScrubber` to the root element and `forum.less`
 hides `.PostStreamScrubber`.

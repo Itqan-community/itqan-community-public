@@ -11,6 +11,8 @@ export default class CollapseToggle extends Component {
       'button.NestedRepliesCollapseToggle.Button.Button--icon',
       {
         type: 'button',
+        'aria-expanded': collapsed ? 'false' : 'true',
+        'aria-label': app.translator.trans(`mtareq-nested-replies.forum.${key}`),
         title: app.translator.trans(`mtareq-nested-replies.forum.${key}`),
         onclick: this.attrs.onclick,
       },

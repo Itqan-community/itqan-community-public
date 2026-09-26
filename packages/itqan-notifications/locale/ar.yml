@@ -3,3 +3,81 @@ itqan-notifications:
     dnd:
       enable: تفعيل عدم الإزعاج
       disable: إيقاف عدم الإزعاج
+    settings:
+      notify_comment_replied_label: شخص ما رد على تعليقي
+    notification:
+      comment_replied_text: "{username} رد على تعليقك"
+
+  # Arabic overrides for flarum-mentions email/notification strings
+  # (fixes {username} bracket rendering when Arabic locale is active)
+  flarum-mentions:
+    forum:
+      notifications:
+        post_mentioned_text: "{username} رد على منشورك"
+        user_mentioned_text: "{username} أشار إليك"
+        group_mentioned_text: "{username} أشار إلى مجموعة أنت عضو فيها"
+    email:
+      post_mentioned:
+        subject: "{replier_display_name} رد على منشورك في {title}"
+        body: |
+          مرحباً {recipient_display_name}!
+
+          {replier_display_name} رد على منشورك (#{post_number}) في {title}.
+
+          {url}
+
+          ---
+
+          {content}
+      user_mentioned:
+        subject: "{mentioner_display_name} أشار إليك في {title}"
+        body: |
+          مرحباً {recipient_display_name}!
+
+          {mentioner_display_name} أشار إليك في منشور في {title}.
+
+          {url}
+
+          ---
+
+          {content}
+      group_mentioned:
+        subject: "{mentioner_display_name} أشار إلى مجموعة أنت عضو فيها في {title}"
+        body: |
+          مرحباً {recipient_display_name}!
+
+          {mentioner_display_name} أشار إلى مجموعة أنت عضو فيها في {title}.
+
+          {url}
+
+          ---
+
+          {content}
+
+  # Arabic overrides for flarum-subscriptions email/notification strings
+  flarum-subscriptions:
+    forum:
+      notifications:
+        new_post_text: "{username} نشر"
+      settings:
+        follow_after_reply_label: متابعة المناقشات تلقائياً بعد الرد عليها
+        notify_for_all_posts_label: الإشعار عن كل منشور جديد بدلاً من الأخير فقط
+        notify_new_post_label: شخص ما نشر في منقاشة أتابعها
+    email:
+      new_post:
+        subject: "[منشور جديد] {title}"
+        body: |
+          مرحباً {recipient_display_name}!
+
+          {poster_display_name} نشر منشوراً في منقاشة تتابعها: {title}.
+
+          للاطلاع على النشاط الجديد، تفضل بالرابط التالي:
+          {url}
+
+          ---
+
+          {content}
+
+          ---
+
+          لن تتلقى المزيد من الإشعارات عن هذه المناقشة حتى تصبح محدثاً.
