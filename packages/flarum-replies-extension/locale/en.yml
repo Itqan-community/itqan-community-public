@@ -55,6 +55,9 @@ mtareq-nested-replies:
     action_cancel: Cancel
     action_continue: Continue
     reply_form_discard_title: Discard reply?
+    delete_post_title: Delete post
+    delete_post_forever_title: Delete forever
+    delete_discussion_title: Delete discussion
 
 core:
   forum:

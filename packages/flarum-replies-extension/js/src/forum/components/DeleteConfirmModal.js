@@ -23,48 +23,56 @@ export default class DeleteConfirmModal extends Modal {
   }
 
   content() {
-    const { onconfirm, message, confirmLabel, cancelLabel } = this.attrs;
+    const { message, confirmLabel, cancelLabel } = this.attrs;
 
     const bodyMessage = message || app.translator.trans('core.forum.post_controls.delete_confirmation');
     const confirmText = confirmLabel || app.translator.trans('core.forum.post_controls.delete_button');
     const cancelText = cancelLabel || app.translator.trans('mtareq-nested-replies.forum.action_cancel');
 
-    // Structure (bodyText class + Modal-footer + button classes) is kept
-    // verbatim from the previous version: less/forum.less styles all three,
-    // including its dark-mode variants.
-    return m('.Modal-body', [
-      m('.DeleteConfirmModal-bodyText', bodyMessage),
+    // Core renders `.Modal-body` and `.Modal-footer` as siblings inside the
+    // modal form, so return them as siblings too (less/forum.less styles them
+    // independently).
+    return [
+      m('.Modal-body', m('.DeleteConfirmModal-bodyText', bodyMessage)),
       m('.Modal-footer', [
         m(
           Button,
           {
+            type: 'submit',
             className: 'Button Button--danger DeleteConfirmModal-buttonConfirm',
             loading: this.loading,
-            onclick: () => {
-              // Run the confirmation first and only close on success: all call
-              // sites return void (fire-and-forget promises), so this resolves
-              // on the next microtask — same net timing as hide-first — while
-              // promise-returning callers get a spinner until they settle.
-              this.loading = true;
-              Promise.resolve(typeof onconfirm === 'function' ? onconfirm() : null)
-                .then(() => this.hide())
-                .catch(() => {
-                  this.loading = false;
-                  m.redraw();
-                });
-            },
           },
           confirmText
         ),
         m(
           Button,
           {
+            type: 'button',
             className: 'Button Button--default DeleteConfirmModal-buttonCancel',
             onclick: () => this.hide(),
           },
           cancelText
         ),
       ]),
-    ]);
+    ];
+  }
+
+  onsubmit(event) {
+    event.preventDefault();
+    this.confirm();
+  }
+
+  confirm() {
+    // Run the confirmation first and only close on success: all call sites
+    // return void (fire-and-forget promises), so this resolves on the next
+    // microtask — same net timing as hide-first — while promise-returning
+    // callers get a spinner until they settle.
+    this.loading = true;
+    Promise.resolve(typeof this.attrs.onconfirm === 'function' ? this.attrs.onconfirm() : null)
+      .then(() => this.hide())
+      .catch(() => {
+        this.loading = false;
+        m.redraw();
+      });
   }
 }

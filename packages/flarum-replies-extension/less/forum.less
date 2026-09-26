@@ -301,7 +301,7 @@
     // Core renders Like/Reply as text-only; give them an icon.
     .item-reply .Button::before,
     .item-like .Button::before {
-      font-family: "Font Awesome 5 Free";
+      font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 5 Pro";
       font-weight: 900;
       font-style: normal;
     }
@@ -1007,7 +1007,7 @@ a.NestedRepliesReplyTag {
   color: var(--muted-color);
 
   .icon {
-    font-family: "Font Awesome 5 Free";
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 5 Pro";
     font-weight: 400;
 
     &::before {
@@ -1021,9 +1021,12 @@ a.NestedRepliesReplyTag {
   }
 }
 
-// EventPost styling (tag changes, title changes, pin/lock event items)
-.EventPost {
-  .EventPost-icon {
+// EventPost styling (tag changes, title changes, pin/lock event items). Scoped
+// to the nested-reply cards so event posts elsewhere on the forum are not
+// affected.
+.NestedRepliesThreadCard,
+.NestedRepliesReplyCard {
+  .EventPost .EventPost-icon {
     float: none;
     position: static;
     display: block;
@@ -1058,27 +1061,23 @@ a.NestedRepliesReplyTag {
     border-bottom: none;
     position: relative;
 
-    .Modal-title {
+    // Core renders the title as a h3 inside .Modal-header, not .Modal-title.
+    h3 {
       font-size: 1.1rem;
       font-weight: 700;
       color: var(--text-strong);
       line-height: 1.4;
       margin: 0;
     }
+  }
 
-    .close {
-      position: absolute;
-      top: 14px;
-      left: 16px;
-      margin: 0;
-      padding: 4px;
-      font-size: 1.1rem;
-      opacity: 0.6;
-      transition: opacity 0.15s ease;
+  // Core renders the close control as .Modal-close, not .Modal-header .close.
+  .Modal-close {
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
 
-      &:hover {
-        opacity: 1;
-      }
+    &:hover {
+      opacity: 1;
     }
   }
 

@@ -131,108 +131,90 @@ app.initializers.add('mtareq-nested-replies', () => {
     forceRedraw();
   }
 
-  function purgePostElement(postId) {
-    const selector = `.PostStream-item[data-id="${postId}"], .NestedRepliesPost[data-id="${postId}"]`;
-    const elements = document.querySelectorAll(selector);
-    elements.forEach((el) => {
-      el.style.display = 'none';
-      if (el.parentNode) el.parentNode.removeChild(el);
-    });
+  // Flarum's native post actions open `confirm()`. DeleteConfirmModal is the
+  // confirmation, so run the original core action with the native prompt
+  // suppressed instead of copying its body (which would silently drift from core
+  // in future releases).
+  function runWithoutNativeConfirm(run) {
+    const nativeConfirm = window.confirm;
+    window.confirm = () => true;
+
+    try {
+      return run();
+    } finally {
+      window.confirm = nativeConfirm;
+    }
   }
 
-  // Override DiscussionControls.deleteAction to use custom DeleteConfirmModal
+  // Replace the native confirm() of DiscussionControls.deleteAction with the
+  // custom DeleteConfirmModal, delegating the delete itself to core.
   if (DiscussionControls) {
     override(DiscussionControls, 'deleteAction', function (original) {
-      const discussion = this;
-
       app.modal.show(DeleteConfirmModal, {
-        title: app.translator.trans('core.forum.discussion_controls.delete_confirmation'),
+        title: app.translator.trans('mtareq-nested-replies.forum.delete_discussion_title'),
         message: app.translator.trans('core.forum.discussion_controls.delete_confirmation'),
         confirmLabel: app.translator.trans('core.forum.discussion_controls.delete_button'),
-        onconfirm: () => {
-          discussion.delete().then(() => {
-            if (app.discussions && typeof app.discussions.removeDiscussion === 'function') {
-              app.discussions.removeDiscussion(discussion);
-            }
-            if (app.viewingDiscussion && app.viewingDiscussion(discussion)) {
-              app.history.back();
-            } else {
-              m.redraw();
-            }
-          });
-        },
+        onconfirm: () => runWithoutNativeConfirm(() => original()),
       });
     });
   }
 
-  // Override PostControls.hideAction & deleteAction to use custom DeleteConfirmModal
-  // and instantly remove deleted posts from local stream tree without page reload.
+  // Replace the native confirm() of the hide/delete post actions. Hide keeps the
+  // post in the stream as a hidden placeholder (so its replies stay nested);
+  // delete removes it and drops it from the cached tree so it vanishes without a
+  // page reload.
   if (PostControls) {
-    override(PostControls, 'hideAction', function (original, context) {
+    override(PostControls, 'hideAction', function (original) {
       const post = this;
 
       app.modal.show(DeleteConfirmModal, {
         post,
-        title: app.translator.trans('core.forum.post_controls.hide_confirmation'),
+        title: app.translator.trans('mtareq-nested-replies.forum.delete_post_title'),
         message: app.translator.trans('core.forum.post_controls.hide_confirmation'),
-        confirmLabel: app.translator.trans('core.forum.post_controls.hide_button'),
+        confirmLabel: app.translator.trans('core.forum.post_controls.delete_button'),
         onconfirm: () => {
-          if (context) context.loading = true;
-          const postId = String(post.id());
-
-          post
-            .save({ isHidden: true })
-            .then(() => {
-              removePostFromTree(postId);
-              purgePostElement(postId);
-            })
-            .catch(() => {})
-            .then(() => {
-              if (context) context.loading = false;
-              m.redraw();
-            });
+          // Core keeps the post as a hidden placeholder and marks it hidden
+          // optimistically; removing it here would re-root its replies.
+          Promise.resolve(runWithoutNativeConfirm(() => original())).then(() => forceRedraw(), () => forceRedraw());
         },
       });
     });
 
     override(PostControls, 'deleteAction', function (original, context) {
       const post = this;
+      const postId = String(post.id());
 
       app.modal.show(DeleteConfirmModal, {
         post,
-        title: app.translator.trans('core.forum.post_controls.delete_confirmation'),
+        title: app.translator.trans('mtareq-nested-replies.forum.delete_post_forever_title'),
         message: app.translator.trans('core.forum.post_controls.delete_confirmation'),
-        confirmLabel: app.translator.trans('core.forum.post_controls.delete_button'),
+        confirmLabel: app.translator.trans('core.forum.post_controls.delete_forever_button'),
         onconfirm: () => {
-          if (context) context.loading = true;
-          const discussion = post.discussion();
-          const postId = String(post.id());
-
-          post
-            .delete()
-            .then(() => {
-              if (discussion && typeof discussion.removePost === 'function') {
-                discussion.removePost(postId);
-                if (typeof discussion.postIds === 'function' && !discussion.postIds().length) {
-                  if (app.discussions && typeof app.discussions.removeDiscussion === 'function') {
-                    app.discussions.removeDiscussion(discussion);
-                  }
-                  if (app.viewingDiscussion && app.viewingDiscussion(discussion)) {
-                    app.history.back();
-                  }
-                }
-              }
-
-              removePostFromTree(postId);
-              purgePostElement(postId);
-            })
-            .catch(() => {})
-            .then(() => {
-              if (context) context.loading = false;
-              m.redraw();
-            });
+          // Core deletes the post and updates the discussion/store; drop it from
+          // our cached tree too so it vanishes without a page reload.
+          Promise.resolve(runWithoutNativeConfirm(() => original(context))).then(
+            () => removePostFromTree(postId),
+            () => {}
+          );
         },
       });
+    });
+  }
+
+  // Route core's "Edit" post action to the in-card form. Overriding the action
+  // (rather than intercepting app.composer.load) avoids showing an empty native
+  // composer behind the inline form, and avoids hide() dropping another draft.
+  if (PostControls && typeof PostControls.editAction === 'function') {
+    override(PostControls, 'editAction', function (original) {
+      const post = this;
+      const canEdit = app.session.user && post && typeof post.canEdit === 'function' && post.canEdit();
+
+      if (canEdit && (!post.contentType || post.contentType() === 'comment')) {
+        editPost(post);
+        return Promise.resolve();
+      }
+
+      return original.call(this);
     });
   }
 
@@ -354,20 +336,6 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   if (app.composer && typeof app.composer.load === 'function') {
     override(app.composer, 'load', function (original, componentClass, attrs) {
-      // Intercept the native EditPostComposer and redirect to inline edit.
-      if (attrs && attrs.post && componentClass && componentClass.prototype) {
-        const name = componentClass.name || componentClass.displayName || '';
-        if (name === 'EditPostComposer' || (componentClass.prototype && typeof componentClass.prototype.onsubmit === 'function' && attrs.post)) {
-          const post = attrs.post;
-          if (app.session.user && typeof post.canEdit === 'function' && post.canEdit()) {
-            editPost(post);
-            if (typeof this.hide === 'function') this.hide();
-            // Return a no-op result — the native composer stays hidden.
-            return { then: (fn) => fn && fn() };
-          }
-        }
-      }
-
       const result = original.call(this, componentClass, attrs);
 
       const apply = () => {
@@ -776,7 +744,12 @@ app.initializers.add('mtareq-nested-replies', () => {
       const grouped = [];
       if (opItem) grouped.push(m('div.NestedRepliesThreadCard', { key: 'nestedRepliesThreadCard' }, opItem));
 
-      grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, [replySortVNode(), ...replyItems]));
+      // Skip the reply card entirely when there are no replies: the sort header
+      // must not render on a discussion with no replies. Mirrors the fallback
+      // path below.
+      if (replyItems.length) {
+        grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, [replySortVNode(), ...replyItems]));
+      }
 
       return m('div.PostStream', vnode.attrs, grouped);
     }
@@ -1100,12 +1073,9 @@ app.initializers.add('mtareq-nested-replies', () => {
   function editPost(post) {
     if (!post) return;
 
-    // Close any open reply form first.
+    // Close any open reply form first (closeInlineReply uses composer.close(),
+    // so an existing draft is confirmed before it is discarded).
     if (inlineReply) closeInlineReply();
-
-    if (app.composer && typeof app.composer.hide === 'function') {
-      app.composer.hide();
-    }
 
     const content = typeof post.content === 'function' ? post.content() : '';
     editingPostId = String(post.id());

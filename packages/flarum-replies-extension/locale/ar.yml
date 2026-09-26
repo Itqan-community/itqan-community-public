@@ -55,6 +55,9 @@ mtareq-nested-replies:
     action_cancel: إلغاء
     action_continue: متابعة
     reply_form_discard_title: تجاهل الرد؟
+    delete_post_title: حذف المشاركة
+    delete_post_forever_title: حذف نهائي
+    delete_discussion_title: حذف الموضوع
 
 core:
   forum:
