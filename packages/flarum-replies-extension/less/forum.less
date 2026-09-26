@@ -1051,12 +1051,22 @@ a.NestedRepliesReplyTag {
    --text-color, ...), which already flip with the compile-time dark mode, so
    this block needs no separate dark-mode override.
    ========================================================================== */
+// Core puts the drop shadow on the `.Modal` wrapper, which has a near-square
+// 4px radius. In light mode that reads as a hard-edged grey box behind the
+// rounded card (and is invisible in dark mode). Move the shadow onto the
+// rounded card itself and keep the wrapper/backdrop transparent.
+.DeleteConfirmModal.Modal {
+  box-shadow: none;
+  background: transparent;
+}
+
 .DeleteConfirmModal {
   .Modal-content {
     border-radius: 16px;
     overflow: hidden;
     background: var(--body-bg);
     border: none;
+    box-shadow: 0 7px 15px var(--shadow-color, rgba(0, 0, 0, 0.35));
   }
 
   .Modal-header {
