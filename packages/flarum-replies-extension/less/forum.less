@@ -21,8 +21,8 @@
 // Card shared by the original post and the reply tree.
 .NestedRepliesThreadCard,
 .NestedRepliesReplyCard {
-  background: var(--body-bg-light, #fff);
-  border: 1px solid var(--control-bg-shaded, #edeff1);
+  background: var(--body-bg-light);
+  border: 1px solid var(--control-bg-shaded);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   padding: 16px 20px;
@@ -49,7 +49,7 @@
 // Divider between top-level replies only. Nested replies are separated by
 // their indentation thread line instead, so they never get a divider.
 .NestedRepliesReplyCard > .PostStream-item.is-top-level {
-  border-top: 1px solid var(--control-bg-shaded, #edeff1);
+  border-block-start: 1px solid var(--control-bg-shaded);
   margin-top: 16px;
   padding-top: 16px;
 
@@ -79,12 +79,9 @@
   background-size: 2px 100%;
 
   > .NestedRepliesPost-container {
-    margin-inline-start: ~"calc(var(--depth) * var(--indent))";
-    // A guide gutter on the inline-start holds the thread line and the
-    // fold/unfold button, both centred on it, so the line runs through the
-    // middle of the button and the text starts clear of them.
+    margin-inline-start: 0;
     padding-block: 4px 14px;
-    padding-inline: var(--gutter) 0;
+    padding-inline: ~"calc(var(--depth) * var(--indent))";
     border-radius: 4px;
     background: transparent;
     transition: background 0.15s ease;
@@ -152,7 +149,7 @@
     padding-bottom: 0;
 
     .Post-footer {
-      background: #fff;
+      background: var(--surface-card);
       // Stretch the fill from the shallowest thread column (gutter in, minus
       // the line's own 2px) to the inline-end, so no guide line pokes out below
       // the control; an equal inline-start padding returns the content to its
@@ -281,10 +278,10 @@
       min-height: 28px;
       box-sizing: border-box;
       padding: 3px 10px;
-      border: 1px solid var(--control-bg-shaded, #edeff1);
+      border: 1px solid var(--control-bg-shaded);
       border-radius: 999px;
-      background: var(--control-bg, #f6f7f8) !important;
-      color: var(--muted-color, #878a8c);
+      background: var(--control-bg) !important;
+      color: var(--muted-color);
       font-size: 12px;
       font-weight: 600;
       line-height: 20px;
@@ -292,8 +289,8 @@
       &:hover,
       &:focus,
       &:active {
-        background: var(--control-bg-hover, #eef1f3) !important;
-        color: var(--text-color, #1c1c1c);
+        background: var(--surface-hover) !important;
+        color: var(--text-color);
         box-shadow: none;
       }
     }
@@ -304,7 +301,7 @@
     // Core renders Like/Reply as text-only; give them an icon.
     .item-reply .Button::before,
     .item-like .Button::before {
-      font-family: "Font Awesome 5 Free";
+      font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 5 Pro";
       font-weight: 900;
       font-style: normal;
     }
@@ -320,10 +317,10 @@
   min-height: 28px;
   box-sizing: border-box;
   padding: 2px 10px;
-  border: 1px solid var(--control-bg-shaded, #edeff1);
+  border: 1px solid var(--control-bg-shaded);
   border-radius: 999px;
-  background: var(--control-bg, #f6f7f8);
-  color: var(--muted-color, #878a8c);
+  background: var(--control-bg);
+  color: var(--muted-color);
 
   &.is-disabled {
     opacity: 0.5;
@@ -343,15 +340,15 @@
   }
 
   &:hover:not(:disabled) {
-    color: var(--text-color, #1c1c1c);
+    color: var(--text-color);
   }
 
   &--up.is-active {
-    color: var(--nested-replies-upvote-color, #16a34a);
+    color: var(--intent-up);
   }
 
   &--down.is-active {
-    color: var(--nested-replies-downvote-color, #dc2626);
+    color: var(--intent-danger);
   }
 }
 
@@ -360,7 +357,7 @@
   text-align: center;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-color, #1c1c1c);
+  color: var(--text-color);
 }
 
 // Reddit-style circular fold/unfold button on a comment.
@@ -403,7 +400,7 @@
   padding: 3px 10px 3px 8px;
   border-radius: 999px;
   background: var(--control-bg, rgba(77, 105, 142, 0.1));
-  color: var(--text-color, #1c1c1e);
+  color: var(--text-color);
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
@@ -437,8 +434,8 @@
   // Opaque so the control masks the guide lines running behind it, ending the
   // thread at its top edge. `!important` beats core's
   // `.Button--link { background: transparent !important; }`.
-  background: #fff !important;
-  color: #4470e6;
+  background: var(--surface-card) !important;
+  color: var(--accent);
   font-size: 12px;
   font-weight: 700;
   line-height: 1.4;
@@ -453,10 +450,10 @@
     width: 16px;
     height: 16px;
     box-sizing: border-box;
-    border: 1px solid #edeff1;
+    border: 1px solid var(--hairline);
     border-radius: 8px;
-    background: #f6f7f8;
-    color: #878a8c;
+    background: var(--surface-page);
+    color: var(--text-muted);
     font-size: 9px;
     line-height: 1;
   }
@@ -472,7 +469,7 @@
   }
 
   &-label {
-    color: #4470e6;
+    color: var(--accent);
   }
 
   &-icon {
@@ -481,7 +478,7 @@
     font-size: 11px;
 
     .icon {
-      color: #4470e6;
+      color: var(--accent);
       font-size: 11px;
       line-height: 1;
       margin-right: 0;
@@ -490,8 +487,8 @@
 
   &:hover,
   &:focus {
-    background: #f6f7f8 !important;
-    color: #2a54c4;
+    background: var(--surface-hover) !important;
+    color: var(--accent-hover);
     text-decoration: none;
   }
 
@@ -499,7 +496,7 @@
   &:focus &-label,
   &:hover &-icon .icon,
   &:focus &-icon .icon {
-    color: #2a54c4;
+    color: var(--accent-hover);
   }
 }
 
@@ -507,7 +504,7 @@
 .NestedRepliesPost .item-like.is-liked .Button,
 .NestedRepliesPost .item-like.is-liked .Button:hover,
 .NestedRepliesPost .item-like.is-liked .Button:focus {
-  color: var(--nested-replies-like-color, #ff4500);
+  color: var(--nested-replies-like);
 }
 
 // "Reply to X" tag shown in the post header, replacing the inline mention.
@@ -518,8 +515,8 @@ a.NestedRepliesReplyTag {
   gap: 4px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #e6f4ea;
-  color: #1c1c1c;
+  background: var(--intent-up-soft);
+  color: var(--text-strong);
   font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
@@ -528,7 +525,7 @@ a.NestedRepliesReplyTag {
 
   .icon {
     font-size: 11px;
-    color: #2e7d32;
+    color: var(--intent-up);
   }
 }
 
@@ -554,16 +551,16 @@ a.NestedRepliesReplyTag {
   align-items: center;
   gap: 6px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--control-bg-shaded, #edeff1);
+  border-block-end: 1px solid var(--control-bg-shaded);
   font-size: 13px;
-  color: var(--muted-color, #878a8c);
+  color: var(--muted-color);
 
   select {
     padding: 2px 6px;
-    border: 1px solid var(--control-bg-shaded, #edeff1);
+    border: 1px solid var(--control-bg-shaded);
     border-radius: 6px;
-    background: var(--control-bg, #f6f7f8);
-    color: var(--text-color, #1c1c1c);
+    background: var(--control-bg);
+    color: var(--text-color);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -590,9 +587,9 @@ a.NestedRepliesReplyTag {
 }
 
 .NestedRepliesQuickReply {
-  border: 1px solid var(--control-bg-shaded, #dfe3e6);
+  border: 1px solid var(--control-bg-shaded);
   border-radius: 8px;
-  background: var(--body-bg-light, #fff);
+  background: var(--body-bg-light);
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 
@@ -607,14 +604,14 @@ a.NestedRepliesReplyTag {
     border: 0;
     border-bottom: 2px solid transparent;
     background: transparent;
-    color: var(--muted-color, #878a8c);
+    color: var(--muted-color);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
 
     &.is-active {
-      color: var(--primary-color, #4470e6);
-      border-bottom-color: var(--primary-color, #4470e6);
+      color: var(--primary-color);
+      border-block-end-color: var(--primary-color);
     }
   }
 
@@ -628,7 +625,7 @@ a.NestedRepliesReplyTag {
     outline: none;
     resize: vertical;
     background: transparent;
-    color: var(--text-color, #1c1c1e);
+    color: var(--text-color);
     font: inherit;
     font-size: 14px;
     line-height: 1.5;
@@ -639,7 +636,7 @@ a.NestedRepliesReplyTag {
     align-items: center;
     gap: 2px;
     padding: 2px 8px 6px;
-    border-top: 1px solid var(--control-bg-shaded, #f0f1f2);
+    border-block-start: 1px solid var(--control-bg-shaded);
   }
 
   &-format {
@@ -647,20 +644,20 @@ a.NestedRepliesReplyTag {
     border: 0;
     border-radius: 5px;
     background: transparent;
-    color: var(--muted-color, #878a8c);
+    color: var(--muted-color);
     font-size: 12px;
     cursor: pointer;
 
     &:hover,
     &:focus {
-      background: var(--control-bg, #f0f1f2);
-      color: var(--text-color, #1c1c1e);
+      background: var(--control-bg);
+      color: var(--text-color);
     }
   }
 
   &-error {
     padding: 0 10px 6px;
-    color: #d0021b;
+    color: var(--intent-danger);
     font-size: 12px;
   }
 
@@ -669,22 +666,22 @@ a.NestedRepliesReplyTag {
     align-items: center;
     gap: 8px;
     padding: 6px 8px 8px;
-    border-top: 1px solid var(--control-bg-shaded, #f0f1f2);
-    background: var(--body-bg-shaded, #fafbfc);
+    border-block-start: 1px solid var(--control-bg-shaded);
+    background: var(--body-bg-shaded);
   }
 
   &-preview {
     min-height: 72px;
     padding: 10px;
     font-size: 14px;
-    color: var(--text-color, #1c1c1e);
+    color: var(--text-color);
   }
 }
 
 .NestedRepliesInlineComposer {
-  border: 1px solid var(--control-bg-shaded, #dfe3e6);
+  border: 1px solid var(--control-bg-shaded);
   border-radius: 8px;
-  background: var(--body-bg-light, #fff);
+  background: var(--body-bg-light);
   overflow: hidden;
 
   &-head {
@@ -693,17 +690,17 @@ a.NestedRepliesReplyTag {
     justify-content: space-between;
     gap: 8px;
     padding: 8px 10px;
-    border-bottom: 1px solid var(--control-bg-shaded, #f0f1f2);
+    border-block-end: 1px solid var(--control-bg-shaded);
   }
 
   &-title {
-    color: var(--muted-color, #878a8c);
+    color: var(--muted-color);
     font-size: 12px;
   }
 
   &-loading {
     padding: 14px 12px;
-    color: var(--muted-color, #878a8c);
+    color: var(--muted-color);
     font-size: 13px;
   }
 
@@ -762,7 +759,7 @@ a.NestedRepliesReplyTag {
   &-preview {
     padding: 10px 12px;
     min-height: 60px;
-    color: #1c1c1e;
+    color: var(--text-strong);
     font-size: 14px;
   }
 
@@ -912,7 +909,7 @@ a.NestedRepliesReplyTag {
     padding: 0;
     // `!important` beats our own base `.Post-actions .Button` background, so
     // the opaque fill truly masks neighbouring thread lines behind it.
-    background: #fff !important;
+    background: var(--surface-card) !important;
     transform: ~"translateX(calc(var(--indent) - var(--gutter) + 4px))";
 
     .icon {
@@ -984,7 +981,7 @@ a.NestedRepliesReplyTag {
     // The "This post was deleted" placeholder in the body should use the
     // normal text colour so it stays readable against the tinted card.
     .Post-body {
-      color: #666;
+      color: var(--text-muted);
       font-style: italic;
     }
   }
@@ -1007,10 +1004,10 @@ a.NestedRepliesReplyTag {
   display: block;
   padding: 4px 0 0;
   font-size: 12px;
-  color: var(--muted-color, #878a8c);
+  color: var(--muted-color);
 
   .icon {
-    font-family: "Font Awesome 5 Free";
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 5 Pro";
     font-weight: 400;
 
     &::before {
@@ -1020,13 +1017,16 @@ a.NestedRepliesReplyTag {
 
   .username {
     font-weight: 600;
-    color: var(--text-color, #1c1c1e);
+    color: var(--text-color);
   }
 }
 
-// EventPost styling (tag changes, title changes, pin/lock event items)
-.EventPost {
-  .EventPost-icon {
+// EventPost styling (tag changes, title changes, pin/lock event items). Scoped
+// to the nested-reply cards so event posts elsewhere on the forum are not
+// affected.
+.NestedRepliesThreadCard,
+.NestedRepliesReplyCard {
+  .EventPost .EventPost-icon {
     float: none;
     position: static;
     display: block;
@@ -1038,256 +1038,77 @@ a.NestedRepliesReplyTag {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Dark mode overrides
-// ---------------------------------------------------------------------------
-html[data-itqan-theme='dark'],
-body.dark,
-[data-theme='dark'] {
-  .NestedRepliesThreadCard,
-  .NestedRepliesReplyCard {
-    background: var(--body-bg-light, #1d1e22);
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .NestedRepliesReplyCard > .PostStream-item.is-top-level {
-    border-top-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .NestedRepliesPost--hasMore > .NestedRepliesPost-container .Post-footer {
-    background: var(--body-bg-light, #1d1e22);
-  }
-
-  .NestedRepliesReplySort {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-    color: var(--muted-color, #a0a0a0);
-
-    select {
-      background: var(--control-bg, #2a2b30);
-      border-color: rgba(255, 255, 255, 0.12);
-      color: var(--text-color, #e0e0e0);
-    }
-  }
-
-  .NestedRepliesPost .Post-likedBy {
-    color: var(--muted-color, #a0a0a0);
-
-    .icon {
-      color: var(--muted-color, #a0a0a0);
-    }
-
-    .username {
-      color: var(--text-color, #e0e0e0) !important;
-    }
-  }
-
-  .NestedRepliesPost .item-like.is-liked .Button,
-  .NestedRepliesPost .item-like.is-liked .Button:hover,
-  .NestedRepliesPost .item-like.is-liked .Button:focus {
-    color: var(--nested-replies-like-color, #ff5252) !important;
-  }
-
-  .NestedRepliesPost .Post-actions {
-    .Button:not(.NestedRepliesCollapseToggle) {
-      background: var(--control-bg, rgba(255, 255, 255, 0.08)) !important;
-      border-color: rgba(255, 255, 255, 0.1) !important;
-      color: var(--muted-color, #a0a0a0) !important;
-
-      &:hover,
-      &:focus,
-      &:active {
-        background: rgba(255, 255, 255, 0.16) !important;
-        color: var(--text-color, #ffffff) !important;
-      }
-    }
-
-    .item-like.is-liked .Button {
-      color: var(--nested-replies-like-color, #ff5252) !important;
-    }
-  }
-
-  .NestedRepliesVoteRail {
-    background: var(--control-bg, rgba(255, 255, 255, 0.08));
-    border-color: rgba(255, 255, 255, 0.1);
-    color: var(--muted-color, #a0a0a0);
-  }
-
-  .NestedRepliesVoteScore {
-    color: var(--text-color, #e0e0e0);
-  }
-
-  .NestedRepliesVoteButton {
-    &:hover:not(:disabled) {
-      color: var(--text-color, #ffffff);
-    }
-
-    &--up.is-active {
-      color: var(--nested-replies-upvote-color-dark, #4ade80) !important;
-    }
-
-    &--down.is-active {
-      color: var(--nested-replies-downvote-color-dark, #f87171) !important;
-    }
-  }
-
-  .NestedRepliesMoreReplies {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--primary-color, #8ab4f8) !important;
-
-    &:hover,
-    &:focus {
-      background: rgba(255, 255, 255, 0.15);
-      color: var(--primary-color, #a8c7fa) !important;
-    }
-  }
-
-  .NestedRepliesShowMore {
-    background: var(--body-bg-light, #1d1e22) !important;
-    color: var(--primary-color, #8ab4f8);
-
-    &-label,
-    &-icon .icon {
-      color: var(--primary-color, #8ab4f8);
-    }
-
-    &-toggle {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.12);
-      color: var(--muted-color, #a0a0a0);
-    }
-
-    &:hover,
-    &:focus {
-      background: rgba(255, 255, 255, 0.12) !important;
-      color: var(--primary-color, #a8c7fa);
-
-      .NestedRepliesShowMore-label,
-      .NestedRepliesShowMore-icon .icon {
-        color: var(--primary-color, #a8c7fa);
-      }
-    }
-  }
-
-  a.NestedRepliesReplyTag {
-    background: rgba(46, 125, 50, 0.25);
-    color: #a5d6a7;
-
-    .icon {
-      color: #81c784;
-    }
-  }
-
-  .NestedRepliesQuickReply,
-  .NestedRepliesInlineComposer {
-    background: var(--body-bg-light, #222327);
-    border-color: rgba(255, 255, 255, 0.12);
-
-    .NestedRepliesQuickReply-input,
-    .NestedRepliesQuickReply-preview,
-    .NestedRepliesInlineComposer-preview {
-      color: var(--text-color, #e0e0e0);
-    }
-
-    .NestedRepliesQuickReply-toolbar,
-    .NestedRepliesQuickReply-actions,
-    .NestedRepliesInlineComposer-head {
-      border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .NestedRepliesQuickReply-actions {
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    .NestedRepliesQuickReply-format {
-      color: var(--muted-color, #a0a0a0);
-
-      &:hover,
-      &:focus {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--text-color, #ffffff);
-      }
-    }
-
-    .NestedRepliesQuickReply-tab {
-      color: var(--muted-color, #a0a0a0);
-
-      &.is-active {
-        color: var(--primary-color, #8ab4f8);
-        border-bottom-color: var(--primary-color, #8ab4f8);
-      }
-    }
-
-    .NestedRepliesInlineComposer-title,
-    .NestedRepliesInlineComposer-loading {
-      color: var(--muted-color, #a0a0a0);
-    }
-  }
-}
-
 /* ==========================================================================
    DeleteConfirmModal - Custom confirmation modal styling
    ========================================================================== */
+.DeleteConfirmModal.Modal,
+.DeleteConfirmModal .Modal-dialog,
+.DeleteConfirmModal .Modal-content {
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
 .DeleteConfirmModal {
   .Modal-content {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
-    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    background: var(--surface-card);
     border: none;
     transition: background-color 0.2s ease, border-color 0.2s ease;
   }
 
   .Modal-header {
-    padding: 20px 24px 12px 24px;
+    padding: 16px 20px 12px 20px;
     border-bottom: none;
+    position: relative;
 
-    .Modal-title {
-      font-size: 1.125rem;
+    // Core renders the title as a h3 inside .Modal-header, not .Modal-title.
+    h3 {
+      font-size: 1.1rem;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--text-strong);
       line-height: 1.4;
+      margin: 0;
     }
+  }
 
-    .close {
-      top: 16px;
-      left: 16px;
-      opacity: 0.6;
-      transition: opacity 0.15s ease;
+  // Core renders the close control as .Modal-close, not .Modal-header .close.
+  .Modal-close {
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
 
-      &:hover {
-        opacity: 1;
-      }
+    &:hover {
+      opacity: 1;
     }
   }
 
   .Modal-body {
-    padding: 0 24px 24px 24px;
+    padding: 0 20px 20px 20px;
     background: transparent !important;
   }
 
   .DeleteConfirmModal-bodyText {
     font-size: 0.95rem;
     line-height: 1.6;
-    color: #475569;
-    margin-bottom: 24px;
+    color: var(--text-default);
+    margin-bottom: 20px;
   }
 
   .Modal-footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 10px;
     padding: 0;
     margin: 0;
     background: transparent !important;
     border: none !important;
 
     .Button {
-      height: 40px;
-      padding: 0 20px;
-      border-radius: 10px;
+      height: 38px;
+      padding: 0 18px;
+      border-radius: 6px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1296,17 +1117,16 @@ body.dark,
     }
 
     .DeleteConfirmModal-buttonConfirm {
-      background: #ef4444;
-      color: #ffffff;
+      background: var(--intent-danger);
+      color: var(--text-on-accent);
       border: none;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+      box-shadow: 0 2px 6px rgba(239, 68, 68, 0.25);
 
       &:hover,
       &:focus {
-        background: #dc2626;
-        color: #ffffff;
-        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
-        transform: translateY(-1px);
+        background: var(--intent-danger);
+        color: var(--text-on-accent);
+        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.35);
       }
 
       &:active {
@@ -1315,79 +1135,175 @@ body.dark,
     }
 
     .DeleteConfirmModal-buttonCancel {
-      background: #f1f5f9;
-      color: #334155;
-      border: 1px solid #cbd5e1;
+      background: var(--surface-sunken);
+      color: var(--text-default);
+      border: 1px solid var(--border-subtle);
 
       &:hover,
       &:focus {
-        background: #e2e8f0;
-        color: #0f172a;
-        border-color: #94a3b8;
+        background: var(--surface-hover);
+        color: var(--text-strong);
+        border-color: var(--border-default);
       }
 
       &:active {
-        background: #cbd5e1;
+        background: var(--surface-active);
       }
     }
   }
 }
 
-/* Dark mode adjustments for DeleteConfirmModal */
-html[data-itqan-theme="dark"],
-body.dark-mode {
-  .DeleteConfirmModal {
-    .Modal-content {
-      background: #1e293b;
-      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    }
+/* Mobile responsive adjustments for DeleteConfirmModal */
+@media (max-width: 767px) {
+  .DeleteConfirmModal.Modal {
+    padding: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
 
-    .Modal-header {
-      .Modal-title {
-        color: #f8fafc;
-      }
+  .DeleteConfirmModal .Modal-dialog {
+    width: 100% !important;
+    max-width: 480px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: auto !important;
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+  }
 
-      .close {
-        color: #94a3b8;
+  .DeleteConfirmModal .Modal-content {
+    height: auto !important;
+    min-height: 0 !important;
+    border-radius: 8px !important;
+  }
+}
 
-        &:hover {
-          color: #f8fafc;
-        }
-      }
-    }
+// ---------------------------------------------------------------------------
+// Unification additions (spec §3–6) — written directly against tokens.
+// ---------------------------------------------------------------------------
 
-    .DeleteConfirmModal-bodyText {
-      color: #94a3b8;
-    }
+// Discussion-row vote rail (contentItems lead item). The in-stream rail keeps
+// its migrated styles; this scopes the list-row variant.
+.DiscussionListItem .NestedRepliesVoteRail {
+  flex-direction: column;
+  gap: var(--sp-2);
+  align-self: flex-start;
 
-    .Modal-footer {
-      .DeleteConfirmModal-buttonConfirm {
-        background: #dc2626;
-        color: #ffffff;
+  .NestedRepliesVoteScore {
+    font-size: var(--fs-ui-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--text-muted);
+  }
 
-        &:hover,
-        &:focus {
-          background: #b91c1c;
-        }
-      }
+  .NestedRepliesVoteButton {
+    width: var(--ctl-h-sm);
+    height: var(--ctl-h-sm);
+    border-radius: var(--r-sm);
+  }
+}
 
-      .DeleteConfirmModal-buttonCancel {
-        background: #334155;
-        color: #f1f5f9;
-        border: 1px solid #475569;
+// Unread chip on discussion rows.
+.NestedRepliesUnreadChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--sp-20);
+  padding-inline: var(--sp-6);
+  border-radius: var(--r-pill);
+  background: var(--accent-faint);
+  color: var(--accent);
+  font-size: var(--fs-ui-sm);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+}
 
-        &:hover,
-        &:focus {
-          background: #475569;
-          color: #ffffff;
-          border-color: #64748b;
-        }
+// Unread badge on unread root posts (spec §6.3): the localized label rides the
+// attribute so CSS renders it via content: attr() — decorative (the counted
+// version lives on the list-row chip). Same per-post number > lastRead test
+// itqan runs on every row, narrowed to roots per spec. Core defines no
+// ::before on .PostStream-item (verified against vendor/flarum/core/less).
+.NestedRepliesPost[data-unread]:not([data-unread=''])::before {
+  content: attr(data-unread);
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--sp-20);
+  margin-block-end: var(--sp-6);
+  padding-inline: var(--sp-6);
+  border-radius: var(--r-pill);
+  background: var(--accent-faint);
+  color: var(--accent);
+  font-size: var(--fs-ui-xs);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+}
 
-        &:active {
-          background: #1e293b;
-        }
-      }
+// Day divider — first post of each UTC day (label from data-day-label).
+.NestedRepliesPost[data-day-label]:not([data-day-label=''])::before {
+  content: attr(data-day-label);
+  display: block;
+  margin-block-end: var(--sp-12);
+  padding-block-end: var(--sp-6);
+  border-block-end: 1px solid var(--hairline);
+  font-size: var(--fs-ui-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+}
+
+// Tombstone stub anchoring a subtree whose parent is invisible to this reader.
+.NestedRepliesPost[data-missing-parent]:not([data-missing-parent=''])::before {
+  content: attr(data-tombstone);
+  display: block;
+  margin-block-end: var(--sp-8);
+  padding: var(--sp-8) var(--sp-12);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  color: var(--text-faint);
+  font-size: var(--fs-ui-sm);
+  font-style: italic;
+}
+
+// Folded-group footer summary. Selectors follow the shipped Task-15 markup
+// (the draft plan's .NestedRepliesShowMore-* names never existed — defect #28).
+.NestedRepliesSummary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-8);
+  margin-inline-start: var(--sp-8);
+  font-size: var(--fs-ui-sm);
+  color: var(--text-muted);
+
+  .NestedRepliesSummary-avatars {
+    display: inline-flex;
+  }
+
+  .NestedRepliesSummary-avatar {
+    width: var(--avatar-xs);
+    height: var(--avatar-xs);
+    // Escaped: less.php evaluates arithmetic inside `calc()` and cannot reason
+    // about CSS custom properties — an unescaped `var() * -1` throws
+    // "Operation on an invalid type", which silently empties forum.css.
+    margin-inline-start: ~"calc(var(--sp-6) * -1)";
+    border: 1px solid var(--surface-card);
+    border-radius: var(--r-pill);
+    background: var(--surface-active) center / cover no-repeat;
+
+    &:first-child {
+      margin-inline-start: 0;
     }
   }
+
+  .NestedRepliesSummary-activity {
+    margin-inline-start: var(--sp-4);
+    color: var(--text-faint);
+  }
+}
+
+// Guest rail state: dimmed but clickable (opens login).
+.NestedRepliesVoteRail.is-disabled .NestedRepliesVoteButton {
+  opacity: 0.6;
 }
 

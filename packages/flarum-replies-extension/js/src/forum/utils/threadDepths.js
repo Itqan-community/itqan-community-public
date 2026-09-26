@@ -170,13 +170,15 @@ export function planSiblingFolding(posts, options = {}) {
   const hidden = new Set();
   const moreAfter = new Map();
 
-  const collectSubtree = (post) => {
-    hidden.add(String(post.id()));
+  const collectSubtree = (post, members) => {
+    const id = String(post.id());
+    hidden.add(id);
+    if (members) members.push(id);
 
     let total = 1;
-    const children = childrenByParent.get(String(post.id())) || [];
+    const children = childrenByParent.get(id) || [];
     children.forEach((child) => {
-      total += collectSubtree(child);
+      total += collectSubtree(child, members);
     });
 
     return total;
@@ -211,20 +213,21 @@ export function planSiblingFolding(posts, options = {}) {
     const folded = group.slice(visibleReplies);
 
     let count = 0;
+    const members = [];
     folded.forEach((child) => {
-      count += collectSubtree(child);
+      count += collectSubtree(child, members);
     });
 
     const branchRoot = kept[kept.length - 1];
     if (!branchRoot) return;
 
-    foldedGroups.push({ parentId, branchRoot, count });
+    foldedGroups.push({ parentId, branchRoot, count, members });
   });
 
   // Second pass: anchor each control to the last visible post of its kept
   // branch. Several folded groups can share one anchor (a group nested inside
   // the kept branch), so every control that belongs to a post is collected.
-  foldedGroups.forEach(({ parentId, branchRoot, count }) => {
+  foldedGroups.forEach(({ parentId, branchRoot, count, members }) => {
     // A group nested under an already hidden reply has no visible control.
     if (hidden.has(parentId)) return;
 
@@ -239,6 +242,8 @@ export function planSiblingFolding(posts, options = {}) {
     entries.push({
       parentId,
       count,
+      // Hidden post ids of this group (whole subtree) — feeds footer summaries.
+      members,
       // Depth the hidden replies belong to, so the control can line up with it.
       targetDepth: getDepth(branchRoot, Infinity, resolve, legacyMentions),
     });

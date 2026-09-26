@@ -44,3 +44,22 @@ mtareq-nested-replies:
     reply_form_replying: "Replying to {username}"
     reply_form_error: Could not post your reply. Please try again.
     reply_form_discard: Discard your draft reply?
+    date_today: Today
+    tombstone: "[deleted]"
+    unread_badge: New
+    unread_chip: "{count} new"
+    summary_replies: "{count} replies"
+    summary_last_activity: "last activity {time}"
+    vote_rail_label: Vote
+    # Task-15 additions (core ships no cancel/continue keys — see Task 15 amendments):
+    action_cancel: Cancel
+    action_continue: Continue
+    reply_form_discard_title: Discard reply?
+    delete_post_title: Delete post
+    delete_post_forever_title: Delete forever
+    delete_discussion_title: Delete discussion
+
+core:
+  forum:
+    index_sort:
+      hot_button: Hot

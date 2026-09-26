@@ -3,3 +3,21 @@ itqan-notifications:
     dnd:
       enable: Turn on Do Not Disturb
       disable: Turn off Do Not Disturb
+    settings:
+      notify_comment_replied_label: Someone replies to my comment
+    notification:
+      comment_replied_text: "{username} replied to your comment"
+
+  email:
+    comment_replied:
+      subject: "{replier_display_name} replied to your comment in {title}"
+      body: |
+        Hey {recipient_display_name}!
+
+        {replier_display_name} replied to your comment in {title}.
+
+        {url}
+
+        ---
+
+        {content}

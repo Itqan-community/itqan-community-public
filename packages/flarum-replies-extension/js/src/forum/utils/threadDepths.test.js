@@ -172,7 +172,7 @@ describe('planSiblingFolding', () => {
     const plan = planSiblingFolding(order(posts, [2, 3, 4, 5]), { lookup, visibleReplies: 1 });
 
     expect([...plan.hidden].sort()).toEqual(['4', '5']);
-    expect(plan.moreAfter.get('3')).toEqual([{ parentId: '2', count: 2, targetDepth: 1 }]);
+    expect(plan.moreAfter.get('3')).toEqual([{ parentId: '2', count: 2, members: ['4', '5'], targetDepth: 1 }]);
   });
 
   it('never folds the original post direct replies', () => {
@@ -201,7 +201,7 @@ describe('planSiblingFolding', () => {
     const plan = planSiblingFolding(order(posts, [2, 3, 4, 5]), { lookup, visibleReplies: 2 });
 
     expect([...plan.hidden]).toEqual(['5']);
-    expect(plan.moreAfter.get('4')).toEqual([{ parentId: '2', count: 1, targetDepth: 1 }]);
+    expect(plan.moreAfter.get('4')).toEqual([{ parentId: '2', count: 1, members: ['5'], targetDepth: 1 }]);
   });
 
   it('unfolds a group the reader expanded', () => {
@@ -236,7 +236,7 @@ describe('planSiblingFolding', () => {
     const plan = planSiblingFolding(order(posts, [2, 3, 6, 4, 5]), { lookup, visibleReplies: 1 });
 
     expect([...plan.hidden].sort()).toEqual(['4', '5']);
-    expect(plan.moreAfter.get('6')).toEqual([{ parentId: '2', count: 2, targetDepth: 1 }]);
+    expect(plan.moreAfter.get('6')).toEqual([{ parentId: '2', count: 2, members: ['4', '5'], targetDepth: 1 }]);
   });
 
   it('folds sibling groups at every depth and counts folded subtrees', () => {
@@ -254,8 +254,8 @@ describe('planSiblingFolding', () => {
 
     expect([...plan.hidden].sort()).toEqual(['4', '6', '7']);
     expect(plan.moreAfter.get('5')).toEqual([
-      { parentId: '2', count: 1, targetDepth: 1 },
-      { parentId: '3', count: 2, targetDepth: 2 },
+      { parentId: '2', count: 1, members: ['4'], targetDepth: 1 },
+      { parentId: '3', count: 2, members: ['6', '7'], targetDepth: 2 },
     ]);
   });
 
@@ -276,6 +276,45 @@ describe('planSiblingFolding', () => {
     expect([...plan.hidden].sort()).toEqual(['4', '6', '7', '8']);
     expect(plan.moreAfter.has('7')).toBe(false);
     expect(plan.moreAfter.has('8')).toBe(false);
+  });
+});
+
+describe('planSiblingFolding with members', () => {
+  const order = (posts, ids) => ids.map((id) => posts[String(id)]);
+
+  it('exposes hidden member ids on each group for summaries', () => {
+    // Parent 5 with 8 children (6..13); visibleReplies = 3 folds the last 5.
+    const { posts, lookup } = build([
+      ['1', null],
+      ['5', 1],
+      ['6', 5],
+      ['7', 5],
+      ['8', 5],
+      ['9', 5],
+      ['10', 5],
+      ['11', 5],
+      ['12', 5],
+      ['13', 5],
+    ]);
+
+    const plan = planSiblingFolding(order(posts, [5, 6, 7, 8, 9, 10, 11, 12, 13]), {
+      lookup,
+      visibleReplies: 3,
+    });
+
+    const entries = plan.moreAfter.get('8');
+    expect(entries).toHaveLength(1);
+    const [entry] = entries;
+
+    expect(entry.parentId).toBe('5');
+    expect(entry.count).toBe(5);
+    // Contract: members.length === count, all strings, all hidden, none visible.
+    expect(entry.members).toEqual(['9', '10', '11', '12', '13']);
+    expect(entry.members.length).toBe(entry.count);
+    entry.members.forEach((id) => {
+      expect(typeof id).toBe('string');
+      expect(plan.hidden.has(id)).toBe(true);
+    });
   });
 });
 
