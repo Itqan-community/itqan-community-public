@@ -1228,6 +1228,15 @@ body:has(.DeleteConfirmModal) .Modal-backdrop {
   .DeleteConfirmModal .Modal-content:has(.App-titleControl) {
     padding-top: ~"calc(var(--header-height-phone) + 32px)";
 
+    // The handle is a flow child, so `padding-top` above would drag it down
+    // with the body; pin it to the very top of the sheet instead.
+    &::before {
+      position: absolute;
+      inset-block-start: var(--sp-12, 12px);
+      inset-inline: 0;
+      margin: 0 auto;
+    }
+
     .Modal-header {
       display: block;
       padding: 0;
