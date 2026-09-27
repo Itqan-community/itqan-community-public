@@ -1183,17 +1183,6 @@ body:has(.DeleteConfirmModal) .Modal-backdrop {
     border-top: 1px solid var(--hairline, var(--control-bg));
     border-radius: var(--r-xl, 16px) var(--r-xl, 16px) 0 0;
     box-shadow: 0 -8px 24px var(--shadow-color, rgba(0, 0, 0, 0.35));
-
-    // Grab handle — the visual cue that this is a dismissible sheet.
-    &::before {
-      content: '';
-      display: block;
-      width: 40px;
-      height: 4px;
-      margin: var(--sp-12, 12px) auto var(--sp-4, 4px);
-      border-radius: var(--r-pill, 9999px);
-      background: color-mix(in srgb, var(--text-color) 22%, transparent);
-    }
   }
 
   // Flex row so the close sits level with the title, on the end side, with no
@@ -1202,7 +1191,7 @@ body:has(.DeleteConfirmModal) .Modal-backdrop {
     display: flex;
     align-items: center;
     gap: var(--sp-8, 8px);
-    padding: var(--sp-12, 12px) var(--sp-20, 20px);
+    padding: var(--sp-16, 16px) var(--sp-20, 20px);
 
     // `:not(.App-titleControl)` keeps this off Flarum >= 1.8.19's app-style
     // header, where the title centres itself with a negative margin our
@@ -1222,20 +1211,11 @@ body:has(.DeleteConfirmModal) .Modal-backdrop {
 
   // Flarum >= 1.8.19 builds the phone modal header out of the app-header
   // controls (`.App-titleControl` for the title, `.Modal-close.App-backControl`
-  // for the close) and `App.less` pins that row to the top of the modal.
-  // Push it below our grab handle and reserve both rows, so the body clears
-  // them. On 1.8.17's plain `.Modal-header` none of this matches.
+  // for the close) and `App.less` pins that row to the top of the modal. It
+  // also expects the row's height reserved as the content's top padding.
+  // On 1.8.17's plain `.Modal-header` none of this matches.
   .DeleteConfirmModal .Modal-content:has(.App-titleControl) {
-    padding-top: ~"calc(var(--header-height-phone) + 32px)";
-
-    // The handle is a flow child, so `padding-top` above would drag it down
-    // with the body; pin it to the very top of the sheet instead.
-    &::before {
-      position: absolute;
-      inset-block-start: var(--sp-12, 12px);
-      inset-inline: 0;
-      margin: 0 auto;
-    }
+    padding-top: var(--header-height-phone);
 
     .Modal-header {
       display: block;
@@ -1246,11 +1226,6 @@ body:has(.DeleteConfirmModal) .Modal-backdrop {
         line-height: var(--header-height-phone);
       }
     }
-  }
-
-  .DeleteConfirmModal .App-titleControl,
-  .DeleteConfirmModal .Modal-close.App-backControl {
-    top: 32px !important;
   }
 
   // Those controls are coloured for a dark app header; the sheet is a surface.
