@@ -1138,17 +1138,27 @@ a.NestedRepliesReplyTag {
   }
 }
 
+// A neutral scrim for this dialog only. Core derives `--overlay-bg` from the
+// theme's secondary hue, which reads blue; the sheet wants a plain dim.
+// `:has()` scopes it to the manager holding our modal so no other backdrop
+// changes; without `:has()` support it simply falls back to core's colour.
+.ModalManager:has(.DeleteConfirmModal) .Modal-backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
 // Phone: the confirmation is a bottom sheet rather than core's full-screen
 // page. Scoped to our class, so no other modal is affected.
 @media @phone {
-  // `.Modal` is `position: relative` and core slides it with a *relative* `top`
-  // on phone, so `bottom: 0` alone does nothing. Fixed positioning against the
-  // viewport is what actually pins the sheet to the bottom.
+  // Core's `.Modal` is `position: relative` and slides with a *relative* `top`,
+  // so `bottom: 0` alone does nothing — fixed positioning is what pins the
+  // sheet. The slide animates `bottom`: core's ModalManager removes the modal
+  // only after a `transitionend` fires here, so a property that never
+  // transitions (which a fixed `top: auto` gives you) leaves the sheet open.
   .DeleteConfirmModal.Modal {
     position: fixed;
     top: auto;
     right: 0;
-    bottom: 0;
+    bottom: -100%;
     left: 0;
     margin: 0;
     max-width: 100%;
@@ -1156,6 +1166,11 @@ a.NestedRepliesReplyTag {
     border-radius: 0;
     box-shadow: none;
     background: transparent;
+    transition: bottom 0.22s ease-out;
+
+    &.in {
+      bottom: 0;
+    }
   }
 
   .DeleteConfirmModal .Modal-content {
@@ -1167,10 +1182,6 @@ a.NestedRepliesReplyTag {
     border-top: 1px solid var(--hairline, var(--control-bg));
     border-radius: var(--r-xl, 16px) var(--r-xl, 16px) 0 0;
     box-shadow: 0 -8px 24px var(--shadow-color, rgba(0, 0, 0, 0.35));
-  }
-
-  .DeleteConfirmModal .Modal-header {
-    padding: var(--sp-12, 12px) var(--sp-20, 20px) var(--sp-8, 8px);
 
     // Grab handle — the visual cue that this is a dismissible sheet.
     &::before {
@@ -1178,17 +1189,32 @@ a.NestedRepliesReplyTag {
       display: block;
       width: 40px;
       height: 4px;
-      margin: 0 auto var(--sp-12, 12px);
+      margin: var(--sp-12, 12px) auto var(--sp-4, 4px);
       border-radius: var(--r-pill, 9999px);
       background: color-mix(in srgb, var(--text-color) 22%, transparent);
     }
   }
 
+  // Flex row so the close sits level with the title, on the end side, with no
+  // absolute offset to re-tune per breakpoint.
+  .DeleteConfirmModal .Modal-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-8, 8px);
+    padding: var(--sp-12, 12px) var(--sp-20, 20px);
+
+    h3 {
+      flex: 1 1 auto;
+      // Core only zeroes this at tablet-up; the UA default would push the
+      // title away from the grab handle here.
+      margin: 0;
+    }
+  }
+
+  // Core only absolutely-positions the close at tablet-up; put it back in flow.
   .DeleteConfirmModal .Modal-close {
-    position: absolute;
-    inset-block-start: var(--sp-10, 10px);
-    inset-inline-end: var(--sp-12, 12px);
-    inset-inline-start: auto;
+    position: static;
+    flex: 0 0 auto;
   }
 
   .DeleteConfirmModal .Modal-body {
