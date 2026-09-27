@@ -224,7 +224,8 @@ abstract class AbstractTranslationProvider
 
         if (!$cached || $force) {
             try {
-                $translatedTitle = $this->translate($discussion->title, $targetLang);
+                $sourceLang = self::detectLanguageByScript($discussion->title) ?? $discussion->detected_lang;
+                $translatedTitle = $this->translate($discussion->title, $targetLang, $sourceLang);
                 if (empty(trim(strip_tags($translatedTitle)))) {
                     throw new Exception("Translation engine returned empty title for discussion {$discussion->id}");
                 }
@@ -250,7 +251,10 @@ abstract class AbstractTranslationProvider
     {
         $formatter = $post->getFormatter();
         $unparsed = $formatter->unparse($post->getParsedContentAttribute(), $post);
-        $translatedText = $this->translate($unparsed, $toLanguage);
+        // Resolve the source language ourselves: relying on the engine's auto-detection
+        // makes mixed ar/en comments translate to themselves (a no-op).
+        $sourceLang = self::detectLanguageByScript($unparsed) ?? $post->detected_lang;
+        $translatedText = $this->translate($unparsed, $toLanguage, $sourceLang);
 
         if (empty(trim($translatedText))) {
             throw new Exception("Translation engine returned empty result for post {$post->id}");
@@ -258,6 +262,28 @@ abstract class AbstractTranslationProvider
 
         $translatedXml = $formatter->parse($translatedText, $post, $user);
         return PostTranslation::buildOrUpdate($post->id, $toLanguage, $translatedXml, $this->name());
+    }
+
+    /**
+     * Deterministic Arabic/Latin script classifier for this ar/en forum.
+     *
+     * Engine language detection misclassifies mixed comments (e.g. an English
+     * sentence that embeds Arabic terms is reported as "ar"), which makes the
+     * translation engine treat ar->ar as a no-op. Counting letters by script is
+     * stable for bilingual content and lets us pass an explicit source language.
+     *
+     * @return string|null "ar", "en", or null when the text holds no letters.
+     */
+    protected static function detectLanguageByScript(string $text): ?string
+    {
+        $arabic = preg_match_all('/[\x{0600}-\x{06FF}\x{0750}-\x{077F}\x{FB50}-\x{FDFF}\x{FE70}-\x{FEFF}]/u', $text);
+        $latin = preg_match_all('/[A-Za-z]/u', $text);
+
+        if ($arabic === false || $latin === false || ($arabic + $latin) === 0) {
+            return null;
+        }
+
+        return $arabic >= $latin ? 'ar' : 'en';
     }
 
 
