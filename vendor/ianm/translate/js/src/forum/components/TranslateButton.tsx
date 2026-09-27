@@ -15,10 +15,11 @@ interface ITranslateButtonAttrs extends ComponentAttrs {
 
 export default class TranslateButton extends Component<ITranslateButtonAttrs> {
   view(vnode: Mithril.Vnode<ITranslateButtonAttrs>) {
-    const { languages, detectedLang, onTranslate, iconOnly, loading } = vnode.attrs;
+    const { languages, onTranslate, iconOnly, loading } = vnode.attrs;
 
-    // Filter out the detected language from the list of languages
-    const availableLanguages = languages.filter((code: string) => code !== detectedLang);
+    // Show every configured language so the user can always pick either one, even when
+    // automatic language detection is wrong (e.g. mixed Arabic/English comments).
+    const availableLanguages = languages;
 
     if (availableLanguages.length === 0) {
       return null;
