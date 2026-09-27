@@ -50,3 +50,9 @@ mtareq-nested-replies:
     delete_discussion_title: حذف الموضوع
     delete_discussion_forever_title: حذف الموضوع نهائيًا
     hide_discussion_confirmation: إخفاء هذا الموضوع؟
+
+core:
+  forum:
+    index_sort:
+      votes_button: الأعلى تصويتًا
+      replies_button: الأكثر ردودًا

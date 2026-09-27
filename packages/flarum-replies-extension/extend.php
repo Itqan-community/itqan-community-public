@@ -1,13 +1,18 @@
 <?php
 
+use Flarum\Api\Controller\ListDiscussionsController;
 use Flarum\Api\Serializer\BasicPostSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving;
+use Flarum\Post\Post;
+use Mtareq\NestedReplies\Access\PostPolicy;
 use Mtareq\NestedReplies\Api\VotePostController;
 use Mtareq\NestedReplies\Listener\StoreReplyParent;
 use Mtareq\NestedReplies\PostReply;
 use Mtareq\NestedReplies\PostVote;
+use Mtareq\NestedReplies\Provider\SortMapProvider;
+use Mtareq\NestedReplies\Vote\VoteCounts;
 
 $extenders = [
     (new Extend\Frontend('forum'))
@@ -42,6 +47,58 @@ $extenders = [
         ->serializeToForum('nestedRepliesReplyForm', 'mtareq-nested-replies.reply_form')
         ->serializeToForum('nestedRepliesHighlightColor', 'mtareq-nested-replies.highlight_color')
         ->serializeToForum('nestedRepliesLegacyMentions', 'mtareq-nested-replies.legacy_mentions', 'boolval'),
+
+    // --- Vote authorization --------------------------------------------------
+    (new Extend\Policy())
+        ->modelPolicy(Post::class, PostPolicy::class),
+
+    // --- Discussion-list sorts: votes (+ core's commentCount) ----------------
+    // Prime the first-post scores for the whole page in one query so the list's
+    // vote rails do not N+1. (prepareDataForSerialization's callback receives
+    // ($controller, $data, $request, $document) on Flarum 1.x.)
+    (new Extend\ApiController(ListDiscussionsController::class))
+        ->addSortField('votes')
+        ->prepareDataForSerialization(function ($controller, $data, $request) {
+            $ids = [];
+            foreach ($data as $discussion) {
+                if ($discussion && $discussion->first_post_id) {
+                    $ids[] = (int) $discussion->first_post_id;
+                }
+                if ($discussion && $discussion->most_relevant_post_id) {
+                    $ids[] = (int) $discussion->most_relevant_post_id;
+                }
+            }
+            if ($ids) {
+                VoteCounts::primeIds($ids, \Flarum\Http\RequestUtil::getActor($request));
+            }
+        }),
+
+    // The details page serializes a whole post stream; prime it once.
+    (new Extend\ApiController(\Flarum\Api\Controller\ShowDiscussionController::class))
+        ->prepareDataForSerialization(function ($controller, $discussion, $request) {
+            if ($discussion && $discussion->id) {
+                VoteCounts::primeOwnForDiscussion((int) $discussion->id, \Flarum\Http\RequestUtil::getActor($request));
+            }
+        }),
+
+    // Posts fetched directly (the reply tree uses /api/posts) are serialized
+    // outside the discussion include; prime the page in one go.
+    (new Extend\ApiController(\Flarum\Api\Controller\ListPostsController::class))
+        ->prepareDataForSerialization(function ($controller, $data, $request) {
+            $ids = [];
+            foreach ($data as $post) {
+                if ($post) {
+                    $ids[] = (int) $post->id;
+                }
+            }
+            if ($ids) {
+                VoteCounts::primeIds($ids, \Flarum\Http\RequestUtil::getActor($request));
+            }
+        }),
+
+    // --- Server sort map (the preloaded first page) --------------------------
+    (new Extend\ServiceProvider())
+        ->register(SortMapProvider::class),
 
     (new Extend\Routes('api'))
         ->post('/mtareq-nested-replies/posts/{id}/vote', 'mtareq-nested-replies.vote', VotePostController::class),
@@ -104,26 +161,13 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
     // BasicPostSerializer). PostSerializer extends this, so the details page
     // is unaffected.
     $extenders[] = (new Extend\ApiSerializer(BasicPostSerializer::class))
-        ->attribute('votes', function ($serializer, $post) {
-            return (int) PostVote::query()->where('post_id', $post->id)->sum('value');
-        })
-        ->attribute('userVote', function ($serializer, $post) {
+        ->attributes(function ($serializer, $post) {
             $actor = $serializer->getActor();
 
-            if (! $actor || ! $actor->exists) {
-                return null;
-            }
-
-            $vote = PostVote::query()
-                ->where('post_id', $post->id)
-                ->where('user_id', $actor->id)
-                ->first();
-
-            if (! $vote) {
-                return null;
-            }
-
-            return $vote->value > 0 ? 'up' : 'down';
+            return [
+                'votes' => VoteCounts::forPosts([(int) $post->id], $actor)[(int) $post->id] ?? 0,
+                'userVote' => VoteCounts::userVotes([(int) $post->id], $actor)[(int) $post->id] ?? null,
+            ];
         });
 
     $extenders[] = (new Extend\ApiSerializer(PostSerializer::class))

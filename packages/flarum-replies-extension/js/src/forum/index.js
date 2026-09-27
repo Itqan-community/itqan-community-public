@@ -13,6 +13,7 @@ import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 import Stream from 'flarum/common/utils/Stream';
 import { withFirstPostInclude } from './utils/listParams';
+import { withCatalogSorts } from './utils/discussionSortMap';
 import { readSettings } from '../common/settings';
 import { createVoteAdapter } from '../common/voteAdapter';
 import { getDepth, isHidden, isOriginalPost, getReplyTarget, getParentId, isDerivedParent, planSiblingFolding } from './utils/threadDepths';
@@ -43,6 +44,12 @@ app.initializers.add('mtareq-nested-replies', () => {
   override(DiscussionListState.prototype, 'requestParams', function (original) {
     if (!settings.showVotes) return original();
     return withFirstPostInclude(original());
+  });
+
+  // The list dropdown is built from this map's keys. We swap core's `top`
+  // (replies) for our `replies` key and add `votes`; see discussionSortMap.js.
+  override(DiscussionListState.prototype, 'sortMap', function (original) {
+    return withCatalogSorts(original());
   });
 
   const collapsed = new Set();

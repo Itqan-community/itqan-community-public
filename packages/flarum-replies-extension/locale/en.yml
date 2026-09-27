@@ -51,3 +51,9 @@ mtareq-nested-replies:
     delete_discussion_title: Delete discussion
     delete_discussion_forever_title: Delete discussion forever
     hide_discussion_confirmation: Hide this discussion?
+
+core:
+  forum:
+    index_sort:
+      votes_button: Top voted
+      replies_button: Most replies

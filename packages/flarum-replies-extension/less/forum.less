@@ -1060,22 +1060,25 @@ a.NestedRepliesReplyTag {
   background: transparent;
 }
 
+// Card language: 12px container, 6px buttons, and a separated padded footer so
+// the actions never sit flush in the rounded corner. Radii/spacing use the
+// itqan-theme tokens with core fallbacks, so a bare Flarum still renders.
 .DeleteConfirmModal {
   .Modal-content {
-    border-radius: 16px;
+    border-radius: var(--r-lg, 12px);
     overflow: hidden;
     background: var(--body-bg);
-    border: none;
-    box-shadow: 0 7px 15px var(--shadow-color, rgba(0, 0, 0, 0.35));
+    border: 1px solid var(--hairline, var(--control-bg));
+    box-shadow: var(--elev-3, 0 8px 24px var(--shadow-color, rgba(0, 0, 0, 0.35)));
   }
 
   .Modal-header {
-    padding: 20px 24px 12px 24px;
+    padding: var(--sp-20, 20px) var(--sp-24, 24px) var(--sp-8, 8px);
     border-bottom: none;
 
     // Core renders the title as a h3 inside .Modal-header, not .Modal-title.
     h3 {
-      font-size: 1.125rem;
+      font-size: var(--fs-title-sm, 17px);
       font-weight: 700;
       color: var(--heading-color);
       line-height: 1.4;
@@ -1083,7 +1086,11 @@ a.NestedRepliesReplyTag {
   }
 
   // Core renders the close control as .Modal-close, not .Modal-header .close.
+  // Physical `right` on purpose: the RTL stylesheet (rtlcss) flips it, and
+  // core's own rule here is physical too.
   .Modal-close {
+    top: var(--sp-12, 12px);
+    right: var(--sp-12, 12px);
     opacity: 0.6;
     transition: opacity 0.15s ease;
 
@@ -1093,38 +1100,48 @@ a.NestedRepliesReplyTag {
   }
 
   .Modal-body {
-    padding: 0 24px 24px 24px;
-    background: transparent !important;
+    padding: 0 var(--sp-24, 24px) var(--sp-20, 20px);
+    background: transparent;
   }
 
   .DeleteConfirmModal-bodyText {
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: var(--lh-body, 1.75);
     color: var(--text-color);
-    margin-bottom: 24px;
+    margin: 0;
   }
 
   .Modal-footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 12px;
-    padding: 0;
+    gap: var(--sp-8, 8px);
+    padding: var(--sp-16, 16px) var(--sp-24, 24px);
     margin: 0;
-    background: transparent !important;
-    border: none !important;
+    background: var(--surface-sunken, var(--body-bg-shaded));
+    border-top: 1px solid var(--hairline, var(--control-bg));
 
     .Button {
-      min-height: 40px;
-      padding: 0 20px;
-      border-radius: 10px;
+      min-height: var(--ctl-h-lg, 32px);
+      padding: 0 var(--sp-16, 16px);
+      border-radius: var(--r-sm, 6px);
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: var(--fs-ui, 13px);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
+  }
+}
+
+// Core turns the modal into a full-viewport sheet on phone (radius 0, no
+// border/shadow). Our card rules outrank core's phone rules, so restore it.
+@media @phone {
+  .DeleteConfirmModal .Modal-content {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 }
 
