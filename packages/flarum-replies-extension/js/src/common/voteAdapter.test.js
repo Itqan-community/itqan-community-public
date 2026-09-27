@@ -151,4 +151,25 @@ describe('createVoteAdapter', () => {
     // Clearing an existing up-vote drops the score by 1.
     expect(post.pushAttributes).toHaveBeenNthCalledWith(1, { votes: 0, userVote: null });
   });
+
+  it('is unavailable on a post the actor may not vote on (canVote false)', () => {
+    const adapter = createVoteAdapter(fakeApp());
+
+    expect(adapter.isAvailable(fakePost({ canVote: false }))).toBe(false);
+    expect(adapter.isAvailable(fakePost({ canVote: true }))).toBe(true);
+    expect(adapter.isAvailable(fakePost())).toBe(true);
+    expect(adapter.isAvailable()).toBe(true);
+  });
+
+  it('rejects a vote on a read-only post without hitting the API', async () => {
+    const app = fakeApp();
+    const adapter = createVoteAdapter(app);
+    const post = fakePost({ canVote: false, votes: 2 });
+
+    const result = await adapter.vote(post, 'up');
+
+    expect(result).toEqual({ rejected: 'cannot' });
+    expect(app.request).not.toHaveBeenCalled();
+    expect(post.pushAttributes).not.toHaveBeenCalled();
+  });
 });

@@ -167,6 +167,11 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
             return [
                 'votes' => VoteCounts::forPosts([(int) $post->id], $actor)[(int) $post->id] ?? 0,
                 'userVote' => VoteCounts::userVotes([(int) $post->id], $actor)[(int) $post->id] ?? null,
+                // Display hint only — registered actors who did not author this
+                // post. Cheap (no query); the PostPolicy still gates the write, so
+                // this never widens access, it only stops the rail from firing a
+                // request the server would deny.
+                'canVote' => (bool) ($actor->exists && (int) $post->user_id !== (int) $actor->id),
             ];
         });
 

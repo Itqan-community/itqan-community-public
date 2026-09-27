@@ -20,6 +20,7 @@ mtareq-nested-replies:
     expand: توسيع الردود
     upvote: تصويت إيجابي
     downvote: تصويت سلبي
+    vote_own_post: لا يمكنك التصويت على منشورك
     reply_to: "الرد على {username}"
     more_replies: "{count} ردود أخرى"
     show_more_replies: إظهار المزيد من الردود

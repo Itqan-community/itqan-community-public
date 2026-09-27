@@ -1086,11 +1086,14 @@ a.NestedRepliesReplyTag {
   }
 
   // Core renders the close control as .Modal-close, not .Modal-header .close.
-  // Physical `right` on purpose: the RTL stylesheet (rtlcss) flips it, and
-  // core's own rule here is physical too.
+  // Logical insets so the control sits on the *end* side in RTL without
+  // depending on a physical-property flip pass. `inline-start: auto` cancels
+  // core's own physical `right` in RTL (where inline-start is right), which
+  // would otherwise stretch the absolutely-positioned button.
   .Modal-close {
-    top: var(--sp-12, 12px);
-    right: var(--sp-12, 12px);
+    inset-block-start: var(--sp-12, 12px);
+    inset-inline-end: var(--sp-12, 12px);
+    inset-inline-start: auto;
     opacity: 0.6;
     transition: opacity 0.15s ease;
 
@@ -1135,13 +1138,65 @@ a.NestedRepliesReplyTag {
   }
 }
 
-// Core turns the modal into a full-viewport sheet on phone (radius 0, no
-// border/shadow). Our card rules outrank core's phone rules, so restore it.
+// Phone: the confirmation is a bottom sheet rather than core's full-screen
+// page. Scoped to our class, so no other modal is affected.
 @media @phone {
-  .DeleteConfirmModal .Modal-content {
-    border: 0;
+  .DeleteConfirmModal.Modal {
+    top: auto;
+    bottom: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
     border-radius: 0;
     box-shadow: none;
+    background: transparent;
+  }
+
+  .DeleteConfirmModal .Modal-content {
+    min-height: 0;
+    padding-top: 0;
+    border: 0;
+    border-top: 1px solid var(--hairline, var(--control-bg));
+    border-radius: var(--r-xl, 16px) var(--r-xl, 16px) 0 0;
+    box-shadow: 0 -8px 24px var(--shadow-color, rgba(0, 0, 0, 0.35));
+  }
+
+  .DeleteConfirmModal .Modal-header {
+    padding: var(--sp-12, 12px) var(--sp-20, 20px) var(--sp-8, 8px);
+
+    // Grab handle — the visual cue that this is a dismissible sheet.
+    &::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 4px;
+      margin: 0 auto var(--sp-12, 12px);
+      border-radius: var(--r-pill, 9999px);
+      background: color-mix(in srgb, var(--text-color) 22%, transparent);
+    }
+  }
+
+  .DeleteConfirmModal .Modal-close {
+    position: absolute;
+    inset-block-start: var(--sp-10, 10px);
+    inset-inline-end: var(--sp-12, 12px);
+    inset-inline-start: auto;
+  }
+
+  .DeleteConfirmModal .Modal-body {
+    padding: 0 var(--sp-20, 20px) var(--sp-20, 20px);
+  }
+
+  .DeleteConfirmModal .Modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: var(--sp-10, 10px);
+    padding: var(--sp-16, 16px) var(--sp-20, 20px) ~"calc(var(--sp-16, 16px) + env(safe-area-inset-bottom, 0px))";
+
+    .Button {
+      min-height: var(--ctl-h-touch, 44px);
+      border-radius: var(--r-md, 8px);
+    }
   }
 }
 

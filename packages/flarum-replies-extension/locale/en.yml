@@ -20,6 +20,7 @@ mtareq-nested-replies:
     expand: Expand replies
     upvote: Upvote
     downvote: Downvote
+    vote_own_post: You can't vote on your own post
     reply_to: "Reply to {username}"
     more_replies: "{count} more replies"
     show_more_replies: Show more replies

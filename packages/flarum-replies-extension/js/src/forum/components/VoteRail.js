@@ -5,7 +5,8 @@ import icon from 'flarum/common/helpers/icon';
 export default class VoteRail extends Component {
   view() {
     const { post, adapter } = this.attrs;
-    const available = adapter.isAvailable();
+    const available = adapter.isAvailable(post);
+    const ownPost = Boolean(app.session.user) && post.attribute('canVote') === false;
     const score = adapter.getScore(post);
     const current = adapter.getUserVote(post);
 
@@ -16,7 +17,7 @@ export default class VoteRail extends Component {
           type: 'button',
           className: current === direction ? 'is-active' : '',
           disabled: !available,
-          title: app.translator.trans(`mtareq-nested-replies.forum.${key}`),
+          title: app.translator.trans(ownPost ? 'mtareq-nested-replies.forum.vote_own_post' : `mtareq-nested-replies.forum.${key}`),
           onclick: () => {
             if (!available) return;
             adapter.vote(post, current === direction ? null : direction);

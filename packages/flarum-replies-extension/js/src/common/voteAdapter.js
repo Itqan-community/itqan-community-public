@@ -12,7 +12,11 @@ export function createVoteAdapter(app) {
     return value === 'up' || value === 'down' ? value : null;
   };
 
-  const isAvailable = () => Boolean(app && app.session && app.session.user);
+  // `canVote` is the serialized hint; a missing hint means "assume available"
+  // (the server still decides). `post` is optional so score-only callers work.
+  const isAvailable = (post) =>
+    Boolean(app && app.session && app.session.user) &&
+    (!post || post.attribute('canVote') !== false);
   const pending = new Set();
 
   return {
@@ -23,7 +27,8 @@ export function createVoteAdapter(app) {
 
     vote(post, direction) {
       if (!post) return Promise.resolve();
-      if (!isAvailable()) return Promise.resolve({ rejected: 'guest' });
+      if (!app.session || !app.session.user) return Promise.resolve({ rejected: 'guest' });
+      if (!isAvailable(post)) return Promise.resolve({ rejected: 'cannot' });
 
       const key = String(post.id());
       if (pending.has(key)) return Promise.resolve({ rejected: 'inflight' });
