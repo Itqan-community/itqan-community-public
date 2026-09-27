@@ -1140,9 +1140,10 @@ a.NestedRepliesReplyTag {
 
 // A neutral scrim for this dialog only. Core derives `--overlay-bg` from the
 // theme's secondary hue, which reads blue; the sheet wants a plain dim.
-// `:has()` scopes it to the manager holding our modal so no other backdrop
-// changes; without `:has()` support it simply falls back to core's colour.
-.ModalManager:has(.DeleteConfirmModal) .Modal-backdrop {
+// Anchored on `body` so it matches both Flarum's DOMs (1.8.17 keeps the
+// backdrop inside `.ModalManager`, 1.8.19+ makes it a sibling of it); without
+// `:has()` support it simply falls back to core's colour.
+body:has(.DeleteConfirmModal) .Modal-backdrop {
   background: rgba(0, 0, 0, 0.45);
 }
 
@@ -1203,10 +1204,12 @@ a.NestedRepliesReplyTag {
     gap: var(--sp-8, 8px);
     padding: var(--sp-12, 12px) var(--sp-20, 20px);
 
-    h3 {
+    // `:not(.App-titleControl)` keeps this off Flarum >= 1.8.19's app-style
+    // header, where the title centres itself with a negative margin our
+    // higher-specificity rule would otherwise wipe out. Core only zeroes this
+    // at tablet-up, so the UA default would otherwise push the title down.
+    h3:not(.App-titleControl) {
       flex: 1 1 auto;
-      // Core only zeroes this at tablet-up; the UA default would push the
-      // title away from the grab handle here.
       margin: 0;
     }
   }
@@ -1215,6 +1218,39 @@ a.NestedRepliesReplyTag {
   .DeleteConfirmModal .Modal-close {
     position: static;
     flex: 0 0 auto;
+  }
+
+  // Flarum >= 1.8.19 builds the phone modal header out of the app-header
+  // controls (`.App-titleControl` for the title, `.Modal-close.App-backControl`
+  // for the close) and `App.less` pins that row to the top of the modal.
+  // Push it below our grab handle and reserve both rows, so the body clears
+  // them. On 1.8.17's plain `.Modal-header` none of this matches.
+  .DeleteConfirmModal .Modal-content:has(.App-titleControl) {
+    padding-top: ~"calc(var(--header-height-phone) + 32px)";
+
+    .Modal-header {
+      display: block;
+      padding: 0;
+
+      // Fill the app row so the title centres against the close button.
+      h3 {
+        line-height: var(--header-height-phone);
+      }
+    }
+  }
+
+  .DeleteConfirmModal .App-titleControl,
+  .DeleteConfirmModal .Modal-close.App-backControl {
+    top: 32px !important;
+  }
+
+  // Those controls are coloured for a dark app header; the sheet is a surface.
+  .DeleteConfirmModal .App-titleControl {
+    color: var(--heading-color) !important;
+  }
+
+  .DeleteConfirmModal .App-backControl > .Button {
+    color: var(--muted-color) !important;
   }
 
   .DeleteConfirmModal .Modal-body {
