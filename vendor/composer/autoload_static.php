@@ -305,6 +305,12 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
             'Itqan\\Theme\\' => 12,
             'Itqan\\MailerLite\\' => 17,
             'Itqan\\Discussions\\' => 18,
+            'Itqan\\ComposerTools\\' => 20,
+            'Itqan\\Discussions\\' => 18,
+            'Itqan\\Llms\\' => 11,
+            'Itqan\\MailerLite\\' => 17,
+            'Itqan\\Theme\\' => 12,
+            'Itqan\\Typography\\' => 17,
             'Irmmr\\RTLCss\\' => 13,
             'Irmmr\\FlarumRtlSupport\\' => 23,
             'Intervention\\Image\\' => 19,
@@ -921,6 +927,30 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'Itqan\\Discussions\\' =>
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-discussions/src',
+        ),
+        'Itqan\\ComposerTools\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/flarum-composer-tools/src',
+        ),
+        'Itqan\\Discussions\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/flarum-discussions/src',
+        ),
+        'Itqan\\Llms\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/flarum-llms/src',
+        ),
+        'Itqan\\MailerLite\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/flarum-mailerlite/src',
+        ),
+        'Itqan\\Theme\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/flarum-theme/src',
+        ),
+        'Itqan\\Typography\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/flarum-typography/src',
         ),
         'Irmmr\\RTLCss\\' =>
         array (

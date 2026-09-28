@@ -1164,6 +1164,22 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'itqan/flarum-composer-tools' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'flarum-extension',
+            'install_path' => __DIR__ . '/../itqan/flarum-composer-tools',
+            'aliases' => array(),
+            'dev' => false,
+        ),
+        'itqan/flarum-llms' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'flarum-extension',
+            'install_path' => __DIR__ . '/../itqan/flarum-llms',
+            'aliases' => array(),
+            'dev' => false,
+        ),
         'itqan/flarum-discussions' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',

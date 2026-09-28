@@ -17881,6 +17881,121 @@
                 "source": "https://github.com/wohali/oauth2-discord-new/tree/1.2.1"
             },
             "install-path": "../wohali/oauth2-discord-new"
+        },
+        {
+            "name": "itqan/flarum-composer-tools",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-composer-tools",
+                "reference": "5daea9d7202a045ce957c039cf880babf98bae32"
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Composer Tools",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fab fa-markdown",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\ComposerTools\\": "src/"
+                }
+            },
+            "scripts": {
+                "build": "cd js && npm run build"
+            },
+            "license": "MIT",
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Writing and preview tools for the Itqan community composer",
+            "keywords": [
+                "flarum",
+                "composer",
+                "markdown",
+                "preview"
+            ],
+            "installation-source": "dist",
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-composer-tools"
+        },
+        {
+            "name": "itqan/flarum-llms",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-llms",
+                "reference": "597fc06492d99b66e8503b9cad5f87ba57e9aea8"
+            },
+            "require": {
+                "php": "^8.0",
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan LLMs",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fas fa-robot",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    },
+                    "optional-dependencies": [
+                        "flarum/tags"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Llms\\": "src/"
+                }
+            },
+            "scripts": {
+                "test": "php tests/run_all.php"
+            },
+            "license": "MIT",
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "LLM-readable Markdown exports of discussions and a spec-compliant /llms.txt index for the Itqan community",
+            "keywords": [
+                "flarum",
+                "llm",
+                "llms.txt",
+                "markdown",
+                "ai",
+                "seo"
+            ],
+            "suggest": {
+                "flarum/tags": "Groups the /llms.txt index by tag instead of listing one flat block of recent discussions",
+                "itqan/flarum-discussions": "Adds the vote score and the threaded-reply tree to the Markdown export",
+                "fof/discussion-language": "Records each discussion's language so the index can group by it"
+            },
+            "installation-source": "dist",
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-llms"
         }
     ],
     "dev": true,
