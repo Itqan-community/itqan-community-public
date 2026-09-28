@@ -50,6 +50,54 @@ html[data-itqan-theme='dark'] body {
   text-align: left;
 }
 
+// Direction follows each block's first strong character, so an English comment
+// in an RTL discussion reads LTR and an Arabic one stays RTL.
+.Post-body {
+  p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th {
+    unicode-bidi: plaintext;
+    text-align: start;
+  }
+
+  // Native markers take the li's `direction` (rtl), which plaintext never changes, so
+  // English bullets sit on the right or render glued/reversed ("•You", ".1First").
+  // Generated markers are inline text inside the plaintext block, so they follow its direction.
+  li {
+    list-style: none;
+
+    // Loose lists wrap the text in <p>, which would push the marker onto its own line.
+    > p:first-child {
+      display: inline;
+      unicode-bidi: normal;
+    }
+  }
+
+  // Both sides, so the list is indented whichever way its text runs.
+  ul, ol {
+    padding-inline: 20px;
+  }
+
+  ul > li::before {
+    content: "\2022\00a0\00a0";
+  }
+
+  ol > li::before {
+    content: counter(list-item) ".\00a0";
+  }
+
+  // An isolated mention is skipped when the paragraph's direction is picked, so an
+  // English reply that opens with "@<Arabic name>" is not forced RTL by the name.
+  .UserMention,
+  .PostMention {
+    unicode-bidi: isolate;
+  }
+}
+
+.TextEditor textarea,
+.Composer textarea {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
 .Button.Button--primary,
 .SplitDropdown-button.Button.Button--primary {
   display: inline-flex;
