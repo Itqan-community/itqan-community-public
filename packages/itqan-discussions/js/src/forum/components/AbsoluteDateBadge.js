@@ -1,7 +1,9 @@
 import Component from 'flarum/common/Component';
+import app from 'flarum/forum/app';
 import humanTime from 'flarum/common/helpers/humanTime';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import 'dayjs/locale/ar';
 
 dayjs.extend(localizedFormat);
 
@@ -21,9 +23,10 @@ export default class AbsoluteDateBadge extends Component {
 
     // Posts older than 30 days display explicit calendar dates
     if (diffDays > 30) {
-      const formattedDate = d.format('LL');
+      const locale = app.data.locale;
+      const formattedDate = d.locale(locale).format('LL');
       const isoTimestamp = d.toISOString();
-      const fullTimeStr = d.format('LLLL');
+      const fullTimeStr = d.locale(locale).format('LLLL');
 
       return (
         <time pubdate datetime={isoTimestamp} title={fullTimeStr} className="AbsoluteDateBadge">
