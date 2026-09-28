@@ -63,6 +63,13 @@ html[data-itqan-theme='dark'] body {
   li {
     list-style-position: inside;
   }
+
+  // An isolated mention is skipped when the paragraph's direction is picked, so an
+  // English reply that opens with "@<Arabic name>" is not forced RTL by the name.
+  .UserMention,
+  .PostMention {
+    unicode-bidi: isolate;
+  }
 }
 
 .TextEditor textarea,
