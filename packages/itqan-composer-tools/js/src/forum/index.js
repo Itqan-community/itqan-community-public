@@ -51,7 +51,7 @@ app.initializers.add('itqan-composer-tools', () => {
 
   extend(TextEditor.prototype, 'view', function (vdom) {
     if (!isDiscussionComposer(this.attrs.composer)) return;
-
+      
     vdom.attrs.className = classList(vdom.attrs.className, {
       'TextEditor--markdownPreview': this.itqanMarkdownPreviewOpen,
     });
