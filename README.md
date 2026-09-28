@@ -49,7 +49,8 @@ All community contributions must be built inside modular extensions under `packa
 | `packages/itqan-composer-tools` | [#3](https://github.com/Itqan-community/itqan-community-public/issues/3) | Live Markdown preview, rich toolbar (tables, quotes, code), mobile editor UX. |
 | `packages/itqan-notifications` | [#4](https://github.com/Itqan-community/itqan-community-public/issues/4) | DND toggle, granular subscriptions, weekly email digest command. |
 | `packages/itqan-developer-profile` | [#5](https://github.com/Itqan-community/itqan-community-public/issues/5) | Developer portfolio, GitHub integration, Quranic tech trophies & badges. |
-| `packages/itqan-discussions` | [#6](https://github.com/Itqan-community/itqan-community-public/issues/6) | Nested reply threading, single category enforcement, calendar dates. |
+| `packages/itqan-discussions` | [#6](https://github.com/Itqan-community/itqan-community-public/issues/6) | Nested reply threading, vote scores, single category enforcement, calendar dates. |
+| `packages/itqan-llms` | N/A | LLM-readable Markdown exports of discussions and a spec-compliant `/llms.txt` index. |
 | `packages/itqan-mailerlite` | N/A | MailerLite subscriber synchronization & campaign triggers. |
 
 ---
