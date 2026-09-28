@@ -62,6 +62,12 @@ html[data-itqan-theme='dark'] body {
   // English list would keep its bullets on the right; inside makes them follow the text.
   li {
     list-style-position: inside;
+
+    // Loose lists wrap the text in <p>, which would push an inside marker onto its own line.
+    > p:first-child {
+      display: inline;
+      unicode-bidi: normal;
+    }
   }
 
   // An isolated mention is skipped when the paragraph's direction is picked, so an
