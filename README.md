@@ -7,6 +7,7 @@
   [![Website](https://img.shields.io/badge/Production-community.itqan.dev-0D9488?style=for-the-badge&logo=google-chrome&logoColor=white)](https://community.itqan.dev)
   [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
   [![Flarum Core](https://img.shields.io/badge/Flarum-v1.8-4D69FF?style=for-the-badge&logo=flarum&logoColor=white)](https://flarum.org)
+  [![CI](https://img.shields.io/github/actions/workflow/status/Itqan-community/itqan-community-public/ci.yml?branch=main&style=for-the-badge&logo=github)](https://github.com/Itqan-community/itqan-community-public/actions/workflows/ci.yml)
 
 </div>
 
@@ -60,7 +61,6 @@ All community contributions must be built inside modular extensions under `packa
 ```bash
 git clone https://github.com/Itqan-community/itqan-community-public.git
 cd itqan-community-public
-git checkout develop
 ```
 
 ### Step 2: Run via Docker
@@ -106,7 +106,7 @@ docker compose down -v && rm -rf storage config.php && docker compose up -d
 ---
 
 ## 🤝 Contributing
-Please see our [`CONTRIBUTING.md`](./CONTRIBUTING.md) guide. All pull requests MUST target the **`develop`** branch.
+Please see our [`CONTRIBUTING.md`](./CONTRIBUTING.md) guide. All pull requests MUST target the **`main`** branch.
 
 ---
 

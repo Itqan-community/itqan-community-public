@@ -1,0 +1,148 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  manifest:
+    name: Manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+  php-lint:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ['8.0', '8.1', '8.2']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+      - name: Lint PHP files in packages
+        run: find packages -name "*.php" -print0 | xargs -0 -n1 php -l
+
+  extension-manifest:
+    name: Extension Manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check extension manifests
+        run: |
+          #!/usr/bin/env php
+          <?php
+          $valid = true;
+          foreach (glob('packages/*/composer.json') as $file) {
+              $data = json_decode(file_get_contents($file), true);
+              if (($data['type'] ?? '') !== 'flarum-extension') {
+                  echo "$file missing type: flarum-extension\n";
+                  $valid = false;
+              }
+              $ext = $data['extra']['flarum-extension'] ?? [];
+              foreach (['dependencies', 'optional-dependencies'] as $key) {
+                  if (isset($ext[$key])) {
+                      foreach ($ext[$key] as $dep) {
+                          if (strpos($dep, '/') === false) {
+                              echo "$file invalid dependency format: $dep\n";
+                              $valid = false;
+                          }
+                      }
+                  }
+              }
+          }
+          exit($valid ? 0 : 1);
+        shell: php {0}
+
+  js-build:
+    name: JS Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install and build JS
+        run: |
+          for dir in packages/*/js; do
+            if [ -f "$dir/package.json" ]; then
+              echo "Building $dir"
+              cd "$dir"
+              npm ci
+              npm run build
+              cd -
+            fi
+          done
+      - name: Check for uncommitted changes
+        run: git diff --exit-code js/dist
+
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: mariadb:11.4
+        env:
+          MARIADB_DATABASE: flarum
+          MARIADB_USER: flarum
+          MARIADB_PASSWORD: flarum
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mariadb-admin ping -h 127.0.0.1 -u flarum -pflarum" --health-interval=5s --health-timeout=5s --health-retries=30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+          extensions: curl, dom, gd, json, mbstring, openssl, pdo_mysql, tokenizer, zip
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+      - name: Install Flarum
+        run: |
+          php flarum install \
+            --db-host=127.0.0.1 \
+            --db-name=flarum \
+            --db-user=flarum \
+            --db-pass=flarum \
+            --forum-title="Test Forum" \
+            --forum-url="http://localhost" \
+            --admin-mail="admin@example.com" \
+            --admin-pass="password" \
+            --admin-user="admin"
+      - name: Enable itqan extensions
+        run: |
+          php flarum extension:enable \
+            itqan-theme \
+            itqan-typography \
+            itqan-composer-tools \
+            itqan-mailerlite \
+            itqan-discussions
+      - name: Start PHP built-in server
+        run: php -S 0.0.0.0:8000 -t public &
+      - name: Wait for server
+        run: sleep 5
+      - name: Assert GET /
+        run: curl -sSf http://localhost:8000/ > /dev/null
+      - name: Assert GET /api/discussions
+        run: |
+          curl -sSf http://localhost:8000/api/discussions | grep -q '"data"'
