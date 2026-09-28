@@ -1,0 +1,51 @@
+name: Cloudflare IP drift
+
+# The prod origin only accepts 80/443 from Cloudflare (DigitalOcean firewall). The range list is a
+# snapshot: if Cloudflare adds a range, visitors on it get 521/522 until the firewall is updated.
+# Alert-only on purpose: reads a public list and opens an issue, so no DigitalOcean token is stored here.
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    name: Compare Cloudflare ranges with the prod firewall snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for drift
+        id: check
+        run: |
+          set +e
+          bash scripts/check-cloudflare-ips.sh | tee drift.txt
+          echo "rc=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Open an issue on drift
+        if: steps.check.outputs.rc == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Cloudflare IP ranges changed: update the prod firewall"
+          existing=$(gh issue list --state open --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            echo "Issue #$existing is already open"
+            exit 0
+          fi
+          {
+            echo 'The weekly check found Cloudflare IP ranges that differ from `infra/cloudflare-ips.txt`, the list the prod firewall was built from. Until the firewall is updated, visitors on any added range get 521/522 errors.'
+            echo
+            echo '```'
+            cat drift.txt
+            echo '```'
+          } > body.md
+          gh issue create --title "$title" --body-file body.md
+
+      - name: Fail if the range list could not be fetched
+        if: steps.check.outputs.rc == '2'
+        run: exit 1
