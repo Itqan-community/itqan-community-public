@@ -58,16 +58,30 @@ html[data-itqan-theme='dark'] body {
     text-align: start;
   }
 
-  // Outside markers are placed by `direction` (rtl), not by plaintext, so an
-  // English list would keep its bullets on the right; inside makes them follow the text.
+  // Native markers take the li's `direction` (rtl), which plaintext never changes, so
+  // English bullets sit on the right or render glued/reversed ("•You", ".1First").
+  // Generated markers are inline text inside the plaintext block, so they follow its direction.
   li {
-    list-style-position: inside;
+    list-style: none;
 
-    // Loose lists wrap the text in <p>, which would push an inside marker onto its own line.
+    // Loose lists wrap the text in <p>, which would push the marker onto its own line.
     > p:first-child {
       display: inline;
       unicode-bidi: normal;
     }
+  }
+
+  // Both sides, so the list is indented whichever way its text runs.
+  ul, ol {
+    padding-inline: 20px;
+  }
+
+  ul > li::before {
+    content: "\2022\00a0\00a0";
+  }
+
+  ol > li::before {
+    content: counter(list-item) ".\00a0";
   }
 
   // An isolated mention is skipped when the paragraph's direction is picked, so an
