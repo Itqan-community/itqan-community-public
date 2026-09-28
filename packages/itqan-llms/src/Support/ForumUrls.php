@@ -67,13 +67,24 @@ class ForumUrls
     }
 
     /**
+     * The forum's base URL, with no trailing slash.
+     *
+     * Used to resolve the in-site links a post contains. Flarum renders those
+     * as root-relative paths, and a relative link in an exported document is
+     * worse than useless to a provider: it has no domain, cannot be fetched,
+     * and carries no indication of where the thread came from.
+     */
+    public function base(): string
+    {
+        return rtrim($this->url->to('forum')->base(), '/');
+    }
+
+    /**
      * The index that describes every page under the forum root.
      */
     public function toLlmsTxt(): string
     {
-        // `base()` is the forum's base URL with no trailing slash, unlike
-        // `path()`, which adds one.
-        return $this->url->to('forum')->base().'/llms.txt';
+        return $this->base().'/llms.txt';
     }
 
     /**

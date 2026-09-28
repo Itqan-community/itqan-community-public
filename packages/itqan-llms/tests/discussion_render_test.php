@@ -276,6 +276,14 @@ $urls = new class extends ForumUrls {
     {
         return 'https://community.test/d/'.$discussion->id.'-'.$discussion->title;
     }
+
+    // DiscussionRenderer resolves in-site links against this, so a stub that
+    // omits it fails at construction rather than quietly exporting relative
+    // links.
+    public function base(): string
+    {
+        return 'https://community.test';
+    }
 };
 
 $renderer = new DiscussionRenderer(new HtmlToMarkdown, new ThreadTree, $urls);

@@ -22,6 +22,32 @@ use DOMText;
 class HtmlToMarkdown
 {
     /**
+     * The forum's base URL, used to resolve in-site links. Null leaves
+     * root-relative paths as they are, so the converter stays usable on its own.
+     */
+    private ?string $baseUrl;
+
+    public function __construct(?string $baseUrl = null)
+    {
+        $this->baseUrl = $baseUrl === null ? null : rtrim($baseUrl, '/');
+    }
+
+    /**
+     * A copy that resolves in-site links against a base URL.
+     *
+     * Flarum renders a post's own links as root-relative paths. In an exported
+     * document those are the citations a provider is most likely to quote, and
+     * a relative one has no domain to attribute the quote to, so they are
+     * resolved to the community's own URL.
+     */
+    public function withBaseUrl(?string $baseUrl): self
+    {
+        $clone = clone $this;
+        $clone->baseUrl = $baseUrl === null ? null : rtrim($baseUrl, '/');
+
+        return $clone;
+    }
+    /**
      * Escapes the characters that would otherwise be read as Markdown syntax.
      */
     private const ESCAPE_PATTERN = '/([\\\\`*_\[\]<>])/';
@@ -664,9 +690,11 @@ class HtmlToMarkdown
             return 'https:'.$url;
         }
 
-        // A root-relative path into this forum.
+        // A root-relative path into this forum, resolved so a provider lifting
+        // the citation can attribute it. A protocol-relative "//host" is a
+        // different thing and is handled above.
         if (str_starts_with($url, '/')) {
-            return $url;
+            return $this->baseUrl === null ? $url : $this->baseUrl.$url;
         }
 
         // A bare host.

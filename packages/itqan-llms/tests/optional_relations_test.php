@@ -139,6 +139,11 @@ $urls = new class extends ForumUrls {
     {
         return 'https://community.test/d/'.$d->id;
     }
+
+    public function base(): string
+    {
+        return 'https://community.test';
+    }
 };
 
 /**
@@ -184,6 +189,11 @@ function controllerFor(array $enabled): MarkdownDiscussionController
             public function toDiscussion(Flarum\Discussion\Discussion $d): string
             {
                 return 'https://community.test/d/'.$d->id;
+            }
+
+            public function base(): string
+            {
+                return 'https://community.test';
             }
         }
     );

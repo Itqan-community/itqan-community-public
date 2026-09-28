@@ -41,7 +41,9 @@ class DiscussionRenderer
 
     public function __construct(HtmlToMarkdown $html, ThreadTree $tree, ForumUrls $urls)
     {
-        $this->html = $html;
+        // The converter is shared, so the base URL is attached to a copy rather
+        // than mutating the shared instance.
+        $this->html = $html->withBaseUrl($urls->base());
         $this->tree = $tree;
         $this->urls = $urls;
     }

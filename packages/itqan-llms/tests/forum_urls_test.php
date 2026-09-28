@@ -114,6 +114,12 @@ $sub = new ForumUrls(
 check('subdirectory_discussion', 'https://community.test/forum/d/42-best-way-to-learn-php-8', $sub->toDiscussion($discussion));
 check('subdirectory_llms_txt', 'https://community.test/forum/llms.txt', $sub->toLlmsTxt());
 
+// base() has no trailing slash: the in-site link resolver appends paths to it,
+// and a double slash would appear in every link in the export.
+check('base_has_no_trailing_slash', 'https://community.test', $default->base());
+check('subdirectory_base_has_no_trailing_slash', 'https://community.test/forum', $sub->base());
+check('base_plus_path_is_clean', 'https://community.test/d/42', $default->base().'/d/42');
+
 echo $failures === 0 ? "\nALL PASS\n" : "\n$failures FAILED\n";
 
 exit($failures === 0 ? 0 : 1);

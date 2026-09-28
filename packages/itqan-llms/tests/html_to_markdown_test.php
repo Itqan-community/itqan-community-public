@@ -278,6 +278,37 @@ checkContains(
     $converter->convert('<p><a href="//cdn.example.com/a">//cdn.example.com/a</a></p>')
 );
 
+// --- in-site links resolve to the community ------------------------------------
+//
+// Flarum renders a post's own links root-relative. A provider quoting one is
+// quoting the community, and "/d/5-my-thread" has no domain to attribute it to
+// and cannot be fetched. Resolved against the forum base so every citation in
+// the file carries the community URL.
+
+$based = (new HtmlToMarkdown('https://community.itqan.dev'))->withBaseUrl('https://community.itqan.dev');
+
+check('relative_link_becomes_absolute', '[this thread](https://community.itqan.dev/d/5-my-thread)', $based->convert('<p><a href="/d/5-my-thread">this thread</a></p>'));
+check('relative_image_becomes_absolute', '![p](https://community.itqan.dev/assets/x.png)', $based->convert('<p><img src="/assets/x.png" alt="p"></p>'));
+check('relative_user_link_becomes_absolute', '[@amina](https://community.itqan.dev/u/amina)', $based->convert('<p><a href="/u/amina">@amina</a></p>'));
+check('external_link_untouched', '[x](https://other.com/x)', $based->convert('<p><a href="https://other.com/x">x</a></p>'));
+check('protocol_relative_still_normalised', '![p](https://cdn.x/a.png)', $based->convert('<p><img src="//cdn.x/a.png" alt="p"></p>'));
+
+// A forum served from a subdirectory keeps its prefix.
+$sub = (new HtmlToMarkdown('https://example.test/forum/'))->withBaseUrl('https://example.test/forum/');
+check('subdirectory_preserved', '[t](https://example.test/forum/d/5-t)', $sub->convert('<p><a href="/d/5-t">t</a></p>'));
+
+// No base URL means no rewriting, so the converter still works standalone.
+check(
+    'no_base_url_leaves_relative',
+    '[this thread](/d/5-my-thread)',
+    (new HtmlToMarkdown)->convert('<p><a href="/d/5-my-thread">this thread</a></p>')
+);
+
+// withBaseUrl must not mutate the shared instance.
+$shared = new HtmlToMarkdown;
+$shared->withBaseUrl('https://community.itqan.dev');
+check('withBaseUrl_does_not_mutate', '[t](/d/5-t)', $shared->convert('<p><a href="/d/5-t">t</a></p>'));
+
 echo $failures === 0 ? "\nALL PASS\n" : "\n$failures FAILED\n";
 
 exit($failures === 0 ? 0 : 1);
