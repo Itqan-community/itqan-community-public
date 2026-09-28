@@ -1319,4 +1319,44 @@ body:has(.DeleteConfirmModal) .Modal-backdrop {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Discussion list — per-row actions on phones
+// ---------------------------------------------------------------------------
+// Flarum hides `.DiscussionListItem-controls` below the tablet breakpoint and
+// reveals them only through the touch-only `Slidable` swipe, which leaves no
+// visible affordance — so on a phone the row's actions (Follow, Rename, Edit
+// Tags, Sticky, Lock, Delete, …) are unreachable. Show the always-tappable
+// "…" dropdown instead.
+//
+// `!important` is load-bearing: core's `.Slidable .DiscussionListItem-controls`
+// sets `position: static`, and the Slidable JS writes an inline `display` on
+// the toggle while sliding. Both would otherwise win over this rule.
+//
+// Physical `top`/`right` on purpose, matching the vote-rail rules above: Flarum
+// compiles a separate RTL stylesheet that mirrors them, so the button lands in
+// the corner opposite the vote rail in both directions.
+@media @phone {
+  .DiscussionListItem {
+    position: relative;
+  }
+
+  .DiscussionListItem .DiscussionListItem-controls {
+    display: block !important;
+    position: absolute !important;
+    top: 5px;
+    right: 5px;
+    z-index: 2;
+    opacity: 1;
+
+    > .Dropdown-toggle {
+      display: block !important;
+    }
+
+    .Dropdown-menu {
+      right: 0;
+      left: auto;
+    }
+  }
+}
+
 
