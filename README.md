@@ -95,14 +95,29 @@ docker compose down -v && rm -rf storage config.php && docker compose up -d
 > git checkout -- public/assets && git clean -fd public/assets
 > ```
 
-> **Note on the local extensions.** `packages/itqan-theme` and
-> `packages/itqan-typography` are path repositories that `composer.lock` does
-> not list yet, so the container cannot link them into `vendor/` and skips
-> them on boot. Linking needs a full Composer resolve, which also reaches the
-> private `flarum-lang-arabic` repository. Until a maintainer with access runs
-> `composer update itqan/flarum-theme itqan/flarum-typography --lock`, the
-> local forum runs without those two extensions. Everything else — core, the
-> bundled extensions, migrations, the API — works.
+> **Note on the local extensions.** Everything under `packages/` is a path
+> repository, and `composer.lock` only lists the ones present when it was last
+> resolved. Installing one the normal way needs a full `composer update`, which
+> also reaches the private `flarum-lang-arabic` repository — so on a machine
+> without a key for it, a newly added extension simply cannot be installed and
+> the container runs without it, silently.
+>
+> The container therefore registers them offline instead:
+>
+> ```bash
+> docker compose exec web php .docker/link-local-extensions.php   # idempotent
+> docker compose exec web php .docker/verify-local-extensions.php
+> ```
+>
+> The first writes the symlink and the `installed.json` entry that Flarum's
+> `ExtensionManager` reads, then calls `composer dump-autoload`, which rebuilds
+> the autoloader without contacting any repository. The second checks the
+> result the way Flarum will read it. Both run automatically on `docker compose
+> up`, and read `packages/` rather than a hardcoded list, so an extension added
+> here cannot be forgotten.
+>
+> A maintainer with access to the private repository can still reconcile
+> properly with `composer update --lock`, which supersedes both scripts.
 
 ---
 
