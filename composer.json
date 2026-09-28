@@ -72,6 +72,7 @@
         "irmmr/flarum-ext-rtl": "^0.2.5",
         "itqan/flarum-composer-tools": "@dev",
         "itqan/flarum-discussions": "@dev",
+        "itqan/flarum-llms": "@dev",
         "itqan/flarum-mailerlite": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
@@ -97,6 +98,10 @@
         "itqan-discussions": {
             "type": "path",
             "url": "packages/itqan-discussions"
+        },
+        "itqan-llms": {
+            "type": "path",
+            "url": "packages/itqan-llms"
         },
         "itqan-mailerlite": {
             "type": "path",
