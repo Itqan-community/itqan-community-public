@@ -116,6 +116,70 @@ class NotificationStringCorrections
                 'locale' => 'en',
                 'value' => '[Follow User] New post in {title}',
             ],
+
+            // --- ianm/follow-users (bodies, AR) ---
+            // Blade tokens (must match the vendor blade exactly so strtr's
+            // longest-substring pass leaves no stray braces):
+            //   newDiscussion.blade.php → {recipient_display_name},
+            //     {user_display_name}, {discussion_title},
+            //     {discussion_url}, {post_content}
+            //   newPost.blade.php        → {recipient_display_name},
+            //     {user_display_name}, {discussion_title},
+            //     {post_url}, {post_content}
+            //   newFollower.blade.php    → {recipient_display_name},
+            //     {follower_display_name}, {profile_url}
+            //
+            // Note on keys: the vendor blades call the body translator with
+            // an *underscore* suffix (`...new_discussion_by_user_body`),
+            // but fof_linguist had historically stored a *dot-suffix*
+            // override (`...new_discussion_by_user.body`). The dot keys
+            // are dead — Symfony's MessageCatalogue does not normalize
+            // underscores to dots — so we write the AR override under the
+            // underscore key the blade actually asks for. We also write
+            // it under the dot key for parity with the rest of the
+            // linguist schema (in case a future import normalizes the
+            // blade, or somebody queries the dot key by hand).
+            [
+                'key' => 'ianm-follow-users.email.new_discussion_by_user.body',
+                'locale' => 'ar',
+                'value' => "مرحباً {recipient_display_name}!\n\nبدأ {user_display_name} (شخص تتابعه) نقاشاً جديداً: {discussion_title}\n\nلعرض النقاش الجديد، تفضل بزيارة الرابط التالي:\n\n{discussion_url}\n\n---\n\n{post_content}",
+            ],
+            [
+                'key' => 'ianm-follow-users.email.new_discussion_by_user_body',
+                'locale' => 'ar',
+                'value' => "مرحباً {recipient_display_name}!\n\nبدأ {user_display_name} (شخص تتابعه) نقاشاً جديداً: {discussion_title}\n\nلعرض النقاش الجديد، تفضل بزيارة الرابط التالي:\n\n{discussion_url}\n\n---\n\n{post_content}",
+            ],
+            [
+                'key' => 'ianm-follow-users.email.new_post_by_user.body',
+                'locale' => 'ar',
+                'value' => "مرحباً {recipient_display_name}!\n\nقام {user_display_name} (شخص تتابعه) بنشر رد في: {discussion_title}\n\nلعرض النشاط الجديد، تفضل بزيارة الرابط التالي:\n\n{post_url}\n\n---\n\n{post_content}\n\n---\n\nلن تتلقى المزيد من الإشعارات حول هذا النقاش حتى تكون على اطلاع بآخر المشاركات.",
+            ],
+            [
+                'key' => 'ianm-follow-users.email.new_post_body',
+                'locale' => 'ar',
+                'value' => "مرحباً {recipient_display_name}!\n\nقام {user_display_name} (شخص تتابعه) بنشر رد في: {discussion_title}\n\nلعرض النشاط الجديد، تفضل بزيارة الرابط التالي:\n\n{post_url}\n\n---\n\n{post_content}\n\n---\n\nلن تتلقى المزيد من الإشعارات حول هذا النقاش حتى تكون على اطلاع بآخر المشاركات.",
+            ],
+            [
+                'key' => 'ianm-follow-users.email.user_followed.body',
+                'locale' => 'ar',
+                'value' => "مرحباً {recipient_display_name}!\n\nبدأ {follower_display_name} بمتابعتك، سيتم إخطاره عندما تبدأ نقاشاً جديداً.\n\nلعرض ملفه الشخصي، تفضل بزيارة الرابط التالي:\n\n{profile_url}",
+            ],
+            [
+                'key' => 'ianm-follow-users.email.new_follower_body',
+                'locale' => 'ar',
+                'value' => "مرحباً {recipient_display_name}!\n\nبدأ {follower_display_name} بمتابعتك، سيتم إخطاره عندما تبدأ نقاشاً جديداً.\n\nلعرض ملفه الشخصي، تفضل بزيارة الرابط التالي:\n\n{profile_url}",
+            ],
+
+            // --- flarum/mentions (AR typo) ---
+            // fof_linguist AR row for `group_mentioned.subject` had the
+            // misspelling `محموعة`; correct it to `مجموعة`. The other
+            // group_mentioned keys share the typo but are out of scope for
+            // this batch.
+            [
+                'key' => 'flarum-mentions.email.group_mentioned.subject',
+                'locale' => 'ar',
+                'value' => '{mentioner_display_name} أشار إلى مجموعة أنت فيها في {title}',
+            ],
         ];
     }
 }

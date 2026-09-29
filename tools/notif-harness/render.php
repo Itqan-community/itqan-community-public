@@ -37,11 +37,39 @@ $types = [
     'newUnfollower' => new IanM\FollowUsers\Notifications\NewUnfollowerBlueprint($user),
 ];
 
-// Only include the reply-notification types when their extension is present
-// (main has them in itqan-discussions; staging uses mtareq and does not).
-if (class_exists(\Itqan\Discussions\Notification\DiscussionRepliedBlueprint::class)) {
-    $types['discussionReplied'] = new \Itqan\Discussions\Notification\DiscussionRepliedBlueprint($reply);
-    $types['commentReplied'] = new \Itqan\Discussions\Notification\CommentRepliedBlueprint($reply, $parent);
+// Only include the reply-notification types when their extension is present.
+// Main has them under Itqan\Discussions; staging has moved them under
+// Itqan\Notifications (with mtareq-driven parent lookup). Pick whichever
+// namespace is currently loaded.
+$discussionRepliedClass = null;
+$commentRepliedClass = null;
+foreach (
+    [
+        \Itqan\Notifications\Notification\DiscussionRepliedBlueprint::class,
+        \Itqan\Discussions\Notification\DiscussionRepliedBlueprint::class,
+    ] as $candidate
+) {
+    if (class_exists($candidate)) {
+        $discussionRepliedClass = $candidate;
+        break;
+    }
+}
+foreach (
+    [
+        \Itqan\Notifications\Notification\CommentRepliedBlueprint::class,
+        \Itqan\Discussions\Notification\CommentRepliedBlueprint::class,
+    ] as $candidate
+) {
+    if (class_exists($candidate)) {
+        $commentRepliedClass = $candidate;
+        break;
+    }
+}
+if ($discussionRepliedClass) {
+    $types['discussionReplied'] = new $discussionRepliedClass($reply);
+}
+if ($commentRepliedClass) {
+    $types['commentReplied'] = new $commentRepliedClass($reply, $parent);
 }
 
 $out = [];
