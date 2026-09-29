@@ -25,10 +25,12 @@ mtareq-nested-replies:
     more_replies: "{count} ردود إضافية"
     show_more_replies: عرض المزيد من الردود
     reply_link: رد
+    heading_count: "{count} تعليقًا"
+    sort_label: "الترتيب"
     sort_by: "ترتيب حسب:"
     sort_oldest: الأقدم
     sort_newest: الأحدث
-    sort_top: الأعلى تصويتاً
+    sort_top: الأعلى
     sort_replies: الأكثر ردوداً
     sort_loading: جاري التحميل...
     reply_form_placeholder: "الرد على {username}."
@@ -56,5 +58,21 @@ mtareq-nested-replies:
 core:
   forum:
     index_sort:
-      votes_button: الأعلى تصويتاً
+      votes_button: الأعلى
       replies_button: الأكثر ردوداً
+
+datlechin-copy-links:
+  forum:
+    copy_link_button: نسخ الرابط
+    link_copied_message: تم نسخ الرابط!
+
+fof-oauth:
+  forum:
+    log_in:
+      with_twitter_button: الدخول باستخدام X
+      with_button: الدخول باستخدام {provider}
+
+fof-share-social:
+  lib:
+    networks:
+      twitter: X
