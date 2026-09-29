@@ -11,7 +11,11 @@ $builder = $c->make(Askvortsov\FlarumPWA\NotificationBuilder::class);
 
 $user = Flarum\User\User::whereNotNull('username')->orderBy('id')->first();
 $reply = Flarum\Post\Post::where('number', '>', 1)->has('discussion')->has('user')->first();
-$parent = Flarum\Post\Post::whereNotNull('parent_id')->first() ?: $reply;
+try {
+    $parent = Flarum\Post\Post::whereNotNull('parent_id')->first() ?: $reply;
+} catch (\Throwable $e) {
+    $parent = $reply; // staging (mtareq) has no posts.parent_id column
+}
 $discussion = $reply->discussion;
 $mentioned = Flarum\Post\Post::where('number', '>', 1)->has('user')->first() ?: $reply;
 

@@ -1,6 +1,10 @@
 <?php
 // Scans the harness output for content defects. Exit 1 if any found.
 $path = $argv[1] ?? '/var/www/html/storage/notif-harness.json';
+if (! is_file($path)) {
+    fwrite(STDERR, "harness JSON missing: $path (did render.php run?)\n");
+    exit(2);
+}
 $data = json_decode(file_get_contents($path), true);
 $problems = [];
 foreach ($data as $k => $v) {
