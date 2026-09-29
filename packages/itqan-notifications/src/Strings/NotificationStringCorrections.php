@@ -171,14 +171,22 @@ class NotificationStringCorrections
             ],
 
             // --- flarum/mentions (AR typo) ---
-            // fof_linguist AR row for `group_mentioned.subject` had the
-            // misspelling `محموعة`; correct it to `مجموعة`. The other
-            // group_mentioned keys share the typo but are out of scope for
-            // this batch.
+            // AR group_mentioned rows all had the misspelling `محموعة`;
+            // correct all three to `مجموعة`.
             [
                 'key' => 'flarum-mentions.email.group_mentioned.subject',
                 'locale' => 'ar',
                 'value' => '{mentioner_display_name} أشار إلى مجموعة أنت فيها في {title}',
+            ],
+            [
+                'key' => 'flarum-mentions.email.group_mentioned.html.body',
+                'locale' => 'ar',
+                'value' => '{mentioner_display_name} أشار إلى مجموعة أنت فيها في [{title}]({url}).',
+            ],
+            [
+                'key' => 'flarum-mentions.email.group_mentioned.plain.body',
+                'locale' => 'ar',
+                'value' => "{mentioner_display_name} أشار إلى مجموعة أنت فيها في {title}.\n\n{url}\n\n---\n\n{content}\n",
             ],
         ];
     }
