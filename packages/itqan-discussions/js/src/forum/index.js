@@ -13,6 +13,9 @@ import extractText from 'flarum/common/utils/extractText';
 
 import VoteButtons from './components/VoteButtons';
 import { getPostDepth, isDescendantOfCollapsed, reorderStreamTree } from './components/CommentTree';
+import DiscussionRepliedNotification from './components/DiscussionRepliedNotification';
+import CommentRepliedNotification from './components/CommentRepliedNotification';
+import NotificationGrid from 'flarum/forum/components/NotificationGrid';
 
 export { default as VoteButtons } from './components/VoteButtons';
 export * from './components/CommentTree';
@@ -47,6 +50,27 @@ export function isMainPost(post) {
 }
 
 app.initializers.add('itqan-discussions', () => {
+  // ==========================================
+  // Reply notification components (discussion-author + nested comment-author)
+  // ==========================================
+  app.notificationComponents.discussionReplied = DiscussionRepliedNotification;
+  app.notificationComponents.commentReplied = CommentRepliedNotification;
+
+  // Add the new notification types to the preferences grid so users can
+  // toggle them on/off per delivery method (alert/email).
+  extend(NotificationGrid.prototype, 'notificationTypes', function (items) {
+    items.add('discussionReplied', {
+      name: 'discussionReplied',
+      icon: 'fas fa-reply',
+      label: app.translator.trans('itqan-discussions.forum.settings.notify_discussion_replied_label'),
+    });
+    items.add('commentReplied', {
+      name: 'commentReplied',
+      icon: 'fas fa-reply',
+      label: app.translator.trans('itqan-discussions.forum.settings.notify_comment_replied_label'),
+    });
+  });
+
   // ==========================================
   // 1. Voting System Extensions (PR #30)
   // ==========================================
