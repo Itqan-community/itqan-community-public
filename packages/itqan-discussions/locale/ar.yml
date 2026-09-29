@@ -2,62 +2,48 @@ itqan-discussions:
   forum:
     reply: "رد"
     replying_to: "الرد على {username}"
-    cancel_reply: "إلغاء الرد"
-    replied_to: "رد من {username}"
+    cancel_reply: "إلغاء الرد المتشعب"
+    replied_to: "رد على {username}"
     collapse_thread: "طي"
-    expand_thread: "توسيع ({count})"
+    expand_thread: "ردود ({count})"
     op_badge: "الكاتب"
     permalink: "نسخ الرابط"
     permalink_copied: "تم نسخ الرابط"
     new_chip: "جديد"
     list:
-      score: "{count} تصويت"
+      score: "{count} نقطة"
     vote:
-      up: "تصويت إيجابي"
-      down: "تصويت سلبي"
+      up: "تصويت مؤيّد"
+      down: "تصويت معارض"
     tree:
       collapse: "طي"
-      expand: "توسيع ({count})"
+      expand: "ردود ({count})"
       replies: "{count} ردود"
-      collapse_rail: "طي سلسلة الردود"
-      expand_rail: "توسيع سلسلة الردود"
-      last_activity: "تحديث {time}"
+      collapse_rail: "طي هذا النقاش"
+      expand_rail: "توسيع هذا النقاش"
+      last_activity: "آخرها {time}"
     sort:
       label: "الترتيب"
       oldest: "الأقدم"
       latest: "الأحدث"
       top: "الأعلى"
     meta:
-      replies: "ردود"
-      participants: "مشاركون"
+      replies: "ردًا"
+      participants: "مشاركًا"
       views: "مشاهدة"
     stream:
-      heading: "النقاشات"
-      heading_count: "{count} تعليقًا"
-      load_more: "عرض المزيد من التعليقات"
-      load_previous: "عرض التعليقات السابقة"
+      heading: "التعليقات"
+      heading_count: "{count} ردود"
+      load_more: "تحميل المزيد من التعليقات"
+      load_previous: "تحميل التعليقات السابقة"
       continue_thread: "عرض {count} ردود أخرى"
-      loading: "جاري التحميل..."
-      empty_title: "لا تعليقات هنا"
+      loading: "جاري التحميل…"
+      empty_title: "لا تعليقات بعد"
       empty_body: "كن أول من يرد."
-      parent_preview: "معاينة التعليق الأصلي"
-      reply_posted_elsewhere: "تم نشر الرد. قد تضطر إلى تحديث الصفحة لرؤيته."
+      parent_preview: "التعليق الأصلي"
+      reply_posted_elsewhere: "تم نشر ردك. افتح التعليق الأصلي لعرضه في سياقه."
 
 core:
   forum:
     index_sort:
-      hot_button: "الأكثر تفاعلاً"
-
-datlechin-copy-links:
-  forum:
-      copy_link_button: نسخ الرابط
-      link_copied_message: تم نسخ الرابط!
-
-fof-oauth:
-  forum:
-    log_in:
-      with_twitter_button: الدخول باستخدام X
-fof-share-social:
-  lib:
-    networks:
-      twitter: X
+      hot_button: "الأكثر تفاعلًا"
