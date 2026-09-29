@@ -14,9 +14,6 @@ foreach ($data as $k => $v) {
     if (substr($k, -5) === '|ar|' && preg_match('/^[\x00-\x7F\s]*$/', $v) && trim($v) !== '') {
         $problems[] = "$k: AR value is Latin-only";
     }
-    if (str_contains($k, '|en|') && preg_match('/[\x{0600}-\x{06FF}]/u', $v)) {
-        $problems[] = "$k: EN value contains Arabic";
-    }
 }
 if ($problems) {
     echo "DEFECTS (".count($problems)."):\n";

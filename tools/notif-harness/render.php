@@ -40,7 +40,7 @@ foreach ($types as $name => $bp) {
         $translator->setLocale($loc);
         $out["$name|$loc|email_subject"] = method_exists($bp, 'getEmailSubject') ? $bp->getEmailSubject($translator) : '';
         try {
-            $vn = $bp->getEmailView()['text'] ?? null;
+            $vn = method_exists($bp, 'getEmailView') ? ($bp->getEmailView()['text'] ?? null) : null;
             $out["$name|$loc|email_body"] = $vn ? strip_tags($view->make($vn, ['blueprint' => $bp, 'user' => $user])->render()) : '';
         } catch (\Throwable $e) {
             $out["$name|$loc|email_body"] = 'ERR: '.$e->getMessage();
