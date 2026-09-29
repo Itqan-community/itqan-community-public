@@ -481,55 +481,99 @@ Button[aria-label*="Language"] {
   height: 42px;
 }
 
-// Disable Flarum core's post hover background
+// -----------------------------------------------------------------------------
+// Community UI Feedback Improvements & Parity Fixes
+// -----------------------------------------------------------------------------
+
+// 1. Remove background color change on hover over post items and cards
 .PostStream-item:hover,
 .Post:hover,
-.CommentPost:hover {
+.CommentPost:hover,
+.NestedRepliesPost:hover,
+.NestedRepliesPost:hover > .NestedRepliesPost-container,
+.NestedRepliesPost-container:hover,
+.NestedRepliesThreadCard:hover,
+.NestedRepliesReplyCard:hover,
+.Post-header:hover {
+  background: transparent !important;
   background-color: transparent !important;
 }
 
-// Fix image alignment and sizing
+// 2. Center and constrain uploaded images
 .Post-body img:not(.emoji) {
-  display: block;
-  margin-inline: auto;
-  max-width: 100%;
-  max-height: 600px;
-  object-fit: contain;
+  display: block !important;
+  margin-inline: auto !important;
+  max-width: 100% !important;
+  max-height: 520px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  border-radius: 8px !important;
 }
 
-// Fix text selection on mobile
-.Post-body {
+// 3. Restore mobile multi-word selection and text copying
+*, *:before, *:after {
+  -webkit-touch-callout: default;
+}
+.Post,
+.Post-body,
+.Post-body *,
+.Composer,
+.TextEditor,
+.TextEditor textarea,
+.Composer textarea {
   user-select: text !important;
   -webkit-user-select: text !important;
 }
 
-// Fix text selection in composer textarea
-.TextEditor textarea, .Composer textarea {
-  user-select: text !important;
-  -webkit-user-select: text !important;
+// 4. Twitter to X Rebranding
+.Button--twitter,
+.Share--twitter,
+a[class*="Share--twitter"],
+button[class*="Share--twitter"],
+.Button--twitter:hover,
+.Share--twitter:hover,
+.Button--twitter:focus,
+.Share--twitter:focus {
+  background-color: #000000 !important;
+  border-color: #000000 !important;
+  color: #ffffff !important;
+
+  .icon::before,
+  .Button-icon::before {
+    content: "\1D54F" !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-style: normal !important;
+    font-weight: bold !important;
+    font-size: 13px !important;
+  }
 }
 
-// Twitter to X rebranding
-.Button--twitter .icon::before, .Share--twitter .icon::before {
-  content: '𝕏' !important;
-  font-family: system-ui, -apple-system, sans-serif !important;
-  font-style: normal;
-  font-size: 1.2em;
-}
-.Button--twitter, .Share--twitter, .Button--twitter:hover, .Share--twitter:hover {
-  background-color: #0f1419 !important;
-  color: #fff !important;
-}
-
-// Better line spacing for Arabic text
+// 5. Line Spacing and Mention Badge Alignment in Post Bodies
 .Post-body {
-  line-height: 1.8 !important;
-}
-.Post-body p, .Post-body li {
-  line-height: 1.8 !important;
+  line-height: 1.85 !important;
+
+  p, li {
+    line-height: 1.85 !important;
+  }
 }
 
-// Visual separation between comments
-.itqan-comments-card .PostStream-item:not(:last-child) {
-  border-bottom: 1px solid var(--control-bg-shaded, #edeff1);
+.UserMention,
+.PostMention,
+.GroupMention,
+.TagMention {
+  display: inline-block !important;
+  vertical-align: baseline !important;
+  padding: 1px 7px !important;
+  line-height: 1.35 !important;
+  margin: 0 2px !important;
+  font-size: 0.9em !important;
+}
+
+// 6. Visual separation between comments
+.NestedRepliesReplyCard > .PostStream-item.is-top-level:not(:first-child),
+.itqan-comments-card .PostStream-item:not(:first-child) {
+  border-top: 1px solid var(--control-bg-shaded, #e4e6eb) !important;
+  margin-top: 16px !important;
+  padding-top: 16px !important;
 }

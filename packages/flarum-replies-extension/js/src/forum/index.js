@@ -651,10 +651,10 @@ app.initializers.add('mtareq-nested-replies', () => {
     const replySortVNode = (discussion) => {
       const trans = (key) => app.translator.trans(`mtareq-nested-replies.forum.${key}`);
       const options = [
-        ['oldest', trans('sort_oldest'), 'fas fa-clock'],
-        ['newest', trans('sort_newest'), 'fas fa-bolt'],
+        ['oldest', trans('sort_oldest'), 'far fa-clock'],
         ['top', trans('sort_top'), 'fas fa-fire'],
-        ['replies', trans('sort_replies'), 'fas fa-comments'],
+        ['newest', trans('sort_newest'), 'fas fa-bolt'],
+        ['replies', trans('sort_replies'), 'far fa-comments'],
       ];
 
       const postIds = discussion && typeof discussion.postIds === 'function' ? discussion.postIds() : [];
@@ -664,26 +664,26 @@ app.initializers.add('mtareq-nested-replies', () => {
       return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort' }, [
         m('div.itqan-stream-toolbar-title', [
           m('i.icon.far.fa-comments'),
-          m('span', app.translator.trans('itqan-discussions.forum.stream.heading_count', { count }))
+          m('span', app.translator.trans('mtareq-nested-replies.forum.heading_count', { count }))
         ]),
-      m('div.itqan-sort-segmented', { role: 'radiogroup', 'aria-label': app.translator.trans('itqan-discussions.forum.sort.label') },
-        options.map(([value, label, iconClass]) => m('button', {
-          key: value,
-          type: 'button',
-          role: 'radio',
-          className: 'itqan-sort-segment',
-          'aria-checked': sortMode === value ? 'true' : 'false',
-          disabled: loadingAll,
-          title: typeof label === 'object' ? label[0] : label,
-          onclick: () => setSortMode(value)
-        }, [
-          m('i.icon.' + iconClass.replace(/ /g, '.')),
-          m('span.itqan-sort-segment-label', label)
-        ]))
-      ),
-      loadingAll ? m('span.NestedRepliesReplySort-loading', trans('sort_loading')) : null
-    ]);
-  }
+        m('div.itqan-sort-segmented', { role: 'radiogroup', 'aria-label': app.translator.trans('mtareq-nested-replies.forum.sort_label') },
+          options.map(([value, label, iconClass]) => m('button', {
+            key: value,
+            type: 'button',
+            role: 'radio',
+            className: 'itqan-sort-segment',
+            'aria-checked': sortMode === value ? 'true' : 'false',
+            disabled: loadingAll,
+            title: typeof label === 'object' ? (label.join ? label.join('') : String(label)) : String(label),
+            onclick: () => setSortMode(value)
+          }, [
+            m('i.icon.' + iconClass.replace(/ /g, '.')),
+            m('span.itqan-sort-segment-label', label)
+          ]))
+        ),
+        loadingAll ? m('span.NestedRepliesReplySort-loading', trans('sort_loading')) : null
+      ]);
+    };
 
   // The tree layout needs every reply in the discussion so children can be
   // nested under their parent, so we load all pages once per discussion (for
@@ -777,7 +777,9 @@ app.initializers.add('mtareq-nested-replies', () => {
       // ("Sort by:") must not render on a discussion with no replies. Mirrors
       // the fallback path below.
       if (replyItems.length) {
-        grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, [replySortVNode(this.discussion || (this.stream && this.stream.discussion)), ...replyItems]));
+        const toolbar = replySortVNode(this.discussion || (this.stream && this.stream.discussion));
+        if (toolbar) grouped.push(toolbar);
+        grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, replyItems));
       }
 
       return m('div.PostStream', vnode.attrs, grouped);
@@ -813,7 +815,9 @@ app.initializers.add('mtareq-nested-replies', () => {
     const grouped = [...before, m('div.NestedRepliesThreadCard', { key: 'nestedRepliesThreadCard' }, op)];
 
     if (replies.length) {
-      grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, [replySortVNode(this.discussion || (this.stream && this.stream.discussion)), ...replies]));
+      const toolbar = replySortVNode(this.discussion || (this.stream && this.stream.discussion));
+      if (toolbar) grouped.push(toolbar);
+      grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, replies));
     }
 
     grouped.push(...tail);

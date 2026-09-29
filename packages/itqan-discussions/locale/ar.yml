@@ -47,17 +47,21 @@ core:
   forum:
     index_sort:
       hot_button: "الأكثر تفاعلاً"
+      votes_button: "الأعلى"
+      replies_button: "الأكثر ردوداً"
 
 datlechin-copy-links:
   forum:
-      copy_link_button: نسخ الرابط
-      link_copied_message: تم نسخ الرابط!
+    copy_link_button: "نسخ الرابط"
+    link_copied_message: "تم نسخ الرابط!"
 
 fof-oauth:
   forum:
     log_in:
-      with_twitter_button: الدخول باستخدام X
+      with_twitter_button: "الدخول باستخدام X"
+      with_button: "الدخول باستخدام {provider}"
+
 fof-share-social:
   lib:
     networks:
-      twitter: X
+      twitter: "X"
