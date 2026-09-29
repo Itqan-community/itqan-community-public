@@ -70,12 +70,12 @@ class NotificationStringCorrections
             [
                 'key' => 'fof-follow-tags.email.body.newDiscussionInTag',
                 'locale' => 'en',
-                'value' => "Hey recipient_display_name!\n\nactor_display_name started a new discussion in a tag you follow: discussion_title\n\nTo view the discussion, visit the following link:\ndiscussion_url\n\n---\n\npost_content",
+                'value' => "Hey {recipient_display_name}!\n\n{actor_display_name} started a new discussion in a tag you follow: {discussion_title}\n\nTo view the discussion, visit the following link:\n{discussion_url}\n\n---\n\n{post_content}",
             ],
             [
                 'key' => 'fof-follow-tags.email.body.newDiscussionInTag',
                 'locale' => 'ar',
-                'value' => "مرحباً recipient_display_name!\n\nبدأ actor_display_name نقاشاً جديداً في وسم تتابعه: discussion_title\n\nلعرض النقاش، تفضل بزيارة الرابط التالي:\ndiscussion_url\n\n---\n\npost_content",
+                'value' => "مرحباً {recipient_display_name}!\n\nبدأ {actor_display_name} نقاشاً جديداً في وسم تتابعه: {discussion_title}\n\nلعرض النقاش، تفضل بزيارة الرابط التالي:\n{discussion_url}\n\n---\n\n{post_content}",
             ],
             // vendor/blades/newPost.blade.php passes BARE keys
             // (recipient_display_name, actor_display_name, discussion_title,
@@ -83,12 +83,12 @@ class NotificationStringCorrections
             [
                 'key' => 'fof-follow-tags.email.body.newPostInTag',
                 'locale' => 'en',
-                'value' => "Hey recipient_display_name!\n\nactor_display_name replied in a tag you follow: discussion_title\n\nTo view the reply, visit the following link:\npost_url\n\n---\n\npost_content",
+                'value' => "Hey {recipient_display_name}!\n\n{actor_display_name} replied in a tag you follow: {discussion_title}\n\nTo view the reply, visit the following link:\n{post_url}\n\n---\n\n{post_content}",
             ],
             [
                 'key' => 'fof-follow-tags.email.body.newPostInTag',
                 'locale' => 'ar',
-                'value' => "مرحباً recipient_display_name!\n\nقام actor_display_name بالرد على: discussion_title\n\nلعرض الرد، تفضل بزيارة الرابط التالي:\npost_url\n\n---\n\npost_content",
+                'value' => "مرحباً {recipient_display_name}!\n\nقام {actor_display_name} بالرد على: {discussion_title}\n\nلعرض الرد، تفضل بزيارة الرابط التالي:\n{post_url}\n\n---\n\n{post_content}",
             ],
             // vendor/blades/newTag.blade.php passes BARE keys
             // (recipient_display_name, actor_display_name, author_display_name,
@@ -98,7 +98,7 @@ class NotificationStringCorrections
             [
                 'key' => 'fof-follow-tags.email.body.newDiscussionTag',
                 'locale' => 'ar',
-                'value' => 'مرحباً recipient_display_name، قام actor_display_name بتغيير الوسم في نقاشٍ أجراه author_display_name إلى الوسم الذي تتابعه discussion_title للاطلاع على النقاش الجديد، تفضل بزيارة الرابط التالي: discussion_url',
+                'value' => 'مرحباً {recipient_display_name}، قام {actor_display_name} بتغيير الوسم في نقاشٍ أجراه {author_display_name} إلى الوسم الذي تتابعه {discussion_title} للاطلاع على النقاش الجديد، تفضل بزيارة الرابط التالي: {discussion_url}',
             ],
 
             // --- ianm/follow-users (subjects) ---
