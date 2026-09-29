@@ -788,7 +788,7 @@ app.initializers.add('itqan-discussions', () => {
 
     // Toolbar at the head of the comments surface: count, and a segmented sort
     // control in place of a native select.
-    extend(PostStream.prototype, 'afterFirstPostItems', function (items) {
+    extend(PostStream.prototype, 'afterFirstPostItemsX', function (items) {
       const discussion = this.discussion || (this.stream && this.stream.discussion);
       if (!discussion) return;
 
