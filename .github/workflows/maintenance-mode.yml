@@ -1,0 +1,79 @@
+name: Maintenance mode
+
+# Run manually from the Actions tab. Turns Flarum maintenance mode on or off on the prod
+# server (or just reports it). While on, the forum, API and admin answer 503 and the queue
+# worker and scheduler pause. Deploys keep it on: see scripts/maintenance-mode.sh.
+on:
+  workflow_dispatch:
+    inputs:
+      state:
+        description: "on = take the site offline, off = bring it back, status = just report"
+        type: choice
+        options:
+          - status
+          - "on"
+          - "off"
+        default: status
+
+permissions:
+  contents: read
+
+# Same group as a deploy, so this never edits config.php while a deploy rewrites it.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  toggle:
+    name: Maintenance mode ${{ inputs.state }} on community.itqan.dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply on the server
+        env:
+          SSH_KEY: ${{ secrets.BETA_SSH_KEY }}
+          SSH_HOST: ${{ secrets.BETA_SSH_HOST }}
+          STATE: ${{ inputs.state }}
+        run: |
+          set -o pipefail # a failing script must fail the step, not be hidden by tee
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/beta_deploy_key
+          chmod 600 ~/.ssh/beta_deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          # The script travels over stdin, so this does not depend on which version
+          # of the repo is currently checked out on the server.
+          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" bash -s -- "$STATE" < scripts/maintenance-mode.sh | tee result.txt
+
+      - name: Verify publicly, via Cloudflare
+        if: inputs.state != 'status'
+        env:
+          STATE: ${{ inputs.state }}
+        run: |
+          for i in $(seq 1 10); do
+            code=$(curl -s -m 15 -o /dev/null -w "%{http_code}" "https://community.itqan.dev" || true)
+            if [ "$STATE" = "on" ] && [ "$code" = "503" ]; then
+              echo "Site is in maintenance mode (503)"; exit 0
+            fi
+            if [ "$STATE" = "off" ] && { [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; }; then
+              echo "Site is back ($code)"; exit 0
+            fi
+            echo "Attempt $i: got $code, retrying..."
+            sleep 6
+          done
+          echo "The public site did not reach the expected state for '$STATE'"
+          exit 1
+
+      - name: Summary
+        if: always()
+        env:
+          STATE: ${{ inputs.state }}
+        run: |
+          {
+            echo "### Maintenance mode: $STATE"
+            echo
+            echo '```'
+            cat result.txt 2>/dev/null || echo "no output"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
