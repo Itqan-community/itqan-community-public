@@ -1,0 +1,15 @@
+{
+    "name": "itqan/flarum-notifications",
+    "description": "Itqan notification content corrections (placeholder keys, wording, push titles).",
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": { "flarum/core": "^1.8" },
+    "autoload": { "psr-4": { "Itqan\\Notifications\\": "src/" } },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Notifications",
+            "category": "feature",
+            "icon": { "name": "fas fa-bell", "backgroundColor": "#0f8264", "color": "#fff" }
+        }
+    }
+}
