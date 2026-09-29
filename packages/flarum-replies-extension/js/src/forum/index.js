@@ -648,22 +648,24 @@ app.initializers.add('mtareq-nested-replies', () => {
     );
   }
 
-  const replySortVNode = () => {
-    const trans = (key) => app.translator.trans(`mtareq-nested-replies.forum.${key}`);
-    const options = [
-      ['oldest', trans('sort_oldest'), 'fas fa-clock'],
-      ['newest', trans('sort_newest'), 'fas fa-bolt'],
-      ['top', trans('sort_top'), 'fas fa-fire'],
-      ['replies', trans('sort_replies'), 'fas fa-comments'],
-    ];
+    const replySortVNode = (discussion) => {
+      const trans = (key) => app.translator.trans(`mtareq-nested-replies.forum.${key}`);
+      const options = [
+        ['oldest', trans('sort_oldest'), 'fas fa-clock'],
+        ['newest', trans('sort_newest'), 'fas fa-bolt'],
+        ['top', trans('sort_top'), 'fas fa-fire'],
+        ['replies', trans('sort_replies'), 'fas fa-comments'],
+      ];
 
-    const count = Math.max(0, this.discussion.commentCount() - 1);
+      const postIds = discussion && typeof discussion.postIds === 'function' ? discussion.postIds() : [];
+      const commentCount = discussion && typeof discussion.commentCount === 'function' ? discussion.commentCount() : postIds.length;
+      const count = Math.max(0, commentCount - 1);
 
-    return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort' }, [
-      m('div.itqan-stream-toolbar-title', [
-        m('i.icon.far.fa-comments'),
-        m('span', app.translator.trans('itqan-discussions.forum.stream.heading_count', { count }))
-      ]),
+      return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort' }, [
+        m('div.itqan-stream-toolbar-title', [
+          m('i.icon.far.fa-comments'),
+          m('span', app.translator.trans('itqan-discussions.forum.stream.heading_count', { count }))
+        ]),
       m('div.itqan-sort-segmented', { role: 'radiogroup', 'aria-label': app.translator.trans('itqan-discussions.forum.sort.label') },
         options.map(([value, label, iconClass]) => m('button', {
           key: value,
@@ -775,7 +777,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       // ("Sort by:") must not render on a discussion with no replies. Mirrors
       // the fallback path below.
       if (replyItems.length) {
-        grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, [replySortVNode(), ...replyItems]));
+        grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, [replySortVNode(this.discussion || (this.stream && this.stream.discussion)), ...replyItems]));
       }
 
       return m('div.PostStream', vnode.attrs, grouped);
@@ -811,7 +813,7 @@ app.initializers.add('mtareq-nested-replies', () => {
     const grouped = [...before, m('div.NestedRepliesThreadCard', { key: 'nestedRepliesThreadCard' }, op)];
 
     if (replies.length) {
-      grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, [replySortVNode(), ...replies]));
+      grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, [replySortVNode(this.discussion || (this.stream && this.stream.discussion)), ...replies]));
     }
 
     grouped.push(...tail);
