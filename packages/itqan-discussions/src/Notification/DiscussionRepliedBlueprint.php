@@ -57,7 +57,7 @@ class DiscussionRepliedBlueprint implements BlueprintInterface, MailableInterfac
     public function getEmailSubject(TranslatorInterface $translator)
     {
         return $translator->trans('itqan-discussions.email.discussion_replied.subject', [
-            '{title}' => $this->post->discussion->title,
+            '{title}' => $this->post->discussion?->title ?? '',
         ]);
     }
 

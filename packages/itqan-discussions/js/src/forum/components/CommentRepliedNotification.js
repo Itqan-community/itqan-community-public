@@ -1,29 +1,25 @@
 import app from 'flarum/forum/app';
 import Notification from 'flarum/forum/components/Notification';
+import { truncate } from 'flarum/common/utils/string';
 
+/**
+ * "Someone replied to your comment" — the notification's subject is the new
+ * reply post (so the push notification and this deep-link both point at it).
+ */
 export default class CommentRepliedNotification extends Notification {
   icon() {
     return 'fas fa-reply';
   }
 
-  /**
-   * Deep-link to the new reply (the post that triggered the alert). Falls back
-   * to the parent post number if the reply number is unavailable.
-   */
   href() {
-    const subject = this.attrs.notification.subject();
-    if (!subject) return '#';
+    const post = this.attrs.notification.subject();
+    const discussion = post && post.discussion ? post.discussion() : null;
 
-    const discussion = subject.discussion ? subject.discussion() : null;
-    if (!discussion) return '#';
+    if (discussion && post && typeof post.number === 'function') {
+      return app.route.discussion(discussion, post.number());
+    }
 
-    const data = this.attrs.notification.data() || {};
-    const targetNumber =
-      data.postNumber || data.parentPostNumber || (typeof subject.number === 'function' ? subject.number() : null);
-
-    if (!targetNumber) return '#';
-
-    return app.route.discussion(discussion, targetNumber);
+    return app.forum.attribute('basePath') || '/';
   }
 
   /**
@@ -36,41 +32,9 @@ export default class CommentRepliedNotification extends Notification {
     });
   }
 
-  /**
-   * Best-effort preview of the new reply. The reply may not be in the store
-   * (only the parent is bundled with the notification), so fall back to the
-   * parent comment's content.
-   */
   excerpt() {
-    const subject = this.attrs.notification.subject();
-    if (!subject) return null;
+    const post = this.attrs.notification.subject();
 
-    const data = this.attrs.notification.data() || {};
-    const discussion = subject.discussion ? subject.discussion() : null;
-    const discussionId = discussion && typeof discussion.id === 'function' ? discussion.id() : null;
-    const replyNumber = data.postNumber;
-
-    if (discussionId && replyNumber && app.store && typeof app.store.all === 'function') {
-      const posts = app.store.all('posts') || [];
-
-      for (let i = 0; i < posts.length; i++) {
-        const p = posts[i];
-        if (!p) continue;
-
-        const pNumber = typeof p.number === 'function' ? p.number() : p.attribute && p.attribute('number');
-        const pDiscussion = p.discussion && p.discussion();
-        const pDiscussionId =
-          pDiscussion && typeof pDiscussion.id === 'function' ? pDiscussion.id() : p.attribute && p.attribute('discussionId');
-
-        if (String(pNumber) === String(replyNumber) && String(pDiscussionId) === String(discussionId)) {
-          const content = typeof p.contentPlain === 'function' ? p.contentPlain() : null;
-          if (content) return content.substring(0, 200);
-        }
-      }
-    }
-
-    const parentContent = typeof subject.contentPlain === 'function' ? subject.contentPlain() : null;
-
-    return parentContent ? parentContent.substring(0, 200) : null;
+    return truncate((post && post.contentPlain && post.contentPlain()) || '', 200);
   }
 }

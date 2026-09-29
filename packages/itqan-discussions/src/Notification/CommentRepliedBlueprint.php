@@ -40,11 +40,16 @@ class CommentRepliedBlueprint implements BlueprintInterface, MailableInterface
 
     /**
      * The model that is the subject of this activity.
-     * The subject is the parent post — the one being replied to.
+     *
+     * This is the NEW reply, not the parent: push notifications build their
+     * body and deep-link from the subject (`askvortsov/flarum-pwa`
+     * NotificationBuilder), and the bell groups by `subject.discussion()`.
+     * The parent post is still kept on the blueprint for the email body and is
+     * also stored in `getData()` as `parentPostNumber`.
      */
     public function getSubject()
     {
-        return $this->parentPost;
+        return $this->post;
     }
 
     /**
@@ -72,8 +77,8 @@ class CommentRepliedBlueprint implements BlueprintInterface, MailableInterface
     public function getEmailSubject(TranslatorInterface $translator): string
     {
         return $translator->trans('itqan-discussions.email.comment_replied.subject', [
-            '{replier_display_name}' => $this->post->user->display_name,
-            '{title}'                => $this->post->discussion->title,
+            '{replier_display_name}' => $this->post->user?->display_name ?? '',
+            '{title}'                => $this->post->discussion?->title ?? '',
         ]);
     }
 
