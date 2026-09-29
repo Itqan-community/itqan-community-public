@@ -14,44 +14,6 @@ itqan-discussions:
     tree:
       collapse: "Collapse"
       expand: "Replies ({count})"
-    notifications:
-      discussion_replied_text: "{username} replied to your discussion"
-      comment_replied_text: "{username} replied to your comment"
-    settings:
-      notify_discussion_replied_label: Someone replies to a discussion I started
-      notify_comment_replied_label: Someone replies to my comment
-
-  email:
-    discussion_replied:
-      subject: "[New Reply] {title}"
-      body: |
-        Hey {recipient_display_name}!
-
-        {poster_display_name} replied to your discussion: {title}.
-
-        To view the new reply, check out the following link:
-        {url}
-
-        ---
-
-        {content}
-
-        ---
-
-    comment_replied:
-      subject: "{replier_display_name} replied to your comment in {title}"
-      body: |
-        Hey {recipient_display_name}!
-
-        {replier_display_name} replied to your comment in {title}.
-
-        {url}
-
-        ---
-
-        {content}
-
-        ---
 
 core:
   forum:

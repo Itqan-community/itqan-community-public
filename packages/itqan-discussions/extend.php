@@ -7,7 +7,6 @@ use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Extend;
-use Flarum\Post\Event\Posted;
 use Flarum\Post\Event\Deleted;
 use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
@@ -15,11 +14,7 @@ use Flarum\User\User;
 use Itqan\Discussions\Access\PostPolicy;
 use Itqan\Discussions\Api\VoteController;
 use Itqan\Discussions\Listener\SaveParentIdToPost;
-use Itqan\Discussions\Listener\SendReplyNotifications;
 use Itqan\Discussions\Listener\UpdateReplyCountOnDelete;
-use Itqan\Discussions\Notification\CommentRepliedBlueprint;
-use Itqan\Discussions\Notification\DiscussionRepliedBlueprint;
-use Itqan\Discussions\Notification\FilterDiscussionAuthorFromNewPost;
 use Itqan\Discussions\Provider\SortMapProvider;
 use Itqan\Discussions\Vote\Vote;
 
@@ -29,16 +24,6 @@ return [
         ->css(__DIR__.'/less/forum.less'),
 
     new Extend\Locales(__DIR__.'/locale'),
-
-    (new Extend\View)->namespace('itqan-discussions', __DIR__.'/views'),
-
-    // Reply notifications: discussion-author + nested comment-author (alert + email).
-    // FilterDiscussionAuthorFromNewPost prevents the OP from also receiving the
-    // built-in subscriptions notification for their own discussion.
-    (new Extend\Notification)
-        ->type(DiscussionRepliedBlueprint::class, PostSerializer::class, ['alert', 'email'])
-        ->type(CommentRepliedBlueprint::class, PostSerializer::class, ['alert', 'email'])
-        ->beforeSending(FilterDiscussionAuthorFromNewPost::class),
 
     (new Extend\Routes('api'))
         ->patch('/posts/{id}/vote', 'itqan-discussions.vote', VoteController::class),
@@ -140,12 +125,10 @@ return [
             return $post ? $serializer->getActor()->can('vote', $post) : false;
         }),
 
-    // Event listeners for parent_id persistence, reply_count synchronization,
-    // and reply notifications (discussion-author + nested comment-author).
+    // Event listeners for parent_id persistence and reply_count synchronization
     (new Extend\Event())
         ->listen(Saving::class, SaveParentIdToPost::class)
-        ->listen(Deleted::class, UpdateReplyCountOnDelete::class)
-        ->listen(Posted::class, SendReplyNotifications::class),
+        ->listen(Deleted::class, UpdateReplyCountOnDelete::class),
 
     // The two orderings the discussion list offers.
     (new Extend\ApiController(ListDiscussionsController::class))
