@@ -480,3 +480,56 @@ Button[aria-label*="Language"] {
   width: 42px;
   height: 42px;
 }
+
+// Disable Flarum core's post hover background
+.PostStream-item:hover,
+.Post:hover,
+.CommentPost:hover {
+  background-color: transparent !important;
+}
+
+// Fix image alignment and sizing
+.Post-body img:not(.emoji) {
+  display: block;
+  margin-inline: auto;
+  max-width: 100%;
+  max-height: 600px;
+  object-fit: contain;
+}
+
+// Fix text selection on mobile
+.Post-body {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+// Fix text selection in composer textarea
+.TextEditor textarea, .Composer textarea {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+// Twitter to X rebranding
+.Button--twitter .icon::before, .Share--twitter .icon::before {
+  content: '𝕏' !important;
+  font-family: system-ui, -apple-system, sans-serif !important;
+  font-style: normal;
+  font-size: 1.2em;
+}
+.Button--twitter, .Share--twitter, .Button--twitter:hover, .Share--twitter:hover {
+  background-color: #0f1419 !important;
+  color: #fff !important;
+}
+
+// Better line spacing for Arabic text
+.Post-body {
+  line-height: 1.8 !important;
+}
+.Post-body p, .Post-body li {
+  line-height: 1.8 !important;
+}
+
+// Visual separation between comments
+.itqan-comments-card .PostStream-item:not(:last-child) {
+  border-bottom: 1px solid var(--control-bg-shaded, #edeff1);
+}

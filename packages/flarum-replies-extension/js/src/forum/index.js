@@ -648,27 +648,38 @@ app.initializers.add('mtareq-nested-replies', () => {
     );
   }
 
-  function replySortVNode() {
+  const replySortVNode = () => {
     const trans = (key) => app.translator.trans(`mtareq-nested-replies.forum.${key}`);
     const options = [
-      ['oldest', trans('sort_oldest')],
-      ['newest', trans('sort_newest')],
-      ['top', trans('sort_top')],
-      ['replies', trans('sort_replies')],
+      ['oldest', trans('sort_oldest'), 'fas fa-clock'],
+      ['newest', trans('sort_newest'), 'fas fa-bolt'],
+      ['top', trans('sort_top'), 'fas fa-fire'],
+      ['replies', trans('sort_replies'), 'fas fa-comments'],
     ];
 
-    return m('div.NestedRepliesReplySort', { key: 'nestedRepliesReplySort' }, [
-      m('span.NestedRepliesReplySort-label', trans('sort_by')),
-      m(
-        'select.NestedRepliesReplySort-select',
-        {
-          value: sortMode,
+    const count = Math.max(0, this.discussion.commentCount() - 1);
+
+    return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort' }, [
+      m('div.itqan-stream-toolbar-title', [
+        m('i.icon.far.fa-comments'),
+        m('span', app.translator.trans('itqan-discussions.forum.stream.heading_count', { count }))
+      ]),
+      m('div.itqan-sort-segmented', { role: 'radiogroup', 'aria-label': app.translator.trans('itqan-discussions.forum.sort.label') },
+        options.map(([value, label, iconClass]) => m('button', {
+          key: value,
+          type: 'button',
+          role: 'radio',
+          className: 'itqan-sort-segment',
+          'aria-checked': sortMode === value ? 'true' : 'false',
           disabled: loadingAll,
-          onchange: (e) => setSortMode(e.target.value),
-        },
-        options.map(([value, label]) => m('option', { value, selected: sortMode === value }, label))
+          title: typeof label === 'object' ? label[0] : label,
+          onclick: () => setSortMode(value)
+        }, [
+          m('i.icon.' + iconClass.replace(/ /g, '.')),
+          m('span.itqan-sort-segment-label', label)
+        ]))
       ),
-      loadingAll ? m('span.NestedRepliesReplySort-loading', trans('sort_loading')) : null,
+      loadingAll ? m('span.NestedRepliesReplySort-loading', trans('sort_loading')) : null
     ]);
   }
 
