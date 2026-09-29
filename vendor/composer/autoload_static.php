@@ -303,6 +303,7 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'I' =>
         array (
             'Itqan\\Typography\\' => 17,
+            'Itqan\\Notifications\\' => 20,
             'Itqan\\Theme\\' => 12,
             'Itqan\\MailerLite\\' => 17,
             'Itqan\\Discussions\\' => 18,
@@ -916,6 +917,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'Itqan\\Typography\\' =>
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-typography/src',
+        ),
+        'Itqan\\Notifications\\' =>
+        array (
+          0 => __DIR__ . '/..' . '/itqan/flarum-notifications/src',
         ),
         'Itqan\\Theme\\' =>
         array (

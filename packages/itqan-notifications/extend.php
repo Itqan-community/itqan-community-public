@@ -1,6 +1,7 @@
 <?php
 
 use Flarum\Extend;
+use Itqan\Notifications\Provider\ResolveStringsServiceProvider;
 
 return [
     (new Extend\Frontend('forum'))
@@ -10,4 +11,8 @@ return [
 
     (new Extend\User())
         ->registerPreference('dndEnabled', 'boolval', false),
+
+    // W1 — notification content corrections (push-title keys + linguist string fixes).
+    (new Extend\ServiceProvider())
+        ->register(ResolveStringsServiceProvider::class),
 ];

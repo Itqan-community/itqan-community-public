@@ -1200,6 +1200,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'itqan/flarum-notifications' => array(
+            'pretty_version' => 'dev-staging',
+            'version' => 'dev-staging',
+            'reference' => null,
+            'type' => 'flarum-extension',
+            'install_path' => __DIR__ . '/../itqan/flarum-notifications',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'itqan/flarum-theme' => array(
             'pretty_version' => 'dev-feat/comment-feed-window',
             'version' => 'dev-feat/comment-feed-window',
