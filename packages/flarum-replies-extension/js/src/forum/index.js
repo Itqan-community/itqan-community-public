@@ -929,9 +929,9 @@ app.initializers.add('mtareq-nested-replies', () => {
       if (!loadingScrollDone) {
         loadingScrollDone = true;
         requestAnimationFrame(() => {
-          const el = document.querySelector('.PostStream .LoadingIndicator');
-          if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start', behavior: 'auto' });
-          else window.scrollTo(0, 0);
+          // Stay at the very top while loading (the spinner sits below the hero,
+          // and any earlier scroll offset would leave us over empty space).
+          window.scrollTo(0, 0);
         });
       }
 
