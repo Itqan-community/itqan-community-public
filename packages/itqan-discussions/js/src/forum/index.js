@@ -28,6 +28,9 @@ import {
   toggleCollapsed,
 } from './components/CommentTree';
 import CommentStreamState from './states/CommentStreamState';
+import DiscussionRepliedNotification from './components/DiscussionRepliedNotification';
+import CommentRepliedNotification from './components/CommentRepliedNotification';
+import NotificationGrid from 'flarum/forum/components/NotificationGrid';
 
 /**
  * Group DFS-ordered comment stream vnodes into one envelope per root:
@@ -197,6 +200,27 @@ const SORT_OPTIONS = [
 ];
 
 app.initializers.add('itqan-discussions', () => {
+  // ==========================================
+  // Reply notification components (discussion-author + nested comment-author)
+  // ==========================================
+  app.notificationComponents.discussionReplied = DiscussionRepliedNotification;
+  app.notificationComponents.commentReplied = CommentRepliedNotification;
+
+  // Add the new notification types to the preferences grid so users can
+  // toggle them on/off per delivery method (alert/email).
+  extend(NotificationGrid.prototype, 'notificationTypes', function (items) {
+    items.add('discussionReplied', {
+      name: 'discussionReplied',
+      icon: 'fas fa-reply',
+      label: app.translator.trans('itqan-discussions.forum.settings.notify_discussion_replied_label'),
+    });
+    items.add('commentReplied', {
+      name: 'commentReplied',
+      icon: 'fas fa-reply',
+      label: app.translator.trans('itqan-discussions.forum.settings.notify_comment_replied_label'),
+    });
+  });
+
   // ==========================================
   // 1. Voting
   // ==========================================

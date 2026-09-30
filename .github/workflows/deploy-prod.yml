@@ -51,9 +51,20 @@ jobs:
           git checkout -f main 2>/dev/null || git checkout -B main origin/main
           git reset --hard origin/main
 
+          # Maintenance mode survives deploys: scripts/maintenance-mode.sh keeps a flag
+          # file in storage/ (git reset does not touch it), and config.php is rebuilt below.
+          MAINT=0
+          OFFLINE_LINE=""
+          if [ -e storage/maintenance ]; then
+            MAINT=1
+            OFFLINE_LINE="'offline' => true,"
+            echo "Maintenance mode is on: keeping it on"
+          fi
+
           cat > /var/www/flarum/config.php <<PHP
           <?php return array (
             'debug' => false,
+            ${OFFLINE_LINE}
             'database' => array(
               'driver' => 'mysql',
               'database' => 'flarum',
@@ -120,7 +131,7 @@ jobs:
           # request right after the reload can race it.
           for i in $(seq 1 10); do
             code=$(curl -sk -m 10 -o /dev/null -w "%{http_code}" -H "Host: community.itqan.dev" https://127.0.0.1/ || true)
-            if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
+            if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ] || { [ "$MAINT" = 1 ] && [ "$code" = "503" ]; }; then
               echo "Origin responded with $code"
               break
             fi
@@ -130,11 +141,26 @@ jobs:
           done
           REMOTE
 
+      - name: Read maintenance flag
+        id: maint
+        env:
+          SSH_HOST: ${{ secrets.BETA_SSH_HOST }}
+        run: |
+          set +e
+          ssh -i ~/.ssh/beta_deploy_key "root@$SSH_HOST" test -e /var/www/flarum/storage/maintenance
+          case $? in
+            0) echo "on=1" >> "$GITHUB_OUTPUT" ;;
+            1) echo "on=0" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Could not read the maintenance flag over SSH"; exit 1 ;;
+          esac
+
       - name: Health check (public, via Cloudflare)
+        env:
+          MAINT: ${{ steps.maint.outputs.on }}
         run: |
           for i in $(seq 1 10); do
             code=$(curl -s -m 15 -o /dev/null -w "%{http_code}" "https://community.itqan.dev" || true)
-            if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
+            if [ "$code" = "200" ] || [ "$code" = "301" ] || [ "$code" = "302" ] || { [ "$MAINT" = 1 ] && [ "$code" = "503" ]; }; then
               echo "Production responded with $code"
               exit 0
             fi
