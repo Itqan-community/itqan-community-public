@@ -10,6 +10,7 @@ import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
 import PostControls from 'flarum/forum/utils/PostControls';
 import Composer from 'flarum/forum/components/Composer';
 import PostStream from 'flarum/forum/components/PostStream';
+import PostStreamScrubber from 'flarum/forum/components/PostStreamScrubber';
 import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
@@ -27,6 +28,131 @@ import DeleteConfirmModal from './components/DeleteConfirmModal';
 
 app.initializers.add('mtareq-nested-replies', () => {
   const settings = readSettings(app);
+
+  // ---------------------------------------------------------------------------
+  // Tree-aware scrubber
+  // ---------------------------------------------------------------------------
+  // Core's PostStreamScrubber is driven by the stream's number-ordered
+  // index/count, while our DOM is tree-ordered (a reply sits under its parent).
+  // Hand the scrubber a stream-shaped facade over the RENDERED order so its
+  // handle, unread marker and click/drag navigation line up with the view.
+  let treeScrollCache = null;
+
+  function invalidateTreeScrollCache() {
+    treeScrollCache = null;
+  }
+
+  function treeItems() {
+    if (treeScrollCache && treeScrollCache.items) return treeScrollCache.items;
+
+    const root = document.querySelector('.PostStream');
+    const items = root
+      ? Array.from(root.querySelectorAll('.PostStream-item')).filter((el) => el.getAttribute('data-id') != null)
+      : [];
+
+    treeScrollCache = { items, tops: null };
+    return items;
+  }
+
+  function treeTops(items) {
+    if (!treeScrollCache.tops || treeScrollCache.tops.length !== items.length) {
+      treeScrollCache.tops = items.map((el) => el.getBoundingClientRect().top + window.pageYOffset);
+    }
+    return treeScrollCache.tops;
+  }
+
+  // 0-based rendered index of the item at the top of the viewport.
+  function renderedIndex() {
+    const items = treeItems();
+    if (!items.length) return 0;
+
+    const tops = treeTops(items);
+    const y = window.pageYOffset + 1;
+    let lo = 0;
+    let hi = items.length - 1;
+    let ans = 0;
+
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+
+      if (tops[mid] <= y) {
+        ans = mid;
+        lo = mid + 1;
+      } else {
+        hi = mid - 1;
+      }
+    }
+
+    return ans;
+  }
+
+  function visibleCount() {
+    const items = treeItems();
+    if (!items.length) return 1;
+
+    const tops = treeTops(items);
+    const top = window.pageYOffset;
+    const bottom = top + window.innerHeight;
+    let n = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      if (tops[i] < bottom && tops[i] + items[i].offsetHeight > top) n++;
+    }
+
+    return Math.max(1, n);
+  }
+
+  function scrollToRendered(i) {
+    const items = treeItems();
+    if (!items.length) return;
+
+    const el = items[Math.max(0, Math.min(Math.floor(i), items.length - 1))];
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' });
+  }
+
+  function makeTreeStream(real) {
+    let dragIndex = null;
+
+    return {
+      discussion: real.discussion,
+      loadPromise: Promise.resolve(),
+      forceUpdateScrubber: false,
+      // Keep it "unpaused": core's updateScrubberValues bails on scroll while paused.
+      paused: false,
+      description: '',
+      disabled: () => false,
+      count: () => Math.max(1, treeItems().length),
+      sanitizeIndex: (i) => Math.max(0, Math.min(i, treeItems().length)),
+      get index() {
+        return dragIndex != null ? dragIndex : renderedIndex();
+      },
+      set index(v) {
+        dragIndex = v;
+      },
+      goToFirst() {
+        dragIndex = null;
+        scrollToRendered(0);
+      },
+      goToLast() {
+        dragIndex = null;
+        scrollToRendered(treeItems().length - 1);
+      },
+      goToIndex(i) {
+        dragIndex = null;
+        scrollToRendered(i);
+      },
+    };
+  }
+
+  override(PostStreamScrubber.prototype, 'oninit', function (original, vnode) {
+    const stream = vnode.attrs && vnode.attrs.stream;
+
+    if (stream && stream.discussion) {
+      vnode.attrs.stream = makeTreeStream(stream);
+    }
+
+    return original(vnode);
+  });
 
   // The scrubber setting is independent of the master switch.
   if (typeof document !== 'undefined' && document.documentElement) {
@@ -763,6 +889,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       refreshing = false;
       deepLinkApplied = false;
       scrollReapplied = false;
+      invalidateTreeScrollCache();
       foldPlan = { hidden: new Set(), moreAfter: new Map() };
     }
 
@@ -780,6 +907,8 @@ app.initializers.add('mtareq-nested-replies', () => {
     }
 
     if (allPosts && allPosts.length) {
+      // The layout is about to change; the scrubber's DOM cache is stale.
+      invalidateTreeScrollCache();
       // The tree view renders the whole discussion from our own ordering, so
       // stop the native stream from paginating underneath it.
       if (this.stream) {
