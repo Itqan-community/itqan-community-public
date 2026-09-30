@@ -6,6 +6,14 @@ use Itqan\Notifications\Strings\NotificationStringCorrections;
 
 return [
     'up' => function (Builder $schema) {
+        // fof/linguist is a third-party extension; if it (or its table) is not
+        // present on this instance there is nothing to correct. Bailing keeps
+        // the migration — and therefore the deploy's `flarum migrate` — from
+        // aborting on a table that does not exist.
+        if (! $schema->hasTable('fof_linguist_strings')) {
+            return;
+        }
+
         $db = $schema->getConnection();
         $now = Carbon::now();
 
@@ -28,6 +36,10 @@ return [
         }
     },
     'down' => function (Builder $schema) {
+        if (! $schema->hasTable('fof_linguist_strings')) {
+            return;
+        }
+
         $db = $schema->getConnection();
 
         foreach (NotificationStringCorrections::all() as $row) {
