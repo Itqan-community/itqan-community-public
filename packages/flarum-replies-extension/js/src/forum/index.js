@@ -204,6 +204,8 @@ app.initializers.add('mtareq-nested-replies', () => {
   let deepLinkApplied = false;
   // One-shot flag: re-arm core's scroll once the tree has replaced the stream.
   let scrollReapplied = false;
+  // One-shot flag: pull the loading spinner into view when a discussion opens.
+  let loadingScrollDone = false;
 
   // The open in-card reply form, and the draft it holds (shared so a target
   // switch can warn before discarding).
@@ -574,6 +576,7 @@ app.initializers.add('mtareq-nested-replies', () => {
     deepLinkNear = Number.isInteger(parsed) && parsed > 1 ? parsed : null;
     deepLinkApplied = false;
     scrollReapplied = false;
+    loadingScrollDone = false;
 
     return original(vnode);
   });
@@ -889,6 +892,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       refreshing = false;
       deepLinkApplied = false;
       scrollReapplied = false;
+      loadingScrollDone = false;
       invalidateTreeScrollCache();
       foldPlan = { hidden: new Set(), moreAfter: new Map() };
     }
@@ -903,6 +907,19 @@ app.initializers.add('mtareq-nested-replies', () => {
     // Otherwise the native flat stream is rendered (and core scrolls it to the
     // target), then replaced by the tree — the user sees a teleport.
     if (allPosts === null) {
+      // On a reload the browser restores the previous (often mid-page) scroll,
+      // which leaves this loader above the viewport — an empty screen until the
+      // tree arrives. Pull the loader into view once per discussion so the user
+      // sees the spinner; the post-swap scroll then takes them to the target.
+      if (!loadingScrollDone) {
+        loadingScrollDone = true;
+        requestAnimationFrame(() => {
+          const el = document.querySelector('.PostStream .LoadingIndicator');
+          if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start', behavior: 'auto' });
+          else window.scrollTo(0, 0);
+        });
+      }
+
       return m('div.PostStream', vnode.attrs, m(LoadingIndicator));
     }
 
@@ -934,7 +951,7 @@ app.initializers.add('mtareq-nested-replies', () => {
           if (this.stream) {
             this.stream.needsScroll = true;
             this.stream.targetPost = { number: deepLinkNear };
-            this.stream.animateScroll = false;
+            this.stream.animateScroll = true;
           }
         }
       }
@@ -945,7 +962,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       if (!scrollReapplied && this.stream && this.stream.targetPost) {
         scrollReapplied = true;
         this.stream.needsScroll = true;
-        this.stream.animateScroll = false;
+        this.stream.animateScroll = true;
       }
 
       foldPlan = planSiblingFolding(ordered, {
