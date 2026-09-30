@@ -3,6 +3,8 @@ import { extend, override } from 'flarum/common/extend';
 import NotificationList from 'flarum/forum/components/NotificationList';
 import NotificationsDropdown from 'flarum/forum/components/NotificationsDropdown';
 import DndToggle from './components/DndToggle';
+import DiscussionRepliedNotification from './components/DiscussionRepliedNotification';
+import CommentRepliedNotification from './components/CommentRepliedNotification';
 
 app.initializers.add('itqan-notifications', () => {
   extend(NotificationList.prototype, 'controlItems', function (items) {
@@ -18,4 +20,9 @@ app.initializers.add('itqan-notifications', () => {
   override(NotificationsDropdown.prototype, 'getNewCount', function (original) {
     return isDndActive() ? 0 : original();
   });
+
+  // Reply-notification components (mirrors itqan-discussions on main, but
+  // under the itqan-notifications extension for staging).
+  app.notificationComponents.discussionReplied = DiscussionRepliedNotification;
+  app.notificationComponents.commentReplied = CommentRepliedNotification;
 });
