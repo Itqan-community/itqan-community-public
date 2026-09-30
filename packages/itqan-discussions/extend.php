@@ -173,7 +173,15 @@ return [
 
     (new Extend\ApiSerializer(\Flarum\Api\Serializer\BasicDiscussionSerializer::class))
         ->attributes(function (\Flarum\Api\Serializer\BasicDiscussionSerializer $serializer, Discussion $discussion, array $attributes) {
-            if (class_exists(\IanM\Translate\AddDiscussionAttributes::class)) {
+            // IanM\Translate\AddDiscussionAttributes::__invoke() types its first
+            // argument as DiscussionSerializer, so it may only be called when the
+            // discussion is the primary resource. When a discussion is included
+            // as a relationship it is serialized through BasicDiscussionSerializer
+            // (e.g. GET /api/posts, whose default include list contains
+            // 'discussion'); calling the invoker there throws a TypeError -> 500.
+            // Fall through untouched in that case.
+            if ($serializer instanceof DiscussionSerializer
+                && class_exists(\IanM\Translate\AddDiscussionAttributes::class)) {
                 $invoker = resolve(\IanM\Translate\AddDiscussionAttributes::class);
                 return $invoker($serializer, $discussion, $attributes);
             }
