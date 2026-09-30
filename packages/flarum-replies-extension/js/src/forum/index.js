@@ -581,6 +581,21 @@ app.initializers.add('mtareq-nested-replies', () => {
     return original(vnode);
   });
 
+  // Flarum's DiscussionPage lets the browser restore the pre-reload scroll
+  // (`useBrowserScrollRestoration = true` -> `history.scrollRestoration = 'auto'`),
+  // which lands you mid-page over the not-yet-rendered stream and fights our
+  // loader/target scrolling. Force manual restoration for discussions so our own
+  // scroll is the only movement.
+  override(DiscussionPage.prototype, 'oncreate', function (original, vnode) {
+    const result = original(vnode);
+
+    if (typeof history !== 'undefined' && 'scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    return result;
+  });
+
   // Vote rail on the discussion list. It votes the discussion's first post — the
   // same model the details page votes — so the two views stay in sync.
   extend(DiscussionListItem.prototype, 'contentItems', function (items) {
@@ -914,9 +929,9 @@ app.initializers.add('mtareq-nested-replies', () => {
       if (!loadingScrollDone) {
         loadingScrollDone = true;
         requestAnimationFrame(() => {
-          const el = document.querySelector('.PostStream .LoadingIndicator');
-          if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start', behavior: 'auto' });
-          else window.scrollTo(0, 0);
+          // Stay at the very top while loading (the spinner sits below the hero,
+          // and any earlier scroll offset would leave us over empty space).
+          window.scrollTo(0, 0);
         });
       }
 
