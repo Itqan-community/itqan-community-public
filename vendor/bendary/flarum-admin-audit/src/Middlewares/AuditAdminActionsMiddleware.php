@@ -144,10 +144,9 @@ class AuditAdminActionsMiddleware implements MiddlewareInterface
                         if (!empty($groupNames)) {
                             $afterState['groups'] = $groupNames;
                         }
-                    } catch (\Exception $e) {
-                    } finally {
-                        try { $response->getBody()->rewind(); } catch (\Throwable $t) {}
-                    }
+
+                        $response->getBody()->rewind();
+                    } catch (\Exception $e) {}
 
                     // ── Build the diff: only include fields that actually changed ──
                     $oldDiff = null;

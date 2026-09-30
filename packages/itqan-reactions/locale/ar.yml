@@ -1,7 +1,0 @@
-itqan-reactions:
-  forum:
-    react: "تفاعل"
-    add_reaction: "أضف تفاعلاً"
-  admin:
-    permissions:
-      react_posts_label: "التفاعل على المشاركات"

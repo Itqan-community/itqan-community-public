@@ -13,12 +13,7 @@ use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
 use Flarum\User\User;
 use Itqan\Discussions\Access\PostPolicy;
-use Itqan\Discussions\Api\ListCommentTreeController;
-use Itqan\Discussions\Api\ListPostRepliesController;
-use Itqan\Discussions\Api\LoadTreePostsRelationship;
 use Itqan\Discussions\Api\VoteController;
-use Itqan\Discussions\Console\BackfillParentIdsCommand;
-use Itqan\Discussions\Console\BackfillRootDepthCommand;
 use Itqan\Discussions\Listener\SaveParentIdToPost;
 use Itqan\Discussions\Listener\SendReplyNotifications;
 use Itqan\Discussions\Listener\UpdateReplyCountOnDelete;
@@ -46,14 +41,7 @@ return [
         ->beforeSending(FilterDiscussionAuthorFromNewPost::class),
 
     (new Extend\Routes('api'))
-        ->patch('/posts/{id}/vote', 'itqan-discussions.vote', VoteController::class)
-        ->get('/discussions/{id}/comment-tree', 'itqan-discussions.comment-tree', ListCommentTreeController::class)
-        ->get('/posts/{id}/replies', 'itqan-discussions.post-replies', ListPostRepliesController::class),
-
-    (new Extend\Settings())
-        ->default('itqan-discussions.maxDepth', '4')
-        ->default('itqan-discussions.maxNodesPerRoot', '20')
-        ->default('itqan-discussions.rootPageSize', '20'),
+        ->patch('/posts/{id}/vote', 'itqan-discussions.vote', VoteController::class),
 
     // Relationships
     (new Extend\Model(Post::class))
@@ -100,24 +88,17 @@ return [
         })
         ->attribute('replyCount', function (BasicPostSerializer $serializer, Post $post) {
             return (int) ($post->reply_count ?? 0);
-        })
-        ->attribute('rootId', function (BasicPostSerializer $serializer, Post $post) {
-            return $post->root_id ? (int) $post->root_id : null;
-        })
-        ->attribute('depth', function (BasicPostSerializer $serializer, Post $post) {
-            return (int) ($post->depth ?? 0);
-        })
-        ->attribute('hasMoreReplies', function (BasicPostSerializer $serializer, Post $post) {
-            if (isset($post->has_more_replies)) {
-                return (bool) $post->has_more_replies;
-            }
-            return false;
         }),
 
     (new Extend\ApiSerializer(PostSerializer::class))
+        // `votes` is the stored score, not a count of the rows: the whole
+        // reason the column exists is that nothing should aggregate the table
+        // to render a post.
         ->attribute('votes', function (PostSerializer $serializer, Post $post) {
             return (int) $post->votes;
         })
+        // What this reader did, so the buttons can show their state without a
+        // second request. Null for guests, who cannot vote anyway.
         ->attribute('userVote', function (PostSerializer $serializer, Post $post) {
             $actor = $serializer->getActor();
 
@@ -157,35 +138,6 @@ return [
             $post = $discussion->firstPost;
 
             return $post ? $serializer->getActor()->can('vote', $post) : false;
-        })
-        ->attribute('rootCommentCount', function (DiscussionSerializer $serializer, Discussion $discussion) {
-            return isset($discussion->root_comment_count) ? (int) $discussion->root_comment_count : null;
-        })
-        ->attribute('rootsLoaded', function (DiscussionSerializer $serializer, Discussion $discussion) {
-            return isset($discussion->roots_loaded) ? (int) $discussion->roots_loaded : null;
-        })
-        ->attribute('rootsHasMore', function (DiscussionSerializer $serializer, Discussion $discussion) {
-            return isset($discussion->roots_has_more) ? (bool) $discussion->roots_has_more : null;
-        })
-        ->attribute('commentSort', function (DiscussionSerializer $serializer, Discussion $discussion) {
-            return $discussion->comment_sort ?? null;
-        }),
-
-    (new Extend\ApiSerializer(\Flarum\Api\Serializer\BasicDiscussionSerializer::class))
-        ->attributes(function (\Flarum\Api\Serializer\BasicDiscussionSerializer $serializer, Discussion $discussion, array $attributes) {
-            // IanM\Translate\AddDiscussionAttributes::__invoke() types its first
-            // argument as DiscussionSerializer, so it may only be called when the
-            // discussion is the primary resource. When a discussion is included
-            // as a relationship it is serialized through BasicDiscussionSerializer
-            // (e.g. GET /api/posts, whose default include list contains
-            // 'discussion'); calling the invoker there throws a TypeError -> 500.
-            // Fall through untouched in that case.
-            if ($serializer instanceof DiscussionSerializer
-                && class_exists(\IanM\Translate\AddDiscussionAttributes::class)) {
-                $invoker = resolve(\IanM\Translate\AddDiscussionAttributes::class);
-                return $invoker($serializer, $discussion, $attributes);
-            }
-            return $attributes;
         }),
 
     // Event listeners for parent_id persistence, reply_count synchronization,
@@ -205,12 +157,7 @@ return [
     (new Extend\ServiceProvider())
         ->register(SortMapProvider::class),
 
-    // Load post votes and tree posts for discussions
+    // Load post votes for discussions
     (new Extend\ApiController(ShowDiscussionController::class))
-        ->load(['posts.postVotes'])
-        ->prepareDataForSerialization(LoadTreePostsRelationship::class),
-
-    (new Extend\Console())
-        ->command(BackfillParentIdsCommand::class)
-        ->command(BackfillRootDepthCommand::class),
+        ->load(['posts.postVotes']),
 ];

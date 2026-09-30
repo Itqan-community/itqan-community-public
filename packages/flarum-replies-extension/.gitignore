@@ -1,7 +1,0 @@
-/vendor
-/node_modules
-/js/node_modules
-/.worktrees
-
-# Brainstorm/visual-companion scratch (local only)
-/.superpowers

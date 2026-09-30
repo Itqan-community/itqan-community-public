@@ -2,52 +2,24 @@ itqan-discussions:
   forum:
     reply: "رد"
     replying_to: "الرد على {username}"
-    cancel_reply: "إلغاء الرد"
-    replied_to: "رد من {username}"
+    cancel_reply: "إلغاء الرد المتشعب"
+    replied_to: "رد على {username}"
     collapse_thread: "طي"
-    expand_thread: "توسيع ({count})"
-    op_badge: "الكاتب"
-    permalink: "نسخ الرابط"
-    permalink_copied: "تم نسخ الرابط"
-    new_chip: "جديد"
+    expand_thread: "ردود ({count})"
     list:
-      score: "{count} تصويت"
+      score: "{count} نقطة"
     vote:
-      up: "تصويت إيجابي"
-      down: "تصويت سلبي"
+      up: "تصويت مؤيّد"
+      down: "تصويت معارض"
     tree:
       collapse: "طي"
-      expand: "توسيع ({count})"
-      replies: "{count} ردود"
-      collapse_rail: "طي سلسلة الردود"
-      expand_rail: "توسيع سلسلة الردود"
-      last_activity: "تحديث {time}"
+      expand: "ردود ({count})"
     notifications:
       discussion_replied_text: "رد {username} على نقاشك"
       comment_replied_text: "رد {username} على تعليقك"
     settings:
       notify_discussion_replied_label: يرد أحد على نقاش بدأته
       notify_comment_replied_label: شخص ما رد على تعليقي
-    sort:
-      label: "الترتيب"
-      oldest: "الأقدم"
-      latest: "الأحدث"
-      top: "الأعلى"
-    meta:
-      replies: "ردود"
-      participants: "مشاركون"
-      views: "مشاهدة"
-    stream:
-      heading: "النقاشات"
-      heading_count: "{count} تعليقًا"
-      load_more: "عرض المزيد من التعليقات"
-      load_previous: "عرض التعليقات السابقة"
-      continue_thread: "عرض {count} ردود أخرى"
-      loading: "جاري التحميل..."
-      empty_title: "لا تعليقات هنا"
-      empty_body: "كن أول من يرد."
-      parent_preview: "معاينة التعليق الأصلي"
-      reply_posted_elsewhere: "تم نشر الرد. قد تضطر إلى تحديث الصفحة لرؤيته."
 
   email:
     discussion_replied:
@@ -84,22 +56,4 @@ itqan-discussions:
 core:
   forum:
     index_sort:
-      hot_button: "الأكثر تفاعلاً"
-      votes_button: "الأعلى"
-      replies_button: "الأكثر ردوداً"
-
-datlechin-copy-links:
-  forum:
-    copy_link_button: "نسخ الرابط"
-    link_copied_message: "تم نسخ الرابط!"
-
-fof-oauth:
-  forum:
-    log_in:
-      with_twitter_button: "الدخول باستخدام X"
-      with_button: "الدخول باستخدام {provider}"
-
-fof-share-social:
-  lib:
-    networks:
-      twitter: "X"
+      hot_button: "الأكثر تفاعلًا"

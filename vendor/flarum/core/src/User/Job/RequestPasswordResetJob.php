@@ -56,9 +56,9 @@ class RequestPasswordResetJob extends AbstractJob
         $token->save();
 
         $data = [
-            '{username}' => $user->display_name,
-            '{url}'      => $url->to('forum')->route('resetPassword', ['token' => $token->token]),
-            '{forum}'    => $settings->get('forum_title'),
+            'username' => $user->display_name,
+            'url' => $url->to('forum')->route('resetPassword', ['token' => $token->token]),
+            'forum' => $settings->get('forum_title'),
         ];
 
         $body = $translator->trans('core.email.reset_password.body', $data);
