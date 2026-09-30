@@ -333,5 +333,79 @@ html[data-itqan-theme='dark'] {
       }
     }
   }
+
+  // Dark Mode Popup & Modal Overrides for MailerLite (S1 Fix)
+  .ml-form-embedPopup,
+  .ml-form-embedWrapper.ml-form-embedPopup,
+  .Modal.ml-subscribe-modal .Modal-content,
+  div[id*="mlb2-"] .ml-form-embedWrapper {
+    background: #161b22 !important;
+    border: 1px solid #30363d !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+    color: #e6edf3 !important;
+
+    h4, .ml-form-embedContent h4 {
+      color: #f0f6fc !important;
+    }
+
+    p, span, label, .ml-form-embedContent p {
+      color: #8b949e !important;
+    }
+
+    input.form-control,
+    input[type="email"],
+    input[type="text"] {
+      background-color: #0d1117 !important;
+      border: 1px solid #30363d !important;
+      color: #e6edf3 !important;
+
+      &::placeholder {
+        color: #6e7681 !important;
+      }
+
+      &:focus {
+        border-color: #146C60 !important;
+        background-color: #161b22 !important;
+        box-shadow: 0 0 0 3px rgba(20, 108, 96, 0.3) !important;
+      }
+    }
+  }
+
+  // Dark Mode #newsletter-popup Overrides
+  #newsletter-popup {
+    background-color: #262626 !important;
+
+    #newsletter-popup-close {
+      color: #a6a6a6 !important;
+    }
+
+    h3 {
+      color: #ffffff !important;
+    }
+
+    p {
+      color: #cfcfcf !important;
+    }
+
+    #newsletter-form {
+      input[type="text"],
+      input[type="email"],
+      input {
+        color: #ffffff !important;
+        background: #232323 !important;
+        border-color: #656565 !important;
+
+        &::placeholder {
+          color: #a6a6a6 !important;
+        }
+      }
+
+      button.later {
+        background: #4e4e4e !important;
+        color: #ffffff !important;
+      }
+    }
+  }
 }
+
 

@@ -253,6 +253,7 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         ),
         'M' =>
         array (
+            'Mtareq\\NestedReplies\\' => 21,
             'Monolog\\' => 8,
             'Minishlink\\WebPush\\' => 19,
             'Middlewares\\Utils\\' => 18,
@@ -302,9 +303,11 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'I' =>
         array (
             'Itqan\\Typography\\' => 17,
+            'Itqan\\Notifications\\' => 20,
             'Itqan\\Theme\\' => 12,
             'Itqan\\MailerLite\\' => 17,
             'Itqan\\Discussions\\' => 18,
+            'Itqan\\ComposerTools\\' => 20,
             'Irmmr\\RTLCss\\' => 13,
             'Irmmr\\FlarumRtlSupport\\' => 23,
             'Intervention\\Image\\' => 19,
@@ -377,6 +380,7 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
             'FoF\\SocialProfile\\' => 18,
             'FoF\\Sitemap\\' => 12,
             'FoF\\ShareSocial\\' => 16,
+            'FoF\\Reactions\\' => 14,
             'FoF\\PrettyMail\\' => 15,
             'FoF\\OAuth\\' => 10,
             'FoF\\MergeDiscussions\\' => 21,
@@ -757,6 +761,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
             0 => __DIR__ . '/..' . '/nette/schema/src',
             1 => __DIR__ . '/..' . '/nette/utils/src',
         ),
+        'Mtareq\\NestedReplies\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/mtareq/flarum-nested-replies/src',
+        ),
         'Monolog\\' =>
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
@@ -910,6 +918,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-typography/src',
         ),
+        'Itqan\\Notifications\\' =>
+        array (
+          0 => __DIR__ . '/..' . '/itqan/flarum-notifications/src',
+        ),
         'Itqan\\Theme\\' =>
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-theme/src',
@@ -921,6 +933,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'Itqan\\Discussions\\' =>
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-discussions/src',
+        ),
+        'Itqan\\ComposerTools\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/flarum-composer-tools/src',
         ),
         'Irmmr\\RTLCss\\' =>
         array (
@@ -1175,6 +1191,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'FoF\\ShareSocial\\' =>
         array (
             0 => __DIR__ . '/..' . '/fof/share-social/src',
+        ),
+        'FoF\\Reactions\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/fof/reactions/src',
         ),
         'FoF\\PrettyMail\\' =>
         array (

@@ -1,2 +1,28 @@
-@import "forum/voting.less";
-@import "forum/tree.less";
+// Itqan Discussions — forum styles.
+//
+// Structure, and the order it has to be imported in:
+//
+//   chip            mixins only, emits nothing — must come first
+//   vote-control    the VoteButtons component, used by both pages below
+//   discussion-list the vote column on index rows
+//   inline-pills    mentions inside post bodies
+//   composer        the reply-context banner
+//   post-page/      the discussion details page, split by component
+//
+// Design tokens come from `itqan-theme` as CSS custom properties, which is what
+// lets them cross the extension boundary — LESS variables do not. See
+// knowledge/design-system/tokens.md.
+
+@import "forum/chip.less";
+@import "forum/vote-control.less";
+@import "forum/discussion-list.less";
+@import "forum/inline-pills.less";
+@import "forum/composer.less";
+@import "forum/fof-reactions.less";
+
+@import "forum/post-page/layout.less";
+@import "forum/post-page/hero.less";
+@import "forum/post-page/op.less";
+@import "forum/post-page/comments-surface.less";
+@import "forum/post-page/thread.less";
+@import "forum/post-page/actions.less";

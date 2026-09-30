@@ -1,0 +1,22 @@
+{
+    "name": "itqan/flarum-notifications",
+    "description": "Itqan community notifications — do-not-disturb toggle",
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        { "name": "Itqan Community", "email": "a.abduraghman@itqan.dev" }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "autoload": {
+        "psr-4": { "Itqan\\Notifications\\": "src/" }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Notifications",
+            "category": "feature",
+            "icon": { "name": "far fa-bell", "color": "#ffffff", "backgroundColor": "#0D9488" }
+        }
+    }
+}

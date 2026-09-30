@@ -39,17 +39,50 @@
 .MarkdownPreviewDrawer-content {
   min-width: 0;
   overflow-wrap: anywhere;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-color);
+
+  p {
+    margin: 0 0 0.8em 0;
+  }
 
   table {
     display: block;
     max-width: 100%;
     overflow-x: auto;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+
+    th, td {
+      padding: 6px 12px;
+      border: 1px solid var(--control-bg-shaded, #e5e7eb);
+    }
   }
 
-  pre,
   code {
     direction: ltr;
     text-align: left;
+    background: var(--code-bg, #f6f8fa);
+    color: var(--code-color, #24292f);
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+    font-size: 0.9em;
+  }
+
+  pre {
+    direction: ltr;
+    text-align: left;
+    background: var(--code-bg, #f6f8fa);
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+
+    code {
+      padding: 0;
+      background: transparent;
+    }
   }
 }
 
