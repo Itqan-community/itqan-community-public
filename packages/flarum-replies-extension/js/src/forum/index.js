@@ -3,6 +3,7 @@ import Link from 'flarum/common/components/Link';
 import app from 'flarum/forum/app';
 import icon from 'flarum/common/helpers/icon';
 import Button from 'flarum/common/components/Button';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Post from 'flarum/forum/components/Post';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
@@ -75,6 +76,8 @@ app.initializers.add('mtareq-nested-replies', () => {
   // one-shot flag so we re-apply the scroll exactly once per discussion.
   let deepLinkNear = null;
   let deepLinkApplied = false;
+  // One-shot flag: re-arm core's scroll once the tree has replaced the stream.
+  let scrollReapplied = false;
 
   // The open in-card reply form, and the draft it holds (shared so a target
   // switch can warn before discarding).
@@ -444,6 +447,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
     deepLinkNear = Number.isInteger(parsed) && parsed > 1 ? parsed : null;
     deepLinkApplied = false;
+    scrollReapplied = false;
 
     return original(vnode);
   });
@@ -758,6 +762,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       loadingAll = false;
       refreshing = false;
       deepLinkApplied = false;
+      scrollReapplied = false;
       foldPlan = { hidden: new Set(), moreAfter: new Map() };
     }
 
@@ -766,6 +771,13 @@ app.initializers.add('mtareq-nested-replies', () => {
     loadAllPosts();
 
     const vnode = original();
+
+    // Show a loader until every page has been fetched and the tree can render.
+    // Otherwise the native flat stream is rendered (and core scrolls it to the
+    // target), then replaced by the tree — the user sees a teleport.
+    if (allPosts === null) {
+      return m('div.PostStream', vnode.attrs, m(LoadingIndicator));
+    }
 
     if (allPosts && allPosts.length) {
       // The tree view renders the whole discussion from our own ordering, so
@@ -796,6 +808,15 @@ app.initializers.add('mtareq-nested-replies', () => {
             this.stream.animateScroll = false;
           }
         }
+      }
+
+      // Core's native render consumed `needsScroll` before our tree existed, so
+      // re-arm its scroll once to target the tree — covers deep-links handled
+      // above, and resume-at-unread. Without this the target is lost on swap.
+      if (!scrollReapplied && this.stream && this.stream.targetPost) {
+        scrollReapplied = true;
+        this.stream.needsScroll = true;
+        this.stream.animateScroll = false;
       }
 
       foldPlan = planSiblingFolding(ordered, {
