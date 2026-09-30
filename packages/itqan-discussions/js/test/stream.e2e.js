@@ -10,8 +10,8 @@
  * Set FORUM / ADMIN_USER / ADMIN_PASS / CHROME as needed.
  */
 const FORUM = process.env.FORUM || 'http://localhost:8080';
-const ADMIN_USER = process.env.ADMIN_USER || 'Amr-Bendary';
-const ADMIN_PASS = process.env.ADMIN_PASS || 'LocalTest123!';
+const ADMIN_USER = process.env.ADMIN_USER;
+const ADMIN_PASS = process.env.ADMIN_PASS;
 const CHROME =
   process.env.CHROME ||
   (process.platform === 'win32'
