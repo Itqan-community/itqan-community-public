@@ -10,6 +10,7 @@ import PostControls from 'flarum/forum/utils/PostControls';
 import Composer from 'flarum/forum/components/Composer';
 import PostStream from 'flarum/forum/components/PostStream';
 import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
+import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 import Stream from 'flarum/common/utils/Stream';
 import { withFirstPostInclude } from './utils/listParams';
@@ -70,6 +71,10 @@ app.initializers.add('mtareq-nested-replies', () => {
   let refreshing = false;
   let currentDiscussion = null;
   let pendingParentId = null;
+  // Deep-link target (`/d/<id>/<near>`) captured before core resolves it, and a
+  // one-shot flag so we re-apply the scroll exactly once per discussion.
+  let deepLinkNear = null;
+  let deepLinkApplied = false;
 
   // The open in-card reply form, and the draft it holds (shared so a target
   // switch can warn before discarding).
@@ -429,6 +434,20 @@ app.initializers.add('mtareq-nested-replies', () => {
     });
   }
 
+  // Capture the deep-link target (`/d/<id>/<near>`) BEFORE core resolves it.
+  // Core scrolls the native flat stream to `near`, but our tree then replaces
+  // that stream (loadAllPosts -> swap), which reflows the page and drops the
+  // viewport off the target. We re-apply the scroll once the tree is rendered.
+  override(DiscussionPage.prototype, 'oninit', function (original, vnode) {
+    const raw = m.route.param('near');
+    const parsed = raw && raw !== 'reply' ? parseInt(raw, 10) : NaN;
+
+    deepLinkNear = Number.isInteger(parsed) && parsed > 1 ? parsed : null;
+    deepLinkApplied = false;
+
+    return original(vnode);
+  });
+
   // Vote rail on the discussion list. It votes the discussion's first post — the
   // same model the details page votes — so the two views stay in sync.
   extend(DiscussionListItem.prototype, 'contentItems', function (items) {
@@ -738,6 +757,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       allPosts = null;
       loadingAll = false;
       refreshing = false;
+      deepLinkApplied = false;
       foldPlan = { hidden: new Set(), moreAfter: new Map() };
     }
 
@@ -756,6 +776,27 @@ app.initializers.add('mtareq-nested-replies', () => {
       }
 
       const { op, ordered } = buildReplyOrder(allPosts, sortMode);
+
+      // Deep-link: now that the tree owns the stream, reveal the target post's
+      // ancestors and re-arm core's scroll so it lands — and stays — on the
+      // target, instead of on wherever the native flat stream happened to be
+      // when we swapped it out.
+      if (!deepLinkApplied && deepLinkNear != null) {
+        const nearPost = allPosts.find((post) => Number(post.number()) === deepLinkNear);
+
+        if (nearPost) {
+          deepLinkApplied = true;
+
+          const parentId = getParentId(nearPost, settings.legacyMentions);
+          if (parentId) revealReply(parentId);
+
+          if (this.stream) {
+            this.stream.needsScroll = true;
+            this.stream.targetPost = { number: deepLinkNear };
+            this.stream.animateScroll = false;
+          }
+        }
+      }
 
       foldPlan = planSiblingFolding(ordered, {
         lookup,
