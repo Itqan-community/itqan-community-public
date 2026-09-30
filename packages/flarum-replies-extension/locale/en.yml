@@ -25,14 +25,16 @@ mtareq-nested-replies:
     more_replies: "{count} more replies"
     show_more_replies: Show more replies
     reply_link: Reply
+    heading_count: "{count} comments"
+    sort_label: "Sort"
     sort_by: "Sort by:"
     sort_oldest: Oldest
     sort_newest: Newest
-    sort_top: Top voted
+    sort_top: Top
     sort_replies: Most replies
     sort_loading: Loading...
-    reply_form_placeholder: "Reply to {username}…"
-    reply_form_placeholder_op: "Write a reply…"
+    reply_form_placeholder: "Reply to {username}."
+    reply_form_placeholder_op: "Write a reply."
     reply_form_write: Write
     reply_form_preview: Preview
     reply_form_bold: Bold
@@ -56,5 +58,21 @@ mtareq-nested-replies:
 core:
   forum:
     index_sort:
-      votes_button: Top voted
+      votes_button: Top
       replies_button: Most replies
+
+datlechin-copy-links:
+  forum:
+    copy_link_button: Copy Link
+    link_copied_message: Link copied to clipboard!
+
+fof-oauth:
+  forum:
+    log_in:
+      with_twitter_button: Log in with X
+      with_button: Log in with {provider}
+
+fof-share-social:
+  lib:
+    networks:
+      twitter: X

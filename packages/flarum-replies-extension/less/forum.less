@@ -120,7 +120,7 @@
   }
 
   &:hover > .NestedRepliesPost-container {
-    background: rgba(0, 0, 0, 0.025);
+    background: transparent;
   }
 
   // Briefly highlight the reply the reader just posted so they can spot it.
@@ -550,30 +550,112 @@ a.NestedRepliesReplyTag {
   // display: block is set in the deleted-post section below; nothing to hide.
 }
 
-// Reply card header: sort control.
-.NestedRepliesReplySort {
+// Stream toolbar & segmented sorting
+.itqan-stream-toolbar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--control-bg-shaded, #edeff1);
-  font-size: 13px;
-  color: var(--muted-color, #878a8c);
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  background: var(--body-bg-light, #fff);
+  border: 1px solid var(--control-bg-shaded, #e4e6eb);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 
-  select {
-    padding: 2px 6px;
-    border: 1px solid var(--control-bg-shaded, #edeff1);
-    border-radius: 6px;
-    background: var(--control-bg, #f6f7f8);
-    color: var(--text-color, #1c1c1c);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
+  @media @phone {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
+
+    .itqan-stream-toolbar-title {
+      justify-content: flex-start;
+    }
+
+    .itqan-sort-segmented {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+
+      .itqan-sort-segment {
+        flex: 1;
+        justify-content: center;
+        padding: 0 6px;
+        font-size: 11.5px;
+      }
+    }
+  }
+}
+
+.itqan-stream-toolbar-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color, #1c1c1e);
+
+  .icon {
+    font-size: 15px;
+    color: var(--muted-color, #8e8e93);
+  }
+}
+
+.itqan-sort-segmented {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--control-bg, #f2f3f5);
+  border: 1px solid var(--control-bg-shaded, #e4e6eb);
+  border-radius: 9999px;
+}
+
+.itqan-sort-segment {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--muted-color, #65676b);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+
+  .icon {
+    font-size: 11px;
   }
 
-  &-loading {
-    font-size: 12px;
+  &:hover {
+    color: var(--text-color, #1c1c1e);
   }
+
+  &[aria-checked='true'] {
+    background: var(--body-bg-light, #ffffff);
+    color: var(--text-color, #1c1c1e);
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.NestedRepliesReplySort-loading {
+  font-size: 12px;
+  color: var(--muted-color, #8e8e93);
 }
 
 // In-card reply form. It sits inside the replied-to post's own indented
