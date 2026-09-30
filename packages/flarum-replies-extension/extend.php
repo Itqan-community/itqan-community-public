@@ -17,15 +17,7 @@ use Mtareq\NestedReplies\Vote\VoteCounts;
 $extenders = [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
-        ->css(__DIR__.'/less/forum.less')
-        ->content(function (\Flarum\Frontend\Document $document) {
-            // Must run before Flarum boots: on a reload the browser otherwise
-            // restores the pre-reload (often mid-page) scroll before any of our
-            // JS runs, landing the viewport on the empty, not-yet-rendered stream.
-            // Discussions manage their own scroll, so opt out of browser
-            // restoration for them here (other pages keep the default).
-            $document->head[] = '<script>try{if(location.pathname.indexOf("/d/")===0&&"scrollRestoration" in history){history.scrollRestoration="manual";}}catch(e){}</script>';
-        }),
+        ->css(__DIR__.'/less/forum.less'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js'),
