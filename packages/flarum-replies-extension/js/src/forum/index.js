@@ -10,6 +10,7 @@ import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
 import PostControls from 'flarum/forum/utils/PostControls';
 import Composer from 'flarum/forum/components/Composer';
 import PostStream from 'flarum/forum/components/PostStream';
+import ReplyPlaceholder from 'flarum/forum/components/ReplyPlaceholder';
 import PostStreamScrubber from 'flarum/forum/components/PostStreamScrubber';
 import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
@@ -996,13 +997,29 @@ app.initializers.add('mtareq-nested-replies', () => {
       const grouped = [];
       if (opItem) grouped.push(m('div.NestedRepliesThreadCard', { key: 'nestedRepliesThreadCard' }, opItem));
 
+      // Core's reply box lives in an extra stream item this tree view never
+      // renders, so draw it ourselves: under the original post and, on threads
+      // with replies, again after the last one. Same condition as core's
+      // PostStream: guests get the log-in prompt, locked threads get nothing.
+      const discussion = this.discussion || (this.stream && this.stream.discussion);
+      const replyBox = (key) =>
+        discussion && (!app.session.user || discussion.canReply())
+          ? m('div.PostStream-item', { key, 'data-index': allPosts.length }, m(ReplyPlaceholder, { discussion }))
+          : null;
+
+      const topBox = replyBox('replyTop');
+      if (topBox) grouped.push(topBox);
+
       // Skip the reply card entirely when there are no replies: the sort header
       // ("Sort by:") must not render on a discussion with no replies. Mirrors
       // the fallback path below.
       if (replyItems.length) {
-        const toolbar = replySortVNode(this.discussion || (this.stream && this.stream.discussion));
+        const toolbar = replySortVNode(discussion);
         if (toolbar) grouped.push(toolbar);
         grouped.push(m('div.NestedRepliesReplyCard', { key: 'nestedRepliesReplyCard' }, replyItems));
+
+        const bottomBox = replyBox('reply');
+        if (bottomBox) grouped.push(bottomBox);
       }
 
       return m('div.PostStream', vnode.attrs, grouped);
