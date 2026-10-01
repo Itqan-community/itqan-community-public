@@ -2,12 +2,14 @@
 // Composer affordances
 // ---------------------------------------------------------------------------
 //
-// Three shortcuts to the composer that the header and sidebar controls do not
-// cover on a phone, or once a long thread has been scrolled away from:
+// Two shortcuts to the composer that the header and sidebar controls do not
+// cover on a phone:
 //
-//   .NewDiscussionFab   phone      — start a discussion from the list
-//   .ReplyDock--bar     phone      — reply, pinned to the bottom
-//   .ReplyDock--float   wide screen — reply, once the opening post is gone
+//   .NewDiscussionFab   phone — start a discussion from the list
+//   .ReplyDock--bar     phone — reply, pinned to the bottom
+//
+// Wide screens get no shortcut: the original post's reply composer is opened
+// inline there (see the replies extension), so a reader can comment from the top.
 //
 // They are plain `position: fixed` siblings of the page, so nothing re-flows
 // when they appear. Every colour comes from a token (`less/forum/tokens.less`
@@ -97,37 +99,9 @@
   border-radius: 0;
   box-shadow: 0 -6px 18px fade(#000, 7%);
 
-  // Wide screens get the floating button instead.
+  // Wide screens open the original post's composer inline instead.
   @media @tablet-up {
     display: none;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Wide screen — the floating button, revealed after the opening post
-// ---------------------------------------------------------------------------
-
-.ReplyDock--float {
-  display: none;
-  inset-inline-end: var(--sp-24, 24px);
-  bottom: var(--sp-24, 24px);
-  padding: var(--sp-8, 8px) var(--sp-20, 20px) var(--sp-8, 8px) var(--sp-12, 12px);
-  border-radius: var(--r-pill, 9999px);
-  box-shadow: var(--elev-2, 0 2px 8px rgba(0, 0, 0, 0.1));
-  opacity: 0;
-  transform: translateY(12px);
-  pointer-events: none;
-  transition: opacity var(--dur, 180ms) var(--ease-out, ease), transform var(--dur, 180ms) var(--ease-out, ease),
-    border-color var(--dur-fast, 120ms) var(--ease-out, ease);
-
-  @media @tablet-up {
-    display: flex;
-  }
-
-  &.is-visible {
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
   }
 }
 
