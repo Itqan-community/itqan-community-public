@@ -463,6 +463,26 @@ html[data-itqan-theme='dark'] {
 
     }
   }
+
+  // The media manager (fof/upload, opened from the composer) tunes its header
+  // against a desktop-width file list. On phones the tab strip's negative
+  // margins fold it over the header, and the body's fixed `100vh - 122px`
+  // height pushes the OK/Cancel footer off the bottom edge.
+  .fof-file-manager-modal {
+    .LibrarySelection {
+      margin-bottom: 0;
+      padding: 0;
+    }
+
+    // `.Modal-content` in the selector: fof's own mobile rule sets
+    // `max-height: unset` at the same specificity, so the extra class is what
+    // lets this win without an `!important`.
+    .Modal-content .Modal-body {
+      // Escaped: Less would otherwise evaluate `100vh - 158px` itself and
+      // emit `calc(-58vh)`.
+      max-height: ~"calc(100vh - 158px)";
+    }
+  }
 }
 
 .LanguageSelector,
