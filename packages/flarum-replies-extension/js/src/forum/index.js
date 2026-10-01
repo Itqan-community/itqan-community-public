@@ -210,8 +210,8 @@ app.initializers.add('mtareq-nested-replies', () => {
   // The open in-card reply form, and the draft it holds (shared so a target
   // switch can warn before discarding).
   let inlineReply = null;
-  // A *native* reply composer (the sticky bar, the floating button, a restored
-  // reply box) carries no id we can see in hide(). Remember the discussion and
+  // A *native* reply composer (the sticky bar, a restored reply box) carries no
+  // id we can see in hide(). Remember the discussion and
   // the newest post at the moment it opened, so hide() can tell a posted reply
   // from a cancel and focus the new one.
   let nativeReply = null;
@@ -644,6 +644,48 @@ app.initializers.add('mtareq-nested-replies', () => {
     }
 
     return result;
+  });
+
+  // Wide screens (>= tablet) have no floating reply button. Instead, open the
+  // original post's reply form once when its discussion appears, so a reader can
+  // comment from the top. Phones keep the pinned `ReplyDock--bar` (itqan-theme)
+  // and open the form on demand, so this stays desktop-only.
+  //
+  // `onupdate` rather than `oncreate`: core only sets `this.discussion` after the
+  // API response lands, which is past the first render. A per-instance guard
+  // makes it one attempt per visit; a manual close stays closed, and a posted
+  // comment closes the form through the inline form's own `onSubmitted`.
+  extend(DiscussionPage.prototype, 'onupdate', function () {
+    const discussion = this.discussion;
+
+    if (!discussion) return;
+
+    const id = String(discussion.id());
+
+    if (this.opComposerFor === id) return;
+
+    // The extension loads every page into `allPosts` before the tree renders,
+    // and core's `discussion.firstPost()` is empty on this page, so take the
+    // original post from there. Until it arrives, try again on the next update.
+    const firstPost = allPosts && allPosts.length ? allPosts.find((post) => isOriginalPost(post)) : null;
+
+    if (!firstPost) return;
+
+    this.opComposerFor = id;
+
+    if (!window.matchMedia('(min-width: 768px)').matches) return;
+    if (!app.session.user) return;
+    if (typeof discussion.canReply === 'function' && !discussion.canReply()) return;
+    if (app.composer.isVisible() || inlineReply) return;
+
+    openInlineReply(firstPost);
+
+    // The tree may still be mid-render when this update runs, so the post that
+    // now holds the inline form could have computed its footer before the form
+    // existed. Nudge one more redraw once the frame settles.
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => forceRedraw());
+    }
   });
 
   // Vote rail on the discussion list. It votes the discussion's first post — the
