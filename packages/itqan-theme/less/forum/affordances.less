@@ -1,0 +1,187 @@
+// ---------------------------------------------------------------------------
+// Composer affordances
+// ---------------------------------------------------------------------------
+//
+// Three shortcuts to the composer that the header and sidebar controls do not
+// cover on a phone, or once a long thread has been scrolled away from:
+//
+//   .NewDiscussionFab   phone      — start a discussion from the list
+//   .ReplyDock--bar     phone      — reply, pinned to the bottom
+//   .ReplyDock--float   wide screen — reply, once the opening post is gone
+//
+// They are plain `position: fixed` siblings of the page, so nothing re-flows
+// when they appear. Every colour comes from a token (`less/forum/tokens.less`
+// and Flarum's palette), so both colour schemes are correct without restating
+// them here — the one exception is the shadow, which has no token at this size.
+//
+// The shape deliberately echoes `.ReplyPlaceholder` (see `custom-parity.less`):
+// avatar, quiet label, primary accent on the action.
+
+@affordance-z: var(--z-dropdown, 1070);
+@affordance-dock-gap: 10px;
+
+.reply-dock-surface() {
+  border: 1px solid var(--control-bg-shaded, #e5e7eb);
+  background: var(--body-bg-light, #ffffff);
+  color: var(--muted-color);
+}
+
+// ---------------------------------------------------------------------------
+// Shared
+// ---------------------------------------------------------------------------
+
+.ReplyDock {
+  position: fixed;
+  z-index: @affordance-z;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-10, 10px);
+  box-sizing: border-box;
+  margin: 0;
+  font-family: inherit;
+  font-size: var(--fs-ui-lg, 14px);
+  font-weight: var(--fw-medium, 500);
+  line-height: var(--lh-snug, 1.45);
+  text-align: start;
+  cursor: pointer;
+  .reply-dock-surface();
+
+  &:hover {
+    border-color: var(--primary-color);
+    color: var(--text-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+
+  .Avatar,
+  .ReplyDock-avatar {
+    flex: none;
+    width: var(--avatar, 32px);
+    height: var(--avatar, 32px);
+    margin: 0;
+    line-height: var(--avatar, 32px);
+    font-size: var(--fs-ui, 13px);
+  }
+}
+
+.ReplyDock-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ReplyDock-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--primary-color);
+}
+
+// ---------------------------------------------------------------------------
+// Phone — the always-on bar
+// ---------------------------------------------------------------------------
+
+.ReplyDock--bar {
+  inset-inline: 0;
+  bottom: ~"calc(var(--mobile-tab-height, 0px) + env(safe-area-inset-bottom, 0px))";
+  padding: var(--sp-10, 10px) var(--sp-16, 16px);
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: 0 -6px 18px fade(#000, 7%);
+
+  // Wide screens get the floating button instead.
+  @media @tablet-up {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Wide screen — the floating button, revealed after the opening post
+// ---------------------------------------------------------------------------
+
+.ReplyDock--float {
+  display: none;
+  inset-inline-end: var(--sp-24, 24px);
+  bottom: var(--sp-24, 24px);
+  padding: var(--sp-8, 8px) var(--sp-20, 20px) var(--sp-8, 8px) var(--sp-12, 12px);
+  border-radius: var(--r-pill, 9999px);
+  box-shadow: var(--elev-2, 0 2px 8px rgba(0, 0, 0, 0.1));
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity var(--dur, 180ms) var(--ease-out, ease), transform var(--dur, 180ms) var(--ease-out, ease),
+    border-color var(--dur-fast, 120ms) var(--ease-out, ease);
+
+  @media @tablet-up {
+    display: flex;
+  }
+
+  &.is-visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Phone — start a new discussion from the list
+// ---------------------------------------------------------------------------
+
+.NewDiscussionFab {
+  position: fixed;
+  z-index: @affordance-z;
+  inset-inline-end: var(--sp-16, 16px);
+  bottom: ~"calc(var(--mobile-tab-height, 0px) + env(safe-area-inset-bottom, 0px) + 14px)";
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: var(--button-primary-color, #ffffff);
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px fade(#000, 24%);
+  transition: transform var(--dur-fast, 120ms) var(--ease-out, ease);
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
+  }
+
+  // The list has its own header control on a wide screen.
+  @media @tablet-up {
+    display: none;
+  }
+}
+
+// Keep the last post clear of the pinned bar on a phone.
+@media @phone {
+  .DiscussionPage {
+    padding-bottom: 72px;
+  }
+}
+
+// The composer supersedes every one of these — it is where they all lead, and
+// on a phone it is full screen. Declared in CSS as well as in the components'
+// `view()` so the affordances can never sit on top of the editor.
+html:has(.Composer.visible) {
+  .ReplyDock,
+  .NewDiscussionFab {
+    display: none !important;
+  }
+}
