@@ -42,13 +42,23 @@ export default class ReplyDock extends Component {
     super.oncreate(vnode);
 
     window.addEventListener('scroll', this.handleScroll, { passive: true });
-    this.handleScroll();
+    this.syncFloat();
   }
 
   onremove(vnode) {
     super.onremove(vnode);
 
     window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  // Push the current scroll state onto the button. Called on create and after
+  // the composer closes: the component instance survives that (its `view()`
+  // just returned null for a while), so the freshly rendered button would
+  // otherwise start without the class and never get it until the next scroll.
+  syncFloat() {
+    this.scrolled = window.scrollY > SCROLLED_THRESHOLD;
+
+    if (this.floatEl) this.floatEl.classList.toggle('is-visible', this.scrolled);
   }
 
   canReply() {
@@ -91,7 +101,14 @@ export default class ReplyDock extends Component {
         className={`ReplyDock ${className}`}
         aria-label={app.translator.trans('itqan-theme.forum.reply_dock.accessible_label')}
         onclick={() => this.open()}
-        oncreate={float ? (btn) => (this.floatEl = btn.dom) : undefined}
+        oncreate={
+          float
+            ? (btn) => {
+                this.floatEl = btn.dom;
+                this.syncFloat();
+              }
+            : undefined
+        }
       >
         {avatar(app.session.user, { className: 'ReplyDock-avatar' })}
         <span className="ReplyDock-text">{app.translator.trans('itqan-theme.forum.reply_dock.placeholder')}</span>

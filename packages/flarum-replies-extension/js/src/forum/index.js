@@ -210,6 +210,11 @@ app.initializers.add('mtareq-nested-replies', () => {
   // The open in-card reply form, and the draft it holds (shared so a target
   // switch can warn before discarding).
   let inlineReply = null;
+  // A *native* reply composer (the sticky bar, the floating button, a restored
+  // reply box) carries no id we can see in hide(). Remember the discussion and
+  // the newest post at the moment it opened, so hide() can tell a posted reply
+  // from a cancel and focus the new one.
+  let nativeReply = null;
   const inlineDraft = Stream('');
   // Whether the embedded composer is showing the rendered preview instead of
   // the editor (toggled by the composer's eye control).
@@ -516,6 +521,29 @@ app.initializers.add('mtareq-nested-replies', () => {
     });
   }
 
+  // Remember what the discussion looked like when a *native* reply composer was
+  // opened, so hide() can tell a posted reply from a cancel. Captured on show(),
+  // not load(): a second reply in the same visit reuses the composer instance
+  // (core keeps the body after hide), so load() is not called again.
+  if (app.composer && typeof app.composer.show === 'function') {
+    const originalShow = app.composer.show;
+
+    app.composer.show = function (...args) {
+      const body = this.body;
+
+      if (!nativeReply && !isInlineComposer() && body && body.attrs && body.attrs.discussion && !body.attrs.post) {
+        const latest = latestPostIn(body.attrs.discussion);
+
+        nativeReply = {
+          discussion: body.attrs.discussion,
+          baselinePostId: latest && latest.id ? latest.id() : null,
+        };
+      }
+
+      return originalShow.apply(this, args);
+    };
+  }
+
   // A successful composer submit (and the shell's own close) calls
   // app.composer.hide(). The inline host renders inside a Post whose
   // SubtreeRetainer caches it, so the host's onupdate cannot observe the change;
@@ -533,6 +561,14 @@ app.initializers.add('mtareq-nested-replies', () => {
       // was actually posted; otherwise this was a cancel and nothing changed.
       const posted = Boolean(latest && latest.id && String(latest.id()) !== String(baselineId));
 
+      // The same question for a reply made through the native composer. Its post
+      // is in the store by now (the save resolved before hide() is called), so
+      // comparing the newest post with the baseline identifies it.
+      const latestNative = !wasInline && nativeReply ? latestPostIn(nativeReply.discussion) : null;
+      const postedNative = Boolean(
+        latestNative && latestNative.id && String(latestNative.id()) !== String(nativeReply ? nativeReply.baselinePostId : null)
+      );
+
       const result = originalHide.apply(this, args);
 
       if (wasInline) {
@@ -547,6 +583,20 @@ app.initializers.add('mtareq-nested-replies', () => {
         } else {
           // Cancelled: clear the form without revealing or scrolling anywhere.
           forceRedraw();
+        }
+      } else if (nativeReply) {
+        const repliedTo = postedNative ? getParentId(latestNative, settings.legacyMentions) : null;
+
+        nativeReply = null;
+
+        if (postedNative) {
+          // Same treatment as the inline form: unfold the reply's ancestors,
+          // refetch the tree, then scroll the new reply into view and highlight
+          // it. Without this the composer's own stream.update()/goToNumber()
+          // lands on core's flat stream, which the tree has already replaced.
+          revealReply(repliedTo);
+          forceRedraw();
+          refreshTree(latestNative.id());
         }
       }
 
