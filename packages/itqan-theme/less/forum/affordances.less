@@ -17,7 +17,11 @@
 // The shape deliberately echoes `.ReplyPlaceholder` (see `custom-parity.less`):
 // avatar, quiet label, primary accent on the action.
 
-@affordance-z: var(--z-dropdown, 1070);
+// Page furniture, not a popup: above the page content and the mobile tab bar
+// (1000) but *below* Flarum's dropdown layer (1030), so a post-actions or
+// translate menu opens over the dock instead of under it. Deliberately not
+// `--z-dropdown`, which is the popups' own layer and sits above modals.
+@affordance-z: ~"calc(var(--zindex-dropdown, 1030) - 1)";
 @affordance-dock-gap: 10px;
 
 .reply-dock-surface() {
