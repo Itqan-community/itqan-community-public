@@ -18,13 +18,6 @@ itqan-theme:
     settings:
       heading: Appearance
 
-    reply_dock:
-      placeholder: Write a reply…
-      accessible_label: Write a reply to the discussion
-
-    new_discussion:
-      accessible_label: Start a new discussion
-
     lightbox:
       title: Image viewer
       open: Open image full screen

@@ -8,7 +8,6 @@ import classList from 'flarum/common/utils/classList';
 
 import ThemeSwitcher, { ICONS } from './components/ThemeSwitcher';
 import addImageLightbox from './addImageLightbox';
-import addReplyAffordances from './addReplyAffordances';
 import { MODES, boot, currentMode, setMode } from './utils/scheme';
 
 export { default as ThemeSwitcher } from './components/ThemeSwitcher';
@@ -19,7 +18,6 @@ export * from './utils/scheme';
 app.initializers.add('itqan-theme', () => {
   boot();
   addImageLightbox();
-  addReplyAffordances();
 
   // Next to search and notifications: the same place the language selector
   // lives, which is the closest existing analogue to this control.

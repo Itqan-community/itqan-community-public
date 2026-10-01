@@ -18,13 +18,6 @@ itqan-theme:
     settings:
       heading: المظهر
 
-    reply_dock:
-      placeholder: اكتب تعليقًا على الموضوع…
-      accessible_label: اكتب ردًا على الموضوع
-
-    new_discussion:
-      accessible_label: بدء موضوع جديد
-
     lightbox:
       title: عارض الصور
       open: فتح الصورة بملء الشاشة
