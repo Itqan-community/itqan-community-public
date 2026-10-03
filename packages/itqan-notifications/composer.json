@@ -1,9 +1,11 @@
 {
     "name": "itqan/flarum-notifications",
-    "description": "Itqan community notifications — do-not-disturb toggle and per-tag notification channel preferences",
+    "description": "Itqan community notifications — do-not-disturb, reply alerts, and per-tag notification channel preferences",
     "keywords": [
         "flarum",
         "notifications",
+        "replies",
+        "dnd",
         "tags",
         "email"
     ],
@@ -17,6 +19,7 @@
     ],
     "require": {
         "flarum/core": "^1.8.0",
+        "flarum/subscriptions": "*",
         "flarum/tags": "^1.8.0"
     },
     "autoload": {
@@ -38,5 +41,8 @@
                 "askvortsov-pwa"
             ]
         }
+    },
+    "scripts": {
+        "build": "cd js && npm run build"
     }
 }

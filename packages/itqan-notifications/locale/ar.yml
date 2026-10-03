@@ -27,6 +27,8 @@ itqan-notifications:
     notifications:
       discussion_replied_text: "رد {username} على نقاشك"
       comment_replied_text: "رد {username} على تعليقك"
+    settings:
+      notify_discussion_replied_label: يرد أحد على نقاش بدأته
 
   email:
     discussion_replied:
