@@ -77,6 +77,8 @@ foreach ($found as $name => $id) {
 out('');
 
 $installed = json_decode(file_get_contents($base.'/vendor/composer/installed.json'), true);
+$rootComposer = json_decode(file_get_contents($base.'/composer.json'), true);
+$required = array_keys($rootComposer['require'] ?? []);
 $byName = [];
 
 foreach ($installed['packages'] as $package) {
@@ -101,6 +103,16 @@ foreach (glob($base.'/packages/itqan-*', GLOB_ONLYDIR) as $dir) {
     }
 
     if (($conf['type'] ?? null) !== 'flarum-extension') {
+        continue;
+    }
+
+    // A package directory that the root project does not require is not
+    // installed. itqan-reactions is leftover source and is not part of the
+    // committed vendor tree; failing CI on it would demand registering an
+    // extension the forum does not ship.
+    if (! in_array($name, $required, true)) {
+        out("SKIP $name (not required by the root composer.json)");
+
         continue;
     }
 
