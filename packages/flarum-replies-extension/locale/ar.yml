@@ -1,0 +1,78 @@
+mtareq-nested-replies:
+  admin:
+    settings:
+      enabled_label: تفعيل الردود المتداخلة
+      max_depth_label: أقصى عمق للتداخل
+      show_votes_label: عرض شريط التصويت
+      show_reply_tag_label: 'إظهار علامة "رد على"'
+      show_replied_indicator_label: 'إظهار مؤشر "تم الرد على هذا"'
+      like_color_label: لون الإعجاب (نشط)
+      start_at_first_post_label: بدء النقاشات عند المشاركة الأولى
+      visible_replies_label: الردود المعروضة لكل مستوى قبل طي الباقي
+      show_scrubber_label: عرض شريط التمرير
+      reply_form_label: نموذج الرد
+      reply_form_quick: رد سريع
+      reply_form_composer: المحرر الكامل
+      highlight_color_label: لون تمييز الرد الجديد
+      legacy_mentions_label: تداخل الردود القديمة
+  forum:
+    collapse: طي الردود
+    expand: توسيع الردود
+    upvote: تصويت إيجابي
+    downvote: تصويت سلبي
+    vote_own_post: لا يمكنك التصويت على مشاركتك
+    reply_to: "الرد على {username}"
+    more_replies: "{count} ردود إضافية"
+    show_more_replies: عرض المزيد من الردود
+    reply_link: رد
+    heading_count: "{count} تعليقًا"
+    sort_label: "الترتيب"
+    sort_by: "ترتيب حسب:"
+    sort_oldest: الأقدم
+    sort_newest: الأحدث
+    sort_top: الأعلى
+    sort_replies: الأكثر ردوداً
+    sort_loading: جاري التحميل...
+    reply_form_placeholder: "الرد على {username}."
+    reply_form_placeholder_op: "اكتب رداً."
+    reply_form_write: كتابة
+    reply_form_preview: معاينة
+    reply_form_bold: عريض
+    reply_form_italic: مائل
+    reply_form_quote: اقتباس
+    reply_form_link: رابط
+    reply_form_submit: إرسال الرد
+    edit_form_submit: حفظ التعديل
+    reply_form_cancel: إلغاء
+    reply_form_replying: "جارِ الرد على {username}"
+    reply_form_error: لم نتمكن من نشر ردك. يرجى المحاولة مرة أخرى.
+    reply_form_discard: هل تريد تجاهل الرد كمسودة؟
+    reply_form_discard_title: تجاهل المسودة
+    reply_form_discard_confirm: تجاهل ومتابعة
+    delete_post_title: حذف المشاركة
+    delete_post_forever_title: حذف نهائي
+    delete_discussion_title: حذف النقاش
+    delete_discussion_forever_title: حذف النقاش نهائياً
+    hide_discussion_confirmation: إخفاء هذا النقاش؟
+
+core:
+  forum:
+    index_sort:
+      votes_button: الأعلى
+      replies_button: الأكثر ردوداً
+
+datlechin-copy-links:
+  forum:
+    copy_link_button: نسخ الرابط
+    link_copied_message: تم نسخ الرابط!
+
+fof-oauth:
+  forum:
+    log_in:
+      with_twitter_button: الدخول باستخدام X
+      with_button: الدخول باستخدام {provider}
+
+fof-share-social:
+  lib:
+    networks:
+      twitter: X

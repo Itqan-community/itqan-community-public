@@ -1,0 +1,35 @@
+{
+    "name": "itqan/flarum-reactions",
+    "description": "Emoji reactions on posts for the Itqan community (separate from vote ranking)",
+    "keywords": ["flarum", "reactions", "emoji"],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\Reactions\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Reactions",
+            "category": "feature",
+            "icon": {
+                "name": "far fa-smile",
+                "color": "#ffffff",
+                "backgroundColor": "#064e3b"
+            }
+        }
+    },
+    "scripts": {
+        "build": "cd js && npm run build"
+    }
+}
