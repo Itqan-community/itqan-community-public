@@ -10,6 +10,17 @@
 // Extension stylesheets are appended after the Custom LESS from Appearance,
 // so this replaces the `body` rule there rather than competing with it. The
 // only change is the fallback face between Noto and the generic family.
+//
+// `html` is included because anything that resolves a font against the root —
+// `rem`-adjacent measurement, elements portalled outside `body`, and the
+// computed style tooling we audit with — otherwise falls back to the browser's
+// default serif. The stack is also published as a token so components can name
+// it rather than repeating it.
+:root {
+  --font-arabic: 'Noto Sans Arabic', 'Noto Sans Arabic Fallback', sans-serif;
+}
+
+html,
 body {
-  font-family: 'Noto Sans Arabic', 'Noto Sans Arabic Fallback', sans-serif;
+  font-family: var(--font-arabic);
 }

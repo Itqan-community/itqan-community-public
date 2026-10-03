@@ -58,10 +58,26 @@ PATCH /api/posts/{id}/vote
 
 وتضيف الإضافة إلى `PostSerializer`: `votes` النتيجة، و`userVote` صوت القارئ نفسه، و`canVote`.
 
+## واجهة الـAPI — شجرة التعليقات
+
+```
+GET /api/discussions/{id}?page[limit]=20&sort=oldest|latest|top
+GET /api/discussions/{id}/comment-tree?page[offset]=N&page[limit]=20&sort=...
+GET /api/posts/{id}/replies?page[offset]=N&page[limit]=20&sort=...
+```
+
+الوحدة هي **التعليقات الجذرية** فقط؛ كل جذر يُحمَّل مع شجرة ردود محدودة العمق/العدد، والباقي عبر «متابعة هذا النقاش».
+
 ## التطوير
 
 ```bash
 cd packages/itqan-discussions/js
 npm install
 npm run build
+```
+
+اختبار التحميل/الترقيم/التفاعلات:
+
+```bash
+node test/stream.e2e.js
 ```

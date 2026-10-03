@@ -1,0 +1,35 @@
+// ---------------------------------------------------------------------------
+// Post page — DiscussionHero
+// ---------------------------------------------------------------------------
+//
+// Keep tag-driven hero colours (core sets background/color from the primary
+// tag). Only tighten title wrapping so phone titles are not squeezed (B14).
+
+.DiscussionPage .DiscussionHero {
+  margin: 0;
+  // Do not set background/color — production uses the tag's colour + contrast.
+
+  .container {
+    max-width: 100%;
+  }
+}
+
+.DiscussionPage .DiscussionHero-title {
+  // Full column width — never the ~249px squeeze measured on phone.
+  max-width: 100%;
+  width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  @media @phone {
+    font-size: var(--fs-title-lg);
+  }
+
+  @media (max-width: 380px) {
+    font-size: var(--fs-title);
+  }
+}
+
+// DiscussionPage-nav / scrubber: leave core + theme parity layout alone so
+// Reply/Follow and the scrubber match production. Do not restyle into an
+// icon-only 48px rail.

@@ -1,0 +1,150 @@
+// ---------------------------------------------------------------------------
+// Post page — the opening post
+// ---------------------------------------------------------------------------
+//
+// The only card on the page. Making it the sole elevated surface is what gives
+// it hierarchy — no extra decoration is needed, and every comment below can
+// then be quiet.
+
+.PostStream-item[data-number='1'],
+.PostStream-item:has(.CommentPost[data-is-op='true']) {
+  margin-bottom: var(--sp-16);
+
+  .CommentPost {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-xl);
+    box-shadow: var(--elev-1);
+
+    // Marks the anchor post. `overflow: hidden` above keeps it inside the
+    // radius; dropdowns inside the card are portalled by core so they are not
+    // clipped by it.
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 3px;
+      background: var(--accent);
+    }
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      padding: var(--sp-24);
+      box-sizing: border-box;
+
+      @media @phone {
+        padding: var(--sp-16);
+      }
+    }
+
+    // A larger avatar and a larger name: the author of the thread outranks a
+    // replier, and that should be legible before reading a word.
+    .Post-header {
+      margin-bottom: var(--sp-16);
+
+      .PostUser-avatar,
+      .PostUser-name .Avatar {
+        width: var(--avatar-hero);
+        height: var(--avatar-hero);
+        min-width: var(--avatar-hero);
+        line-height: var(--avatar-hero);
+        font-size: var(--fs-title-sm);
+        --size: var(--avatar-hero);
+      }
+
+      .PostUser .username {
+        font-size: var(--fs-title-sm);
+        max-width: 28ch;
+      }
+    }
+
+    .Post-body {
+      font-size: var(--fs-body-lg);
+
+      // OP fills the card like production — do not apply the comment reading
+      // measure cap here (that stays on nested comments only).
+      > p,
+      > ul,
+      > ol,
+      > blockquote,
+      > h1,
+      > h2,
+      > h3,
+      > h4,
+      > h5,
+      > h6 {
+        max-width: none;
+      }
+    }
+  }
+
+  @media @phone {
+    margin-bottom: var(--sp-12);
+
+    .CommentPost {
+      border-radius: var(--r-lg);
+    }
+  }
+}
+
+// The metadata strip: replies, participants, views. Sits between the body and
+// the action bar, so the action bar still terminates the card.
+.itqan-op-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-6) var(--sp-16);
+  margin-top: var(--sp-20);
+  padding-top: var(--sp-12);
+  border-top: 1px solid var(--hairline);
+  font-size: var(--fs-ui-sm);
+  color: var(--text-muted);
+}
+
+.itqan-op-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+
+  .icon {
+    font-size: var(--fs-ui-sm);
+    color: var(--text-faint);
+  }
+
+  strong {
+    font-weight: var(--fw-semibold);
+    color: var(--text-default);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// The OP's action bar is the page's primary one, so it gets the larger density.
+.PostStream-item[data-number='1'] .CommentPost .Post-actions,
+.PostStream-item:has(.CommentPost[data-is-op='true']) .CommentPost .Post-actions {
+  --ctl-h: var(--ctl-h-lg);
+
+  margin-top: var(--sp-16);
+}
+
+// "OP" beside a name. Uses the brand tint rather than a literal blue so it
+// follows the admin's primary colour and both schemes.
+.itqan-op-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--sp-6);
+  font-size: var(--fs-ui-xs);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--r-pill);
+}
