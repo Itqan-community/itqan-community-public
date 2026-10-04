@@ -308,6 +308,8 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
             'Itqan\\MailerLite\\' => 17,
             'Itqan\\Discussions\\' => 18,
             'Itqan\\ComposerTools\\' => 20,
+            'Itqan\\Llms\\' => 11,
+            'Itqan\\PreviewCards\\' => 19,
             'Irmmr\\RTLCss\\' => 13,
             'Irmmr\\FlarumRtlSupport\\' => 23,
             'Intervention\\Image\\' => 19,
@@ -937,6 +939,14 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'Itqan\\ComposerTools\\' =>
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-composer-tools/src',
+        ),
+        'Itqan\\Llms\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/packages/itqan-llms/src',
+        ),
+        'Itqan\\PreviewCards\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/packages/itqan-preview-cards/src',
         ),
         'Irmmr\\RTLCss\\' =>
         array (
