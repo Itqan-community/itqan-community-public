@@ -30,7 +30,7 @@ export function readSettings(app) {
     showRepliedIndicator: Boolean(read('nestedRepliesShowRepliedIndicator', true)),
     likeColor: String(read('nestedRepliesLikeColor', '#ff4500')),
     startAtFirstPost: Boolean(read('nestedRepliesStartAtFirstPost', true)),
-    visibleReplies: Number(read('nestedRepliesVisibleReplies', 1)) || 1,
+    visibleReplies: Number(read('nestedRepliesVisibleReplies', 2)) || 2,
     showScrubber: Boolean(read('nestedRepliesShowScrubber', true)),
     replyForm: read('nestedRepliesReplyForm', 'quick') === 'composer' ? 'composer' : 'quick',
     highlightColor: String(read('nestedRepliesHighlightColor', '#00c853')),
