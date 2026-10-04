@@ -13,7 +13,7 @@ const defaults = {
   showRepliedIndicator: true,
   likeColor: '#ff4500',
   startAtFirstPost: true,
-  visibleReplies: 2,
+  visibleReplies: 1,
   showScrubber: true,
   replyForm: 'quick',
   highlightColor: '#00c853',
