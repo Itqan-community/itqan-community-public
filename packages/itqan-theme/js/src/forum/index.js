@@ -1,17 +1,20 @@
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
 import HeaderSecondary from 'flarum/forum/components/HeaderSecondary';
+import SessionDropdown from 'flarum/forum/components/SessionDropdown';
 import SettingsPage from 'flarum/forum/components/SettingsPage';
 import FieldSet from 'flarum/common/components/FieldSet';
 import Button from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
 
 import ThemeSwitcher, { ICONS } from './components/ThemeSwitcher';
+import PwaInstallPrompt from './components/PwaInstallPrompt';
 import addImageLightbox from './addImageLightbox';
 import addReplyAffordances from './addReplyAffordances';
 import { MODES, boot, currentMode, setMode } from './utils/scheme';
 
 export { default as ThemeSwitcher } from './components/ThemeSwitcher';
+export { default as PwaInstallPrompt } from './components/PwaInstallPrompt';
 export { default as ImageLightbox } from './components/ImageLightbox';
 export { default as addImageLightbox } from './addImageLightbox';
 export * from './utils/scheme';
@@ -25,6 +28,19 @@ app.initializers.add('itqan-theme', () => {
   // lives, which is the closest existing analogue to this control.
   extend(HeaderSecondary.prototype, 'items', function (items) {
     items.add('itqanTheme', <ThemeSwitcher />, 25);
+  });
+
+  extend(SessionDropdown.prototype, 'items', function (items) {
+    items.add(
+      'pwaInstall',
+      <Button
+        icon="fas fa-mobile-alt"
+        onclick={() => PwaInstallPrompt.openModal()}
+      >
+        تثبيت التطبيق
+      </Button>,
+      -10
+    );
   });
 
   // The header control is the fast path; this is where a reader looks when
@@ -48,6 +64,20 @@ app.initializers.add('itqan-theme', () => {
         </div>
       </FieldSet>,
       5
+    );
+
+    items.add(
+      'itqanPwa',
+      <FieldSet className="Settings-pwa" label="تطبيق مجتمع إتقان">
+        <Button
+          className="Button Button--primary"
+          icon="fas fa-download"
+          onclick={() => PwaInstallPrompt.openModal()}
+        >
+          تثبيت التطبيق على جهازك
+        </Button>
+      </FieldSet>,
+      4
     );
   });
 });

@@ -92,12 +92,15 @@
 // ---------------------------------------------------------------------------
 
 .ReplyDock--bar {
+  position: fixed;
   inset-inline: 0;
+  bottom: 0;
   bottom: ~"calc(var(--mobile-tab-height, 0px) + env(safe-area-inset-bottom, 0px))";
   padding: var(--sp-10, 10px) var(--sp-16, 16px);
   border-inline: 0;
   border-radius: 0;
   box-shadow: 0 -6px 18px fade(#000, 7%);
+  z-index: 999;
 
   // Wide screens open the original post's composer inline instead.
   @media @tablet-up {
