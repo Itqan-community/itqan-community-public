@@ -23,13 +23,14 @@ export default class NestedRepliesQuickReply extends Component {
     this.uploadingImage = true;
     this.redraw();
 
-    const data = new FormData();
-    data.append('files[]', file);
+    const body = new FormData();
+    body.append('files[]', file);
 
     app.request({
       method: 'POST',
       url: app.forum.attribute('apiUrl') + '/fof/upload',
-      data,
+      serialize: (raw) => raw,
+      body,
     })
     .then((response) => {
       this.uploadingImage = false;
