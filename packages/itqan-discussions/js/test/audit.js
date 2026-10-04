@@ -13,8 +13,8 @@ const arg = (name, fallback) => {
 };
 
 const FORUM = process.env.FORUM || 'http://localhost:8080';
-const USER = process.env.ADMIN_USER || 'Amr-Bendary';
-const PASS = process.env.ADMIN_PASS || 'LocalTest123!';
+const USER = process.env.ADMIN_USER;
+const PASS = process.env.ADMIN_PASS;
 const CHROME =
   process.env.CHROME || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const targetPath = arg('path', '/d/734');

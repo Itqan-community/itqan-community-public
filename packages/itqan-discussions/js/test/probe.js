@@ -23,7 +23,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.app.session.csrfToken },
       credentials: 'include',
-      body: JSON.stringify({ identification: 'Amr-Bendary', password: 'LocalTest123!', remember: true }),
+      body: JSON.stringify({ identification: process.env.ADMIN_USER, password: process.env.ADMIN_PASS, remember: true }),
     });
   }, FORUM);
 

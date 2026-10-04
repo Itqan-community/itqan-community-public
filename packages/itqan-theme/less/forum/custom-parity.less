@@ -122,14 +122,15 @@ html[data-itqan-theme='dark'] body {
 .notify-popup {
   position: fixed;
   top: 20px;
-  right: 50%;
-  transform: translateX(50%);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
   background: #fff;
   color: #000;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   padding: 30px;
-  width: 90%;
+  width: 90vw;
   max-width: 400px;
   text-align: center;
   opacity: 0;
@@ -138,7 +139,7 @@ html[data-itqan-theme='dark'] body {
 
   &.visible {
     opacity: 1;
-    transform: translateX(50%) translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
 
   .notify-popup-content {
@@ -443,8 +444,13 @@ html[data-itqan-theme='dark'] {
 // Mobile Composer Positioning
 @media (max-width: 767.98px) {
   .Composer:not(.minimized) {
-    top: unset !important;
-    bottom: 52px !important;
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    max-height: 100dvh !important;
+    max-height: -webkit-fill-available !important;
+    z-index: 1001 !important;
   }
 
   .ComposerBody-editor .TextEditor-controls .item-submit {
@@ -460,7 +466,26 @@ html[data-itqan-theme='dark'] {
     button {
       gap: 4px;
       color: white !important;
+    }
+  }
 
+  // The media manager (fof/upload, opened from the composer) tunes its header
+  // against a desktop-width file list. On phones the tab strip's negative
+  // margins fold it over the header, and the body's fixed `100vh - 122px`
+  // height pushes the OK/Cancel footer off the bottom edge.
+  .fof-file-manager-modal {
+    .LibrarySelection {
+      margin-bottom: 0;
+      padding: 0;
+    }
+
+    // `.Modal-content` in the selector: fof's own mobile rule sets
+    // `max-height: unset` at the same specificity, so the extra class is what
+    // lets this win without an `!important`.
+    .Modal-content .Modal-body {
+      // Escaped: Less would otherwise evaluate `100vh - 158px` itself and
+      // emit `calc(-58vh)`.
+      max-height: ~"calc(100vh - 158px)";
     }
   }
 }

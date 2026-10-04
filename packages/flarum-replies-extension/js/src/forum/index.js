@@ -3,13 +3,16 @@ import Link from 'flarum/common/components/Link';
 import app from 'flarum/forum/app';
 import icon from 'flarum/common/helpers/icon';
 import Button from 'flarum/common/components/Button';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Post from 'flarum/forum/components/Post';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
 import PostControls from 'flarum/forum/utils/PostControls';
 import Composer from 'flarum/forum/components/Composer';
 import PostStream from 'flarum/forum/components/PostStream';
+import PostStreamScrubber from 'flarum/forum/components/PostStreamScrubber';
 import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
+import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 import Stream from 'flarum/common/utils/Stream';
 import { withFirstPostInclude } from './utils/listParams';
@@ -22,9 +25,135 @@ import CollapseToggle from './components/CollapseToggle';
 import MoreReplies from './components/MoreReplies';
 import NestedRepliesInlineReply from './components/NestedRepliesInlineReply';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
+import { formatArabicPlural } from './utils/arabicPlural';
 
 app.initializers.add('mtareq-nested-replies', () => {
   const settings = readSettings(app);
+
+  // ---------------------------------------------------------------------------
+  // Tree-aware scrubber
+  // ---------------------------------------------------------------------------
+  // Core's PostStreamScrubber is driven by the stream's number-ordered
+  // index/count, while our DOM is tree-ordered (a reply sits under its parent).
+  // Hand the scrubber a stream-shaped facade over the RENDERED order so its
+  // handle, unread marker and click/drag navigation line up with the view.
+  let treeScrollCache = null;
+
+  function invalidateTreeScrollCache() {
+    treeScrollCache = null;
+  }
+
+  function treeItems() {
+    if (treeScrollCache && treeScrollCache.items) return treeScrollCache.items;
+
+    const root = document.querySelector('.PostStream');
+    const items = root
+      ? Array.from(root.querySelectorAll('.PostStream-item')).filter((el) => el.getAttribute('data-id') != null)
+      : [];
+
+    treeScrollCache = { items, tops: null };
+    return items;
+  }
+
+  function treeTops(items) {
+    if (!treeScrollCache.tops || treeScrollCache.tops.length !== items.length) {
+      treeScrollCache.tops = items.map((el) => el.getBoundingClientRect().top + window.pageYOffset);
+    }
+    return treeScrollCache.tops;
+  }
+
+  // 0-based rendered index of the item at the top of the viewport.
+  function renderedIndex() {
+    const items = treeItems();
+    if (!items.length) return 0;
+
+    const tops = treeTops(items);
+    const y = window.pageYOffset + 1;
+    let lo = 0;
+    let hi = items.length - 1;
+    let ans = 0;
+
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+
+      if (tops[mid] <= y) {
+        ans = mid;
+        lo = mid + 1;
+      } else {
+        hi = mid - 1;
+      }
+    }
+
+    return ans;
+  }
+
+  function visibleCount() {
+    const items = treeItems();
+    if (!items.length) return 1;
+
+    const tops = treeTops(items);
+    const top = window.pageYOffset;
+    const bottom = top + window.innerHeight;
+    let n = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      if (tops[i] < bottom && tops[i] + items[i].offsetHeight > top) n++;
+    }
+
+    return Math.max(1, n);
+  }
+
+  function scrollToRendered(i) {
+    const items = treeItems();
+    if (!items.length) return;
+
+    const el = items[Math.max(0, Math.min(Math.floor(i), items.length - 1))];
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' });
+  }
+
+  function makeTreeStream(real) {
+    let dragIndex = null;
+
+    return {
+      discussion: real.discussion,
+      loadPromise: Promise.resolve(),
+      forceUpdateScrubber: false,
+      // Keep it "unpaused": core's updateScrubberValues bails on scroll while paused.
+      paused: false,
+      description: '',
+      disabled: () => false,
+      count: () => Math.max(1, treeItems().length),
+      sanitizeIndex: (i) => Math.max(0, Math.min(i, treeItems().length)),
+      get index() {
+        return dragIndex != null ? dragIndex : renderedIndex();
+      },
+      set index(v) {
+        dragIndex = v;
+      },
+      goToFirst() {
+        dragIndex = null;
+        scrollToRendered(0);
+      },
+      goToLast() {
+        dragIndex = null;
+        scrollToRendered(treeItems().length - 1);
+      },
+      goToIndex(i) {
+        dragIndex = null;
+        scrollToRendered(i);
+      },
+    };
+  }
+
+  override(PostStreamScrubber.prototype, 'oninit', function (original, vnode) {
+    const stream = vnode.attrs && vnode.attrs.stream;
+
+    if (stream && stream.discussion) {
+      vnode.attrs.stream = makeTreeStream(stream);
+    }
+
+    return original(vnode);
+  });
 
   // The scrubber setting is independent of the master switch.
   if (typeof document !== 'undefined' && document.documentElement) {
@@ -70,10 +199,23 @@ app.initializers.add('mtareq-nested-replies', () => {
   let refreshing = false;
   let currentDiscussion = null;
   let pendingParentId = null;
+  // Deep-link target (`/d/<id>/<near>`) captured before core resolves it, and a
+  // one-shot flag so we re-apply the scroll exactly once per discussion.
+  let deepLinkNear = null;
+  let deepLinkApplied = false;
+  // One-shot flag: re-arm core's scroll once the tree has replaced the stream.
+  let scrollReapplied = false;
+  // One-shot flag: pull the loading spinner into view when a discussion opens.
+  let loadingScrollDone = false;
 
   // The open in-card reply form, and the draft it holds (shared so a target
   // switch can warn before discarding).
   let inlineReply = null;
+  // A *native* reply composer (the sticky bar, a restored reply box) carries no
+  // id we can see in hide(). Remember the discussion and
+  // the newest post at the moment it opened, so hide() can tell a posted reply
+  // from a cancel and focus the new one.
+  let nativeReply = null;
   const inlineDraft = Stream('');
   // Whether the embedded composer is showing the rendered preview instead of
   // the editor (toggled by the composer's eye control).
@@ -380,6 +522,29 @@ app.initializers.add('mtareq-nested-replies', () => {
     });
   }
 
+  // Remember what the discussion looked like when a *native* reply composer was
+  // opened, so hide() can tell a posted reply from a cancel. Captured on show(),
+  // not load(): a second reply in the same visit reuses the composer instance
+  // (core keeps the body after hide), so load() is not called again.
+  if (app.composer && typeof app.composer.show === 'function') {
+    const originalShow = app.composer.show;
+
+    app.composer.show = function (...args) {
+      const body = this.body;
+
+      if (!nativeReply && !isInlineComposer() && body && body.attrs && body.attrs.discussion && !body.attrs.post) {
+        const latest = latestPostIn(body.attrs.discussion);
+
+        nativeReply = {
+          discussion: body.attrs.discussion,
+          baselinePostId: latest && latest.id ? latest.id() : null,
+        };
+      }
+
+      return originalShow.apply(this, args);
+    };
+  }
+
   // A successful composer submit (and the shell's own close) calls
   // app.composer.hide(). The inline host renders inside a Post whose
   // SubtreeRetainer caches it, so the host's onupdate cannot observe the change;
@@ -397,6 +562,14 @@ app.initializers.add('mtareq-nested-replies', () => {
       // was actually posted; otherwise this was a cancel and nothing changed.
       const posted = Boolean(latest && latest.id && String(latest.id()) !== String(baselineId));
 
+      // The same question for a reply made through the native composer. Its post
+      // is in the store by now (the save resolved before hide() is called), so
+      // comparing the newest post with the baseline identifies it.
+      const latestNative = !wasInline && nativeReply ? latestPostIn(nativeReply.discussion) : null;
+      const postedNative = Boolean(
+        latestNative && latestNative.id && String(latestNative.id()) !== String(nativeReply ? nativeReply.baselinePostId : null)
+      );
+
       const result = originalHide.apply(this, args);
 
       if (wasInline) {
@@ -411,6 +584,20 @@ app.initializers.add('mtareq-nested-replies', () => {
         } else {
           // Cancelled: clear the form without revealing or scrolling anywhere.
           forceRedraw();
+        }
+      } else if (nativeReply) {
+        const repliedTo = postedNative ? getParentId(latestNative, settings.legacyMentions) : null;
+
+        nativeReply = null;
+
+        if (postedNative) {
+          // Same treatment as the inline form: unfold the reply's ancestors,
+          // refetch the tree, then scroll the new reply into view and highlight
+          // it. Without this the composer's own stream.update()/goToNumber()
+          // lands on core's flat stream, which the tree has already replaced.
+          revealReply(repliedTo);
+          forceRedraw();
+          refreshTree(latestNative.id());
         }
       }
 
@@ -428,6 +615,79 @@ app.initializers.add('mtareq-nested-replies', () => {
       return 1;
     });
   }
+
+  // Capture the deep-link target (`/d/<id>/<near>`) BEFORE core resolves it.
+  // Core scrolls the native flat stream to `near`, but our tree then replaces
+  // that stream (loadAllPosts -> swap), which reflows the page and drops the
+  // viewport off the target. We re-apply the scroll once the tree is rendered.
+  override(DiscussionPage.prototype, 'oninit', function (original, vnode) {
+    const raw = m.route.param('near');
+    const parsed = raw && raw !== 'reply' ? parseInt(raw, 10) : NaN;
+
+    deepLinkNear = Number.isInteger(parsed) && parsed > 1 ? parsed : null;
+    deepLinkApplied = false;
+    scrollReapplied = false;
+    loadingScrollDone = false;
+
+    return original(vnode);
+  });
+
+  // Flarum's DiscussionPage lets the browser restore the pre-reload scroll
+  // (`useBrowserScrollRestoration = true` -> `history.scrollRestoration = 'auto'`),
+  // which lands you mid-page over the not-yet-rendered stream and fights our
+  // loader/target scrolling. Force manual restoration for discussions so our own
+  // scroll is the only movement.
+  override(DiscussionPage.prototype, 'oncreate', function (original, vnode) {
+    const result = original(vnode);
+
+    if (typeof history !== 'undefined' && 'scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    return result;
+  });
+
+  // Wide screens (>= tablet) have no floating reply button. Instead, open the
+  // original post's reply form once when its discussion appears, so a reader can
+  // comment from the top. Phones keep the pinned `ReplyDock--bar` (itqan-theme)
+  // and open the form on demand, so this stays desktop-only.
+  //
+  // `onupdate` rather than `oncreate`: core only sets `this.discussion` after the
+  // API response lands, which is past the first render. A per-instance guard
+  // makes it one attempt per visit; a manual close stays closed, and a posted
+  // comment closes the form through the inline form's own `onSubmitted`.
+  extend(DiscussionPage.prototype, 'onupdate', function () {
+    const discussion = this.discussion;
+
+    if (!discussion) return;
+
+    const id = String(discussion.id());
+
+    if (this.opComposerFor === id) return;
+
+    // The extension loads every page into `allPosts` before the tree renders,
+    // and core's `discussion.firstPost()` is empty on this page, so take the
+    // original post from there. Until it arrives, try again on the next update.
+    const firstPost = allPosts && allPosts.length ? allPosts.find((post) => isOriginalPost(post)) : null;
+
+    if (!firstPost) return;
+
+    this.opComposerFor = id;
+
+    if (!window.matchMedia('(min-width: 768px)').matches) return;
+    if (!app.session.user) return;
+    if (typeof discussion.canReply === 'function' && !discussion.canReply()) return;
+    if (app.composer.isVisible() || inlineReply) return;
+
+    openInlineReply(firstPost);
+
+    // The tree may still be mid-render when this update runs, so the post that
+    // now holds the inline form could have computed its footer before the form
+    // existed. Nudge one more redraw once the frame settles.
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => forceRedraw());
+    }
+  });
 
   // Vote rail on the discussion list. It votes the discussion's first post — the
   // same model the details page votes — so the two views stay in sync.
@@ -664,7 +924,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort' }, [
         m('div.itqan-stream-toolbar-title', [
           m('i.icon.far.fa-comments'),
-          m('span', app.translator.trans('mtareq-nested-replies.forum.heading_count', { count }))
+          m('span', app.translator.locale === 'ar' || !app.translator.locale || app.translator.locale.startsWith('ar') ? formatArabicPlural(count, 'comment') : app.translator.trans('mtareq-nested-replies.forum.heading_count', { count }))
         ]),
         m('div.itqan-sort-segmented', { role: 'radiogroup', 'aria-label': app.translator.trans('mtareq-nested-replies.forum.sort_label') },
           options.map(([value, label, iconClass]) => m('button', {
@@ -738,6 +998,10 @@ app.initializers.add('mtareq-nested-replies', () => {
       allPosts = null;
       loadingAll = false;
       refreshing = false;
+      deepLinkApplied = false;
+      scrollReapplied = false;
+      loadingScrollDone = false;
+      invalidateTreeScrollCache();
       foldPlan = { hidden: new Set(), moreAfter: new Map() };
     }
 
@@ -747,7 +1011,29 @@ app.initializers.add('mtareq-nested-replies', () => {
 
     const vnode = original();
 
+    // Show a loader until every page has been fetched and the tree can render.
+    // Otherwise the native flat stream is rendered (and core scrolls it to the
+    // target), then replaced by the tree — the user sees a teleport.
+    if (allPosts === null) {
+      // On a reload the browser restores the previous (often mid-page) scroll,
+      // which leaves this loader above the viewport — an empty screen until the
+      // tree arrives. Pull the loader into view once per discussion so the user
+      // sees the spinner; the post-swap scroll then takes them to the target.
+      if (!loadingScrollDone) {
+        loadingScrollDone = true;
+        requestAnimationFrame(() => {
+          // Stay at the very top while loading (the spinner sits below the hero,
+          // and any earlier scroll offset would leave us over empty space).
+          window.scrollTo(0, 0);
+        });
+      }
+
+      return m('div.PostStream', vnode.attrs, m(LoadingIndicator));
+    }
+
     if (allPosts && allPosts.length) {
+      // The layout is about to change; the scrubber's DOM cache is stale.
+      invalidateTreeScrollCache();
       // The tree view renders the whole discussion from our own ordering, so
       // stop the native stream from paginating underneath it.
       if (this.stream) {
@@ -756,6 +1042,36 @@ app.initializers.add('mtareq-nested-replies', () => {
       }
 
       const { op, ordered } = buildReplyOrder(allPosts, sortMode);
+
+      // Deep-link: now that the tree owns the stream, reveal the target post's
+      // ancestors and re-arm core's scroll so it lands — and stays — on the
+      // target, instead of on wherever the native flat stream happened to be
+      // when we swapped it out.
+      if (!deepLinkApplied && deepLinkNear != null) {
+        const nearPost = allPosts.find((post) => Number(post.number()) === deepLinkNear);
+
+        if (nearPost) {
+          deepLinkApplied = true;
+
+          const parentId = getParentId(nearPost, settings.legacyMentions);
+          if (parentId) revealReply(parentId);
+
+          if (this.stream) {
+            this.stream.needsScroll = true;
+            this.stream.targetPost = { number: deepLinkNear };
+            this.stream.animateScroll = true;
+          }
+        }
+      }
+
+      // Core's native render consumed `needsScroll` before our tree existed, so
+      // re-arm its scroll once to target the tree — covers deep-links handled
+      // above, and resume-at-unread. Without this the target is lost on swap.
+      if (!scrollReapplied && this.stream && this.stream.targetPost) {
+        scrollReapplied = true;
+        this.stream.needsScroll = true;
+        this.stream.animateScroll = true;
+      }
 
       foldPlan = planSiblingFolding(ordered, {
         lookup,

@@ -205,13 +205,6 @@
   &[data-hidden="true"] {
     display: none;
   }
-
-  &[data-collapsed="true"] > .NestedRepliesPost-container {
-    .Post-body,
-    .Post-content {
-      display: none;
-    }
-  }
 }
 
 // Fade the "just posted" highlight out over three seconds. Only the background
@@ -871,6 +864,36 @@ a.NestedRepliesReplyTag {
     padding-right: 10px;
   }
 
+  // The inline composer's footer is core's `.TextEditor-controls.Composer-footer`
+  // list. Core lays its controls out as a single non-wrapping inline row, which
+  // runs the submit button and the formatting toolbar off the card's right edge.
+  // Wrap the row, centre what fits, and give the submit its own full-width line.
+  .NestedRepliesInlineComposer {
+    .TextEditor-controls.Composer-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .TextEditor-controls.Composer-footer > .item-submit.App-primaryControl {
+      flex: 100%;
+      order: 1;
+      // The submit also carries `.App-primaryControl`, which a global mobile
+      // rule lifts to `z-index: calc(var(--zindex-header) + 1)` (= 1001) so
+      // page controls sit above the fixed header. As a flex item this now
+      // applies even though the button is `position: static`, painting it over
+      // the fixed mobile tab bar (z-index 1000). Keep it in normal flow.
+      z-index: auto;
+    }
+
+    .TextEditor-controls.Composer-footer > .TextEditor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
   .NestedRepliesThreadCard,
   .NestedRepliesReplyCard {
     padding-inline: 8px;
@@ -1080,8 +1103,13 @@ a.NestedRepliesReplyTag {
 
 // Ensure the three-dot dropdown menu is not clipped by the card overflow and
 // positions itself correctly even at high nesting depths.
+// NOTE: keep core's dropdown stacking (`--zindex-dropdown`). A low z-index here
+// (it used to be `100`) sinks the menu below core's `.dropdown-backdrop`
+// (z-index ~1020), which on phones is a sibling inside the OPEN `.Dropdown` —
+// so the dim backdrop painted over the menu and it looked covered/disabled.
+// Card clipping is handled by the containers' `overflow`, not by z-index.
 .NestedRepliesPost .Dropdown-menu {
-  z-index: 100;
+  z-index: var(--zindex-dropdown);
   max-height: 300px;
   overflow-y: auto;
 }
