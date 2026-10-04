@@ -11,14 +11,14 @@ itqan-discussions:
     permalink_copied: "تم نسخ الرابط"
     new_chip: "جديد"
     list:
-      score: "{count} تصويت"
+      score: "{count, plural, zero {لا تصويتات} one {تصويت واحد} two {تصويتان} few {# تصويتات} many {# تصويتًا} other {# تصويت}}"
     vote:
       up: "تصويت إيجابي"
       down: "تصويت سلبي"
     tree:
       collapse: "طي"
       expand: "توسيع ({count})"
-      replies: "{count} ردود"
+      replies: "{count, plural, zero {لا ردود} one {رد واحد} two {ردان} few {# ردود} many {# ردًا} other {# رد}}"
       collapse_rail: "طي سلسلة الردود"
       expand_rail: "توسيع سلسلة الردود"
       last_activity: "تحديث {time}"
@@ -39,10 +39,10 @@ itqan-discussions:
       views: "مشاهدة"
     stream:
       heading: "النقاشات"
-      heading_count: "{count} تعليقًا"
+      heading_count: "{count, plural, zero {لا تعليقات} one {تعليق واحد} two {تعليقان} few {# تعليقات} many {# تعليقًا} other {# تعليق}}"
       load_more: "عرض المزيد من التعليقات"
       load_previous: "عرض التعليقات السابقة"
-      continue_thread: "عرض {count} ردود أخرى"
+      continue_thread: "{count, plural, one {عرض رد آخر} two {عرض ردين آخرين} few {عرض # ردود أخرى} many {عرض # ردًا آخر} other {عرض # رد آخر}}"
       loading: "جاري التحميل..."
       empty_title: "لا تعليقات هنا"
       empty_body: "كن أول من يرد."

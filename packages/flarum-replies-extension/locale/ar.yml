@@ -22,10 +22,10 @@ mtareq-nested-replies:
     downvote: تصويت سلبي
     vote_own_post: لا يمكنك التصويت على مشاركتك
     reply_to: "الرد على {username}"
-    more_replies: "{count} ردود إضافية"
+    more_replies: "{count, plural, one {رد إضافي واحد} two {ردان إضافيان} few {# ردود إضافية} many {# ردًا إضافيًا} other {# رد إضافي}}"
     show_more_replies: عرض المزيد من الردود
     reply_link: رد
-    heading_count: "{count} تعليقًا"
+    heading_count: "{count, plural, zero {لا تعليقات} one {تعليق واحد} two {تعليقان} few {# تعليقات} many {# تعليقًا} other {# تعليق}}"
     sort_label: "الترتيب"
     sort_by: "ترتيب حسب:"
     sort_oldest: الأقدم
