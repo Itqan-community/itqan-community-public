@@ -32,7 +32,7 @@ return [
     new Extend\Locales(__DIR__.'/locale'),
 
     (new Extend\Routes('forum'))
-        ->get('/og/d/{id:\d+}-{hash:[0-9a-f]+}.png', 'itqan-preview-cards.image', CardController::class),
+        ->get('/og/d/{id:\d+}-{hash:[0-9a-f]+}[.png]', 'itqan-preview-cards.image', CardController::class),
 
     (new Extend\Routes('api'))
         ->post('/itqan-preview-cards/logo', 'itqan-preview-cards.logo.upload', UploadCardLogoController::class)

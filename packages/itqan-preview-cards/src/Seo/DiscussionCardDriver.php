@@ -49,7 +49,8 @@ class DiscussionCardDriver implements PageDriverInterface
             return;
         }
 
-        $id = (int) ($request->getQueryParams()['id'] ?? 0);
+        $routeParams = (array) $request->getAttribute('routeParameters', []);
+        $id = (int) ($routeParams['id'] ?? $request->getQueryParams()['id'] ?? 0);
 
         if ($id <= 0) {
             return;

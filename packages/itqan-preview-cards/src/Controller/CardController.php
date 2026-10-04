@@ -38,9 +38,10 @@ class CardController implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $actor = RequestUtil::getActor($request);
+        $routeParams = (array) $request->getAttribute('routeParameters', []);
         $params = $request->getQueryParams();
-        $id = (int) ($params['id'] ?? 0);
-        $requestedHash = (string) ($params['hash'] ?? '');
+        $id = (int) ($routeParams['id'] ?? $params['id'] ?? 0);
+        $requestedHash = (string) ($routeParams['hash'] ?? $params['hash'] ?? '');
 
         $discussion = $id > 0 ? Discussion::whereVisibleTo($actor)->find($id) : null;
 

@@ -6,9 +6,13 @@ import icon from 'flarum/common/helpers/icon';
 let deferredPrompt = null;
 
 if (typeof window !== 'undefined') {
+  if (window.deferredInstallPrompt) {
+    deferredPrompt = window.deferredInstallPrompt;
+  }
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
+    window.deferredInstallPrompt = e;
   });
 }
 
@@ -27,15 +31,28 @@ export function isAppInstalled() {
 
 export default class PwaInstallPrompt extends Component {
   static openModal() {
+    const promptEvent = deferredPrompt || (typeof window !== 'undefined' ? window.deferredInstallPrompt : null);
+    if (promptEvent) {
+      promptEvent.prompt();
+      promptEvent.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          deferredPrompt = null;
+          if (typeof window !== 'undefined') window.deferredInstallPrompt = null;
+        }
+      });
+      return;
+    }
     app.modal.show(PwaInstallPrompt);
   }
 
   install() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
+    const promptEvent = deferredPrompt || (typeof window !== 'undefined' ? window.deferredInstallPrompt : null);
+    if (promptEvent) {
+      promptEvent.prompt();
+      promptEvent.userChoice.then((choiceResult) => {
         if (choiceResult.outcome === 'accepted') {
           deferredPrompt = null;
+          if (typeof window !== 'undefined') window.deferredInstallPrompt = null;
         }
         app.modal.close();
       });
@@ -45,6 +62,7 @@ export default class PwaInstallPrompt extends Component {
   view() {
     const installed = isAppInstalled();
     const ios = isIosSafari();
+    const promptEvent = deferredPrompt || (typeof window !== 'undefined' ? window.deferredInstallPrompt : null);
 
     return (
       <div className="Modal modal-dialog PwaInstallModal">
@@ -69,7 +87,7 @@ export default class PwaInstallPrompt extends Component {
                   <li>اضغط على <strong>"إضافة" (Add)</strong> في أعلى الشاشة.</li>
                 </ol>
               </div>
-            ) : deferredPrompt ? (
+            ) : promptEvent ? (
               <div>
                 <p style="margin-bottom: 20px;">استمتع بتجربة أسرع وتصفح أسهل بتثبيت التطبيق على جهازك.</p>
                 <Button
@@ -82,8 +100,13 @@ export default class PwaInstallPrompt extends Component {
                 </Button>
               </div>
             ) : (
-              <div>
-                <p style="margin-bottom: 15px;">يمكنك إضافة تطبيق مجتمع إتقان للشاشة الرئيسية من خيارات المتصفح (القائمة ⋮ ⟵ إضافه إلى الشاشة الرئيسية).</p>
+              <div className="PwaInstall-android-guide" style="padding: 10px 0;">
+                <p style="font-weight: bold; margin-bottom: 15px;">لتثبيت التطبيق على جهاز أندرويد (Chrome / Brave):</p>
+                <ol style="text-align: start; line-height: 1.8; margin: 0 auto; max-width: 320px; font-size: 0.95rem;">
+                  <li>افتح قائمة المتصفح <strong>⋮ (النقاط الثلاث)</strong> في الأعلى.</li>
+                  <li>اختر <strong>"إضافة إلى الشاشة الرئيسية" 📲</strong> (أو "تثبيت التطبيق").</li>
+                  <li>تأكيد التثبيت بالضغط على <strong>"إضافة"</strong>.</li>
+                </ol>
               </div>
             )}
           </div>

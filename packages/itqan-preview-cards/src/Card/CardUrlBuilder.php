@@ -20,7 +20,7 @@ class CardUrlBuilder
 
     public function path(CardData $data): string
     {
-        return '/og/d/'.$data->discussionId.'-'.$this->hash($data).'.png';
+        return '/og/d/'.$data->discussionId.'-'.$this->hash($data);
     }
 
     public function absolute(CardData $data): string
