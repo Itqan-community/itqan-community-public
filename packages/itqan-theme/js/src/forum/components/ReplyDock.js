@@ -27,27 +27,12 @@ export default class ReplyDock extends Component {
     if (!this.canReply()) return;
 
     const discussion = this.attrs.discussion;
-    import('flarum/forum/utils/DiscussionControls').then((module) => {
-      const DiscussionControls = module.default;
-      if (DiscussionControls && typeof DiscussionControls.replyAction === 'function') {
-        DiscussionControls.replyAction.call(discussion);
-      }
-    }).catch(() => {
-      if (app.composer && typeof app.composer.show === 'function') {
-        app.composer.show();
-      }
-    });
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const target = document.querySelector('.NestedRepliesInlineReply') || document.querySelector('.NestedRepliesQuickReply') || document.querySelector('.PostStream-item');
-        if (target) {
-          if (target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          const input = target.querySelector ? (target.querySelector('textarea') || target) : null;
-          if (input && input.focus) input.focus();
-        }
-      });
-    });
+    if (!app.composer.composingReplyTo(discussion)) {
+      app.composer.load(ReplyComposer, { user: app.session.user, discussion });
+    }
+
+    app.composer.show();
   }
 
   view() {

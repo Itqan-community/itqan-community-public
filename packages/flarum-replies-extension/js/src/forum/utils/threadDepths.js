@@ -140,7 +140,7 @@ export function isHidden(post, collapsedSet, getPostById, legacyMentions = false
 export function planSiblingFolding(posts, options = {}) {
   const list = Array.isArray(posts) ? posts.filter(Boolean) : [];
   const lookup = typeof options.lookup === 'function' ? options.lookup : () => null;
-  const visibleReplies = Math.max(1, Number(options.visibleReplies) || 2);
+  const visibleReplies = Math.max(1, Number(options.visibleReplies) || 1);
   const expanded = options.expandedParents instanceof Set ? options.expandedParents : new Set();
   const legacyMentions = options.legacyMentions === true;
 

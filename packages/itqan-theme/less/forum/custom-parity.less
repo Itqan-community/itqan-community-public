@@ -122,15 +122,14 @@ html[data-itqan-theme='dark'] body {
 .notify-popup {
   position: fixed;
   top: 20px;
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
+  right: 50%;
+  transform: translateX(50%);
   background: #fff;
   color: #000;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   padding: 30px;
-  width: 90vw;
+  width: 90%;
   max-width: 400px;
   text-align: center;
   opacity: 0;
@@ -139,7 +138,7 @@ html[data-itqan-theme='dark'] body {
 
   &.visible {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(50%) translateY(0);
   }
 
   .notify-popup-content {
@@ -444,13 +443,8 @@ html[data-itqan-theme='dark'] {
 // Mobile Composer Positioning
 @media (max-width: 767.98px) {
   .Composer:not(.minimized) {
-    position: fixed !important;
-    inset: auto 0 0 0 !important;
-    bottom: 0 !important;
-    top: auto !important;
-    max-height: 100dvh !important;
-    max-height: -webkit-fill-available !important;
-    z-index: 1001 !important;
+    top: unset !important;
+    bottom: 52px !important;
   }
 
   .ComposerBody-editor .TextEditor-controls .item-submit {

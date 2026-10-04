@@ -25,7 +25,6 @@ import CollapseToggle from './components/CollapseToggle';
 import MoreReplies from './components/MoreReplies';
 import NestedRepliesInlineReply from './components/NestedRepliesInlineReply';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
-import { formatArabicPlural } from './utils/arabicPlural';
 
 app.initializers.add('mtareq-nested-replies', () => {
   const settings = readSettings(app);
@@ -924,7 +923,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort' }, [
         m('div.itqan-stream-toolbar-title', [
           m('i.icon.far.fa-comments'),
-          m('span', app.translator.locale === 'ar' || !app.translator.locale || app.translator.locale.startsWith('ar') ? formatArabicPlural(count, 'comment') : app.translator.trans('mtareq-nested-replies.forum.heading_count', { count }))
+          m('span', app.translator.trans('mtareq-nested-replies.forum.heading_count', { count }))
         ]),
         m('div.itqan-sort-segmented', { role: 'radiogroup', 'aria-label': app.translator.trans('mtareq-nested-replies.forum.sort_label') },
           options.map(([value, label, iconClass]) => m('button', {
