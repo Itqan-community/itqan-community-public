@@ -18150,6 +18150,68 @@
                 "relative": true
             },
             "install-path": "../itqan/flarum-notifications"
+        },
+        {
+            "name": "itqan/flarum-llms",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-llms",
+                "reference": "main"
+            },
+            "require": {
+                "php": "^8.0",
+                "flarum/core": "^1.8.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan LLMs",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fas fa-robot",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-llms"
+        },
+        {
+            "name": "itqan/flarum-preview-cards",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-preview-cards",
+                "reference": "main"
+            },
+            "require": {
+                "flarum/core": "^1.8.0",
+                "v17development/flarum-seo": "*"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Preview Cards",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fas fa-image",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/flarum-preview-cards"
         }
     ],
     "dev": true,
