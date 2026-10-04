@@ -714,42 +714,24 @@ a.NestedRepliesReplyTag {
   &-toolbar {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 4px;
-    padding: 4px 8px;
+    gap: 2px;
+    padding: 2px 8px 6px;
     border-top: 1px solid var(--control-bg-shaded, #f0f1f2);
   }
 
   &-format {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 6px !important;
-    background: transparent !important;
-    color: var(--muted-color, #878a8c) !important;
-    font-size: 14px !important;
-    cursor: pointer !important;
-
-    .icon,
-    .Button-icon {
-      margin: 0 !important;
-      font-size: 14px !important;
-      color: var(--muted-color, #878a8c) !important;
-    }
+    padding: 3px 8px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--muted-color, #878a8c);
+    font-size: 12px;
+    cursor: pointer;
 
     &:hover,
     &:focus {
-      background: var(--control-bg, #f0f1f2) !important;
-
-      .icon,
-      .Button-icon {
-        color: var(--text-color, #1c1c1e) !important;
-      }
+      background: var(--control-bg, #f0f1f2);
+      color: var(--text-color, #1c1c1e);
     }
   }
 
