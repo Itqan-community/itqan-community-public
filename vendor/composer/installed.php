@@ -1182,14 +1182,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'itqan/flarum-llms' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'type' => 'flarum-extension',
-            'install_path' => __DIR__ . '/../itqan/flarum-llms',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
         'itqan/flarum-discussions' => array(
             'pretty_version' => 'dev-feat/comment-feed-window',
             'version' => 'dev-feat/comment-feed-window',

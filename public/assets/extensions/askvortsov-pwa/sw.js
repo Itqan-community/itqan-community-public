@@ -35,6 +35,12 @@ const offlineFallbackPage = "offline";
 self.addEventListener("install", function (event) {
   console.log("[PWA] Install event processing...");
 
+  // Activate this worker as soon as it finishes installing, instead of waiting
+  // for every client to close. Together with clients.claim() below, a new
+  // deploy is picked up on the next navigation — no Safari-reload dance on iOS,
+  // where an installed PWA stays alive for a very long time.
+  self.skipWaiting();
+
   event.waitUntil(
     caches.open(CACHE).then(function (cache) {
       console.log("[PWA] Cached offline page during install.");
@@ -49,6 +55,12 @@ self.addEventListener("install", function (event) {
   }
 
   receiveInfo();
+});
+
+// Take control of already-open clients as soon as this worker activates, so the
+// new service worker serves the next navigation without a full app restart.
+self.addEventListener("activate", function (event) {
+  event.waitUntil(self.clients.claim());
 });
 
 // If any fetch fails, it will show the offline page.

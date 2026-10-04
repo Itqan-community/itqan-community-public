@@ -1,26 +1,12 @@
 import app from 'flarum/forum/app';
-import Model from 'flarum/common/Model';
 import { extend, override } from 'flarum/common/extend';
-import NotificationGrid from 'flarum/forum/components/NotificationGrid';
 import NotificationList from 'flarum/forum/components/NotificationList';
 import NotificationsDropdown from 'flarum/forum/components/NotificationsDropdown';
-import CommentRepliedNotification from './components/CommentRepliedNotification';
-import DiscussionRepliedNotification from './components/DiscussionRepliedNotification';
 import DndToggle from './components/DndToggle';
-import extendSubscriptionModal from './extendSubscriptionModal';
+import DiscussionRepliedNotification from './components/DiscussionRepliedNotification';
+import CommentRepliedNotification from './components/CommentRepliedNotification';
 
 app.initializers.add('itqan-notifications', () => {
-  app.notificationComponents.discussionReplied = DiscussionRepliedNotification;
-  app.notificationComponents.commentReplied = CommentRepliedNotification;
-
-  extend(NotificationGrid.prototype, 'notificationTypes', function (items) {
-    items.add('discussionReplied', {
-      name: 'discussionReplied',
-      icon: 'fas fa-reply',
-      label: app.translator.trans('itqan-notifications.forum.settings.notify_discussion_replied_label'),
-    });
-  });
-
   extend(NotificationList.prototype, 'controlItems', function (items) {
     items.add('itqanNotificationsDnd', <DndToggle />, 100);
   });
@@ -35,11 +21,8 @@ app.initializers.add('itqan-notifications', () => {
     return isDndActive() ? 0 : original();
   });
 
-  if (app.store.models.tags) {
-    app.store.models.tags.prototype.itqanNotificationChannel = Model.attribute('itqanNotificationChannel');
-  }
-
-  if ('fof-follow-tags' in flarum.extensions) {
-    extendSubscriptionModal();
-  }
+  // Reply-notification components (mirrors itqan-discussions on main, but
+  // under the itqan-notifications extension for staging).
+  app.notificationComponents.discussionReplied = DiscussionRepliedNotification;
+  app.notificationComponents.commentReplied = CommentRepliedNotification;
 });
