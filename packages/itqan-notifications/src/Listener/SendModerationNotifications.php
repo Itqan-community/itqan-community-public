@@ -101,6 +101,11 @@ class SendModerationNotifications
         $chosen = $added->isNotEmpty() ? $added : $newTags;
         $tagName = $chosen->pluck('name')->implode('، ');
 
+        // Nothing to report if the discussion ended up with no tags at all.
+        if ($tagName === '') {
+            return;
+        }
+
         $author = $discussion->user;
 
         if (! $author || ! $author->exists) {
