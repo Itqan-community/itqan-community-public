@@ -2,6 +2,10 @@ import app from 'flarum/forum/app';
 import Notification from 'flarum/forum/components/Notification';
 import { truncate } from 'flarum/common/utils/string';
 
+/**
+ * "Someone replied to your comment" — the notification's subject is the new
+ * reply post (so the push notification and this deep-link both point at it).
+ */
 export default class CommentRepliedNotification extends Notification {
   icon() {
     return 'fas fa-reply';
@@ -18,17 +22,13 @@ export default class CommentRepliedNotification extends Notification {
     return app.forum.attribute('basePath') || '/';
   }
 
+  /**
+   * The base `Notification` view already wraps this in `.Notification-content`
+   * and renders the timestamp, so return only the translated label.
+   */
   content() {
-    const notification = this.attrs.notification;
-    const user = notification.fromUser();
-    const post = notification.subject();
-    const discussion = post && post.discussion ? post.discussion() : null;
-    const title = discussion && typeof discussion.title === 'function' ? discussion.title() : '';
-
     return app.translator.trans('itqan-notifications.forum.notifications.comment_replied_text', {
-      user,
-      username: user ? user.displayName() : '',
-      title,
+      user: this.attrs.notification.fromUser(),
     });
   }
 

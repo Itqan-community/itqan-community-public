@@ -11,6 +11,7 @@ export default class DiscussionRepliedNotification extends Notification {
     const post = this.attrs.notification.subject();
     const discussion = post && post.discussion ? post.discussion() : null;
 
+    // Deep-link to the new reply. Falls back to base path if anything is missing.
     if (discussion && post && typeof post.number === 'function') {
       return app.route.discussion(discussion, post.number());
     }
@@ -19,17 +20,9 @@ export default class DiscussionRepliedNotification extends Notification {
   }
 
   content() {
-    const notification = this.attrs.notification;
-    const user = notification.fromUser();
-    const post = notification.subject();
-    const discussion = post && post.discussion ? post.discussion() : null;
-    const title = discussion && typeof discussion.title === 'function' ? discussion.title() : '';
+    const user = this.attrs.notification.fromUser();
 
-    return app.translator.trans('itqan-notifications.forum.notifications.discussion_replied_text', {
-      user,
-      username: user ? user.displayName() : '',
-      title,
-    });
+    return app.translator.trans('itqan-notifications.forum.notifications.discussion_replied_text', { user });
   }
 
   excerpt() {

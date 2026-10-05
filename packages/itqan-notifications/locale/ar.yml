@@ -4,49 +4,18 @@ itqan-notifications:
       enable: تفعيل عدم الإزعاج
       disable: إيقاف عدم الإزعاج
     notifications:
-      discussion_replied_text: "رد {username} على نقاشك \"{title}\""
-      comment_replied_text: "عقّب {username} على تعليقك في \"{title}\""
-      post_approved_text: "تمت الموافقة على مشاركتك ونشرها في \"{title}\""
-      discussion_stickied_text: "تهانينا! تم تثبيت نقاشك \"{title}\" في أعلى القسم 📌"
-      discussion_retagged_text: "تم نقل نقاشك \"{title}\" إلى قسم {new_tag}"
-
-  push:
-    discussion_replied:
-      title: "رد {username} على: {title}"
-    comment_replied:
-      title: "رد {username} على تعليقك"
-    user_mentioned:
-      title: "أشار إليك {username}"
-    post_mentioned:
-      title: "قتبس {username} مشاركتك"
-    group_mentioned:
-      title: "إشارة إلى مجموعة"
-    new_post:
-      title: "{username} في: {title}"
-    new_discussion:
-      title: "نقاش جديد من {username}"
-    post_liked:
-      title: "أعجب {username} بمنشورك"
-    post_reacted:
-      title: "تفاعل جديد {reaction}"
-    badge_received:
-      title: "وسام جديد! 🏆"
-    post_approved:
-      title: "تمت الموافقة على مشاركتك ✅"
-    discussion_stickied:
-      title: "تم تثبيت نقاشك! 📌"
-    discussion_retagged:
-      title: "تغيير قسم النقاش 🏷️"
+      discussion_replied_text: "رد {username} على نقاشك"
+      comment_replied_text: "رد {username} على تعليقك"
 
   email:
     discussion_replied:
-      subject: "رد {poster_display_name} على نقاشك: \"{title}\""
+      subject: "[رد جديد] {title}"
       body: |
         مرحبًا {recipient_display_name}!
 
-        قام {poster_display_name} بالإجابة على نقاشك "{title}".
+        رد {poster_display_name} على نقاشك: {title}.
 
-        لمشاهدة الرد الجديد، اضغط على الرابط التالي:
+        لمشاهدة الرد الجديد، اتبع الرابط:
         {url}
 
         ---
@@ -56,13 +25,12 @@ itqan-notifications:
         ---
 
     comment_replied:
-      subject: "رد {replier_display_name} على تعليقك في: \"{title}\""
+      subject: "رد {replier_display_name} على تعليقك في {title}"
       body: |
         مرحبًا {recipient_display_name}!
 
-        قام {replier_display_name} بالرد على تعليقك في النقاش "{title}".
+        رد {replier_display_name} على تعليقك في {title}.
 
-        لمشاهدة الرد والتفاعل معه:
         {url}
 
         ---
@@ -70,39 +38,3 @@ itqan-notifications:
         {content}
 
         ---
-
-    post_approved:
-      subject: "تمت الموافقة على نشر مشاركتك في: \"{title}\""
-      body: |
-        مرحبًا {recipient_display_name}!
-
-        يسعدنا إبلاغك بأن فريق الإشراف قد وافق على مشاركتك في "{title}" وتم نشرها بنجاح.
-
-        لعرض مشاركتك في المجتمع:
-        {url}
-
-        ---
-
-        {content}
-
-        ---
-
-    discussion_stickied:
-      subject: "مبروك! تم تثبيت نقاشك \"{title}\" في مجتمع إتقان 📌"
-      body: |
-        مرحبًا {recipient_display_name}!
-
-        تهانينا! قام فريق الإشراف بتثبيت نقاشك "{title}" في أعلى القسم لأهميته وفائدته للمجتمع.
-
-        لعرض النقاش المثبت:
-        {url}
-
-    discussion_retagged:
-      subject: "تم تحديث تصنيف نقاشك: \"{title}\""
-      body: |
-        مرحبًا {recipient_display_name}!
-
-        نحيطك علماً بأنه تم نقل نقاشك "{title}" إلى قسم "{new_tag}" لضمان وصوله إلى الأعضاء المهتمين.
-
-        لعرض النقاش في قسمه الجديد:
-        {url}
