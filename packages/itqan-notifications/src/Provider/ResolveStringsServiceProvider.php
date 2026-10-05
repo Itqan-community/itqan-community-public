@@ -4,9 +4,7 @@ namespace Itqan\Notifications\Provider;
 
 use Askvortsov\FlarumPWA\NotificationBuilder as BaseBuilder;
 use Flarum\Foundation\AbstractServiceProvider;
-use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\QueueManager;
-use Illuminate\Queue\SyncQueue;
 use Itqan\Notifications\Push\NotificationBuilder;
 
 class ResolveStringsServiceProvider extends AbstractServiceProvider
@@ -16,16 +14,12 @@ class ResolveStringsServiceProvider extends AbstractServiceProvider
         // PushSender / PushNotificationDriver resolve NotificationBuilder from the
         // container, so this binding makes them use our subclass.
         $this->container->bind(BaseBuilder::class, NotificationBuilder::class);
-
-        // Bind QueueContract to SyncQueue so AlertNotificationDriver, EmailNotificationDriver,
-        // and PushNotificationDriver execute jobs immediately in-line without pushing to DB jobs table.
-        $this->container->bind(QueueContract::class, function ($container) {
-            return new SyncQueue($container);
-        });
     }
 
     public function boot()
     {
+        // Ensure queued notification jobs (confirmation emails, push notifications, mail)
+        // execute synchronously in-line on environments without an active queue daemon.
         if ($this->container->bound(QueueManager::class)) {
             /** @var QueueManager $manager */
             $manager = $this->container->make(QueueManager::class);
