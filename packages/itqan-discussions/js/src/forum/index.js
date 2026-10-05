@@ -548,6 +548,19 @@ app.initializers.add('itqan-discussions', () => {
   }
 
   if (PostStreamScrubber) {
+    // The phone header shows only the scrubber toggle ("6 of 9"), so the topic
+    // title is nowhere on screen once the hero scrolls away. Put it in the toggle.
+    extend(PostStreamScrubber.prototype, 'view', function (vnode) {
+      const toggle = vnode && vnode.children && vnode.children[0];
+      const title = this.stream && this.stream.discussion && this.stream.discussion.title();
+      if (!toggle || !Array.isArray(toggle.children) || !title) return;
+
+      toggle.children = [
+        <span className="Scrubber-title">{title}</span>,
+        <span className="Scrubber-viewing">{toggle.children}</span>,
+      ];
+    });
+
     extend(PostStreamScrubber.prototype, 'oncreate', function () {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
