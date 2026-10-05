@@ -2,9 +2,9 @@ import app from 'flarum/forum/app';
 import Notification from 'flarum/forum/components/Notification';
 import { truncate } from 'flarum/common/utils/string';
 
-export default class CommentRepliedNotification extends Notification {
+export default class PostApprovedNotification extends Notification {
   icon() {
-    return 'fas fa-reply';
+    return 'fas fa-check-circle';
   }
 
   href() {
@@ -20,21 +20,15 @@ export default class CommentRepliedNotification extends Notification {
 
   content() {
     const notification = this.attrs.notification;
-    const user = notification.fromUser();
     const post = notification.subject();
     const discussion = post && post.discussion ? post.discussion() : null;
     const title = discussion && typeof discussion.title === 'function' ? discussion.title() : '';
 
-    return app.translator.trans('itqan-notifications.forum.notifications.comment_replied_text', {
-      user,
-      username: user ? user.displayName() : '',
-      title,
-    });
+    return app.translator.trans('itqan-notifications.forum.notifications.post_approved_text', { title });
   }
 
   excerpt() {
     const post = this.attrs.notification.subject();
-
     return truncate((post && post.contentPlain && post.contentPlain()) || '', 200);
   }
 }

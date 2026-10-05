@@ -4,16 +4,50 @@ itqan-notifications:
       enable: Turn on Do Not Disturb
       disable: Turn off Do Not Disturb
     notifications:
-      discussion_replied_text: "{username} replied to your discussion"
-      comment_replied_text: "{username} replied to your comment"
+      discussion_replied_text: "{username} replied to your discussion \"{title}\""
+      comment_replied_text: "{username} replied to your comment in \"{title}\""
+      post_approved_text: "Your post in \"{title}\" has been approved and published"
+      post_rejected_text: "Your post in \"{title}\" was not approved"
+      discussion_stickied_text: "Congratulations! Your discussion \"{title}\" was pinned 📌"
+      discussion_retagged_text: "Your discussion \"{title}\" was moved to {new_tag}"
+
+  push:
+    discussion_replied:
+      title: "{username} replied to: {title}"
+    comment_replied:
+      title: "{username} replied to your comment"
+    user_mentioned:
+      title: "{username} mentioned you"
+    post_mentioned:
+      title: "{username} quoted your post"
+    group_mentioned:
+      title: "Mention for your group"
+    new_post:
+      title: "{username} in: {title}"
+    new_discussion:
+      title: "New discussion by {username}"
+    post_liked:
+      title: "New Like ❤️"
+    post_reacted:
+      title: "New Reaction {reaction}"
+    badge_received:
+      title: "New Badge Earned! 🏆"
+    post_approved:
+      title: "Post Approved ✅"
+    post_rejected:
+      title: "Post Review Update ⚠️"
+    discussion_stickied:
+      title: "Discussion Pinned! 📌"
+    discussion_retagged:
+      title: "Category Updated 🏷️"
 
   email:
     discussion_replied:
-      subject: "[New Reply] {title}"
+      subject: "{poster_display_name} replied to your discussion: \"{title}\""
       body: |
         Hey {recipient_display_name}!
 
-        {poster_display_name} replied to your discussion: {title}.
+        {poster_display_name} replied to your discussion "{title}".
 
         To view the new reply, check out the following link:
         {url}
@@ -25,11 +59,11 @@ itqan-notifications:
         ---
 
     comment_replied:
-      subject: "{replier_display_name} replied to your comment in {title}"
+      subject: "{replier_display_name} replied to your comment in: \"{title}\""
       body: |
         Hey {recipient_display_name}!
 
-        {replier_display_name} replied to your comment in {title}.
+        {replier_display_name} replied to your comment in "{title}".
 
         {url}
 
@@ -38,3 +72,48 @@ itqan-notifications:
         {content}
 
         ---
+
+    post_approved:
+      subject: "Your post in \"{title}\" has been approved"
+      body: |
+        Hey {recipient_display_name}!
+
+        Great news! Your post in "{title}" has been reviewed and approved by our moderation team.
+
+        To view your post:
+        {url}
+
+        ---
+
+        {content}
+
+        ---
+
+    post_rejected:
+      subject: "Moderation update regarding your post in \"{title}\""
+      body: |
+        Hey {recipient_display_name}!
+
+        Your post in "{title}" was not approved as it did not meet our community publishing guidelines.
+
+        Moderator note: {reason}
+
+    discussion_stickied:
+      subject: "Congratulations! Your discussion \"{title}\" was pinned 📌"
+      body: |
+        Hey {recipient_display_name}!
+
+        Congratulations! Our moderation team has pinned your discussion "{title}" to the top of the category.
+
+        To view your pinned discussion:
+        {url}
+
+    discussion_retagged:
+      subject: "Category update for your discussion: \"{title}\""
+      body: |
+        Hey {recipient_display_name}!
+
+        Your discussion "{title}" has been moved under "{new_tag}" for better visibility.
+
+        To view the discussion:
+        {url}
