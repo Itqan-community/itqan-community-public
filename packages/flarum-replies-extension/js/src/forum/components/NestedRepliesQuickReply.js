@@ -23,13 +23,14 @@ export default class NestedRepliesQuickReply extends Component {
     this.uploadingImage = true;
     this.redraw();
 
-    const data = new FormData();
-    data.append('files[]', file);
+    const body = new FormData();
+    body.append('files[]', file);
 
     app.request({
       method: 'POST',
       url: app.forum.attribute('apiUrl') + '/fof/upload',
-      data,
+      serialize: (raw) => raw,
+      body,
     })
     .then((response) => {
       this.uploadingImage = false;
@@ -177,15 +178,11 @@ export default class NestedRepliesQuickReply extends Component {
             },
           }),
       m('div.NestedRepliesQuickReply-toolbar', [
-        this.formatButton('bold', 'fas fa-bold', 'reply_form_bold'),
-        this.formatButton('italic', 'fas fa-italic', 'reply_form_italic'),
-        this.formatButton('quote', 'fas fa-quote-right', 'reply_form_quote'),
-        this.formatButton('link', 'fas fa-link', 'reply_form_link'),
         m('label.Button.Button--icon.NestedRepliesQuickReply-format', {
           title: 'رفع صورة',
-          style: 'cursor: pointer; margin-inline-start: 4px; display: inline-flex; align-items: center; justify-content: center;',
+          style: 'cursor: pointer; display: inline-flex; align-items: center; justify-content: center;',
         }, [
-          icon(this.uploadingImage ? 'fas fa-spinner fa-spin' : 'fas fa-image'),
+          icon(this.uploadingImage ? 'fas fa-spinner fa-spin' : 'fas fa-image', { className: 'Button-icon' }),
           m('input', {
             type: 'file',
             accept: 'image/*',
@@ -197,7 +194,11 @@ export default class NestedRepliesQuickReply extends Component {
               }
             }
           })
-        ])
+        ]),
+        this.formatButton('bold', 'fas fa-bold', 'reply_form_bold'),
+        this.formatButton('italic', 'fas fa-italic', 'reply_form_italic'),
+        this.formatButton('quote', 'fas fa-quote-right', 'reply_form_quote'),
+        this.formatButton('link', 'fas fa-link', 'reply_form_link'),
       ]),
       this.error ? m('div.NestedRepliesQuickReply-error', this.error) : null,
       m('div.NestedRepliesQuickReply-actions', [
@@ -219,11 +220,11 @@ export default class NestedRepliesQuickReply extends Component {
     return m(
       Button,
       {
+        icon: iconName,
         className: 'Button Button--icon NestedRepliesQuickReply-format',
         title: app.translator.trans(`mtareq-nested-replies.forum.${labelKey}`),
         onclick: () => this.format(key),
-      },
-      icon(iconName)
+      }
     );
   }
 }

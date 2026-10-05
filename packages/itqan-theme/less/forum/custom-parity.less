@@ -450,12 +450,12 @@ html[data-itqan-theme='dark'] {
     top: auto !important;
     max-height: 100dvh !important;
     max-height: -webkit-fill-available !important;
-    z-index: 1001 !important;
+    z-index: var(--zindex-composer, 1020) !important;
   }
 
   .ComposerBody-editor .TextEditor-controls .item-submit {
     inset-inline: 0;
-    bottom: -52px !important;
+    bottom: 0 !important;
     top: unset !important;
     height: 52px;
     display: flex;
