@@ -21,7 +21,25 @@ return [
     new Extend\Locales(__DIR__.'/locale'),
 
     (new Extend\User())
-        ->registerPreference('dndEnabled', 'boolval', false),
+        ->registerPreference('dndEnabled', 'boolval', false)
+        ->registerPreference('notify_discussionReplied_alert', 'boolval', true)
+        ->registerPreference('notify_discussionReplied_email', 'boolval', true)
+        ->registerPreference('notify_discussionReplied_push', 'boolval', true)
+        ->registerPreference('notify_commentReplied_alert', 'boolval', true)
+        ->registerPreference('notify_commentReplied_email', 'boolval', true)
+        ->registerPreference('notify_commentReplied_push', 'boolval', true)
+        ->registerPreference('notify_postApproved_alert', 'boolval', true)
+        ->registerPreference('notify_postApproved_email', 'boolval', true)
+        ->registerPreference('notify_postApproved_push', 'boolval', true)
+        ->registerPreference('notify_postRejected_alert', 'boolval', true)
+        ->registerPreference('notify_postRejected_email', 'boolval', true)
+        ->registerPreference('notify_postRejected_push', 'boolval', true)
+        ->registerPreference('notify_discussionStickied_alert', 'boolval', true)
+        ->registerPreference('notify_discussionStickied_email', 'boolval', true)
+        ->registerPreference('notify_discussionStickied_push', 'boolval', true)
+        ->registerPreference('notify_discussionRetagged_alert', 'boolval', true)
+        ->registerPreference('notify_discussionRetagged_email', 'boolval', true)
+        ->registerPreference('notify_discussionRetagged_push', 'boolval', true),
 
     (new Extend\View)->namespace('itqan-notifications', __DIR__.'/views'),
 
