@@ -14,7 +14,7 @@ $reply = Flarum\Post\Post::where('number', '>', 1)->has('discussion')->has('user
 try {
     $parent = Flarum\Post\Post::whereNotNull('parent_id')->first() ?: $reply;
 } catch (\Throwable $e) {
-    $parent = $reply; // staging (mtareq) has no posts.parent_id column
+    $parent = $reply;
 }
 $discussion = $reply->discussion;
 $mentioned = Flarum\Post\Post::where('number', '>', 1)->has('user')->first() ?: $reply;
@@ -27,7 +27,6 @@ $types = [
     'postLiked' => new Flarum\Likes\Notification\PostLikedBlueprint($mentioned, $user),
     'userSuspended' => new Flarum\Suspend\Notification\UserSuspendedBlueprint($user),
     'userUnsuspended' => new Flarum\Suspend\Notification\UserUnsuspendedBlueprint($user),
-    // discussionReplied / commentReplied are appended conditionally below (staging uses mtareq).
     'newDiscussionInTag' => new FoF\FollowTags\Notifications\NewDiscussionBlueprint($discussion, $discussion->firstPost),
     'newPostInTag' => new FoF\FollowTags\Notifications\NewPostBlueprint($reply),
     'newDiscussionTag' => new FoF\FollowTags\Notifications\NewDiscussionTagBlueprint($user, $discussion, $discussion->firstPost),
@@ -37,10 +36,16 @@ $types = [
     'newUnfollower' => new IanM\FollowUsers\Notifications\NewUnfollowerBlueprint($user),
 ];
 
-// Only include the reply-notification types when their extension is present.
-// Main has them under Itqan\Discussions; staging has moved them under
-// Itqan\Notifications (with mtareq-driven parent lookup). Pick whichever
-// namespace is currently loaded.
+if (class_exists(\Itqan\Notifications\Notification\PostApprovedBlueprint::class)) {
+    $types['postApproved'] = new \Itqan\Notifications\Notification\PostApprovedBlueprint($reply);
+}
+if (class_exists(\Itqan\Notifications\Notification\DiscussionStickiedBlueprint::class)) {
+    $types['discussionStickied'] = new \Itqan\Notifications\Notification\DiscussionStickiedBlueprint($discussion, $user);
+}
+if (class_exists(\Itqan\Notifications\Notification\DiscussionRetaggedBlueprint::class)) {
+    $types['discussionRetagged'] = new \Itqan\Notifications\Notification\DiscussionRetaggedBlueprint($discussion, $user, 'تطوير البرمجيات');
+}
+
 $discussionRepliedClass = null;
 $commentRepliedClass = null;
 foreach (
