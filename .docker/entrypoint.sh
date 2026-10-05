@@ -18,29 +18,29 @@ until mysqladmin ping -h db -u flarum -pflarum --silent >/dev/null 2>&1; do
     sleep 1
 done
 
-# The extensions under packages/ are path repositories. Registering them the
-# normal way needs a full Composer resolve, which also reaches a private VCS
-# repository (flarum-lang-arabic) that most contributors have no key for -- so
-# without a key, a package added to this repository could never be installed
-# and the container would silently run without it.
+# The extensions under packages/ are path repositories that composer.lock does
+# not list yet. Linking them needs a full Composer resolve, which also reaches
+# a private VCS repository (flarum-lang-arabic) that most contributors have no
+# key for — so this is attempted quietly and never allowed to block the forum
+# from starting.
 #
-# link-local-extensions.php writes only the symlink and installed.json entry,
-# then hands the autoloader back to `composer dump-autoload`, which needs no
-# repository access. Every value comes from each package's own composer.json.
-# An earlier attempt hand-edited the four Composer-generated files and was
-# rejected: a manifest entry without a usable "name" makes
-# Extension::nameToId() destructure a missing array element, and the forum then
-# died on every request.
-log 'Registering local extensions'
-php .docker/link-local-extensions.php || echo "  WARNING: local extensions may be incomplete; the forum will still start"
-
-log 'Verifying local extensions are discoverable'
-# Only the summary is silenced; FAIL and WARN lines go to stderr and are kept,
-# so a broken registration says which extension is at fault. Redirecting stderr
-# too would leave the warning unable to name the culprit.
-if ! php .docker/verify-local-extensions.php --quiet; then
-    echo "  WARNING: not every local extension was found by Flarum (see above)"
-fi
+# Registering them directly in vendor/composer/installed.json instead was
+# tried and rejected: Flarum boots far enough to fatal inside
+# Extension::nameToId, and a forum that dies on every request is a worse
+# outcome than a forum missing its local extensions.
+for pkg in itqan-composer-tools itqan-theme itqan-typography; do
+    name="itqan/flarum-${pkg#itqan-}"
+    if [ -d "packages/$pkg" ] && [ ! -e "vendor/itqan/flarum-${pkg#itqan-}" ]; then
+        log "Linking $name into vendor/"
+        if composer update "$name" --no-interaction --no-scripts --quiet 2>/dev/null; then
+            echo "  linked (composer.lock updated)"
+        else
+            echo "  skipped: composer.lock does not list $name, and the resolve"
+            echo "  needs access to the private flarum-lang-arabic repository."
+            echo "  The forum still runs; that extension just is not installed."
+        fi
+    fi
+done
 
 if [ ! -f config.php ]; then
     log 'Installing Flarum (admin / password123)'
@@ -75,26 +75,12 @@ if [ ! -f config.php ]; then
     # These live in packages/ and only reach Flarum once Composer has linked
     # them. `extension:enable` reports success for an ID it has never heard
     # of, so the vendor directory is what gets checked here.
-    #
-    # Enabling is an explicit list, unlike registration above which covers
-    # everything. Registration is inert; enabling is not. itqan-mailerlite, for
-    # one, expects API credentials and a campaign configuration, so enabling it
-    # in a developer's fresh container gives them a broken admin page for a
-    # service they are not running. Add to this list when a package should come
-    # up enabled locally.
-    #
-    # The loop variable is the full package directory name, so the directory and
-    # the extension id are both derived from it once, rather than each being
-    # rebuilt — which previously produced packages/itqan-itqan-llms and enabled
-    # nothing at all.
-    for pkg in itqan-composer-tools itqan-discussions itqan-llms itqan-theme itqan-typography; do
-        short="${pkg#itqan-}"
-        ext="flarum-$short"
-        if [ -d "packages/$pkg" ] && [ -e "vendor/itqan/$ext" ]; then
-            su -s /bin/bash www-data -c "php -d error_reporting=0 flarum extension:enable $ext" >/dev/null 2>&1 \
-                && echo "  enabled $ext"
+    for pkg in composer-tools theme typography; do
+        if [ -e "vendor/itqan/flarum-$pkg" ]; then
+            su -s /bin/bash www-data -c "php -d error_reporting=0 flarum extension:enable itqan-$pkg" >/dev/null 2>&1 \
+                && echo "  enabled itqan-$pkg"
         else
-            echo "  skipped $ext (not linked into vendor/ — see README)"
+            echo "  skipped itqan-$pkg (not linked into vendor/ — see README)"
         fi
     done
 else
