@@ -6,7 +6,6 @@ use Askvortsov\FlarumPWA\NotificationBuilder as Base;
 use Flarum\Discussion\Discussion;
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Post\Post;
-use Flarum\User\User;
 
 class NotificationBuilder extends Base
 {
@@ -80,9 +79,15 @@ class NotificationBuilder extends Base
                 ]);
 
             case 'postReacted':
+                // fof/reactions exposes the reaction identifier on the blueprint.
+                $reaction = method_exists($blueprint, 'getReactionType')
+                    ? (string) $blueprint->getReactionType()
+                    : '';
+
                 return $this->translator->trans('itqan-notifications.push.post_reacted.title', [
                     '{username}' => $username,
                     '{title}'    => $discussionTitle,
+                    '{reaction}' => $reaction,
                 ]);
 
             case 'badgeReceived':
@@ -93,11 +98,6 @@ class NotificationBuilder extends Base
 
             case 'postApproved':
                 return $this->translator->trans('itqan-notifications.push.post_approved.title', [
-                    '{title}' => $discussionTitle,
-                ]);
-
-            case 'postRejected':
-                return $this->translator->trans('itqan-notifications.push.post_rejected.title', [
                     '{title}' => $discussionTitle,
                 ]);
 
