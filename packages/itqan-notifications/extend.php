@@ -1,12 +1,17 @@
 <?php
 
+use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Extend;
 use Flarum\Post\Event\Posted;
 use Itqan\Notifications\Listener\SendReplyNotifications;
 use Itqan\Notifications\Notification\CommentRepliedBlueprint;
 use Itqan\Notifications\Notification\DiscussionRepliedBlueprint;
+use Itqan\Notifications\Notification\DiscussionRetaggedBlueprint;
+use Itqan\Notifications\Notification\DiscussionStickiedBlueprint;
 use Itqan\Notifications\Notification\FilterDiscussionAuthorFromNewPost;
+use Itqan\Notifications\Notification\PostApprovedBlueprint;
+use Itqan\Notifications\Notification\PostRejectedBlueprint;
 use Itqan\Notifications\Provider\ResolveStringsServiceProvider;
 
 return [
@@ -18,24 +23,20 @@ return [
     (new Extend\User())
         ->registerPreference('dndEnabled', 'boolval', false),
 
-    // Reply notifications (alert + email) for the discussion's author and
-    // the parent comment's author. Staging's nested-reply model is
-    // mtareq/flarum-nested-replies, so SendReplyNotifications resolves the
-    // parent via Mtareq\NestedReplies\PostReply (the main extension used
-    // posts.parent_id). FilterDiscussionAuthorFromNewPost prevents the OP
-    // from also receiving the built-in subscriptions notification for
-    // their own discussion.
     (new Extend\View)->namespace('itqan-notifications', __DIR__.'/views'),
 
     (new Extend\Notification)
-        ->type(DiscussionRepliedBlueprint::class, PostSerializer::class, ['alert', 'email'])
-        ->type(CommentRepliedBlueprint::class, PostSerializer::class, ['alert', 'email'])
+        ->type(DiscussionRepliedBlueprint::class, PostSerializer::class, ['alert', 'email', 'push'])
+        ->type(CommentRepliedBlueprint::class, PostSerializer::class, ['alert', 'email', 'push'])
+        ->type(PostApprovedBlueprint::class, PostSerializer::class, ['alert', 'email', 'push'])
+        ->type(PostRejectedBlueprint::class, PostSerializer::class, ['alert', 'email', 'push'])
+        ->type(DiscussionStickiedBlueprint::class, DiscussionSerializer::class, ['alert', 'email', 'push'])
+        ->type(DiscussionRetaggedBlueprint::class, DiscussionSerializer::class, ['alert', 'email', 'push'])
         ->beforeSending(FilterDiscussionAuthorFromNewPost::class),
 
     (new Extend\Event())
         ->listen(Posted::class, SendReplyNotifications::class),
 
-    // W1 — notification content corrections (push-title keys + linguist string fixes).
     (new Extend\ServiceProvider())
         ->register(ResolveStringsServiceProvider::class),
 ];
