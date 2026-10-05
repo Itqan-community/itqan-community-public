@@ -27,5 +27,14 @@ class ResolveStringsServiceProvider extends AbstractServiceProvider
                 $manager->setDefaultDriver('sync');
             }
         }
+
+        // Defensive fix for fof/pretty-mail: If fof-pretty-mail.mailhtml template setting
+        // is missing or empty in DB settings, set fallback template so BladeCompiler does not crash.
+        if ($this->container->bound('flarum.settings')) {
+            $settings = $this->container->make('flarum.settings');
+            if (empty($settings->get('fof-pretty-mail.mailhtml'))) {
+                $settings->set('fof-pretty-mail.mailhtml', '{!! $body !!}');
+            }
+        }
     }
 }
