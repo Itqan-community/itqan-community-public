@@ -1,0 +1,39 @@
+flarum-sticky:
+
+  ##
+  # UNIQUE KEYS - The following keys are used in only one location each.
+  ##
+
+  # Translations in this namespace are used by the forum user interface.
+  forum:
+
+    # These translations are displayed as tooltips for discussion badges.
+    badge:
+      sticky_tooltip: => flarum-sticky.ref.sticky
+
+    # These translations are used by the discussion control buttons.
+    discussion_controls:
+      sticky_button: => flarum-sticky.ref.sticky
+      unsticky_button: إلغاء التثبيت
+
+    # These translations are displayed between posts in the post stream.
+    post_stream:
+      discussion_stickied_text: "{username} ثبت الموضوع {time}"
+      discussion_unstickied_text: "{username} ألغى تثبيت الموضوع في {time}"
+
+  ##
+  # REUSED TRANSLATIONS - These keys should not be used directly in code!
+  ##
+
+  # Translations in this namespace are used by the forum and admin interfaces.
+  lib:
+
+    # These translations are used by gambits. Gambit keys must be in snake_case, no spaces.
+    gambits:
+      discussions:
+        sticky:
+          key: تثبيت
+
+  # Translations in this namespace are referenced by two or more unique keys.
+  ref:
+    sticky: تثبيت

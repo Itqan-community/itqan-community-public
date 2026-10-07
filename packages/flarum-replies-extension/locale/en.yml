@@ -41,6 +41,7 @@ mtareq-nested-replies:
     reply_form_italic: Italic
     reply_form_quote: Quote
     reply_form_link: Link
+    reply_form_mention: Mention user
     reply_form_submit: Post reply
     edit_form_submit: Save edit
     reply_form_cancel: Cancel

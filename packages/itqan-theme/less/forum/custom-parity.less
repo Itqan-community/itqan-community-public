@@ -52,8 +52,9 @@ html[data-itqan-theme='dark'] body {
 
 // Direction follows each block's first strong character, so an English comment
 // in an RTL discussion reads LTR and an Arabic one stays RTL.
-.Post-body {
-  p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th {
+.Post-body,
+.Composer-preview {
+  p, h1, h2, h3, h4, h5, h6, blockquote, td, th {
     unicode-bidi: plaintext;
     text-align: start;
   }
@@ -63,11 +64,12 @@ html[data-itqan-theme='dark'] body {
   // Generated markers are inline text inside the plaintext block, so they follow its direction.
   li {
     list-style: none;
+    unicode-bidi: isolate;
 
     // Loose lists wrap the text in <p>, which would push the marker onto its own line.
     > p:first-child {
       display: inline;
-      unicode-bidi: normal;
+      unicode-bidi: plaintext;
     }
   }
 
