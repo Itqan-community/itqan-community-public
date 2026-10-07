@@ -84,10 +84,6 @@ jobs:
 
           mkdir -p storage/formatter storage/cache storage/assets storage/sessions storage/views storage/logs
           rm -rf storage/cache storage/assets
-          # Rebuild the locale catalogue from source: the Arabic language pack is
-          # committed under vendor/flarum-locale/arabic. A stale compiled
-          # catalogue would otherwise keep serving old (or missing) translations.
-          rm -f storage/locale/catalogue.*
           find public/assets -maxdepth 1 -type f \( -name "*.js" -o -name "*.css" -o -name "*.map" -o -name "rev-manifest.json" \) -delete
           mkdir -p storage/cache storage/assets public/assets
 
@@ -98,44 +94,9 @@ jobs:
 
           sed -i 's#root /var/www/flarum-placeholder;#root /var/www/flarum/public;#' /etc/nginx/sites-available/flarum.conf
           sed -i 's#index index.html;#index index.php;#' /etc/nginx/sites-available/flarum.conf
-
-          # Flarum must serve /robots.txt (v17 SEO route) and the generated OG
-          # card images at /og/*.png. The site conf denies *.txt and serves
-          # *.png as static-only, so add an exact and a prefixed location that
-          # fall through to index.php (idempotent).
-          if ! grep -qF 'location ^~ /og/' /etc/nginx/sites-available/flarum.conf; then
-            printf '%s\n' \
-              '    location = /robots.txt {' \
-              '        try_files $uri /index.php?$query_string;' \
-              '    }' \
-              '' \
-              '    location ^~ /og/ {' \
-              '        try_files $uri /index.php?$query_string;' \
-              '    }' \
-              > /tmp/itqan-flarum-locations.conf
-            awk '{ if ($0 ~ /^[[:space:]]*location \/ \{/ && !done) { while ((getline line < "/tmp/itqan-flarum-locations.conf") > 0) print line; close("/tmp/itqan-flarum-locations.conf"); done=1 } print }' /etc/nginx/sites-available/flarum.conf > /tmp/itqan-flarum.conf.new
-            mv /tmp/itqan-flarum.conf.new /etc/nginx/sites-available/flarum.conf
-            rm -f /tmp/itqan-flarum-locations.conf
-          fi
-
           nginx -t
           systemctl reload nginx
           systemctl reload php8.1-fpm
-
-          # Rendering dependency for itqan-preview-cards: headless Chromium.
-          # The Arabic fonts are bundled with the extension. Idempotent; a
-          # failure here only downgrades cards to the brand fallback, so it
-          # must not fail the deploy.
-          if ! command -v google-chrome >/dev/null 2>&1 && [ ! -x /usr/bin/google-chrome-stable ] && [ ! -x /usr/bin/chromium ]; then
-            if DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-               && wget -q -O /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-               && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /tmp/google-chrome.deb; then
-              echo "Installed headless Chromium: $(google-chrome --version 2>/dev/null)"
-            else
-              echo "WARNING: could not install Chromium; preview cards will serve the brand fallback"
-            fi
-            rm -f /tmp/google-chrome.deb
-          fi
 
           bash scripts/check-flarum-assets.sh
           REMOTE

@@ -12,7 +12,6 @@ import PwaInstallPrompt from './components/PwaInstallPrompt';
 import addImageLightbox from './addImageLightbox';
 import addReplyAffordances from './addReplyAffordances';
 import { MODES, boot, currentMode, setMode } from './utils/scheme';
-import { applyArabicCountOverrides } from './utils/arabicCounts';
 
 export { default as ThemeSwitcher } from './components/ThemeSwitcher';
 export { default as PwaInstallPrompt } from './components/PwaInstallPrompt';
@@ -22,7 +21,6 @@ export * from './utils/scheme';
 
 app.initializers.add('itqan-theme', () => {
   boot();
-  applyArabicCountOverrides(app);
   addImageLightbox();
   addReplyAffordances();
 

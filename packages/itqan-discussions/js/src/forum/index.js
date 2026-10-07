@@ -17,7 +17,6 @@ import humanTime from 'flarum/common/helpers/humanTime';
 import extractText from 'flarum/common/utils/extractText';
 import Button from 'flarum/common/components/Button';
 import PostControls from 'flarum/forum/utils/PostControls';
-import { formatArabicPlural } from './utils/arabicPlural';
 
 import VoteButtons from './components/VoteButtons';
 import {
@@ -549,6 +548,19 @@ app.initializers.add('itqan-discussions', () => {
   }
 
   if (PostStreamScrubber) {
+    // The phone header shows only the scrubber toggle ("6 of 9"), so the topic
+    // title is nowhere on screen once the hero scrolls away. Put it in the toggle.
+    extend(PostStreamScrubber.prototype, 'view', function (vnode) {
+      const toggle = vnode && vnode.children && vnode.children[0];
+      const title = this.stream && this.stream.discussion && this.stream.discussion.title();
+      if (!toggle || !Array.isArray(toggle.children) || !title) return;
+
+      toggle.children = [
+        <span className="Scrubber-title">{title}</span>,
+        <span className="Scrubber-viewing">{toggle.children}</span>,
+      ];
+    });
+
     extend(PostStreamScrubber.prototype, 'oncreate', function () {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -1247,22 +1259,10 @@ app.initializers.add('itqan-discussions', () => {
     const discussion = typeof post.discussion === 'function' ? post.discussion() : null;
     if (!discussion) return;
 
-    const isArabic = String(
-      (typeof app.translator.getLocale === 'function' && app.translator.getLocale()) ||
-        app.translator.locale ||
-        (app.data && app.data.locale) ||
-        ''
-    ).startsWith('ar');
-    const stat = (iconName, value, labelKey) => {
-      if (value == null) return null;
-
-      // Arabic: fold the count into a properly pluralized phrase (تفقيط).
-      if (isArabic) {
-        return m('span.itqan-op-meta-item', [icon(iconName), formatArabicPlural(value, labelKey)]);
-      }
-
-      return m('span.itqan-op-meta-item', [icon(iconName), m('strong', String(value)), trans(`meta.${labelKey}`)]);
-    };
+    const stat = (iconName, value, labelKey) =>
+      value == null
+        ? null
+        : m('span.itqan-op-meta-item', [icon(iconName), m('strong', String(value)), trans(`meta.${labelKey}`)]);
 
     const commentCount = typeof discussion.commentCount === 'function' ? discussion.commentCount() : null;
     const participantCount =

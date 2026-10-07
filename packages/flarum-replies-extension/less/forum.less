@@ -759,42 +759,6 @@ a.NestedRepliesReplyTag {
     font-size: 12px;
   }
 
-  &-mentions {
-    display: flex;
-    flex-direction: column;
-    max-height: 220px;
-    overflow-y: auto;
-    padding: 4px;
-    border-top: 1px solid var(--control-bg-shaded, #f0f1f2);
-    background: var(--body-bg-light, #fff);
-  }
-
-  &-mention {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    padding: 6px 8px;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--text-color, #1c1c1e);
-    font-size: 14px;
-    text-align: start;
-    cursor: pointer;
-
-    .Avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-    }
-
-    &:hover,
-    &.is-active {
-      background: var(--control-bg, #f0f1f2);
-    }
-  }
-
   &-actions {
     display: flex;
     align-items: center;

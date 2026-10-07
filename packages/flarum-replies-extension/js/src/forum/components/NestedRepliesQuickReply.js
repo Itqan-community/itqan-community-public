@@ -4,7 +4,6 @@ import Button from 'flarum/common/components/Button';
 import icon from 'flarum/common/helpers/icon';
 import ComposerPostPreview from 'flarum/forum/components/ComposerPostPreview';
 import { applyMarkdown } from '../utils/markdownFormat';
-import { detectMention } from '../utils/mentionQuery';
 import { buildReplyData } from '../utils/replyData';
 
 export default class NestedRepliesQuickReply extends Component {
@@ -16,13 +15,6 @@ export default class NestedRepliesQuickReply extends Component {
     this.preview = false;
     this.editMode = Boolean(this.attrs.editMode);
     this.wasEmpty = !String(this.attrs.draft() || '').trim();
-
-    // @-mention autocomplete state.
-    this.mentionStart = null;
-    this.mentionQuery = null;
-    this.mentionResults = [];
-    this.mentionIndex = 0;
-    this.mentionToken = 0;
   }
 
   uploadImage(file) {
@@ -69,153 +61,6 @@ export default class NestedRepliesQuickReply extends Component {
     super.oncreate(vnode);
     const textarea = vnode.dom.querySelector('.NestedRepliesQuickReply-input');
     if (textarea) textarea.focus();
-  }
-
-  // The user mentionable exposes Flarum's own user search, the correct
-  // replacement syntax (respecting the display-name setting) and a suggestion
-  // renderer, so the quick reply matches the main composer.
-  mentionable() {
-    return app.mentionFormats && typeof app.mentionFormats.mentionable === 'function' ? app.mentionFormats.mentionable('user') : null;
-  }
-
-  closeMention() {
-    this.mentionStart = null;
-    this.mentionQuery = null;
-    this.mentionResults = [];
-    this.mentionIndex = 0;
-    this.mentionToken++;
-  }
-
-  updateMention() {
-    const textarea = this.$('.NestedRepliesQuickReply-input')[0];
-    const mentionable = this.mentionable();
-
-    if (!textarea || !mentionable || typeof mentionable.search !== 'function') {
-      if (this.mentionStart !== null) this.closeMention();
-      return;
-    }
-
-    const found = detectMention(textarea.value, textarea.selectionStart);
-
-    if (!found) {
-      if (this.mentionStart !== null) {
-        this.closeMention();
-        this.redraw();
-      }
-      return;
-    }
-
-    const token = ++this.mentionToken;
-    const wasActive = this.mentionStart !== null;
-    this.mentionStart = found.start;
-    this.mentionQuery = found.query;
-
-    const applyResults = (users) => {
-      if (token !== this.mentionToken) return;
-      this.mentionResults = (users || []).slice(0, 6);
-      this.mentionIndex = 0;
-      this.redraw();
-    };
-
-    if (found.query === '') {
-      let initial = [];
-      try {
-        initial = typeof mentionable.initialResults === 'function' ? mentionable.initialResults() : [];
-      } catch (e) {
-        initial = [];
-      }
-      applyResults(initial);
-      return;
-    }
-
-    if (!wasActive) this.redraw();
-
-    Promise.resolve()
-      .then(() => mentionable.search(found.query))
-      .then(applyResults)
-      .catch(() => applyResults([]));
-  }
-
-  startMention() {
-    const textarea = this.$('.NestedRepliesQuickReply-input')[0];
-    if (!textarea) return;
-
-    const value = textarea.value;
-    const pos = textarea.selectionStart;
-    const next = value.slice(0, pos) + '@' + value.slice(textarea.selectionEnd);
-
-    this.attrs.draft(next);
-    this.redraw();
-
-    requestAnimationFrame(() => {
-      const ta = this.$('.NestedRepliesQuickReply-input')[0];
-      if (!ta) return;
-      ta.focus();
-      ta.setSelectionRange(pos + 1, pos + 1);
-      this.updateMention();
-    });
-  }
-
-  chooseMention(user) {
-    const textarea = this.$('.NestedRepliesQuickReply-input')[0];
-    const mentionable = this.mentionable();
-    if (!textarea || !mentionable || this.mentionStart === null) return;
-
-    let replacement = '';
-    try {
-      replacement = mentionable.replacement(user);
-    } catch (e) {
-      replacement = '';
-    }
-    if (!replacement) return;
-
-    const value = textarea.value;
-    const cursor = textarea.selectionStart;
-    const next = value.slice(0, this.mentionStart) + replacement + ' ' + value.slice(cursor);
-    const caret = this.mentionStart + replacement.length + 1;
-
-    this.attrs.draft(next);
-    this.closeMention();
-    this.redraw();
-
-    requestAnimationFrame(() => {
-      const ta = this.$('.NestedRepliesQuickReply-input')[0];
-      if (!ta) return;
-      ta.focus();
-      ta.setSelectionRange(caret, caret);
-    });
-  }
-
-  suggestionFor(user) {
-    const mentionable = this.mentionable();
-    try {
-      const rendered = mentionable && typeof mentionable.suggestion === 'function' ? mentionable.suggestion(user, this.mentionQuery) : null;
-      if (rendered !== null && rendered !== undefined) return rendered;
-    } catch (e) {
-      // fall through to the plain label
-    }
-    return (user && user.displayName && user.displayName()) || (user && user.username && user.username()) || '';
-  }
-
-  viewMentions() {
-    if (this.mentionStart === null || !this.mentionResults.length) return null;
-
-    const items = this.mentionResults.map((user, i) =>
-      m(
-        'button.NestedRepliesQuickReply-mention' + (i === this.mentionIndex ? '.is-active' : ''),
-        {
-          type: 'button',
-          key: user.id ? user.id() : i,
-          onmousedown: (e) => {
-            e.preventDefault();
-            this.chooseMention(user);
-          },
-        },
-        this.suggestionFor(user)
-      )
-    );
-
-    return m('div.NestedRepliesQuickReply-mentions', items);
   }
 
   format(key) {
@@ -308,7 +153,6 @@ export default class NestedRepliesQuickReply extends Component {
                 this.wasEmpty = empty;
                 this.redraw();
               }
-              this.updateMention();
             },
             onpaste: (e) => {
               const items = e.clipboardData && e.clipboardData.items;
@@ -325,33 +169,7 @@ export default class NestedRepliesQuickReply extends Component {
                 }
               }
             },
-            onclick: () => this.updateMention(),
             onkeydown: (e) => {
-              if (this.mentionStart !== null && this.mentionResults.length) {
-                if (e.key === 'ArrowDown') {
-                  e.preventDefault();
-                  this.mentionIndex = (this.mentionIndex + 1) % this.mentionResults.length;
-                  this.redraw();
-                  return;
-                }
-                if (e.key === 'ArrowUp') {
-                  e.preventDefault();
-                  this.mentionIndex = (this.mentionIndex - 1 + this.mentionResults.length) % this.mentionResults.length;
-                  this.redraw();
-                  return;
-                }
-                if (!e.ctrlKey && !e.metaKey && (e.key === 'Enter' || e.key === 'Tab')) {
-                  e.preventDefault();
-                  this.chooseMention(this.mentionResults[this.mentionIndex]);
-                  return;
-                }
-                if (e.key === 'Escape') {
-                  e.preventDefault();
-                  this.closeMention();
-                  this.redraw();
-                  return;
-                }
-              }
               if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 this.submit();
@@ -359,7 +177,6 @@ export default class NestedRepliesQuickReply extends Component {
               if (e.key === 'Escape') this.attrs.onCancel();
             },
           }),
-      this.viewMentions(),
       m('div.NestedRepliesQuickReply-toolbar', [
         m('label.Button.Button--icon.NestedRepliesQuickReply-format', {
           title: 'رفع صورة',
@@ -382,12 +199,6 @@ export default class NestedRepliesQuickReply extends Component {
         this.formatButton('italic', 'fas fa-italic', 'reply_form_italic'),
         this.formatButton('quote', 'fas fa-quote-right', 'reply_form_quote'),
         this.formatButton('link', 'fas fa-link', 'reply_form_link'),
-        m(Button, {
-          icon: 'fas fa-at',
-          className: 'Button Button--icon NestedRepliesQuickReply-format',
-          title: app.translator.trans('mtareq-nested-replies.forum.reply_form_mention'),
-          onclick: () => this.startMention(),
-        }),
       ]),
       this.error ? m('div.NestedRepliesQuickReply-error', this.error) : null,
       m('div.NestedRepliesQuickReply-actions', [

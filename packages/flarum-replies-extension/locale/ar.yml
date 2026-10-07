@@ -41,7 +41,6 @@ mtareq-nested-replies:
     reply_form_italic: مائل
     reply_form_quote: اقتباس
     reply_form_link: رابط
-    reply_form_mention: إشارة إلى عضو
     reply_form_submit: إرسال الرد
     edit_form_submit: حفظ التعديل
     reply_form_cancel: إلغاء
