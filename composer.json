@@ -61,6 +61,7 @@
         "fof/oauth": "*",
         "fof/pretty-mail": "*",
         "fof/reactions": "^1.4",
+        "fof/seo": "3.0.6",
         "fof/share-social": "*",
         "fof/sitemap": "*",
         "fof/socialprofile": "*",
@@ -78,12 +79,11 @@
         "itqan/flarum-preview-cards": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
-        "mtareq/flarum-nested-replies": "@dev",
         "justoverclock/newsletter": "*",
         "michaelbelgium/flarum-discussion-views": "^7.4",
+        "mtareq/flarum-nested-replies": "@dev",
         "pipecraft/flarum-ext-id-slug": "*",
         "the-turk/flarum-stickiest": "*",
-        "fof/seo": "^3.0.6",
         "v17development/flarum-user-badges": "*"
     },
     "config": {
