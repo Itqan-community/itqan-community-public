@@ -1,0 +1,51 @@
+fof-drafts:
+  console:
+    scheduled_drafts_disabled: المسودات المجدولة غير مفعلة من الإعدادات.
+  ref:
+    schedule_draft: جدولة نشر المسودة
+  forum:
+    composer:
+      title: حفظ كمسودة
+      saving: جاري الحفظ...
+      saved: تم الحفظ!
+      exit_alert: تجاهل التعديلات على المسودة
+      discard_empty_draft_alert: المسودة فارغة، هل تود تجاهل حفظها
+    dropdown:
+      empty_text: لا يوجد بيانات
+      title: المسودات
+      delete_all_button: حذف كل المسودات
+      delete_button: حذف المسودة
+      schedule_button: => fof-drafts.ref.schedule_draft
+      scheduled_icon_tooltip: جدولة إلى {datetime}
+      # String passed to dayjs.format() to generate the tooltip date-time
+      scheduled_icon_tooltip_formatter: L [at] LT
+      tooltip: => fof-drafts.forum.dropdown.title
+      alert: متأكد أنك تريد حذف المسودة؟
+      delete_all_alert: متأكد أنك تريد حذف كل المسودات؟
+    schedule_draft_modal:
+      title: => fof-drafts.ref.schedule_draft
+      text: جدولة المسودة للنشر تلقائيا في وقت لاحق
+      scheduled_text: سيتم نشر المسودة في {datetime}.
+      scheduled_error: "لا يمكن جدولة المسودة بسبب: {error}."
+      unschedule_button: إلغاء الجدولة
+      unschedule_warning: متأكد أنك تريد إلغاء الجدولة؟
+      reschedule_button: إعادة جدولة
+      schedule_button: جدولة
+      schedule_time_preview: سيتم نشر هذه المسودة تلقائيا في <b>{datetime}</b>.
+      # String passed to dayjs.format() to generate the preview
+      schedule_time_preview_formatter: LLLL
+      schedule_time_preview_invalid: خطأ في الوقت أو التاريخ
+    user:
+      settings:
+        drafts_heading: المسودات
+        draft_autosave_enable: الحفظ التلقائي للمسودات
+        draft_autosave_interval_label: حفظ المسودات كل (بالثواني)
+        draft_autosave_interval_button: تعديل الفاصل الزمني
+        draft_autosave_interval_invalid: يجب أن يكون الفاصل الزمني أكبر من 4
+
+flarum-gdpr:
+  lib:
+    data:
+      drafts:
+        export_description: "جميع مسودات المستخدم"
+        delete_description: "حذف جميع مسودات المستخدم"
