@@ -5,6 +5,7 @@ namespace Mtareq\NestedReplies\Access;
 use Flarum\Post\Post;
 use Flarum\User\Access\AbstractPolicy;
 use Flarum\User\User;
+use Mtareq\NestedReplies\PostReply;
 
 class PostPolicy extends AbstractPolicy
 {
@@ -40,7 +41,7 @@ class PostPolicy extends AbstractPolicy
             $allowEditing = resolve('flarum.settings')->get('allow_post_editing');
 
             if ($allowEditing === 'reply') {
-                $hasDirectReplies = Post::where('reply_to_post_id', $post->id)->exists();
+                $hasDirectReplies = PostReply::where('parent_post_id', $post->id)->exists();
                 if (! $hasDirectReplies) {
                     return $this->allow();
                 }
