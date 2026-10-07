@@ -61,7 +61,7 @@
         "fof/oauth": "*",
         "fof/pretty-mail": "*",
         "fof/reactions": "^1.4",
-        "fof/seo": "3.0.6",
+        "v17development/flarum-seo": "^2.0.9",
         "fof/share-social": "*",
         "fof/sitemap": "*",
         "fof/socialprofile": "*",

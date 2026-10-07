@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f08ec656fa762664432294a0debbd8eb",
+    "content-hash": "d6ba5e3edfb3574a952b5dcbfeb152dc",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -5434,99 +5434,6 @@
             "time": "2024-02-11T21:51:01+00:00"
         },
         {
-            "name": "fof/seo",
-            "version": "3.0.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/FriendsOfFlarum/seo.git",
-                "reference": "7adf3bbb89e02352a55080a1394c64393e5295f4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfFlarum/seo/zipball/7adf3bbb89e02352a55080a1394c64393e5295f4",
-                "reference": "7adf3bbb89e02352a55080a1394c64393e5295f4",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "flarum/core": "^1.8.0",
-                "flarum/tags": "^1.8",
-                "php": "^8.2"
-            },
-            "conflict": {
-                "franzl/flarum-open-links-in-new-tab": "*",
-                "zerosonesfun/elint": "*"
-            },
-            "replace": {
-                "v17development/flarum-seo": "*"
-            },
-            "require-dev": {
-                "flarum/likes": "^1.8",
-                "flarum/phpstan": "^1.0",
-                "flarum/testing": "^1.0.0",
-                "fof/best-answer": "^1.7",
-                "fof/discussion-language": "*",
-                "fof/discussion-views": "*",
-                "fof/gamification": "*",
-                "fof/pages": "^1.0"
-            },
-            "suggest": {
-                "fof/discussion-language": "Sets per-discussion inLanguage in structured data for multi-language forums.",
-                "fof/discussion-views": "Adds a view-count interaction statistic to discussion structured data.",
-                "fof/sitemap": "Provides sitemap and robots.txt functionality."
-            },
-            "type": "flarum-extension",
-            "extra": {
-                "flarum-extension": {
-                    "icon": {
-                        "name": "fas fa-check",
-                        "color": "#fff",
-                        "backgroundColor": "#e74c3c"
-                    },
-                    "title": "FoF SEO",
-                    "category": "feature",
-                    "optional-dependencies": [
-                        "flarum/tags",
-                        "fof/pages",
-                        "fof/sitemap",
-                        "fof/best-answer",
-                        "fof/discussion-views",
-                        "fof/discussion-language"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "FoF\\Seo\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "FriendsOfFlarum",
-                    "homepage": "https://github.com/FriendsOfFlarum"
-                }
-            ],
-            "description": "Adds SEO tags for your Flarum forum",
-            "homepage": "https://friendsofflarum.org",
-            "support": {
-                "docs": "https://github.com/FriendsOfFlarum/seo/blob/1.x/docs/README.md",
-                "forum": "https://discuss.flarum.org/d/39374",
-                "issues": "https://github.com/FriendsOfFlarum/seo/issues",
-                "source": "https://github.com/FriendsOfFlarum/seo"
-            },
-            "funding": [
-                {
-                    "url": "https://opencollective.com/fof",
-                    "type": "open_collective"
-                }
-            ],
-            "time": "2026-06-15T15:02:48+00:00"
-        },
-        {
             "name": "fof/share-social",
             "version": "1.2.0",
             "source": {
@@ -8619,7 +8526,7 @@
         },
         {
             "name": "itqan/flarum-composer-tools",
-            "version": "dev-staging",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-composer-tools",
@@ -8672,7 +8579,7 @@
         },
         {
             "name": "itqan/flarum-discussions",
-            "version": "dev-staging",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-discussions",
@@ -8724,7 +8631,7 @@
         },
         {
             "name": "itqan/flarum-mailerlite",
-            "version": "dev-staging",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-mailerlite",
@@ -8783,7 +8690,7 @@
         },
         {
             "name": "itqan/flarum-notifications",
-            "version": "dev-staging",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-notifications",
@@ -8824,58 +8731,8 @@
             }
         },
         {
-            "name": "itqan/flarum-preview-cards",
-            "version": "dev-staging",
-            "dist": {
-                "type": "path",
-                "url": "packages/itqan-preview-cards",
-                "reference": "a4cd7fe89a9ce9f08c6578fc659f065572e69bd1"
-            },
-            "require": {
-                "flarum/core": "^1.8.0",
-                "fof/seo": "^3.0.6"
-            },
-            "type": "flarum-extension",
-            "extra": {
-                "flarum-extension": {
-                    "title": "Itqan Preview Cards",
-                    "category": "feature",
-                    "icon": {
-                        "name": "fas fa-image",
-                        "color": "#ffffff",
-                        "backgroundColor": "#064e3b"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Itqan\\PreviewCards\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Itqan Community",
-                    "email": "a.abduraghman@itqan.dev"
-                }
-            ],
-            "description": "Generated Open Graph preview cards for discussions, built to typeset Arabic correctly",
-            "keywords": [
-                "arabic",
-                "flarum",
-                "opengraph",
-                "preview",
-                "rtl"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
             "name": "itqan/flarum-theme",
-            "version": "dev-staging",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-theme",
@@ -8928,7 +8785,7 @@
         },
         {
             "name": "itqan/flarum-typography",
-            "version": "dev-staging",
+            "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-typography",
@@ -11485,50 +11342,6 @@
                 }
             ],
             "time": "2022-06-09T08:53:42+00:00"
-        },
-        {
-            "name": "mtareq/flarum-nested-replies",
-            "version": "dev-staging",
-            "dist": {
-                "type": "path",
-                "url": "packages/flarum-replies-extension",
-                "reference": "18f9e7cc94026f7eeb5464f9eab529b74b19bbd3"
-            },
-            "require": {
-                "flarum/core": "^1.8 || ^2.0"
-            },
-            "type": "flarum-extension",
-            "extra": {
-                "flarum-extension": {
-                    "title": "Nested Replies",
-                    "category": "theme",
-                    "icon": {
-                        "name": "fas fa-comments",
-                        "backgroundColor": "#FF4500",
-                        "color": "#fff"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Mtareq\\NestedReplies\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "Restyle Flarum discussions as nested reply threads with indentation, collapsible comments and voting.",
-            "keywords": [
-                "discussion",
-                "flarum",
-                "nested",
-                "replies",
-                "theme",
-                "threads"
-            ],
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -16773,6 +16586,81 @@
             "time": "2025-12-02T11:56:42+00:00"
         },
         {
+            "name": "v17development/flarum-seo",
+            "version": "v2.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/v17development/flarum-seo.git",
+                "reference": "d76aa7dd02f72dfdeba08e790550317fe16a597f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/v17development/flarum-seo/zipball/d76aa7dd02f72dfdeba08e790550317fe16a597f",
+                "reference": "d76aa7dd02f72dfdeba08e790550317fe16a597f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "flarum/core": "^1.0.0",
+                "php": "^8.0"
+            },
+            "conflict": {
+                "franzl/flarum-open-links-in-new-tab": "*",
+                "zerosonesfun/elint": "*"
+            },
+            "require-dev": {
+                "flarum/phpstan": "^1.0",
+                "flarum/tags": "^1.8",
+                "fof/best-answer": "^1.6",
+                "fof/pages": "^1.0"
+            },
+            "suggest": {
+                "fof/sitemap": "Allows you to generate powerful sitemap.xml files"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flagrow": {
+                    "discuss": "https://discuss.flarum.org/d/18316"
+                },
+                "flarum-extension": {
+                    "icon": {
+                        "name": "fas fa-check",
+                        "color": "#ffffff",
+                        "backgroundColor": "#0072ff"
+                    },
+                    "title": "SEO",
+                    "category": "feature",
+                    "optional-dependencies": [
+                        "flarum/tags"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "V17Development\\FlarumSeo\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "V17 Development",
+                    "email": "info@v17.dev"
+                }
+            ],
+            "description": "Adds SEO tags for your Flarum forum",
+            "homepage": "https://v17.dev/projects/flarum-seo",
+            "support": {
+                "docs": "https://community.v17.dev/knowledgebase/category/flarum-seo",
+                "forum": "https://discuss.flarum.org/d/18316",
+                "issues": "https://github.com/v17development/flarum-seo/issues",
+                "source": "https://github.com/v17development/flarum-seo"
+            },
+            "time": "2025-10-13T16:24:53+00:00"
+        },
+        {
             "name": "v17development/flarum-user-badges",
             "version": "v1.1.0",
             "source": {
@@ -17463,10 +17351,8 @@
         "itqan/flarum-discussions": 20,
         "itqan/flarum-mailerlite": 20,
         "itqan/flarum-notifications": 20,
-        "itqan/flarum-preview-cards": 20,
         "itqan/flarum-theme": 20,
-        "itqan/flarum-typography": 20,
-        "mtareq/flarum-nested-replies": 20
+        "itqan/flarum-typography": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
