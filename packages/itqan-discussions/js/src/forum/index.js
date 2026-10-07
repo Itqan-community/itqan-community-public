@@ -1247,7 +1247,12 @@ app.initializers.add('itqan-discussions', () => {
     const discussion = typeof post.discussion === 'function' ? post.discussion() : null;
     if (!discussion) return;
 
-    const isArabic = String(app.translator.locale || '').startsWith('ar');
+    const isArabic = String(
+      (typeof app.translator.getLocale === 'function' && app.translator.getLocale()) ||
+        app.translator.locale ||
+        (app.data && app.data.locale) ||
+        ''
+    ).startsWith('ar');
     const stat = (iconName, value, labelKey) => {
       if (value == null) return null;
 

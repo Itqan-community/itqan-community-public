@@ -23,7 +23,14 @@ export const ARABIC_COUNT_TRANSLATIONS = {
  */
 export function applyArabicCountOverrides(app) {
   if (!app || !app.translator || typeof app.translator.addTranslations !== 'function') return;
-  if (!String(app.translator.locale || '').startsWith('ar')) return;
+
+  const locale =
+    (typeof app.translator.getLocale === 'function' && app.translator.getLocale()) ||
+    app.translator.locale ||
+    (app.data && app.data.locale) ||
+    '';
+
+  if (!String(locale).startsWith('ar')) return;
 
   app.translator.addTranslations(ARABIC_COUNT_TRANSLATIONS);
 }
