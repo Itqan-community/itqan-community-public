@@ -117,7 +117,6 @@ jobs:
 
           chown -R www-data:www-data /var/www/flarum
 
-          composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
           sudo -u www-data php flarum migrate
           sudo -u www-data php flarum cache:clear
 
