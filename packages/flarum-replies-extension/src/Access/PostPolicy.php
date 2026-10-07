@@ -29,4 +29,22 @@ class PostPolicy extends AbstractPolicy
 
         return $this->allow();
     }
+
+    /**
+     * In a nested replies tree, allow editing a post until someone replies directly to IT,
+     * rather than locking editing when an unrelated post is added to the overall discussion.
+     */
+    public function edit(User $actor, Post $post)
+    {
+        if ($post->user_id == $actor->id && (! $post->hidden_at || $post->hidden_user_id == $actor->id) && $actor->can('reply', $post->discussion)) {
+            $allowEditing = resolve('flarum.settings')->get('allow_post_editing');
+
+            if ($allowEditing === 'reply') {
+                $hasDirectReplies = Post::where('reply_to_post_id', $post->id)->exists();
+                if (! $hasDirectReplies) {
+                    return $this->allow();
+                }
+            }
+        }
+    }
 }

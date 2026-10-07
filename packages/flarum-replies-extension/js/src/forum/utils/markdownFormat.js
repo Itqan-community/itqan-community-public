@@ -5,6 +5,7 @@ export const MARKDOWN_FORMATS = {
   bold: { before: '**', after: '**' },
   italic: { before: '*', after: '*' },
   link: { before: '[', after: '](url)' },
+  mention: { before: '@', after: '' },
 };
 
 export function applyMarkdown(value, start, end, key) {
