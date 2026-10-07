@@ -199,6 +199,7 @@ export default class NestedRepliesQuickReply extends Component {
         this.formatButton('italic', 'fas fa-italic', 'reply_form_italic'),
         this.formatButton('quote', 'fas fa-quote-right', 'reply_form_quote'),
         this.formatButton('link', 'fas fa-link', 'reply_form_link'),
+        this.formatButton('mention', 'fas fa-at', 'reply_form_mention'),
       ]),
       this.error ? m('div.NestedRepliesQuickReply-error', this.error) : null,
       m('div.NestedRepliesQuickReply-actions', [
