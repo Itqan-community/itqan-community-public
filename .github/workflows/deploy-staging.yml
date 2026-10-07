@@ -118,6 +118,21 @@ jobs:
           systemctl reload nginx
           systemctl reload php8.1-fpm
 
+          # Rendering dependency for itqan-preview-cards: headless Chromium.
+          # The Arabic fonts are bundled with the extension. Idempotent; a
+          # failure here only downgrades cards to the brand fallback, so it
+          # must not fail the deploy.
+          if ! command -v google-chrome >/dev/null 2>&1 && [ ! -x /usr/bin/google-chrome-stable ] && [ ! -x /usr/bin/chromium ]; then
+            if DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+               && wget -q -O /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+               && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /tmp/google-chrome.deb; then
+              echo "Installed headless Chromium: $(google-chrome --version 2>/dev/null)"
+            else
+              echo "WARNING: could not install Chromium; preview cards will serve the brand fallback"
+            fi
+            rm -f /tmp/google-chrome.deb
+          fi
+
           bash scripts/check-flarum-assets.sh
           REMOTE
 
