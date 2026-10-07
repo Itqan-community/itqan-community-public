@@ -1,0 +1,39 @@
+flarum-lock:
+
+  ##
+  # UNIQUE KEYS - The following keys are used in only one location each.
+  ##
+
+  # Translations in this namespace are used by the forum user interface.
+  forum:
+
+    # These translations are displayed as tooltips for discussion badges.
+    badge:
+      locked_tooltip: مغلق
+
+    # These translations are used by the discussion control buttons.
+    discussion_controls:
+      lock_button: إغلاق
+      unlock_button: فتح
+
+    # These translations are used by the Notifications dropdown, a.k.a. "the bell".
+    notifications:
+      discussion_locked_text: "{username} أغلق موضوعك"
+
+    # These translations are displayed between posts in the post stream.
+    post_stream:
+      discussion_locked_text: "{username} أغلق الموضوع في {time}"
+      discussion_unlocked_text: "{username} فتح الموضوع في {time}"
+
+    # These translations are used in the Settings page.
+    settings:
+      notify_discussion_locked_label: إغلاق موضوعك
+
+  # Translations in this namespace are used by the forum and admin interfaces.
+  lib:
+
+    # These translations are used by gambits. Gambit keys must be in snake_case, no spaces.
+    gambits:
+      discussions:
+        locked:
+          key: locked

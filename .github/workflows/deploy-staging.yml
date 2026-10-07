@@ -84,6 +84,10 @@ jobs:
 
           mkdir -p storage/formatter storage/cache storage/assets storage/sessions storage/views storage/logs
           rm -rf storage/cache storage/assets
+          # Rebuild the locale catalogue from source: the Arabic language pack is
+          # committed under vendor/flarum-locale/arabic. A stale compiled
+          # catalogue would otherwise keep serving old (or missing) translations.
+          rm -f storage/locale/catalogue.*
           find public/assets -maxdepth 1 -type f \( -name "*.js" -o -name "*.css" -o -name "*.map" -o -name "rev-manifest.json" \) -delete
           mkdir -p storage/cache storage/assets public/assets
 

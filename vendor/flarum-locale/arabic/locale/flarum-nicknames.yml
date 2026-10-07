@@ -1,0 +1,17 @@
+flarum-nicknames:
+  api:
+    invalid_nickname_message: الاسم غير صحيح، يرجى التأكد من إدخال الاسم بشكل صحيح ليتم قبوله
+  forum:
+    change_nickname:
+      submit_button: => core.ref.save_changes
+      title:  => flarum-nicknames.ref.change_nickname
+    edit_user:
+      nicknames_heading: => flarum-nicknames.ref.change_nickname
+      nicknames_text: => flarum-nicknames.ref.nickname
+    settings:
+      change_nickname_button: => flarum-nicknames.ref.change_nickname
+    sign_up:
+      nickname_placeholder: => flarum-nicknames.ref.nickname
+  ref:
+    change_nickname: تعديل الاسم
+    nickname: اسم المستخدم

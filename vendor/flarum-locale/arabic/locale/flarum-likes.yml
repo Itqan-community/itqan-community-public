@@ -1,0 +1,45 @@
+flarum-likes:
+
+  ##
+  # UNIQUE KEYS - The following keys are used in only one location each.
+  ##
+
+  # Translations in this namespace are used by the forum user interface.
+  forum:
+
+    # These translations are used by the Notifications dropdown, a.k.a. "the bell".
+    notifications:
+      others_text: => core.ref.some_others
+      post_liked_text: "{username} أعجبته مشاركتك"  # Can be pluralized to agree with the number of users!
+
+    # These translations are displayed beneath individual posts.
+    post:
+      like_link: أعجبني
+      liked_by_self_text: "{users} معجبون"  # Can be pluralized to agree with the number of users!
+      liked_by_text: "{count, plural, one {{users} معجب} other {{users} معجبون}}."
+      others_link: => core.ref.some_others
+      unlike_link: إلغاء الإعجاب
+      you_text: => core.ref.you
+
+    # These translations are used by the Users Who Like This modal dialog.
+    post_likes:
+      title: إعجابات التعليق
+      load_more_button: => core.ref.load_more
+
+    # These translations are used in the Settings page.
+    settings:
+      notify_post_liked_label: حصول تعليقك على إعجابات
+
+    # These translations are used in the User profile page.
+    user:
+      likes_link: الإعجابات
+
+  # Translations in this namespace are used by the forum and admin interfaces.
+  lib:
+
+    # These translations are used by gambits. Gambit keys must be in snake_case, no spaces.
+    gambits:
+      posts:
+        likedBy:
+          key: likedBy
+          hint: The ID or username of the user
