@@ -83,7 +83,7 @@
         "michaelbelgium/flarum-discussion-views": "^7.4",
         "pipecraft/flarum-ext-id-slug": "*",
         "the-turk/flarum-stickiest": "*",
-        "fof/seo": "^3.0.6",
+        "v17development/flarum-seo": "*",
         "v17development/flarum-user-badges": "*"
     },
     "config": {
