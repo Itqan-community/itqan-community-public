@@ -127,8 +127,7 @@ Options -MultiViews
     </IfModule>
 </IfModule>
 
-# Fix for https://httpoxy.org vulnerability & CSP image rules for favicons
+# Fix for https://httpoxy.org vulnerability
 <IfModule mod_headers.c>
   RequestHeader unset Proxy
-  Header set Content-Security-Policy "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; img-src 'self' data: blob: https:; frame-ancestors 'none';"
 </IfModule>

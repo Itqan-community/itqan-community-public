@@ -13,9 +13,9 @@ use Itqan\PreviewCards\Job\GenerateCardJob;
 use Itqan\PreviewCards\Render\CardTemplate;
 use Itqan\PreviewCards\Settings;
 use Psr\Http\Message\ServerRequestInterface;
-use FoF\SEO\Page\PageDriverInterface;
-use FoF\SEO\SeoMeta\SeoMeta;
-use FoF\SEO\SeoProperties;
+use V17Development\FlarumSeo\Page\PageDriverInterface;
+use V17Development\FlarumSeo\SeoMeta\SeoMeta;
+use V17Development\FlarumSeo\SeoProperties;
 
 class DiscussionCardDriver implements PageDriverInterface
 {
@@ -31,7 +31,7 @@ class DiscussionCardDriver implements PageDriverInterface
 
     public function extensionDependencies(): array
     {
-        return ['fof-seo'];
+        return ['v17development-seo'];
     }
 
     public function handleRoutes(): array
