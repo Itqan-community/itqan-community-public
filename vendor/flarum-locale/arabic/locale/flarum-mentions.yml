@@ -26,7 +26,7 @@ flarum-mentions:
 
     # These translations are displayed beneath individual posts.
     post:
-      mentioned_by_more_text: "{count} ردود إضافية"
+      mentioned_by_more_text: "{count, plural, zero {لا ردود إضافية} one {رد إضافي واحد} two {ردان إضافيان} few {# ردود إضافية} many {# رداً إضافياً} other {# رد إضافي}}"
       mentioned_by_self_text: "{users} رد على التعليق"  # Can be pluralized to agree with the number of users!
       mentioned_by_text: "{users} رد على تعليقك"       # Can be pluralized to agree with the number of users!
       others_text: => core.ref.some_others

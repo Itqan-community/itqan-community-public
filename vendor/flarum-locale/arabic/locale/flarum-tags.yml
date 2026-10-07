@@ -39,7 +39,7 @@ flarum-tags:
       added_and_removed_tags_text: "{username} أضاف {tagsAdded} وحذف {tagsRemoved} {time}."
       added_tags_text: "{username} أضاف {tagsAdded} {time}."
       removed_tags_text: "{username} حذف {tagsRemoved} {time}."
-      tags_text: "{count, plural, one {{tags} قسم} other {{tags} أقسام}}"
+      tags_text: "{count, plural, zero {{tags} أقسام} one {{tags} قسم} two {{tags} قسمان} few {{tags} أقسام} many {{tags} قسماً} other {{tags} قسم}}"
 
     # These translations are used when visiting a single tag's discussion list.
     tag:

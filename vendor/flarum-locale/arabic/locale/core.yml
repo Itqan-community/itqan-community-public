@@ -97,8 +97,8 @@ core:
       replied_text: "{username} قام بالرد منذ {ago}"
       skip_discussion_list_pane: تخطي قائمة المواضيع
       started_text: "{username} بدأ الموضوع منذ {ago}"
-      total_replies_a11y_label: "{count, plural, one {# رد} other {# ردود}}"
-      unread_replies_a11y_label: "{count, plural, one {# رد غير مقروء} other {# ردود غير مقروءة}}. تعليم {count, plural, one {reply} other {replies}} كـ مقروءة."
+      total_replies_a11y_label: "{count, plural, zero {لا ردود} one {رد واحد} two {ردان} few {# ردود} many {# رداً} other {# رد}}"
+      unread_replies_a11y_label: "{count, plural, zero {لا ردود غير مقروءة} one {رد واحد غير مقروء} two {ردان غير مقروءان} few {# ردود غير مقروءة} many {# رداً غير مقروء} other {# رد غير مقروء}}"
 
     # These translations are used in the Forgot Password modal dialog.
     forgot_password:
@@ -187,8 +187,8 @@ core:
     post_scrubber:
       now_link: الأحدث
       original_post_link: الموضوع
-      unread_text: "{count} غير مقروءة"
-      viewing_text: "{count, plural, one {{index} من {formattedCount} تعليق} other {{index} من {formattedCount} تعليقات}}"
+      unread_text: "{count, plural, zero {لا تعليقات غير مقروءة} one {تعليق واحد غير مقروء} two {تعليقان غير مقروءان} few {# تعليقات غير مقروءة} many {# تعليقاً غير مقروء} other {# تعليق غير مقروء}}"
+      viewing_text: "{count, plural, zero {{index} من {formattedCount} تعليق} one {{index} من {formattedCount} تعليق واحد} two {{index} من {formattedCount} تعليقين} few {{index} من {formattedCount} تعليقات} many {{index} من {formattedCount} تعليقاً} other {{index} من {formattedCount} تعليق}}"
 
     # These translations are displayed between posts in the post stream.
     post_stream:
@@ -698,7 +698,7 @@ core:
     security: الأمان
     settings: الإعدادات
     sign_up: تسجيل جديد
-    some_others: "{count, plural, one {# آخر} other {# آخرون}}"
+    some_others: "{count, plural, zero {لا أحد آخر} one {# آخر} two {# آخران} few {# آخرون} many {# آخراً} other {# آخر}}"
     username: اسم المستخدم
     users: مستخدمون
     view: عرض

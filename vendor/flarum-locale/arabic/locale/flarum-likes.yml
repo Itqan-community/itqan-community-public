@@ -16,7 +16,7 @@ flarum-likes:
     post:
       like_link: أعجبني
       liked_by_self_text: "{users} معجبون"  # Can be pluralized to agree with the number of users!
-      liked_by_text: "{count, plural, one {{users} معجب} other {{users} معجبون}}."
+      liked_by_text: "{count, plural, zero {{users} معجبون} one {{users} معجب} two {{users} معجبان} few {{users} معجبون} many {{users} معجبون} other {{users} معجبون}}."
       others_link: => core.ref.some_others
       unlike_link: إلغاء الإعجاب
       you_text: => core.ref.you

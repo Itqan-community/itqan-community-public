@@ -17,6 +17,7 @@ import humanTime from 'flarum/common/helpers/humanTime';
 import extractText from 'flarum/common/utils/extractText';
 import Button from 'flarum/common/components/Button';
 import PostControls from 'flarum/forum/utils/PostControls';
+import { formatArabicPlural } from './utils/arabicPlural';
 
 import VoteButtons from './components/VoteButtons';
 import {
@@ -1246,10 +1247,17 @@ app.initializers.add('itqan-discussions', () => {
     const discussion = typeof post.discussion === 'function' ? post.discussion() : null;
     if (!discussion) return;
 
-    const stat = (iconName, value, labelKey) =>
-      value == null
-        ? null
-        : m('span.itqan-op-meta-item', [icon(iconName), m('strong', String(value)), trans(`meta.${labelKey}`)]);
+    const isArabic = String(app.translator.locale || '').startsWith('ar');
+    const stat = (iconName, value, labelKey) => {
+      if (value == null) return null;
+
+      // Arabic: fold the count into a properly pluralized phrase (تفقيط).
+      if (isArabic) {
+        return m('span.itqan-op-meta-item', [icon(iconName), formatArabicPlural(value, labelKey)]);
+      }
+
+      return m('span.itqan-op-meta-item', [icon(iconName), m('strong', String(value)), trans(`meta.${labelKey}`)]);
+    };
 
     const commentCount = typeof discussion.commentCount === 'function' ? discussion.commentCount() : null;
     const participantCount =
