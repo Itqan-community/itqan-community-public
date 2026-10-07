@@ -23,7 +23,7 @@ use Itqan\PreviewCards\Controller\CardController;
 use Itqan\PreviewCards\Listener\CardInvalidationListener;
 use Itqan\PreviewCards\PreviewCardsServiceProvider;
 use Itqan\PreviewCards\Seo\DiscussionCardDriver;
-use V17Development\FlarumSeo\Extend\SEO;
+use FoF\SEO\Extend\SEO;
 
 return [
     (new Extend\Frontend('admin'))
