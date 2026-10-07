@@ -122,6 +122,12 @@ jobs:
           systemctl reload nginx
           systemctl reload php8.1-fpm
 
+          echo "=== LOCALE DIAG ==="
+          echo -n "disk core.yml has new tafqeet? "; grep -c 'لا تعليقات غير مقروءة' vendor/flarum-locale/arabic/locale/core.yml || true
+          rm -f storage/locale/catalogue.*
+          curl -sk -o /dev/null --resolve staging.community.itqan.dev:443:127.0.0.1 https://staging.community.itqan.dev/ || true
+          echo -n "catalogue unread_text: "; grep -a -o "post_scrubber.unread_text' => '[^']*'" storage/locale/catalogue.ar.*.php 2>/dev/null | head -1 || echo none
+
           # Rendering dependency for itqan-preview-cards: headless Chromium.
           # The Arabic fonts are bundled with the extension. Idempotent; a
           # failure here only downgrades cards to the brand fallback, so it
