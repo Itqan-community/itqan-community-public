@@ -40,7 +40,7 @@ export default class EditBadgeModal extends Modal {
   }
 
   className() {
-    return 'Modal--large';
+    return this.isImage() ? 'Modal--small' : 'Modal--large';
   }
 
   title() {
