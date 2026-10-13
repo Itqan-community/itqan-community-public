@@ -1346,7 +1346,12 @@ app.initializers.add('mtareq-nested-replies', () => {
     inlineDraft('');
     forceRedraw();
 
-    // Scroll the reply form into view after it renders.
+    // Scroll the reply form into view after it renders — but not for the
+    // automatic open on page load. Centring the form drags the reader into the
+    // middle of a long original post (and can race a deep-link's own scroll),
+    // when the discussion should be shown from the top.
+    if (options.auto) return;
+
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         const targetEl =
