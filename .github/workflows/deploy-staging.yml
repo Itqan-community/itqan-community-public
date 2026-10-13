@@ -51,7 +51,7 @@ jobs:
           cat > /var/www/flarum/config.php <<PHP
           <?php return array (
             'debug' => false,
-            'queue' => array('driver' => 'sync'),
+            'queue' => array('driver' => 'database'),
             'database' => array(
               'driver' => 'mysql',
               'database' => 'flarum',
@@ -69,15 +69,15 @@ jobs:
             'url' => 'https://staging.community.itqan.dev',
             'paths' => array('api' => 'api', 'admin' => 'admin'),
             'headers' => array('poweredByHeader' => false, 'referrerPolicy' => 'same-origin'),
-            'mail' => array(
-              'driver' => 'smtp',
-              'host' => 'in-v3.mailjet.com',
-              'port' => 587,
-              'username' => '${SMTP_USERNAME}',
-              'password' => '${SMTP_PASSWORD}',
-              'encryption' => 'tls',
-              'from' => array('address' => 'noreply@itqan.dev', 'name' => 'Itqan Community Staging'),
+            'filesystems' => array(
+              'disks' => array(
+                'flarum-assets' => array(
+                  'driver' => 'local',
+                  'root' => '/var/www/flarum/public/assets',
+                ),
+              ),
             ),
+            'mail' => array('driver' => 'log'),
             'cookie' => array('name' => '__Host-flarum', 'samesite' => 'lax'),
           );
           PHP
