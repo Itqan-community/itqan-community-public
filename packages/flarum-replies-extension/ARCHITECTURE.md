@@ -171,6 +171,11 @@ rebuilds without a full page reload.
   `inlineReply`; the target post's footer renders the host indented one level.
   A successful post clears the form and invalidates the cached `allPosts` so the
   tree refreshes. In composer mode the fixed `Composer` shell is suppressed.
+  The original post's form also auto-opens once per discussion visit on **every**
+  screen size (guard: `utils/opComposerAutoOpen`). It never steals focus, so a
+  phone keyboard does not pop on load, and the phone's pinned bar hides while it
+  is open. The guard is re-armed when the discussion changes, so navigating back
+  and forth keeps the auto-open working.
 - `NestedRepliesQuickReply` — plain textarea with bold/italic/quote/link (pure
   `forum/utils/markdownFormat.js`) and a Write/Preview toggle that renders
   `ComposerPostPreview`.
