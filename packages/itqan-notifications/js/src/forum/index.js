@@ -6,7 +6,6 @@ import DndToggle from './components/DndToggle';
 import DiscussionRepliedNotification from './components/DiscussionRepliedNotification';
 import CommentRepliedNotification from './components/CommentRepliedNotification';
 import PostApprovedNotification from './components/PostApprovedNotification';
-import PostRejectedNotification from './components/PostRejectedNotification';
 import DiscussionStickiedNotification from './components/DiscussionStickiedNotification';
 import DiscussionRetaggedNotification from './components/DiscussionRetaggedNotification';
 
@@ -29,7 +28,6 @@ app.initializers.add('itqan-notifications', () => {
   app.notificationComponents.discussionReplied = DiscussionRepliedNotification;
   app.notificationComponents.commentReplied = CommentRepliedNotification;
   app.notificationComponents.postApproved = PostApprovedNotification;
-  app.notificationComponents.postRejected = PostRejectedNotification;
   app.notificationComponents.discussionStickied = DiscussionStickiedNotification;
   app.notificationComponents.discussionRetagged = DiscussionRetaggedNotification;
 });

@@ -39,9 +39,6 @@ $types = [
 if (class_exists(\Itqan\Notifications\Notification\PostApprovedBlueprint::class)) {
     $types['postApproved'] = new \Itqan\Notifications\Notification\PostApprovedBlueprint($reply);
 }
-if (class_exists(\Itqan\Notifications\Notification\PostRejectedBlueprint::class)) {
-    $types['postRejected'] = new \Itqan\Notifications\Notification\PostRejectedBlueprint($reply, 'ملاحظة الإشراف');
-}
 if (class_exists(\Itqan\Notifications\Notification\DiscussionStickiedBlueprint::class)) {
     $types['discussionStickied'] = new \Itqan\Notifications\Notification\DiscussionStickiedBlueprint($discussion, $user);
 }
