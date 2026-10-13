@@ -8,10 +8,9 @@ import ReplyComposer from 'flarum/forum/components/ReplyComposer';
  * A reply shortcut pinned to the bottom of a phone screen, always visible while
  * the composer is closed.
  *
- * On a wide screen there is no shortcut: the original post's reply composer
- * opens there on its own (see the replies extension). That form now opens on a
- * phone too, so this bar is the way back to it once the form has been closed or
- * scrolled away — and it hides (see the LESS) while the form is open.
+ * Wide screens have no shortcut: the original post's reply composer opens there
+ * on its own (see the replies extension). This is the phone's way to reach the
+ * same composer without scrolling back to the top.
  *
  * It opens the same composer as core's reply placeholder, with the same guard:
  * `composer.load` is skipped when the composer is already composing a reply to

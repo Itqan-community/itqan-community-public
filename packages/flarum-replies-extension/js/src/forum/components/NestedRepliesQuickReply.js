@@ -67,12 +67,6 @@ export default class NestedRepliesQuickReply extends Component {
 
   oncreate(vnode) {
     super.oncreate(vnode);
-
-    // A form the reader opened (tap Reply, the phone dock) lands the cursor in
-    // the box. The auto-opened original-post form must NOT steal focus: on a
-    // phone that pops the keyboard the moment a discussion loads.
-    if (this.attrs.autoFocus === false) return;
-
     const textarea = vnode.dom.querySelector('.NestedRepliesQuickReply-input');
     if (textarea) textarea.focus();
   }

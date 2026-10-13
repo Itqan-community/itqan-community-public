@@ -159,11 +159,8 @@
 
 // The composer supersedes every one of these — it is where they all lead, and
 // on a phone it is full screen. Declared in CSS as well as in the components'
-// `view()` so the affordances can never sit on top of the editor. The original
-// post's inline reply form is included: on a phone it opens on its own, and the
-// pinned bar would otherwise duplicate it.
-html:has(.Composer.visible),
-html:has(.NestedRepliesInlineReply) {
+// `view()` so the affordances can never sit on top of the editor.
+html:has(.Composer.visible) {
   .ReplyDock,
   .NewDiscussionFab {
     display: none !important;

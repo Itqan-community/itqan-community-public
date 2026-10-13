@@ -26,7 +26,6 @@ import MoreReplies from './components/MoreReplies';
 import NestedRepliesInlineReply from './components/NestedRepliesInlineReply';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { formatArabicPlural } from './utils/arabicPlural';
-import { canOpenOpComposer, createOpComposerAutoOpen } from './utils/opComposerAutoOpen';
 
 app.initializers.add('mtareq-nested-replies', () => {
   const settings = readSettings(app);
@@ -212,10 +211,6 @@ app.initializers.add('mtareq-nested-replies', () => {
   // The open in-card reply form, and the draft it holds (shared so a target
   // switch can warn before discarding).
   let inlineReply = null;
-  // One-shot guard for the auto-opened original-post composer. Module-level and
-  // re-armed on every discussion change so navigating back and forth keeps
-  // working (see utils/opComposerAutoOpen).
-  const opComposerAutoOpen = createOpComposerAutoOpen();
   // A *native* reply composer (the sticky bar, a restored reply box) carries no
   // id we can see in hide(). Remember the discussion and
   // the newest post at the moment it opened, so hide() can tell a posted reply
@@ -652,16 +647,15 @@ app.initializers.add('mtareq-nested-replies', () => {
     return result;
   });
 
-  // Open the original post's reply form once when its discussion appears, so a
-  // reader can comment from the top — on every screen size. On a phone the
-  // pinned `ReplyDock--bar` (itqan-theme) hides while this form is open.
+  // Wide screens (>= tablet) have no floating reply button. Instead, open the
+  // original post's reply form once when its discussion appears, so a reader can
+  // comment from the top. Phones keep the pinned `ReplyDock--bar` (itqan-theme)
+  // and open the form on demand, so this stays desktop-only.
   //
   // `onupdate` rather than `oncreate`: core only sets `this.discussion` after the
-  // API response lands, which is past the first render. The guard opens once per
-  // discussion visit but never latches a *skipped* attempt (the tree still
-  // loading, a composer already open, a leftover form…), so navigating back and
-  // forth between discussions keeps working. A manual close stays closed, and a
-  // posted comment closes the form through the inline form's own `onSubmitted`.
+  // API response lands, which is past the first render. A per-instance guard
+  // makes it one attempt per visit; a manual close stays closed, and a posted
+  // comment closes the form through the inline form's own `onSubmitted`.
   extend(DiscussionPage.prototype, 'onupdate', function () {
     const discussion = this.discussion;
 
@@ -669,23 +663,23 @@ app.initializers.add('mtareq-nested-replies', () => {
 
     const id = String(discussion.id());
 
+    if (this.opComposerFor === id) return;
+
     // The extension loads every page into `allPosts` before the tree renders,
     // and core's `discussion.firstPost()` is empty on this page, so take the
     // original post from there. Until it arrives, try again on the next update.
     const firstPost = allPosts && allPosts.length ? allPosts.find((post) => isOriginalPost(post)) : null;
 
-    const canOpen = canOpenOpComposer({
-      isCurrentDiscussion: Boolean(currentDiscussion && String(currentDiscussion.id()) === id),
-      hasFirstPost: Boolean(firstPost),
-      hasUser: Boolean(app.session.user),
-      canReply: !(typeof discussion.canReply === 'function' && !discussion.canReply()),
-      composerVisible: app.composer.isVisible(),
-      inlineReplyOpen: Boolean(inlineReply),
-    });
+    if (!firstPost) return;
 
-    if (!opComposerAutoOpen.claim(id, canOpen)) return;
+    this.opComposerFor = id;
 
-    openInlineReply(firstPost, { auto: true });
+    if (!window.matchMedia('(min-width: 768px)').matches) return;
+    if (!app.session.user) return;
+    if (typeof discussion.canReply === 'function' && !discussion.canReply()) return;
+    if (app.composer.isVisible() || inlineReply) return;
+
+    openInlineReply(firstPost);
 
     // The tree may still be mid-render when this update runs, so the post that
     // now holds the inline form could have computed its footer before the form
@@ -1009,12 +1003,6 @@ app.initializers.add('mtareq-nested-replies', () => {
       loadingScrollDone = false;
       invalidateTreeScrollCache();
       foldPlan = { hidden: new Set(), moreAfter: new Map() };
-      // A reply form left open on the previous discussion must not leak into
-      // this one: it would render nowhere here and block the auto-open. (The
-      // draft itself is cleared by `openInlineReply` whenever a form opens.)
-      inlineReply = null;
-      composerPreview = false;
-      opComposerAutoOpen.reset();
     }
 
     // Kick off loading every page so the tree can be ordered. The flat native
@@ -1282,7 +1270,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       });
   }
 
-  function openInlineReply(post, options = {}) {
+  function openInlineReply(post) {
     const id = String(post.id());
 
     if (inlineReply && inlineReply.postId !== id && String(inlineDraft() || '').trim()) {
@@ -1293,7 +1281,7 @@ app.initializers.add('mtareq-nested-replies', () => {
         cancelLabel: app.translator.trans('mtareq-nested-replies.forum.reply_form_cancel'),
         onconfirm: () => {
           inlineDraft('');
-          openInlineReply(post, options);
+          openInlineReply(post);
         },
       });
       return;
@@ -1342,16 +1330,11 @@ app.initializers.add('mtareq-nested-replies', () => {
       return;
     }
 
-    inlineReply = { postId: id, discussion, mode: 'quick', auto: Boolean(options.auto) };
+    inlineReply = { postId: id, discussion, mode: 'quick' };
     inlineDraft('');
     forceRedraw();
 
-    // Scroll the reply form into view after it renders — but not for the
-    // automatic open on page load. Centring the form drags the reader into the
-    // middle of a long original post (and can race a deep-link's own scroll),
-    // when the discussion should be shown from the top.
-    if (options.auto) return;
-
+    // Scroll the reply form into view after it renders.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         const targetEl =
@@ -1574,7 +1557,6 @@ app.initializers.add('mtareq-nested-replies', () => {
           indent: childDepth - depth,
           draft: inlineDraft,
           preview: composerPreview,
-          autoFocus: !inlineReply.auto,
           onRedraw: forceRedraw,
           onCancel: closeInlineReply,
           onSubmitted: (created) => {
