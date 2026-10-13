@@ -27,6 +27,15 @@ echo 2 > "$b/g"; git -C "$b" add g; git -C "$b" commit -qm extra
 git -C "$b" branch staging master
 run drift 0 "$b" "DRIFT" "extra" "--- files ---" " g"
 
+# Repo C: staging has an extra EMPTY commit (no tree change). Trees are equal
+# → verdict must be PARITY OK even though commit counts differ.
+c="$tmp/c"; git init -q -b master "$c"; git -C "$c" config user.email t@t; git -C "$c" config user.name t
+echo 1 > "$c/f"; git -C "$c" add f; git -C "$c" commit -qm init
+git -C "$c" branch main master
+git -C "$c" commit -q --allow-empty -m empty
+git -C "$c" branch staging master
+run empty_commit_parity 0 "$c" "PARITY OK"
+
 # --strict must exit non-zero when drifted.
 out=$(PARITY_REPO="$b" PARITY_A=main PARITY_B=staging bash "$here/parity-report.sh" --strict 2>&1); got=$?
 if [ "$got" = 1 ]; then echo "PASS strict"; else echo "FAIL strict (exit $got, want 1)"; fail=1; fi
@@ -34,5 +43,9 @@ if [ "$got" = 1 ]; then echo "PASS strict"; else echo "FAIL strict (exit $got, w
 # --strict on an EQUAL pair must exit 0.
 out=$(PARITY_REPO="$a" PARITY_A=main PARITY_B=staging bash "$here/parity-report.sh" --strict 2>&1); got=$?
 if [ "$got" = 0 ]; then echo "PASS strict_equal"; else echo "FAIL strict_equal (exit $got, want 0)"; fail=1; fi
+
+# --strict on the empty-commit (tree-equal) pair must also exit 0.
+out=$(PARITY_REPO="$c" PARITY_A=main PARITY_B=staging bash "$here/parity-report.sh" --strict 2>&1); got=$?
+if [ "$got" = 0 ]; then echo "PASS strict_empty_commit"; else echo "FAIL strict_empty_commit (exit $got, want 0)"; fail=1; fi
 
 exit $fail
