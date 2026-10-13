@@ -88,6 +88,21 @@ function itqan_scrub_main(array $argv): int
     $cfg = $argv[1] ?? '/var/www/flarum/config.php';
     $dry = in_array('--dry-run', $argv, true);
     $dsn = getenv('SCRUB_DSN') ?: '';
+    // Production-host denylist. Only enforced when we resolved a host from a
+    // config file (the path the scrub was designed for). SCRUB_DSN bypass is
+    // deliberate: it is the testing escape hatch and the operator-controlled
+    // override. The default 10.106.0.5 is the production DB host.
+    $resolvedHost = null;
+    if ($dsn === '') {
+        $c = include $cfg;
+        $d = $c['database'];
+        $resolvedHost = (string) ($d['host'] ?? '');
+        $deny = array_filter(array_map('trim', explode(',', getenv('SCRUB_DENY_HOSTS') ?: '10.106.0.5')));
+        if ($resolvedHost !== '' && in_array($resolvedHost, $deny, true)) {
+            fwrite(STDERR, "REFUSING: host {$resolvedHost} is a production host (set SCRUB_DENY_HOSTS to override)\n");
+            return 2;
+        }
+    }
     if ($dsn !== '') {
         $db = new PDO($dsn, getenv('SCRUB_USER') ?: null, getenv('SCRUB_PASS') ?: null);
     } else {

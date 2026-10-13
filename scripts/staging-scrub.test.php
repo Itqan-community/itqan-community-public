@@ -87,4 +87,51 @@ putenv('SCRUB_TO_HOST');
 putenv('STAGING_ADMIN_USERNAME');
 putenv('STAGING_ADMIN_PASSWORD');
 
+// Production-host denylist guard.
+// To verify the message actually goes to STDERR (not STDOUT) without the
+// inline call leaking the REFUSING line into the test runner's own stderr,
+// every guard assertion is run in a subprocess with split stdout/stderr.
+$prodCfg = tempnam($tmpdir, 'prodcfg');
+file_put_contents($prodCfg, "<?php return ['database' => ['host' => '10.106.0.5', 'database' => 'flarum', 'username' => 'u', 'password' => 'p']];");
+register_shutdown_function(function () use ($prodCfg) { if (is_file($prodCfg)) { @unlink($prodCfg); } });
+
+$stgCfg = tempnam($tmpdir, 'stgcfg');
+file_put_contents($stgCfg, "<?php return ['database' => ['host' => '10.107.0.2', 'database' => 'flarum', 'username' => 'u', 'password' => 'p']];");
+register_shutdown_function(function () use ($stgCfg) { if (is_file($stgCfg)) { @unlink($stgCfg); } });
+
+// Case A: production host + default denylist -> exit 2, REFUSING on stderr.
+$probeA = tempnam($tmpdir, 'probeA');
+file_put_contents($probeA, "<?php require " . var_export(__DIR__ . '/staging-scrub.php', true) . "; putenv('SCRUB_DSN'); putenv('SCRUB_DENY_HOSTS'); exit(itqan_scrub_main(['staging-scrub.php', " . var_export($prodCfg, true) . "]));");
+register_shutdown_function(function () use ($probeA) { if (is_file($probeA)) { @unlink($probeA); } });
+$outA = $tmpdir . '/Aout'; $errA = $tmpdir . '/Aerr';
+$cmdA = escapeshellarg(PHP_BINARY) . ' -d display_errors=stderr ' . escapeshellarg($probeA) . ' 1>' . escapeshellarg($outA) . ' 2>' . escapeshellarg($errA);
+$rcA = 0; $soA = ''; $seA = '';
+exec($cmdA, $unused, $rcA);
+$soA = (string) file_get_contents($outA);
+$seA = (string) file_get_contents($errA);
+@unlink($outA); @unlink($errA);
+ok('denylist: production host refused (rc=2)', $rcA === 2);
+ok('denylist: REFUSING on stderr', str_contains($seA, 'REFUSING: host 10.106.0.5 is a production host'));
+ok('denylist: no REFUSING on stdout', !str_contains($soA, 'REFUSING:'));
+
+// Case B: staging host with overridden denylist (10.106.0.5 only) -> guard
+// must pass; the call will then fail at MySQL connect, surfacing as rc -99
+// from the probe (via a caught PDOException).
+$probeB = tempnam($tmpdir, 'probeB');
+file_put_contents($probeB, "<?php require " . var_export(__DIR__ . '/staging-scrub.php', true) . "; putenv('SCRUB_DSN'); putenv('SCRUB_DENY_HOSTS=10.106.0.5'); try { exit(itqan_scrub_main(['staging-scrub.php', " . var_export($stgCfg, true) . "])); } catch (PDOException \$e) { fwrite(STDERR, 'POST_GUARD:' . \$e->getMessage()); exit(99); }");
+register_shutdown_function(function () use ($probeB) { if (is_file($probeB)) { @unlink($probeB); } });
+$outB = $tmpdir . '/Bout'; $errB = $tmpdir . '/Berr';
+$cmdB = escapeshellarg(PHP_BINARY) . ' -d display_errors=stderr ' . escapeshellarg($probeB) . ' 1>' . escapeshellarg($outB) . ' 2>' . escapeshellarg($errB);
+$rcB = 0; $soB = ''; $seB = '';
+exec($cmdB, $unused, $rcB);
+$soB = (string) file_get_contents($outB);
+$seB = (string) file_get_contents($errB);
+@unlink($outB); @unlink($errB);
+ok('denylist: staging host not refused (rc != 2)', $rcB !== 2);
+ok('denylist: staging host did not emit REFUSING', !str_contains($soB . $seB, 'REFUSING:'));
+ok('denylist: guard passed, failure was post-guard (rc=99, POST_GUARD on stderr)',
+    $rcB === 99 && str_contains($seB, 'POST_GUARD:'));
+
+putenv('SCRUB_DENY_HOSTS');
+
 exit($fail);
