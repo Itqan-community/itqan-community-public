@@ -18,7 +18,7 @@ SCRUB_CMD=${SCRUB_CMD:-"ssh $STAGING_SSH 'cd $FLARUM && sudo -u www-data php scr
 RSYNC_CMD=${RSYNC_CMD:-"rsync -az $PROD_SSH:$FLARUM/public/assets/files/ $STAGING_SSH:$FLARUM/public/assets/files/"}
 MIGRATE_CMD=${MIGRATE_CMD:-"ssh $STAGING_SSH 'cd $FLARUM && sudo -u www-data php flarum migrate && sudo -u www-data php flarum cache:clear'"}
 BACKUP_CMD=${BACKUP_CMD:-"ssh $STAGING_DB_SSH 'mkdir -p /root/staging-db-backups && mysqldump flarum | gzip > /root/staging-db-backups/flarum-\$(date +%Y%m%d-%H%M%S).sql.gz'"}
-START_WORKER_CMD=${START_WORKER_CMD:-"ssh $STAGING_SSH 'sudo systemctl start flarum-queue || true'"}
+START_WORKER_CMD=${START_WORKER_CMD:-"ssh $STAGING_SSH 'sudo systemctl start flarum-queue'"}
 
 step() { echo "== $1"; shift; eval "$1"; }
 
