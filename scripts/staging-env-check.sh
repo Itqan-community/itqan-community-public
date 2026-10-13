@@ -19,5 +19,5 @@ fail=0
 [ "$queue" = database ] || { echo "FAIL queue.driver=$queue (want database)"; fail=1; }
 [ "$mail"  = log ]      || { echo "FAIL mail.driver=$mail (want log)"; fail=1; }
 [ "$disk"  = yes ]      || { echo "FAIL filesystems.flarum-assets missing"; fail=1; }
-[ "$cookie" = '__Host-flarum' ] || { echo "FAIL cookie.name=$cookie"; fail=1; }
+[ "$cookie" = '__Host-flarum' ] || { echo "FAIL cookie.name=$cookie (want __Host-flarum)"; fail=1; }
 [ "$fail" = 0 ] && echo "ENV OK ($cfg)" || exit 1

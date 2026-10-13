@@ -25,10 +25,14 @@ echo 1 > "$b/f"; git -C "$b" add f; git -C "$b" commit -qm init
 git -C "$b" branch main master
 echo 2 > "$b/g"; git -C "$b" add g; git -C "$b" commit -qm extra
 git -C "$b" branch staging master
-run drift 0 "$b" "DRIFT" "extra"
+run drift 0 "$b" "DRIFT" "extra" "--- files ---" " g"
 
 # --strict must exit non-zero when drifted.
 out=$(PARITY_REPO="$b" PARITY_A=main PARITY_B=staging bash "$here/parity-report.sh" --strict 2>&1); got=$?
 if [ "$got" = 1 ]; then echo "PASS strict"; else echo "FAIL strict (exit $got, want 1)"; fail=1; fi
+
+# --strict on an EQUAL pair must exit 0.
+out=$(PARITY_REPO="$a" PARITY_A=main PARITY_B=staging bash "$here/parity-report.sh" --strict 2>&1); got=$?
+if [ "$got" = 0 ]; then echo "PASS strict_equal"; else echo "FAIL strict_equal (exit $got, want 0)"; fail=1; fi
 
 exit $fail

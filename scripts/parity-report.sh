@@ -16,8 +16,24 @@ if [ "$behind" = 0 ] && [ "$ahead" = 0 ]; then
 fi
 echo "DRIFT: $a <- $behind commit(s) | $b <- $ahead commit(s)"
 echo "--- staging-only (candidate delta) ---"
-git -C "$repo" log --oneline --no-merges "$a..$b" | head -50
+if git_log_out=$(git -C "$repo" log --oneline "$a..$b" 2>/dev/null); then
+  log_total=$(printf '%s\n' "$git_log_out" | wc -l | tr -d ' ')
+  printf '%s\n' "$git_log_out" | head -50
+  if [ "$log_total" -gt 50 ]; then
+    echo "… (truncated; full list: git log $a..$b)"
+  fi
+else
+  echo "(git log failed)"
+fi
 echo "--- files ---"
-git -C "$repo" diff --stat "$a" "$b" | tail -40
+if git_diff_out=$(git -C "$repo" diff --stat "$a" "$b" 2>/dev/null); then
+  diff_total=$(printf '%s\n' "$git_diff_out" | wc -l | tr -d ' ')
+  printf '%s\n' "$git_diff_out" | tail -40
+  if [ "$diff_total" -gt 40 ]; then
+    echo "… (truncated; full list: git diff --stat $a $b)"
+  fi
+else
+  echo "(git diff failed)"
+fi
 [ "$strict" = 1 ] && exit 1
 exit 0

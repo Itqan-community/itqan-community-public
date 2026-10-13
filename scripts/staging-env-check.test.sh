@@ -24,9 +24,9 @@ cat > "$tmp/bad.php" <<'PHP'
 <?php return [
   'queue' => ['driver' => 'sync'],
   'mail' => ['driver' => 'smtp'],
-  'cookie' => ['name' => '__Host-flarum'],
+  'cookie' => ['name' => 'flarum_session'],
 ];
 PHP
 check good 0 "$tmp/good.php" "ENV OK"
-check bad  1 "$tmp/bad.php" "queue.driver" "mail.driver" "filesystems.flarum-assets"
+check bad  1 "$tmp/bad.php" "queue.driver" "mail.driver" "filesystems.flarum-assets" "cookie.name"
 exit $fail
