@@ -10,7 +10,7 @@ All contributions follow our standard open-source campaign rules:
 
 ### 1. The 5-Step Contributor Workflow
 ```
-1. Comment on Issue ──► 2. Maintainer Assigns ──► 3. Open PR (target develop)
+1. Comment on Issue ──► 2. Maintainer Assigns ──► 3. Open PR (target staging)
                                                               │
                                                      4. Review & Merge
                                                               │
@@ -19,8 +19,8 @@ All contributions follow our standard open-source campaign rules:
 
 1. **Pick an Issue:** Find an issue labeled `good first issue` or `help wanted` on [GitHub Issues](https://github.com/Itqan-community/itqan-community-public/issues).
 2. **Request Assignment:** Leave a comment on the issue. A maintainer will assign it to you before you start.
-3. **Branch from `develop`:** Always branch off `develop` and name your branch descriptively (e.g. `feat/categories-grid` or `fix/font-fout`).
-4. **Submit PR targeting `develop`:** Ensure all tests pass locally and follow the issue's acceptance criteria.
+3. **Branch from `staging`:** Always branch off `staging` and name your branch descriptively (e.g. `feat/categories-grid` or `fix/font-fout`).
+4. **Submit PR targeting `staging`:** Ensure all tests pass locally and follow the issue's acceptance criteria.
 5. **Share Your Experience:** Once merged, share a short write-up on [community.itqan.dev](https://community.itqan.dev) to claim your campaign points and badges!
 
 ---
@@ -44,7 +44,7 @@ Using AI tools (ChatGPT, Copilot, Claude, Gemini) to assist your development is 
 
 ## 🚀 Branching Strategy
 
-- **`develop` (Default / Staging):** All active development and community PRs target this branch.
-- **`main` (Production):** Protected branch; deployed to production upon maintainer release.
+- **`staging` (Default / Staging):** All active development and community PRs target this branch.
+- **`main` (Production):** Merging to `main` deploys production and requires maintainer approval.
 
 Happy Coding! 🚀
