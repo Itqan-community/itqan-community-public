@@ -16,8 +16,6 @@ jobs:
           SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
           SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
           DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
-          SMTP_USERNAME: ${{ secrets.STAGING_SMTP_USERNAME }}
-          SMTP_PASSWORD: ${{ secrets.STAGING_SMTP_PASSWORD }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/staging_deploy_key
@@ -28,14 +26,10 @@ jobs:
           # into one remote command string, so raw special characters (this
           # DB password contains &) get re-parsed by the remote shell.
           DB_PASSWORD_B64=$(printf '%s' "$DB_PASSWORD" | base64 | tr -d '\n')
-          SMTP_USERNAME_B64=$(printf '%s' "$SMTP_USERNAME" | base64 | tr -d '\n')
-          SMTP_PASSWORD_B64=$(printf '%s' "$SMTP_PASSWORD" | base64 | tr -d '\n')
 
-          ssh -i ~/.ssh/staging_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" "$SMTP_USERNAME_B64" "$SMTP_PASSWORD_B64" <<'REMOTE'
+          ssh -i ~/.ssh/staging_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" <<'REMOTE'
           set -euo pipefail
           DB_PASSWORD=$(printf '%s' "$1" | base64 -d)
-          SMTP_USERNAME=$(printf '%s' "$2" | base64 -d)
-          SMTP_PASSWORD=$(printf '%s' "$3" | base64 -d)
 
           git config --global --add safe.directory /var/www/flarum
 
@@ -51,7 +45,7 @@ jobs:
           cat > /var/www/flarum/config.php <<PHP
           <?php return array (
             'debug' => false,
-            'queue' => array('driver' => 'sync'),
+            'queue' => array('driver' => 'database'),
             'database' => array(
               'driver' => 'mysql',
               'database' => 'flarum',
@@ -69,15 +63,15 @@ jobs:
             'url' => 'https://staging.community.itqan.dev',
             'paths' => array('api' => 'api', 'admin' => 'admin'),
             'headers' => array('poweredByHeader' => false, 'referrerPolicy' => 'same-origin'),
-            'mail' => array(
-              'driver' => 'smtp',
-              'host' => 'in-v3.mailjet.com',
-              'port' => 587,
-              'username' => '${SMTP_USERNAME}',
-              'password' => '${SMTP_PASSWORD}',
-              'encryption' => 'tls',
-              'from' => array('address' => 'noreply@itqan.dev', 'name' => 'Itqan Community Staging'),
+            'filesystems' => array(
+              'disks' => array(
+                'flarum-assets' => array(
+                  'driver' => 'local',
+                  'root' => '/var/www/flarum/public/assets',
+                ),
+              ),
             ),
+            'mail' => array('driver' => 'log'),
             'cookie' => array('name' => '__Host-flarum', 'samesite' => 'lax'),
           );
           PHP
@@ -96,29 +90,29 @@ jobs:
           sudo -u www-data php flarum migrate
           sudo -u www-data php flarum cache:clear
 
+          # Staging uses the database queue driver for production parity, so a
+          # worker must be running. Idempotent; warns if the unit is missing.
+          if systemctl cat flarum-queue.service >/dev/null 2>&1; then
+            systemctl enable --now flarum-queue
+          else
+            echo "WARNING: flarum-queue.service not installed; queued jobs will not run"
+          fi
+
           sed -i 's#root /var/www/flarum-placeholder;#root /var/www/flarum/public;#' /etc/nginx/sites-available/flarum.conf
           sed -i 's#index index.html;#index index.php;#' /etc/nginx/sites-available/flarum.conf
 
-          # Flarum must serve /robots.txt (v17 SEO route) and the generated OG
-          # card images at /og/*.png. The site conf denies *.txt and serves
-          # *.png as static-only, so add an exact and a prefixed location that
-          # fall through to index.php (idempotent).
-          if ! grep -qF 'location ^~ /og/' /etc/nginx/sites-available/flarum.conf; then
-            printf '%s\n' \
-              '    location = /robots.txt {' \
-              '        try_files $uri /index.php?$query_string;' \
-              '    }' \
-              '' \
-              '    location ^~ /og/ {' \
-              '        try_files $uri /index.php?$query_string;' \
-              '    }' \
-              > /tmp/itqan-flarum-locations.conf
-            awk '{ if ($0 ~ /^[[:space:]]*location \/ \{/ && !done) { while ((getline line < "/tmp/itqan-flarum-locations.conf") > 0) print line; close("/tmp/itqan-flarum-locations.conf"); done=1 } print }' /etc/nginx/sites-available/flarum.conf > /tmp/itqan-flarum.conf.new
-            mv /tmp/itqan-flarum.conf.new /etc/nginx/sites-available/flarum.conf
-            rm -f /tmp/itqan-flarum-locations.conf
+          # Normalize the /robots.txt and /og/ locations so they are handled
+          # exactly once (idempotent; also repairs duplicates from earlier
+          # deploys). Back up first, and restore if the config fails to test.
+          cp /etc/nginx/sites-available/flarum.conf /tmp/flarum.conf.bak
+          python3 scripts/normalize-nginx-locations.py /etc/nginx/sites-available/flarum.conf
+          if ! nginx -t; then
+            cp /tmp/flarum.conf.bak /etc/nginx/sites-available/flarum.conf
+            echo "nginx config invalid after normalization; restored previous config"
+            nginx -t
+            exit 1
           fi
-
-          nginx -t
+          rm -f /tmp/flarum.conf.bak
           systemctl reload nginx
           systemctl reload php8.1-fpm
 

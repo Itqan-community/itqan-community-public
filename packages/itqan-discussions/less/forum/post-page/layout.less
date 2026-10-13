@@ -294,3 +294,35 @@
   font-style: italic;
   margin: 0;
 }
+
+// Phone header: topic title above the "x of y" counter. The toggle is hidden
+// on desktop, so the title only matters here.
+.Scrubber-title {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .PostStreamScrubber.App-titleControl .Dropdown-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.3;
+    max-width: 100%;
+  }
+
+  .PostStreamScrubber .Scrubber-title {
+    display: block;
+    max-width: 62vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .PostStreamScrubber .Scrubber-viewing {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.75;
+  }
+}

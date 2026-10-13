@@ -7,7 +7,6 @@ itqan-notifications:
       discussion_replied_text: "رد {username} على نقاشك \"{title}\""
       comment_replied_text: "عقّب {username} على تعليقك في \"{title}\""
       post_approved_text: "تمت الموافقة على مشاركتك ونشرها في \"{title}\""
-      post_rejected_text: "تعذّر قبول مشاركتك في \"{title}\""
       discussion_stickied_text: "تهانينا! تم تثبيت نقاشك \"{title}\" في أعلى القسم 📌"
       discussion_retagged_text: "تم نقل نقاشك \"{title}\" إلى قسم {new_tag}"
 
@@ -27,15 +26,13 @@ itqan-notifications:
     new_discussion:
       title: "نقاش جديد من {username}"
     post_liked:
-      title: "إعجاب جديد ❤️"
+      title: "أعجب {username} بمنشورك"
     post_reacted:
       title: "تفاعل جديد {reaction}"
     badge_received:
       title: "وسام جديد! 🏆"
     post_approved:
       title: "تمت الموافقة على مشاركتك ✅"
-    post_rejected:
-      title: "تحديث بشأن مشاركتك ⚠️"
     discussion_stickied:
       title: "تم تثبيت نقاشك! 📌"
     discussion_retagged:
@@ -89,15 +86,6 @@ itqan-notifications:
         {content}
 
         ---
-
-    post_rejected:
-      subject: "تحديث من الإشراف بشأن مشاركتك في: \"{title}\""
-      body: |
-        مرحبًا {recipient_display_name}!
-
-        نحيطك علماً بأن مشاركتك في "{title}" لم تتم الموافقة عليها لعدم توافقها مع إرشادات النشر.
-
-        سبب الإشراف: {reason}
 
     discussion_stickied:
       subject: "مبروك! تم تثبيت نقاشك \"{title}\" في مجتمع إتقان 📌"

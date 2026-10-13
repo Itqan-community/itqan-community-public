@@ -7,7 +7,6 @@ itqan-notifications:
       discussion_replied_text: "{username} replied to your discussion \"{title}\""
       comment_replied_text: "{username} replied to your comment in \"{title}\""
       post_approved_text: "Your post in \"{title}\" has been approved and published"
-      post_rejected_text: "Your post in \"{title}\" was not approved"
       discussion_stickied_text: "Congratulations! Your discussion \"{title}\" was pinned 📌"
       discussion_retagged_text: "Your discussion \"{title}\" was moved to {new_tag}"
 
@@ -27,15 +26,13 @@ itqan-notifications:
     new_discussion:
       title: "New discussion by {username}"
     post_liked:
-      title: "New Like ❤️"
+      title: "{username} liked your post"
     post_reacted:
       title: "New Reaction {reaction}"
     badge_received:
       title: "New Badge Earned! 🏆"
     post_approved:
       title: "Post Approved ✅"
-    post_rejected:
-      title: "Post Review Update ⚠️"
     discussion_stickied:
       title: "Discussion Pinned! 📌"
     discussion_retagged:
@@ -88,15 +85,6 @@ itqan-notifications:
         {content}
 
         ---
-
-    post_rejected:
-      subject: "Moderation update regarding your post in \"{title}\""
-      body: |
-        Hey {recipient_display_name}!
-
-        Your post in "{title}" was not approved as it did not meet our community publishing guidelines.
-
-        Moderator note: {reason}
 
     discussion_stickied:
       subject: "Congratulations! Your discussion \"{title}\" was pinned 📌"

@@ -1,0 +1,136 @@
+<?php
+// Purge/rewrite the private + active fields on the STAGING database after a
+// prod-content import. Portable across MySQL (server) and SQLite (tests).
+// NEVER run against production. Usage:
+//   php staging-scrub.php /var/www/flarum/config.php [--dry-run]
+// Env: SCRUB_DSN / SCRUB_USER / SCRUB_PASS (override config), SCRUB_FROM_HOST,
+//      SCRUB_TO_HOST, STAGING_ADMIN_USERNAME, STAGING_ADMIN_PASSWORD.
+
+// Phrase fragments (case-insensitive) that mean "the object I asked for isn't there".
+// Anything else is a real error and must propagate.
+const ITQAN_ABSENT_PHRASES = [
+    'no such table',
+    'no such column',
+    "doesn't exist",
+    'unknown column',
+    'unknown table',
+    'base table or view not found',
+];
+
+function itqan_is_absent(PDOException $e): bool
+{
+    $msg = strtolower($e->getMessage());
+    foreach (ITQAN_ABSENT_PHRASES as $p) {
+        if (str_contains($msg, $p)) { return true; }
+    }
+    return false;
+}
+
+function itqan_table_exists(PDO $db, string $t): bool
+{
+    try { $db->query("SELECT 1 FROM `$t` LIMIT 0"); return true; }
+    catch (PDOException $e) { if (itqan_is_absent($e)) { return false; } throw $e; }
+}
+
+function itqan_col_exists(PDO $db, string $t, string $c): bool
+{
+    try { $db->query("SELECT `$c` FROM `$t` LIMIT 0"); return true; }
+    catch (PDOException $e) { if (itqan_is_absent($e)) { return false; } throw $e; }
+}
+
+function itqan_scrub(PDO $db, array $o = []): array
+{
+    $purge = ['access_tokens', 'email_tokens', 'password_tokens',
+              'login_providers', 'push_subscriptions', 'jobs', 'failed_jobs'];
+    $suffix = $o['email_suffix'] ?? '@staging.invalid';
+    $report = [];
+
+    // 1. Kill impersonation + device + queued-work channels first.
+    foreach ($purge as $t) {
+        if (!itqan_table_exists($db, $t)) { $report[$t] = 'absent'; continue; }
+        $report[$t] = 'purged:' . $db->exec("DELETE FROM `$t`");
+    }
+
+    // 2. Fake every email; null every password (loop = portable, ~2k rows).
+    if (itqan_table_exists($db, 'users') && itqan_col_exists($db, 'users', 'email')) {
+        $hasPw = itqan_col_exists($db, 'users', 'password');
+        $sql = "UPDATE `users` SET email = ?" . ($hasPw ? ", password = NULL" : "") . " WHERE id = ?";
+        $up = $db->prepare($sql);
+        $ids = $db->query("SELECT id FROM `users`")->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($ids as $id) { $up->execute(["u{$id}{$suffix}", $id]); }
+        $report['users_email'] = 'faked:' . count($ids);
+    }
+
+    // 3. Rewrite prod hostnames in stored content so staging self-hosts.
+    $from = $o['from_host'] ?? ''; $to = $o['to_host'] ?? '';
+    if ($from !== '' && $to !== '' && $from !== $to) {
+        foreach ([['posts', 'content'], ['users', 'avatar_url']] as [$t, $c]) {
+            if (itqan_table_exists($db, $t) && itqan_col_exists($db, $t, $c)) {
+                $st = $db->prepare("UPDATE `$t` SET `$c` = REPLACE(`$c`, ?, ?)");
+                $st->execute([$from, $to]);
+                $report["rewrite:$t.$c"] = $st->rowCount();
+            }
+        }
+    }
+
+    // 4. Restore a staging-only admin login.
+    $u = $o['admin_username'] ?? ''; $p = $o['admin_password'] ?? '';
+    if ($u !== '' && $p !== '') {
+        $st = $db->prepare("UPDATE `users` SET password = ? WHERE username = ?");
+        $st->execute([password_hash($p, PASSWORD_BCRYPT), $u]);
+        $report['admin'] = $st->rowCount() ? "set:$u" : "MISSING:$u";
+    }
+    return $report;
+}
+
+function itqan_scrub_main(array $argv): int
+{
+    $cfg = $argv[1] ?? '/var/www/flarum/config.php';
+    $dry = in_array('--dry-run', $argv, true);
+    $dsn = getenv('SCRUB_DSN') ?: '';
+    // Production-host denylist. Only enforced when we resolved a host from a
+    // config file (the path the scrub was designed for). SCRUB_DSN bypass is
+    // deliberate: it is the testing escape hatch and the operator-controlled
+    // override. The default 10.106.0.5 is the production DB host.
+    $resolvedHost = null;
+    if ($dsn === '') {
+        $c = include $cfg;
+        $d = $c['database'];
+        $resolvedHost = (string) ($d['host'] ?? '');
+        $deny = array_filter(array_map('trim', explode(',', getenv('SCRUB_DENY_HOSTS') ?: '10.106.0.5')));
+        if ($resolvedHost !== '' && in_array($resolvedHost, $deny, true)) {
+            fwrite(STDERR, "REFUSING: host {$resolvedHost} is a production host (set SCRUB_DENY_HOSTS to override)\n");
+            return 2;
+        }
+    }
+    if ($dsn !== '') {
+        $db = new PDO($dsn, getenv('SCRUB_USER') ?: null, getenv('SCRUB_PASS') ?: null);
+    } else {
+        $c = include $cfg;
+        $d = $c['database'];
+        $db = new PDO("mysql:host={$d['host']};dbname={$d['database']};charset=utf8mb4",
+            $d['username'], $d['password']);
+    }
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $opts = [
+        'from_host' => getenv('SCRUB_FROM_HOST') ?: '',
+        'to_host' => getenv('SCRUB_TO_HOST') ?: '',
+        'admin_username' => getenv('STAGING_ADMIN_USERNAME') ?: '',
+        'admin_password' => getenv('STAGING_ADMIN_PASSWORD') ?: '',
+    ];
+    $db->beginTransaction();
+    $report = itqan_scrub($db, $opts);
+    // Operator guard: if no admin was set, every password is now NULL.
+    if (($opts['admin_username'] === '' || $opts['admin_password'] === '')
+        && !isset($report['admin'])) {
+        echo "WARNING: no admin credentials set — every password is NULL\n";
+    }
+    if ($dry) { $db->rollBack(); echo "DRY-RUN (rolled back)\n"; }
+    else { $db->commit(); echo "SCRUB COMMITTED\n"; }
+    foreach ($report as $k => $v) { echo "  $k: $v\n"; }
+    return 0;
+}
+
+if (PHP_SAPI === 'cli' && isset($argv[0]) && basename((string) $argv[0]) === basename(__FILE__)) {
+    exit(itqan_scrub_main($argv));
+}

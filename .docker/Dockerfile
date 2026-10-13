@@ -10,7 +10,7 @@ RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         libpng-dev libjpeg62-turbo-dev libfreetype6-dev libzip-dev \
-        unzip git default-mysql-client chromium fonts-noto-arabic; \
+        unzip git default-mysql-client; \
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
     docker-php-ext-install -j"$(nproc)" gd pdo_mysql zip exif; \
     apt-get clean; \

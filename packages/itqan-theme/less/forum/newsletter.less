@@ -250,6 +250,17 @@ div#mlb2-29840832.ml-form-embedContainer,
   }
 }
 
+// MailerLite sets its own font on the button, labels, success text and popup,
+// so only the elements we already override matched the site font.
+div[id^="mlb2-"].ml-form-embedContainer,
+div[id^="mlb2-"].ml-form-embedContainer *,
+.ml-form-embedPopup,
+.ml-form-embedPopup *,
+#newsletter-popup,
+#newsletter-popup * {
+  font-family: var(--font-arabic) !important;
+}
+
 // Mobile footer padding adjustment
 @media (max-width: 767.98px) {
   body > div.container:has(#mlb2-29840832),
