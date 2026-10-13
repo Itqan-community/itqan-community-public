@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: parity-report
+  cancel-in-progress: true
+
 jobs:
   report:
     runs-on: ubuntu-latest
@@ -18,4 +22,14 @@ jobs:
       - name: Compare staging to main
         run: |
           git fetch origin main staging
-          bash scripts/parity-report.sh
+          bash scripts/parity-report.sh | tee parity-report.txt
+          {
+            echo '### Staging parity report'
+            echo '```'
+            cat parity-report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: parity-report
+          path: parity-report.txt
