@@ -8,9 +8,9 @@ STAGING_SSH=${STAGING_SSH:-staging-host}
 STAGING_DB_SSH=${STAGING_DB_SSH:-staging-db-host}
 PROD_SSH=${PROD_SSH:-prod-host}
 DUMP=${DUMP:-/tmp/flarum-prod.sql.gz}
-FLARUM=/var/www/flarum
+FLARUM=${FLARUM:-/var/www/flarum}
 
-STOP_WORKER_CMD=${STOP_WORKER_CMD:-"ssh $STAGING_SSH 'sudo systemctl stop flarum-queue || true'"}
+STOP_WORKER_CMD=${STOP_WORKER_CMD:-"ssh $STAGING_SSH 'sudo systemctl stop flarum-queue'"}
 ENV_CHECK_CMD=${ENV_CHECK_CMD:-"ssh $STAGING_SSH 'bash $FLARUM/scripts/staging-env-check.sh $FLARUM/config.php'"}
 DUMP_CMD=${DUMP_CMD:-"ssh $PROD_SSH 'mysqldump flarum | gzip' > $DUMP"}
 IMPORT_CMD=${IMPORT_CMD:-"gunzip -c $DUMP | ssh $STAGING_DB_SSH 'mysql flarum'"}

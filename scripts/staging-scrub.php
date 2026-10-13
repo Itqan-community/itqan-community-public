@@ -6,16 +6,36 @@
 // Env: SCRUB_DSN / SCRUB_USER / SCRUB_PASS (override config), SCRUB_FROM_HOST,
 //      SCRUB_TO_HOST, STAGING_ADMIN_USERNAME, STAGING_ADMIN_PASSWORD.
 
+// Phrase fragments (case-insensitive) that mean "the object I asked for isn't there".
+// Anything else is a real error and must propagate.
+const ITQAN_ABSENT_PHRASES = [
+    'no such table',
+    'no such column',
+    "doesn't exist",
+    'unknown column',
+    'unknown table',
+    'base table or view not found',
+];
+
+function itqan_is_absent(PDOException $e): bool
+{
+    $msg = strtolower($e->getMessage());
+    foreach (ITQAN_ABSENT_PHRASES as $p) {
+        if (str_contains($msg, $p)) { return true; }
+    }
+    return false;
+}
+
 function itqan_table_exists(PDO $db, string $t): bool
 {
     try { $db->query("SELECT 1 FROM `$t` LIMIT 0"); return true; }
-    catch (PDOException $e) { return false; }
+    catch (PDOException $e) { if (itqan_is_absent($e)) { return false; } throw $e; }
 }
 
 function itqan_col_exists(PDO $db, string $t, string $c): bool
 {
     try { $db->query("SELECT `$c` FROM `$t` LIMIT 0"); return true; }
-    catch (PDOException $e) { return false; }
+    catch (PDOException $e) { if (itqan_is_absent($e)) { return false; } throw $e; }
 }
 
 function itqan_scrub(PDO $db, array $o = []): array
@@ -85,12 +105,17 @@ function itqan_scrub_main(array $argv): int
     ];
     $db->beginTransaction();
     $report = itqan_scrub($db, $opts);
+    // Operator guard: if no admin was set, every password is now NULL.
+    if (($opts['admin_username'] === '' || $opts['admin_password'] === '')
+        && !isset($report['admin'])) {
+        echo "WARNING: no admin credentials set — every password is NULL\n";
+    }
     if ($dry) { $db->rollBack(); echo "DRY-RUN (rolled back)\n"; }
     else { $db->commit(); echo "SCRUB COMMITTED\n"; }
     foreach ($report as $k => $v) { echo "  $k: $v\n"; }
     return 0;
 }
 
-if (PHP_SAPI === 'cli' && isset($argv[0]) && realpath($argv[0]) === __FILE__) {
+if (PHP_SAPI === 'cli' && isset($argv[0]) && basename((string) $argv[0]) === basename(__FILE__)) {
     exit(itqan_scrub_main($argv));
 }
