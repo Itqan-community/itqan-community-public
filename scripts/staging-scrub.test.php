@@ -30,7 +30,7 @@ $db->exec("INSERT INTO jobs VALUES (1)");
 $db->exec("INSERT INTO queue_jobs VALUES (1),(2)");
 $db->exec("INSERT INTO queue_failed_jobs VALUES (1)");
 $db->exec("INSERT INTO posts VALUES (1,'see https://community.itqan.dev/d/1 ok')");
-$db->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan'),('seo_social_media_image_url','https://community.itqan.dev/og/default.png'),('fof-pretty-mail.logo','https://community.itqan.dev/assets/pretty-mail/logo.png')");
+$db->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan'),('seo_social_media_image_url','https://community.itqan.dev/og/default.png'),('fof-pretty-mail.logo','https://community.itqan.dev/assets/pretty-mail/logo.png'),('seo_robots_text','User-agent: *\nAllow: /'),('seo_allow_all_bots','1')");
 $db->exec('CREATE TABLE fof_upload_files (id INTEGER, url TEXT)');
 $db->exec("INSERT INTO fof_upload_files VALUES (1,'https://community.itqan.dev/files/2024-01-01/foo.png'),(2,'https://community.itqan.dev/files/2024-02-02/bar.png')");
 $db->exec("INSERT INTO html_headers VALUES (1, '<script>ga4-prod</script>')");
@@ -88,6 +88,10 @@ ok('settings value (fof-pretty-mail.logo) rewritten', $prettyMailLogo === 'https
 $settingsUnchanged = (string) $db->query("SELECT `value` FROM settings WHERE `key`='forum_title'")->fetchColumn();
 ok('settings value without prod host unchanged', $settingsUnchanged === 'Itqan');
 ok('absent tables skipped', ($r['failed_jobs'] ?? '') === 'absent');
+$stagingRobots = (string) $db->query("SELECT `value` FROM settings WHERE `key`='seo_robots_text'")->fetchColumn();
+ok('seo_robots_text forced to no-index', $stagingRobots === "User-agent: *\nDisallow: /");
+$stagingAllowAll = (string) $db->query("SELECT `value` FROM settings WHERE `key`='seo_allow_all_bots'")->fetchColumn();
+ok('seo_allow_all_bots forced to 0', $stagingAllowAll === '0');
 ok('admin restored', ($r['admin'] ?? '') === 'set:admin');
 
 // --dry-run + SCRUB_DSN end-to-end against a real SQLite FILE.
@@ -101,7 +105,7 @@ $boot->exec("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TE
 $boot->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
 $boot->exec("CREATE TABLE access_tokens (token TEXT)");
 $boot->exec("INSERT INTO users VALUES (1,'real','real@itqan.dev','" . password_hash('fixture-pw', PASSWORD_BCRYPT) . "','https://community.itqan.dev/av/1.png')");
-$boot->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan')");
+$boot->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan'),('seo_robots_text','User-agent: *\nAllow: /'),('seo_allow_all_bots','1')");
 $boot->exec("INSERT INTO access_tokens VALUES ('dry-tok-1'),('dry-tok-2')");
 $boot = null; // close so the file is releasable on Windows
 register_shutdown_function(function () use ($file) { if (is_file($file)) { @unlink($file); } });
@@ -134,6 +138,10 @@ $dryAnalytics = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`=
 ok('dry-run rolled back (fof-analytics.tracking_id still present)', $dryAnalytics === 1);
 $dryForumTitle = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='forum_title'")->fetchColumn();
 ok('dry-run rolled back (forum_title unchanged)', $dryForumTitle === 'Itqan');
+$dryRobots = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='seo_robots_text'")->fetchColumn();
+ok('dry-run rolled back (seo_robots_text unchanged)', $dryRobots === "User-agent: *\nAllow: /");
+$dryAllowAll = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='seo_allow_all_bots'")->fetchColumn();
+ok('dry-run rolled back (seo_allow_all_bots unchanged)', $dryAllowAll === '1');
 // The purge path must be a no-op in dry-run: rows must still be present.
 $dryAccessTokens = (int) $reopen->query('SELECT COUNT(*) FROM access_tokens')->fetchColumn();
 ok('dry-run did NOT purge access_tokens (rows still present)', $dryAccessTokens === 2);
