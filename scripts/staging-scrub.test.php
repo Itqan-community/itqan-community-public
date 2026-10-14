@@ -86,8 +86,10 @@ $boot = new PDO('sqlite:' . $file);
 $boot->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $boot->exec("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT NOT NULL, avatar_url TEXT)");
 $boot->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
+$boot->exec("CREATE TABLE access_tokens (token TEXT)");
 $boot->exec("INSERT INTO users VALUES (1,'real','real@itqan.dev','" . password_hash('fixture-pw', PASSWORD_BCRYPT) . "','https://community.itqan.dev/av/1.png')");
 $boot->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan')");
+$boot->exec("INSERT INTO access_tokens VALUES ('dry-tok-1'),('dry-tok-2')");
 $boot = null; // close so the file is releasable on Windows
 register_shutdown_function(function () use ($file) { if (is_file($file)) { @unlink($file); } });
 
@@ -105,6 +107,7 @@ $dryOut = ob_get_clean();
 ok('dry-run exits 0', $rc === 0);
 ok('dry-run prints DRY-RUN', str_contains($dryOut, 'DRY-RUN (rolled back)'));
 ok('dry-run prints WARNING', str_contains($dryOut, 'WARNING: no admin credentials set'));
+ok('dry-run reports would-purge', str_contains($dryOut, 'access_tokens: would-purge:2'));
 
 $reopen = new PDO('sqlite:' . $file);
 $reopen->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -118,6 +121,9 @@ $dryAnalytics = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`=
 ok('dry-run rolled back (fof-analytics.tracking_id still present)', $dryAnalytics === 1);
 $dryForumTitle = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='forum_title'")->fetchColumn();
 ok('dry-run rolled back (forum_title unchanged)', $dryForumTitle === 'Itqan');
+// The purge path must be a no-op in dry-run: rows must still be present.
+$dryAccessTokens = (int) $reopen->query('SELECT COUNT(*) FROM access_tokens')->fetchColumn();
+ok('dry-run did NOT purge access_tokens (rows still present)', $dryAccessTokens === 2);
 $reopen = null;
 
 ob_start();
