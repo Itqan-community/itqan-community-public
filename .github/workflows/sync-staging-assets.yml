@@ -1,0 +1,52 @@
+name: Sync production assets to staging
+
+# Copies public/assets/files + public/assets/avatars from the production web box
+# to the staging web box. Production is READ-ONLY (rsync source only); the write
+# happens on staging. Manual only.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-staging-assets
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: rsync assets prod -> staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync assets
+        env:
+          PROD_KEY: ${{ secrets.BETA_SSH_KEY }}
+          PROD_HOST: ${{ secrets.BETA_SSH_HOST }}
+          STAGING_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          STAGING_HOST: ${{ secrets.STAGING_SSH_HOST }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh /tmp/assets
+          printf '%s' "$PROD_KEY"    > ~/.ssh/prod_key;    chmod 600 ~/.ssh/prod_key
+          printf '%s' "$STAGING_KEY" > ~/.ssh/staging_key; chmod 600 ~/.ssh/staging_key
+          ssh-keyscan -H "$PROD_HOST"    >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -H "$STAGING_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          echo "== pull from production (READ-ONLY source) =="
+          rsync -az -e "ssh -i ~/.ssh/prod_key" \
+            "root@$PROD_HOST:/var/www/flarum/public/assets/files/"   /tmp/assets/files/
+          rsync -az -e "ssh -i ~/.ssh/prod_key" \
+            "root@$PROD_HOST:/var/www/flarum/public/assets/avatars/" /tmp/assets/avatars/
+
+          echo "== push to staging =="
+          ssh -i ~/.ssh/staging_key "root@$STAGING_HOST" 'mkdir -p /var/www/flarum/public/assets/files /var/www/flarum/public/assets/avatars'
+          rsync -az -e "ssh -i ~/.ssh/staging_key" \
+            /tmp/assets/files/   "root@$STAGING_HOST:/var/www/flarum/public/assets/files/"
+          rsync -az -e "ssh -i ~/.ssh/staging_key" \
+            /tmp/assets/avatars/ "root@$STAGING_HOST:/var/www/flarum/public/assets/avatars/"
+
+          echo "== fix ownership on staging =="
+          ssh -i ~/.ssh/staging_key "root@$STAGING_HOST" 'chown -R www-data:www-data /var/www/flarum/public/assets'
+
+          echo "== counts on staging =="
+          ssh -i ~/.ssh/staging_key "root@$STAGING_HOST" 'find /var/www/flarum/public/assets/files -type f | wc -l; find /var/www/flarum/public/assets/avatars -type f | wc -l'
