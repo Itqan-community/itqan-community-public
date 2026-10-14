@@ -7,7 +7,6 @@ import classList from 'flarum/common/utils/classList';
 import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
 
 import MarkdownPreviewDrawer from './components/MarkdownPreviewDrawer';
-import addRichToolbarButtons from './components/RichToolbarButtons';
 
 export { default as MarkdownPreviewDrawer } from './components/MarkdownPreviewDrawer';
 
@@ -21,8 +20,6 @@ app.initializers.add('itqan-composer-tools', () => {
   extend(TextEditor.prototype, 'oninit', function () {
     this.itqanMarkdownPreviewOpen = false;
   });
-
-  addRichToolbarButtons();
 
   extend(TextEditor.prototype, 'controlItems', function (items) {
     if (!isDiscussionComposer(this.attrs.composer)) return;
