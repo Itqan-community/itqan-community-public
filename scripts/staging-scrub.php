@@ -53,13 +53,18 @@ function itqan_scrub(PDO $db, array $o = []): array
         $report[$t] = 'purged:' . $db->exec("DELETE FROM `$t`");
     }
 
-    // 2. Fake every email; null every password (loop = portable, ~2k rows).
+    // 2. Fake every email; lock every password behind an unknown random hash
+    //    (the column is NOT NULL on MySQL). The admin is restored in step 4.
     if (itqan_table_exists($db, 'users') && itqan_col_exists($db, 'users', 'email')) {
         $hasPw = itqan_col_exists($db, 'users', 'password');
-        $sql = "UPDATE `users` SET email = ?" . ($hasPw ? ", password = NULL" : "") . " WHERE id = ?";
+        $lockHash = $hasPw ? password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT) : null;
+        $sql = "UPDATE `users` SET email = ?" . ($hasPw ? ", password = ?" : "") . " WHERE id = ?";
         $up = $db->prepare($sql);
         $ids = $db->query("SELECT id FROM `users`")->fetchAll(PDO::FETCH_COLUMN);
-        foreach ($ids as $id) { $up->execute(["u{$id}{$suffix}", $id]); }
+        foreach ($ids as $id) {
+            $hasPw ? $up->execute(["u{$id}{$suffix}", $lockHash, $id])
+                   : $up->execute(["u{$id}{$suffix}", $id]);
+        }
         $report['users_email'] = 'faked:' . count($ids);
     }
 

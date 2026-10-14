@@ -6,15 +6,17 @@ function ok(string $name, bool $cond): void { global $fail; echo ($cond ? 'PASS 
 
 $db = new PDO('sqlite::memory:');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, avatar_url TEXT)');
+$db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT NOT NULL, avatar_url TEXT)');
 $db->exec('CREATE TABLE access_tokens (token TEXT)');
 $db->exec('CREATE TABLE jobs (id INTEGER)');
 $db->exec('CREATE TABLE queue_jobs (id INTEGER)');
 $db->exec('CREATE TABLE queue_failed_jobs (id INTEGER)');
 $db->exec('CREATE TABLE posts (id INTEGER, content TEXT)');
 $db->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
-$db->exec("INSERT INTO users VALUES (1,'admin','admin@itqan.dev','HASH','https://community.itqan.dev/av/1.png')");
-$db->exec("INSERT INTO users VALUES (2,'a','a@real.com','H2','https://community.itqan.dev/av/2.png')");
+$adminFixtureHash = password_hash('fixture-admin-pw', PASSWORD_BCRYPT);
+$userFixtureHash = password_hash('fixture-user-pw', PASSWORD_BCRYPT);
+$db->exec("INSERT INTO users VALUES (1,'admin','admin@itqan.dev','{$adminFixtureHash}','https://community.itqan.dev/av/1.png')");
+$db->exec("INSERT INTO users VALUES (2,'a','a@real.com','{$userFixtureHash}','https://community.itqan.dev/av/2.png')");
 $db->exec("INSERT INTO access_tokens VALUES ('tok')");
 $db->exec("INSERT INTO jobs VALUES (1)");
 $db->exec("INSERT INTO queue_jobs VALUES (1),(2)");
@@ -30,7 +32,12 @@ $r = itqan_scrub($db, [
 
 $emails = $db->query('SELECT email FROM users ORDER BY id')->fetchAll(PDO::FETCH_COLUMN);
 ok('emails faked', $emails === ['u1@staging.invalid', 'u2@staging.invalid']);
-ok('non-admin passwords nulled', (int) $db->query('SELECT COUNT(*) FROM users WHERE password IS NOT NULL')->fetchColumn() === 1);
+$nonAdminHashes = $db->query("SELECT password FROM users WHERE username <> 'admin' ORDER BY id")->fetchAll(PDO::FETCH_COLUMN);
+ok('non-admin passwords non-null', count($nonAdminHashes) > 0 && array_product(array_map(static fn($h) => $h !== null && $h !== '' ? 1 : 0, $nonAdminHashes)) === 1);
+ok('non-admin passwords share one lock hash', count(array_unique($nonAdminHashes)) === 1);
+ok('non-admin lock hash differs from fixture', reset($nonAdminHashes) !== $userFixtureHash);
+$adminHash = (string) $db->query("SELECT password FROM users WHERE username = 'admin'")->fetchColumn();
+ok('admin password non-null and verifies', $adminHash !== '' && password_verify('pw', $adminHash));
 ok('access_tokens purged', (int) $db->query('SELECT COUNT(*) FROM access_tokens')->fetchColumn() === 0);
 ok('jobs purged', (int) $db->query('SELECT COUNT(*) FROM jobs')->fetchColumn() === 0);
 ok('queue_jobs purged', (int) $db->query('SELECT COUNT(*) FROM queue_jobs')->fetchColumn() === 0);
@@ -57,9 +64,9 @@ $tmpdir = sys_get_temp_dir();
 $file = tempnam($tmpdir, 'scrub');
 $boot = new PDO('sqlite:' . $file);
 $boot->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$boot->exec("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, avatar_url TEXT)");
+$boot->exec("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT NOT NULL, avatar_url TEXT)");
 $boot->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
-$boot->exec("INSERT INTO users VALUES (1,'real','real@itqan.dev','H','https://community.itqan.dev/av/1.png')");
+$boot->exec("INSERT INTO users VALUES (1,'real','real@itqan.dev','" . password_hash('fixture-pw', PASSWORD_BCRYPT) . "','https://community.itqan.dev/av/1.png')");
 $boot->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan')");
 $boot = null; // close so the file is releasable on Windows
 register_shutdown_function(function () use ($file) { if (is_file($file)) { @unlink($file); } });
