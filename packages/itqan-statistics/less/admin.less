@@ -1,0 +1,1398 @@
+.ItqanStatisticsPage {
+  padding: 24px 0 60px;
+
+  &.is-rtl {
+    direction: rtl;
+    text-align: right;
+  }
+
+  &.is-ltr {
+    direction: ltr;
+    text-align: left;
+  }
+
+  .ItqanStats-topBar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .ItqanStats-titleGroup {
+    h2 {
+      margin: 0 0 4px;
+      font-size: 22px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ItqanStats-subtitle {
+      margin: 0;
+      color: @muted-color;
+      font-size: 13px;
+    }
+  }
+
+  .ItqanStats-navTabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ItqanStats-langSwitchGroup {
+    display: inline-flex;
+    align-items: center;
+    background: @control-bg;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 3px;
+    margin-inline-end: 6px;
+  }
+
+  .ItqanStats-langBtn {
+    border: none;
+    background: transparent;
+    color: @muted-color;
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      color: @text-color;
+    }
+
+    &.is-active {
+      background: @primary-color;
+      color: #ffffff;
+    }
+  }
+
+  .ItqanStats-periodBar {
+    background: @control-bg;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+  }
+
+  .ItqanStats-periodControls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .ItqanStats-periodLabel {
+    font-weight: 700;
+    font-size: 13px;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ItqanStats-customRangeInputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    input[type="date"] {
+      width: auto;
+      height: 34px;
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+  }
+
+  .ItqanStats-customRangeLabel {
+    font-size: 12px;
+    font-weight: 700;
+    color: @muted-color;
+  }
+
+  .ItqanStats-refreshBtn {
+    margin-inline-start: auto;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .ItqanStats-dashboardStack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .ItqanStats-sectionBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ItqanStats-mt16 {
+    margin-top: 4px;
+  }
+
+  .ItqanStats-card {
+    background: @body-bg;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 14px;
+    padding: 20px 22px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+
+    &--flush {
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+
+  .ItqanStats-cardBannerHeader {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    background: fade(@control-bg, 50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    &--indigo {
+      background: rgba(99, 102, 241, 0.06);
+
+      h3 {
+        color: #4f46e5;
+      }
+    }
+
+    &--split {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .ItqanStats-cardHeader {
+    margin-bottom: 16px;
+
+    h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+  }
+
+  .ItqanStats-cardHelp {
+    margin: 0;
+    font-size: 12px;
+    color: @muted-color;
+  }
+
+  .ItqanStats-windowChips {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .ItqanStats-windowChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    background: fade(@control-bg, 80%);
+    color: @muted-color;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+
+    &--primary {
+      background: fade(@primary-color, 10%);
+      color: @primary-color;
+      border-color: fade(@primary-color, 25%);
+    }
+  }
+
+  /* 5 Metric Tabs in Daily Activity Chart */
+  .ItqanStats-metricPillsBar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px 20px 4px;
+  }
+
+  .ItqanStats-metricPill {
+    text-align: start;
+    background: fade(@control-bg, 65%);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    opacity: 0.65;
+    color: @muted-color;
+
+    &:hover {
+      opacity: 0.92;
+      background: @control-bg;
+    }
+
+    &.is-active {
+      opacity: 1;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    &--emerald.is-active {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+      border-color: rgba(16, 185, 129, 0.28);
+    }
+
+    &--blue.is-active {
+      background: rgba(37, 99, 235, 0.1);
+      color: #2563eb;
+      border-color: rgba(37, 99, 235, 0.28);
+    }
+
+    &--purple.is-active {
+      background: rgba(139, 92, 246, 0.1);
+      color: #7c3aed;
+      border-color: rgba(139, 92, 246, 0.28);
+    }
+
+    &--teal.is-active {
+      background: rgba(5, 150, 105, 0.1);
+      color: #0d9488;
+      border-color: rgba(5, 150, 105, 0.28);
+    }
+
+    &--rose.is-active {
+      background: rgba(225, 29, 72, 0.1);
+      color: #e11d48;
+      border-color: rgba(225, 29, 72, 0.28);
+    }
+  }
+
+  .ItqanStats-metricPillRow {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+
+  .ItqanStats-metricPillCount {
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ItqanStats-metricPillLifetime {
+    font-size: 10.5px;
+    font-weight: 600;
+    opacity: 0.78;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .ItqanStats-deltaChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+
+    &--up {
+      background: rgba(16, 185, 129, 0.16);
+      color: #059669;
+    }
+
+    &--down {
+      background: rgba(239, 68, 68, 0.16);
+      color: #dc2626;
+    }
+  }
+
+  .ItqanStats-cardChartBody {
+    padding: 14px 18px 18px;
+  }
+
+  /* 6 Engagement Cards (matching automations color-tinted cards) */
+  .ItqanStats-engagementGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 14px;
+  }
+
+  .ItqanStats-engagementCard {
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    &--amber {
+      background: rgba(245, 158, 11, 0.06);
+      border-color: rgba(245, 158, 11, 0.24);
+      .ItqanStats-engagementTitle,
+      .ItqanStats-engagementIconWrap {
+        color: #d97706;
+      }
+      .ItqanStats-engagementIconWrap {
+        background: rgba(245, 158, 11, 0.14);
+      }
+    }
+
+    &--cyan {
+      background: rgba(6, 182, 212, 0.06);
+      border-color: rgba(6, 182, 212, 0.24);
+      .ItqanStats-engagementTitle,
+      .ItqanStats-engagementIconWrap {
+        color: #0891b2;
+      }
+      .ItqanStats-engagementIconWrap {
+        background: rgba(6, 182, 212, 0.14);
+      }
+    }
+
+    &--emerald {
+      background: rgba(16, 185, 129, 0.06);
+      border-color: rgba(16, 185, 129, 0.24);
+      .ItqanStats-engagementTitle,
+      .ItqanStats-engagementIconWrap {
+        color: #059669;
+      }
+      .ItqanStats-engagementIconWrap {
+        background: rgba(16, 185, 129, 0.14);
+      }
+    }
+
+    &--teal {
+      background: rgba(20, 184, 166, 0.06);
+      border-color: rgba(20, 184, 166, 0.24);
+      .ItqanStats-engagementTitle,
+      .ItqanStats-engagementIconWrap {
+        color: #0d9488;
+      }
+      .ItqanStats-engagementIconWrap {
+        background: rgba(20, 184, 166, 0.14);
+      }
+    }
+
+    &--blue {
+      background: rgba(59, 130, 246, 0.06);
+      border-color: rgba(59, 130, 246, 0.24);
+      .ItqanStats-engagementTitle,
+      .ItqanStats-engagementIconWrap {
+        color: #2563eb;
+      }
+      .ItqanStats-engagementIconWrap {
+        background: rgba(59, 130, 246, 0.14);
+      }
+    }
+
+    &--purple {
+      background: rgba(139, 92, 246, 0.06);
+      border-color: rgba(139, 92, 246, 0.24);
+      .ItqanStats-engagementTitle,
+      .ItqanStats-engagementIconWrap {
+        color: #7c3aed;
+      }
+      .ItqanStats-engagementIconWrap {
+        background: rgba(139, 92, 246, 0.14);
+      }
+    }
+  }
+
+  .ItqanStats-engagementTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .ItqanStats-engagementTitle {
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .ItqanStats-engagementIconWrap {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .ItqanStats-engagementValue {
+    font-size: 24px;
+    font-weight: 900;
+    color: @text-color;
+    line-height: 1.15;
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ItqanStats-engagementDesc {
+    font-size: 11px;
+    color: @muted-color;
+    line-height: 1.35;
+  }
+
+  /* Interactive Series Toggle Pills on 12-Month Engagement Chart */
+  .ItqanStats-seriesToggleBar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 20px 0;
+  }
+
+  .ItqanStats-seriesToggleBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+
+    &.is-hidden {
+      background: fade(@control-bg, 60%);
+      color: @muted-color;
+      opacity: 0.45;
+    }
+
+    &.is-visible {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    &--amber.is-visible {
+      background: rgba(245, 158, 11, 0.12);
+      color: #d97706;
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+    &--cyan.is-visible {
+      background: rgba(6, 182, 212, 0.12);
+      color: #0891b2;
+      border-color: rgba(6, 182, 212, 0.25);
+    }
+    &--emerald.is-visible {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+    &--teal.is-visible {
+      background: rgba(13, 148, 136, 0.12);
+      color: #0d9488;
+      border-color: rgba(13, 148, 136, 0.25);
+    }
+    &--blue.is-visible {
+      background: rgba(59, 130, 246, 0.12);
+      color: #2563eb;
+      border-color: rgba(59, 130, 246, 0.25);
+    }
+    &--purple.is-visible {
+      background: rgba(139, 92, 246, 0.12);
+      color: #7c3aed;
+      border-color: rgba(139, 92, 246, 0.25);
+    }
+  }
+
+  .ItqanStats-seriesDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .ItqanStats-svgChartWrap {
+    width: 100%;
+  }
+
+  .ItqanStats-chartLegend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: @muted-color;
+  }
+
+  .ItqanStats-legendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ItqanStats-legendSwatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+
+    &--dashed {
+      background: transparent;
+      border-top: 2px dashed #94a3b8;
+      height: 0;
+    }
+  }
+
+  .ItqanStats-svgChart {
+    width: 100%;
+    height: auto;
+    max-height: 290px;
+    display: block;
+  }
+
+  /* Teams Section */
+  .ItqanStats-teamsSectionWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-top: 6px;
+  }
+
+  .ItqanStats-teamsTopHeader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .ItqanStats-teamsMainTitle {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ItqanStats-teamHeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ItqanStats-teamFilterPills {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+    background: fade(@control-bg, 80%);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+  }
+
+  .ItqanStats-teamFilterPill {
+    border: none;
+    background: transparent;
+    color: @muted-color;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      color: @text-color;
+    }
+
+    &.is-active {
+      background: @primary-color;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  .ItqanStats-teamsContentStack {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .ItqanStats-teamsOverviewList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ItqanStats-teamOverviewBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ItqanStats-teamBlockHeader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .ItqanStats-teamTitleGroup {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ItqanStats-teamNameBadge {
+    font-size: 13px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 8px;
+    background: fade(@primary-color, 12%);
+    color: @primary-color;
+    border: 1px solid fade(@primary-color, 25%);
+  }
+
+  .ItqanStats-teamMembersCount {
+    font-size: 12px;
+    color: @muted-color;
+    font-weight: 600;
+  }
+
+  .ItqanStats-teamDescInline {
+    font-size: 12px;
+    color: @muted-color;
+  }
+
+  .ItqanStats-teamHiddenBadge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+    font-weight: 700;
+  }
+
+  .ItqanStats-teamCardButtons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* 3 Cards per Team with Embedded 12-Month Team vs Forum Bar Charts */
+  .ItqanStats-teamThreeCardsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .ItqanStats-teamMetricCard {
+    background: @body-bg;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+
+    &--highlight {
+      background: fade(@primary-color, 4%);
+      border-color: fade(@primary-color, 25%);
+    }
+  }
+
+  .ItqanStats-teamMetricCardHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .ItqanStats-teamMetricCardTitle {
+    font-size: 12px;
+    font-weight: 700;
+    color: @muted-color;
+
+    &--primary {
+      color: @primary-color;
+    }
+  }
+
+  .ItqanStats-teamMetricCardValue {
+    font-size: 24px;
+    font-weight: 900;
+    color: @text-color;
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ItqanStats-teamShareCol {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: end;
+  }
+
+  .ItqanStats-teamShareBadge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-variant-numeric: tabular-nums;
+
+    &--emerald {
+      background: rgba(16, 185, 129, 0.14);
+      color: #059669;
+    }
+    &--indigo {
+      background: rgba(99, 102, 241, 0.14);
+      color: #4f46e5;
+    }
+    &--amber {
+      background: rgba(245, 158, 11, 0.14);
+      color: #d97706;
+    }
+  }
+
+  .ItqanStats-teamShareSub {
+    font-size: 10px;
+    color: @muted-color;
+    margin-top: 3px;
+  }
+
+  .ItqanStats-teamBarChartWrap {
+    width: 100%;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(148, 163, 184, 0.18);
+  }
+
+  .ItqanStats-teamBarLegend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 4px;
+    font-size: 10.5px;
+    color: @muted-color;
+  }
+
+  .ItqanStats-teamBarLegendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ItqanStats-teamBarDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .ItqanStats-teamBarSvg {
+    width: 100%;
+    height: 120px;
+    display: block;
+  }
+
+  /* Unified Team Members Table */
+  .ItqanStats-countPill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: @control-bg;
+    color: @muted-color;
+    margin-inline-start: 8px;
+  }
+
+  .ItqanStats-tableFilterWrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: @muted-color;
+  }
+
+  .ItqanStats-teamSelect {
+    width: auto;
+    min-width: 160px;
+    height: 34px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+  }
+
+  .ItqanStats-tableWrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .ItqanStats-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    th,
+    td {
+      padding: 11px 16px;
+      text-align: start;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+
+      &.is-center {
+        text-align: center;
+      }
+
+      &.is-end {
+        text-align: end;
+      }
+    }
+
+    th {
+      background: fade(@control-bg, 45%);
+      font-size: 12px;
+      font-weight: 800;
+      color: @muted-color;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+
+      &:hover {
+        color: @text-color;
+      }
+    }
+
+    tbody tr:hover {
+      background: fade(@control-bg, 30%);
+    }
+  }
+
+  .ItqanStats-thUpvotes {
+    color: #059669;
+  }
+
+  .ItqanStats-thDownvotes {
+    color: #e11d48;
+  }
+
+  .ItqanStats-sortIcon {
+    font-size: 11px;
+    margin-inline-start: 3px;
+
+    &--idle {
+      opacity: 0.35;
+    }
+
+    &--active {
+      color: @primary-color;
+      font-weight: 900;
+    }
+  }
+
+  .ItqanStats-memberCell {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ItqanStats-memberLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: @text-color;
+    text-decoration: none;
+
+    &:hover {
+      color: @primary-color;
+    }
+  }
+
+  .ItqanStats-memberHandle {
+    font-size: 11.5px;
+    color: @muted-color;
+    font-family: monospace;
+  }
+
+  .ItqanStats-externalIcon {
+    font-size: 10px;
+    opacity: 0.45;
+  }
+
+  .ItqanStats-memberTeamTag {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: @control-bg;
+    color: @muted-color;
+  }
+
+  .ItqanStats-numBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 9px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+
+    &--emerald {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+    }
+
+    &--blue {
+      background: rgba(59, 130, 246, 0.12);
+      color: #2563eb;
+    }
+
+    &--upvote {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+    }
+
+    &--downvote {
+      background: rgba(244, 63, 94, 0.12);
+      color: #e11d48;
+    }
+  }
+
+  .ItqanStats-totalNum {
+    font-size: 14px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ItqanStats-emptyCell {
+    text-align: center !important;
+    padding: 28px !important;
+    color: @muted-color;
+  }
+
+  .ItqanStats-muted {
+    color: @muted-color;
+    font-size: 12px;
+  }
+
+  .ItqanStats-emptyState {
+    text-align: center;
+    padding: 28px;
+    color: @muted-color;
+  }
+
+
+  /* Two-Column Custom Team Tracker Manager (matching automations TeamManagement) */
+  .ItqanStats-teamManagerGrid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    align-items: start;
+
+    @media (max-width: 960px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ItqanStats-tmSidebarHeader {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: fade(@control-bg, 50%);
+
+    h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  .ItqanStats-tmCreateBox {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    background: fade(@primary-color, 6%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ItqanStats-tmCreateActions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .ItqanStats-tmTeamList {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ItqanStats-tmTeamRow {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: fade(@control-bg, 55%);
+    }
+
+    &.is-selected {
+      background: fade(@primary-color, 10%);
+      border-inline-start: 4px solid @primary-color;
+    }
+
+    &.is-hidden-team {
+      opacity: 0.65;
+    }
+  }
+
+  .ItqanStats-tmTeamRowInner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .ItqanStats-tmTeamInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .ItqanStats-tmTeamName {
+    font-weight: 800;
+    font-size: 13.5px;
+    color: @text-color;
+  }
+
+  .ItqanStats-tmTeamMeta {
+    font-size: 11.5px;
+    color: @muted-color;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .ItqanStats-tmHiddenTag {
+    font-weight: 700;
+    color: #dc2626;
+  }
+
+  .ItqanStats-tmRowButtons {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ItqanStats-tmIconBtn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: @muted-color;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: @control-bg;
+      color: @text-color;
+    }
+
+    &.is-visible {
+      color: #059669;
+    }
+
+    &--danger:hover {
+      background: rgba(239, 68, 68, 0.12);
+      color: #dc2626;
+    }
+  }
+
+  .ItqanStats-tmInlineEdit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ItqanStats-tmAddDrawer {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    background: fade(@control-bg, 35%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ItqanStats-tmAddDrawerTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+
+  .ItqanStats-tmSelectedCountBadge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: fade(@primary-color, 14%);
+    color: @primary-color;
+  }
+
+  .ItqanStats-tmSelectedChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ItqanStats-tmUserChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: fade(@primary-color, 12%);
+    color: @primary-color;
+    border: 1px solid fade(@primary-color, 25%);
+
+    button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      padding: 0;
+      font-size: 10px;
+    }
+  }
+
+  .ItqanStats-tmDrawerFooter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ItqanStats-tmMembersBody {
+    padding: 18px 20px;
+  }
+
+  .ItqanStats-tmMembersCardsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 12px;
+  }
+
+  .ItqanStats-tmMemberCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: fade(@control-bg, 35%);
+  }
+
+  .ItqanStats-tmMemberCardLeft {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .ItqanStats-tmAvatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: fade(@primary-color, 15%);
+    color: @primary-color;
+    font-weight: 800;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ItqanStats-tmMemberNames {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    strong {
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    span {
+      font-size: 11px;
+      color: @muted-color;
+      font-family: monospace;
+    }
+  }
+
+  .ItqanStats-tmRemoveMemberBtn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: @muted-color;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.12);
+      color: #dc2626;
+    }
+  }
+
+  .ItqanStats-loadingWrap {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+  }
+}
+
+.ItqanStats-userSearchList {
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+}
+
+.ItqanStats-userSearchRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  cursor: pointer;
+
+  &:hover {
+    background: @control-bg;
+  }
+
+  &.is-selected {
+    background: fade(@primary-color, 10%);
+  }
+
+  &.is-existing {
+    opacity: 0.55;
+    cursor: default;
+  }
+}
+
+.ItqanStats-userSearchMeta {
+  flex: 1;
+}
+
+.ItqanStats-userSearchCounts {
+  font-size: 12px;
+  color: @muted-color;
+}
+
+.ItqanStats-MiniWidget-body {
+  padding: 16px 20px;
+
+  .ItqanStats-MiniWidget-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+
+  .ItqanStats-MiniWidget-range {
+    margin-inline-start: 10px;
+    font-size: 12px;
+    color: @muted-color;
+  }
+
+  .ItqanStats-MiniWidget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .ItqanStats-MiniWidget-item {
+    background: @control-bg;
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ItqanStats-MiniWidget-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: @muted-color;
+    text-transform: uppercase;
+  }
+
+  .ItqanStats-MiniWidget-val {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 2px 0;
+  }
+
+  .ItqanStats-MiniWidget-sub {
+    font-size: 11px;
+    color: @muted-color;
+  }
+}
