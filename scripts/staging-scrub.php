@@ -135,6 +135,20 @@ function itqan_scrub(PDO $db, array $o = []): array
         }
     }
 
+    // 3c. Force a staging no-index regardless of what production had.
+    if (itqan_table_exists($db, 'settings') && itqan_col_exists($db, 'settings', 'key')
+        && itqan_col_exists($db, 'settings', 'value')) {
+        $overrides = [
+            'seo_robots_text'   => "User-agent: *\nDisallow: /",
+            'seo_allow_all_bots' => '0',
+        ];
+        foreach ($overrides as $k => $v) {
+            $db->prepare("DELETE FROM `settings` WHERE `key` = ?")->execute([$k]);
+            $db->prepare("INSERT INTO `settings` (`key`, `value`) VALUES (?, ?)")->execute([$k, $v]);
+            $report["override:$k"] = 'set';
+        }
+    }
+
     // 4. Restore a staging-only admin login.
     $u = $o['admin_username'] ?? ''; $p = $o['admin_password'] ?? '';
     if ($u !== '' && $p !== '' && itqan_col_exists($db, 'users', 'password')) {
