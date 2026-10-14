@@ -104,7 +104,7 @@ function itqan_scrub(PDO $db, array $o = []): array
 
     // 4. Restore a staging-only admin login.
     $u = $o['admin_username'] ?? ''; $p = $o['admin_password'] ?? '';
-    if ($u !== '' && $p !== '') {
+    if ($u !== '' && $p !== '' && itqan_col_exists($db, 'users', 'password')) {
         $st = $db->prepare("UPDATE `users` SET password = ? WHERE username = ?");
         $st->execute([password_hash($p, PASSWORD_BCRYPT), $u]);
         $report['admin'] = $st->rowCount() ? "set:$u" : "MISSING:$u";
@@ -150,10 +150,11 @@ function itqan_scrub_main(array $argv): int
     ];
     $db->beginTransaction();
     $report = itqan_scrub($db, $opts);
-    // Operator guard: if no admin was set, every password is now NULL.
+    // Operator guard: if no admin was set, every password is locked behind a
+    // random hash from step 2 — no one can log in until an admin is restored.
     if (($opts['admin_username'] === '' || $opts['admin_password'] === '')
         && !isset($report['admin'])) {
-        echo "WARNING: no admin credentials set — every password is NULL\n";
+        echo "WARNING: no admin credentials set — every password is locked behind a random hash\n";
     }
     if ($dry) { $db->rollBack(); echo "DRY-RUN (rolled back)\n"; }
     else { $db->commit(); echo "SCRUB COMMITTED\n"; }
