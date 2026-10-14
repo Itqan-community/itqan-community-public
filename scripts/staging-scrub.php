@@ -4,7 +4,7 @@
 // NEVER run against production. Usage:
 //   php staging-scrub.php /var/www/flarum/config.php [--dry-run]
 // Env: SCRUB_DSN / SCRUB_USER / SCRUB_PASS (override config), SCRUB_FROM_HOST,
-//      SCRUB_TO_HOST, SCRUB_DENY_SETTINGS, SCRUB_DENY_HOSTS,
+//      SCRUB_TO_HOST, SCRUB_DENY_HOSTS,
 //      STAGING_ADMIN_USERNAME, STAGING_ADMIN_PASSWORD.
 
 // Phrase fragments (case-insensitive) that mean "the object I asked for isn't there".
@@ -113,20 +113,32 @@ function itqan_scrub(PDO $db, array $o = []): array
         }
     }
 
-    // 3b. Neutralise settings that could reach production.
-    //     mail_* is ALWAYS removed and the driver forced to 'log' so nothing can
-    //     send, even if a default driver is 'smtp'.
-    $denyRaw = $o['deny_settings'] ?? '';
-    if ($denyRaw === '') {
-        $denyRaw = 'fof-analytics,ianm-translate,fof-oauth,fof-upload,'
-            . 'itqan-mailerlite,askvortsov-pwa,fof-webhooks,custom_header,custom_footer';
-    }
-    $denySettings = array_filter(array_map('trim', explode(',', $denyRaw)));
+    // 3b. Strip production CREDENTIALS only. Branding and behavioural settings
+    //     (fonts, newsletter popup, uploads, PWA icons, oauth buttons) are kept
+    //     so staging looks and behaves like production. mail_* is always removed
+    //     and the driver forced to 'log'.
+    $secretExact = [
+        'askvortsov-pwa.vapid.private', 'askvortsov-pwa.vapid.public',
+        'fof-analytics.googleGTMCode', 'fof-analytics.googleTrackingCode',
+    ];
+    $secretSuffix = ['client_id', 'client_secret', 'app_id', 'app_secret',
+                     'api_key', 'api_secret', 'secret', 'private'];
     if (itqan_table_exists($db, 'settings') && itqan_col_exists($db, 'settings', 'key')) {
-        foreach (array_merge($denySettings, ['mail_']) as $prefix) {
-            $st = $db->prepare("DELETE FROM `settings` WHERE `key` LIKE ?");
-            $st->execute([$prefix . '%']);
-            if ($st->rowCount()) { $report["settings:$prefix"] = 'deleted:' . $st->rowCount(); }
+        $db->prepare("DELETE FROM `settings` WHERE `key` LIKE ?")->execute(['mail_%']);
+        $del = $db->prepare("DELETE FROM `settings` WHERE `key` = ?");
+        $deleted = [];
+        foreach ($db->query("SELECT `key` FROM `settings`")->fetchAll(PDO::FETCH_COLUMN) as $k) {
+            $dot = strrpos($k, '.'); $und = strrpos($k, '_');
+            $tailDot = strtolower($dot === false ? $k : substr($k, $dot + 1));
+            $tailUnd = strtolower($und === false ? $k : substr($k, $und + 1));
+            if (in_array($k, $secretExact, true)
+                || in_array($tailDot, $secretSuffix, true)
+                || in_array($tailUnd, $secretSuffix, true)) {
+                $del->execute([$k]); $deleted[] = $k;
+            }
+        }
+        if ($deleted) {
+            $report['settings:secrets'] = 'deleted:' . count($deleted) . ' [' . implode(', ', $deleted) . ']';
         }
         if (itqan_col_exists($db, 'settings', 'value')) {
             $db->prepare("DELETE FROM `settings` WHERE `key` = 'mail_driver'")->execute();
@@ -191,7 +203,6 @@ function itqan_scrub_main(array $argv): int
     $opts = [
         'from_host' => getenv('SCRUB_FROM_HOST') ?: '',
         'to_host' => getenv('SCRUB_TO_HOST') ?: '',
-        'deny_settings' => getenv('SCRUB_DENY_SETTINGS') ?: '',
         'admin_username' => getenv('STAGING_ADMIN_USERNAME') ?: '',
         'admin_password' => getenv('STAGING_ADMIN_PASSWORD') ?: '',
     ];
