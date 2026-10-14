@@ -17,6 +17,7 @@ import humanTime from 'flarum/common/helpers/humanTime';
 import extractText from 'flarum/common/utils/extractText';
 import Button from 'flarum/common/components/Button';
 import PostControls from 'flarum/forum/utils/PostControls';
+import PostMeta from 'flarum/forum/components/PostMeta';
 import { formatArabicPlural } from './utils/arabicPlural';
 
 import VoteButtons from './components/VoteButtons';
@@ -32,6 +33,7 @@ import CommentStreamState from './states/CommentStreamState';
 import DiscussionRepliedNotification from './components/DiscussionRepliedNotification';
 import CommentRepliedNotification from './components/CommentRepliedNotification';
 import NotificationGrid from 'flarum/forum/components/NotificationGrid';
+import AbsoluteDateBadge from './components/AbsoluteDateBadge';
 
 /**
  * Group DFS-ordered comment stream vnodes into one envelope per root:
@@ -1423,6 +1425,23 @@ app.initializers.add('itqan-discussions', () => {
         }, this.loaded.bind(this));
     });
   }
+
+  // ==========================================
+  // 3. Archival Post Absolute Timestamps (PR #20)
+  // ==========================================
+  extend(PostMeta.prototype, 'viewItems', function (items) {
+    const post = this.attrs.post;
+    if (!post || !post.createdAt()) return;
+    const time = post.createdAt();
+
+    items.replace(
+      'time',
+      <a className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
+        <AbsoluteDateBadge time={time} />
+      </a>,
+      100
+    );
+  });
 });
 
 // Runs after third-party actionItems (e.g. ianm-translate) so Translate leaves the
