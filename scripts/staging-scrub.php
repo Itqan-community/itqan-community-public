@@ -4,7 +4,8 @@
 // NEVER run against production. Usage:
 //   php staging-scrub.php /var/www/flarum/config.php [--dry-run]
 // Env: SCRUB_DSN / SCRUB_USER / SCRUB_PASS (override config), SCRUB_FROM_HOST,
-//      SCRUB_TO_HOST, STAGING_ADMIN_USERNAME, STAGING_ADMIN_PASSWORD.
+//      SCRUB_TO_HOST, SCRUB_DENY_SETTINGS, SCRUB_DENY_HOSTS,
+//      STAGING_ADMIN_USERNAME, STAGING_ADMIN_PASSWORD.
 
 // Phrase fragments (case-insensitive) that mean "the object I asked for isn't there".
 // Anything else is a real error and must propagate.
@@ -41,7 +42,8 @@ function itqan_col_exists(PDO $db, string $t, string $c): bool
 function itqan_scrub(PDO $db, array $o = []): array
 {
     $purge = ['access_tokens', 'email_tokens', 'password_tokens',
-              'login_providers', 'push_subscriptions', 'jobs', 'failed_jobs'];
+              'login_providers', 'push_subscriptions',
+              'jobs', 'failed_jobs', 'queue_jobs', 'queue_failed_jobs'];
     $suffix = $o['email_suffix'] ?? '@staging.invalid';
     $report = [];
 
@@ -70,6 +72,28 @@ function itqan_scrub(PDO $db, array $o = []): array
                 $st->execute([$from, $to]);
                 $report["rewrite:$t.$c"] = $st->rowCount();
             }
+        }
+    }
+
+    // 3b. Neutralise settings that could reach production.
+    //     mail_* is ALWAYS removed and the driver forced to 'log' so nothing can
+    //     send, even if a default driver is 'smtp'.
+    $denyRaw = $o['deny_settings'] ?? '';
+    if ($denyRaw === '') {
+        $denyRaw = 'fof-analytics,ianm-translate,fof-oauth,fof-upload,'
+            . 'itqan-mailerlite,askvortsov-pwa,fof-webhooks,custom_header,custom_footer';
+    }
+    $denySettings = array_filter(array_map('trim', explode(',', $denyRaw)));
+    if (itqan_table_exists($db, 'settings') && itqan_col_exists($db, 'settings', 'key')) {
+        foreach (array_merge($denySettings, ['mail_']) as $prefix) {
+            $st = $db->prepare("DELETE FROM `settings` WHERE `key` LIKE ?");
+            $st->execute([$prefix . '%']);
+            if ($st->rowCount()) { $report["settings:$prefix"] = 'deleted:' . $st->rowCount(); }
+        }
+        if (itqan_col_exists($db, 'settings', 'value')) {
+            $db->prepare("DELETE FROM `settings` WHERE `key` = 'mail_driver'")->execute();
+            $db->prepare("INSERT INTO `settings` (`key`, `value`) VALUES ('mail_driver', 'log')")->execute();
+            $report['settings:mail_driver'] = 'set:log';
         }
     }
 
@@ -115,6 +139,7 @@ function itqan_scrub_main(array $argv): int
     $opts = [
         'from_host' => getenv('SCRUB_FROM_HOST') ?: '',
         'to_host' => getenv('SCRUB_TO_HOST') ?: '',
+        'deny_settings' => getenv('SCRUB_DENY_SETTINGS') ?: '',
         'admin_username' => getenv('STAGING_ADMIN_USERNAME') ?: '',
         'admin_password' => getenv('STAGING_ADMIN_PASSWORD') ?: '',
     ];

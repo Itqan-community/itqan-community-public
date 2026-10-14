@@ -9,12 +9,18 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, avatar_url TEXT)');
 $db->exec('CREATE TABLE access_tokens (token TEXT)');
 $db->exec('CREATE TABLE jobs (id INTEGER)');
+$db->exec('CREATE TABLE queue_jobs (id INTEGER)');
+$db->exec('CREATE TABLE queue_failed_jobs (id INTEGER)');
 $db->exec('CREATE TABLE posts (id INTEGER, content TEXT)');
+$db->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
 $db->exec("INSERT INTO users VALUES (1,'admin','admin@itqan.dev','HASH','https://community.itqan.dev/av/1.png')");
 $db->exec("INSERT INTO users VALUES (2,'a','a@real.com','H2','https://community.itqan.dev/av/2.png')");
 $db->exec("INSERT INTO access_tokens VALUES ('tok')");
 $db->exec("INSERT INTO jobs VALUES (1)");
+$db->exec("INSERT INTO queue_jobs VALUES (1),(2)");
+$db->exec("INSERT INTO queue_failed_jobs VALUES (1)");
 $db->exec("INSERT INTO posts VALUES (1,'see https://community.itqan.dev/d/1 ok')");
+$db->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan')");
 
 $r = itqan_scrub($db, [
     'from_host' => 'https://community.itqan.dev',
@@ -27,7 +33,15 @@ ok('emails faked', $emails === ['u1@staging.invalid', 'u2@staging.invalid']);
 ok('non-admin passwords nulled', (int) $db->query('SELECT COUNT(*) FROM users WHERE password IS NOT NULL')->fetchColumn() === 1);
 ok('access_tokens purged', (int) $db->query('SELECT COUNT(*) FROM access_tokens')->fetchColumn() === 0);
 ok('jobs purged', (int) $db->query('SELECT COUNT(*) FROM jobs')->fetchColumn() === 0);
+ok('queue_jobs purged', (int) $db->query('SELECT COUNT(*) FROM queue_jobs')->fetchColumn() === 0);
+ok('queue_failed_jobs purged', (int) $db->query('SELECT COUNT(*) FROM queue_failed_jobs')->fetchColumn() === 0);
 ok('content host rewritten', str_contains((string) $db->query('SELECT content FROM posts WHERE id=1')->fetchColumn(), 'staging.community.itqan.dev'));
+$mailDriver = (string) $db->query("SELECT `value` FROM settings WHERE `key`='mail_driver'")->fetchColumn();
+ok('mail_driver forced to log', $mailDriver === 'log');
+ok('mail_password deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='mail_password'")->fetchColumn() === 0);
+ok('fof-analytics.tracking_id deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-analytics.tracking_id'")->fetchColumn() === 0);
+$forumTitle = (string) $db->query("SELECT `value` FROM settings WHERE `key`='forum_title'")->fetchColumn();
+ok('forum_title unchanged', $forumTitle === 'Itqan');
 $avatars = $db->query('SELECT avatar_url FROM users ORDER BY id')->fetchAll(PDO::FETCH_COLUMN);
 ok('avatar_url rewritten', $avatars === [
     'https://staging.community.itqan.dev/av/1.png',
@@ -44,7 +58,9 @@ $file = tempnam($tmpdir, 'scrub');
 $boot = new PDO('sqlite:' . $file);
 $boot->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $boot->exec("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, avatar_url TEXT)");
+$boot->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
 $boot->exec("INSERT INTO users VALUES (1,'real','real@itqan.dev','H','https://community.itqan.dev/av/1.png')");
+$boot->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan')");
 $boot = null; // close so the file is releasable on Windows
 register_shutdown_function(function () use ($file) { if (is_file($file)) { @unlink($file); } });
 
@@ -67,6 +83,14 @@ $reopen = new PDO('sqlite:' . $file);
 $reopen->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $stillReal = (string) $reopen->query("SELECT email FROM users WHERE id=1")->fetchColumn();
 ok('dry-run rolled back (email unchanged)', $stillReal === 'real@itqan.dev');
+$dryMailDriver = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='mail_driver'")->fetchColumn();
+ok('dry-run rolled back (mail_driver still smtp)', $dryMailDriver === 'smtp');
+$dryMailPw = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='mail_password'")->fetchColumn();
+ok('dry-run rolled back (mail_password still present)', $dryMailPw === 1);
+$dryAnalytics = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-analytics.tracking_id'")->fetchColumn();
+ok('dry-run rolled back (fof-analytics.tracking_id still present)', $dryAnalytics === 1);
+$dryForumTitle = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='forum_title'")->fetchColumn();
+ok('dry-run rolled back (forum_title unchanged)', $dryForumTitle === 'Itqan');
 $reopen = null;
 
 ob_start();
