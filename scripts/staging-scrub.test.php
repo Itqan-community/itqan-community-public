@@ -13,6 +13,14 @@ $db->exec('CREATE TABLE queue_jobs (id INTEGER)');
 $db->exec('CREATE TABLE queue_failed_jobs (id INTEGER)');
 $db->exec('CREATE TABLE posts (id INTEGER, content TEXT)');
 $db->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
+// Extra fixture tables added after staging import audit. Each carries a row
+// that must be purged by itqan_scrub().
+$db->exec('CREATE TABLE html_headers (id INTEGER, header TEXT)');
+$db->exec('CREATE TABLE webhooks (id INTEGER, url TEXT)');
+$db->exec('CREATE TABLE api_keys (id INTEGER, `key` TEXT)');
+$db->exec('CREATE TABLE mailerlite_subscribers (id INTEGER, email TEXT)');
+$db->exec('CREATE TABLE registration_tokens (token TEXT)');
+$db->exec('CREATE TABLE discussion_views (id INTEGER, ip TEXT)');
 $adminFixtureHash = password_hash('fixture-admin-pw', PASSWORD_BCRYPT);
 $userFixtureHash = password_hash('fixture-user-pw', PASSWORD_BCRYPT);
 $db->exec("INSERT INTO users VALUES (1,'admin','admin@itqan.dev','{$adminFixtureHash}','https://community.itqan.dev/av/1.png')");
@@ -23,6 +31,12 @@ $db->exec("INSERT INTO queue_jobs VALUES (1),(2)");
 $db->exec("INSERT INTO queue_failed_jobs VALUES (1)");
 $db->exec("INSERT INTO posts VALUES (1,'see https://community.itqan.dev/d/1 ok')");
 $db->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan')");
+$db->exec("INSERT INTO html_headers VALUES (1, '<script>ga4-prod</script>')");
+$db->exec("INSERT INTO webhooks VALUES (1, 'https://prod.example.com/hook')");
+$db->exec("INSERT INTO api_keys VALUES (1, 'prod-secret-key')");
+$db->exec("INSERT INTO mailerlite_subscribers VALUES (1, 'real@prod.example.com')");
+$db->exec("INSERT INTO registration_tokens VALUES ('tok')");
+$db->exec("INSERT INTO discussion_views VALUES (1, '203.0.113.42')");
 
 $r = itqan_scrub($db, [
     'from_host' => 'https://community.itqan.dev',
@@ -42,6 +56,12 @@ ok('access_tokens purged', (int) $db->query('SELECT COUNT(*) FROM access_tokens'
 ok('jobs purged', (int) $db->query('SELECT COUNT(*) FROM jobs')->fetchColumn() === 0);
 ok('queue_jobs purged', (int) $db->query('SELECT COUNT(*) FROM queue_jobs')->fetchColumn() === 0);
 ok('queue_failed_jobs purged', (int) $db->query('SELECT COUNT(*) FROM queue_failed_jobs')->fetchColumn() === 0);
+ok('html_headers purged', (int) $db->query('SELECT COUNT(*) FROM html_headers')->fetchColumn() === 0);
+ok('webhooks purged', (int) $db->query('SELECT COUNT(*) FROM webhooks')->fetchColumn() === 0);
+ok('api_keys purged', (int) $db->query('SELECT COUNT(*) FROM api_keys')->fetchColumn() === 0);
+ok('mailerlite_subscribers purged', (int) $db->query('SELECT COUNT(*) FROM mailerlite_subscribers')->fetchColumn() === 0);
+ok('registration_tokens purged', (int) $db->query('SELECT COUNT(*) FROM registration_tokens')->fetchColumn() === 0);
+ok('discussion_views purged', (int) $db->query('SELECT COUNT(*) FROM discussion_views')->fetchColumn() === 0);
 ok('content host rewritten', str_contains((string) $db->query('SELECT content FROM posts WHERE id=1')->fetchColumn(), 'staging.community.itqan.dev'));
 $mailDriver = (string) $db->query("SELECT `value` FROM settings WHERE `key`='mail_driver'")->fetchColumn();
 ok('mail_driver forced to log', $mailDriver === 'log');
