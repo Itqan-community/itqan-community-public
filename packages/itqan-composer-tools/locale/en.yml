@@ -6,3 +6,7 @@ itqan-composer-tools:
       hide_button: Hide Markdown preview
       empty: Start writing to see a preview.
       error: The preview could not be rendered. Your draft is still safe.
+    toolbar:
+      table_tooltip: Insert Table
+      quote_tooltip: Insert Blockquote
+      code_tooltip: Insert Code Block
