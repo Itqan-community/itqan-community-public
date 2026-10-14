@@ -110,9 +110,10 @@ jobs:
           python3 scripts/normalize-nginx-locations.py /etc/nginx/sites-available/flarum.conf
 
           # Staging must never be indexed. fof-sitemap generates robots.txt and
-          # allows crawling, so force a noindex header on every page instead.
-          if ! grep -qF 'X-Robots-Tag' /etc/nginx/sites-available/flarum.conf; then
-            sed -i 's#^\([[:space:]]*\)location / {#\1location / {\n\1    add_header X-Robots-Tag "noindex, nofollow" always;#' /etc/nginx/sites-available/flarum.conf
+          # allows crawling. Put the header at server level so the internal
+          # redirect into the PHP location (location ~ \.php$) inherits it.
+          if ! grep -qF 'itqan-staging-noindex' /etc/nginx/sites-available/flarum.conf; then
+            sed -i 's|^\(    \)include /etc/nginx/snippets/security-headers.conf;|\1include /etc/nginx/snippets/security-headers.conf;\n\1add_header X-Robots-Tag "noindex, nofollow" always;  # itqan-staging-noindex|' /etc/nginx/sites-available/flarum.conf
           fi
           if ! nginx -t; then
             cp /tmp/flarum.conf.bak /etc/nginx/sites-available/flarum.conf
