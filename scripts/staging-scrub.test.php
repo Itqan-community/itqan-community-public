@@ -30,7 +30,27 @@ $db->exec("INSERT INTO jobs VALUES (1)");
 $db->exec("INSERT INTO queue_jobs VALUES (1),(2)");
 $db->exec("INSERT INTO queue_failed_jobs VALUES (1)");
 $db->exec("INSERT INTO posts VALUES (1,'see https://community.itqan.dev/d/1 ok')");
-$db->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan'),('seo_social_media_image_url','https://community.itqan.dev/og/default.png'),('fof-pretty-mail.logo','https://community.itqan.dev/assets/pretty-mail/logo.png'),('seo_robots_text','User-agent: *\nAllow: /'),('seo_allow_all_bots','1')");
+$db->exec("INSERT INTO settings (`key`,`value`) VALUES "
+    . "('mail_driver','smtp'),('mail_password','SECRET'),"
+    // secrets that MUST be stripped
+    . "('askvortsov-pwa.vapid.private','VAPID-PRIV'),"
+    . "('fof-oauth.google.client_secret','OAUTH-SEC'),"
+    . "('itqan-mailerlite.api_key','ML-KEY'),"
+    . "('ianm-translate.deepl.api_key','DEEPL-KEY'),"
+    . "('fof-analytics.googleTrackingCode','G-XXX'),"
+    . "('itqan-mailerlite.webhook_secret','WH-SEC'),"
+    // branding / behavioural settings that MUST be kept
+    . "('custom_header','<h1>Branding</h1>'),"
+    . "('custom_less','body{color:red}'),"
+    . "('fof-upload.maxFileSize','2048'),"
+    . "('itqan-mailerlite.enabled','1'),"
+    . "('askvortsov-pwa.themeColor','#ff0000'),"
+    . "('fof-oauth.google','google'),"
+    . "('forum_title','Itqan'),"
+    . "('seo_social_media_image_url','https://community.itqan.dev/og/default.png'),"
+    . "('fof-pretty-mail.logo','https://community.itqan.dev/assets/pretty-mail/logo.png'),"
+    . "('seo_robots_text','User-agent: *\nAllow: /'),"
+    . "('seo_allow_all_bots','1')");
 $db->exec('CREATE TABLE fof_upload_files (id INTEGER, url TEXT)');
 $db->exec("INSERT INTO fof_upload_files VALUES (1,'https://community.itqan.dev/files/2024-01-01/foo.png'),(2,'https://community.itqan.dev/files/2024-02-02/bar.png')");
 $db->exec("INSERT INTO html_headers VALUES (1, '<script>ga4-prod</script>')");
@@ -68,7 +88,18 @@ ok('content host rewritten', str_contains((string) $db->query('SELECT content FR
 $mailDriver = (string) $db->query("SELECT `value` FROM settings WHERE `key`='mail_driver'")->fetchColumn();
 ok('mail_driver forced to log', $mailDriver === 'log');
 ok('mail_password deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='mail_password'")->fetchColumn() === 0);
-ok('fof-analytics.tracking_id deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-analytics.tracking_id'")->fetchColumn() === 0);
+ok('askvortsov-pwa.vapid.private deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='askvortsov-pwa.vapid.private'")->fetchColumn() === 0);
+ok('fof-oauth.google.client_secret deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-oauth.google.client_secret'")->fetchColumn() === 0);
+ok('itqan-mailerlite.api_key deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='itqan-mailerlite.api_key'")->fetchColumn() === 0);
+ok('ianm-translate.deepl.api_key deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='ianm-translate.deepl.api_key'")->fetchColumn() === 0);
+ok('fof-analytics.googleTrackingCode deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-analytics.googleTrackingCode'")->fetchColumn() === 0);
+ok('itqan-mailerlite.webhook_secret deleted', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='itqan-mailerlite.webhook_secret'")->fetchColumn() === 0);
+ok('custom_header kept', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='custom_header'")->fetchColumn() === 1);
+ok('custom_less kept', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='custom_less'")->fetchColumn() === 1);
+ok('fof-upload.maxFileSize kept', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-upload.maxFileSize'")->fetchColumn() === 1);
+ok('itqan-mailerlite.enabled kept', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='itqan-mailerlite.enabled'")->fetchColumn() === 1);
+ok('askvortsov-pwa.themeColor kept', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='askvortsov-pwa.themeColor'")->fetchColumn() === 1);
+ok('fof-oauth.google kept', (int) $db->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-oauth.google'")->fetchColumn() === 1);
 $forumTitle = (string) $db->query("SELECT `value` FROM settings WHERE `key`='forum_title'")->fetchColumn();
 ok('forum_title unchanged', $forumTitle === 'Itqan');
 $avatars = $db->query('SELECT avatar_url FROM users ORDER BY id')->fetchAll(PDO::FETCH_COLUMN);
@@ -105,7 +136,7 @@ $boot->exec("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TE
 $boot->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
 $boot->exec("CREATE TABLE access_tokens (token TEXT)");
 $boot->exec("INSERT INTO users VALUES (1,'real','real@itqan.dev','" . password_hash('fixture-pw', PASSWORD_BCRYPT) . "','https://community.itqan.dev/av/1.png')");
-$boot->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan'),('seo_robots_text','User-agent: *\nAllow: /'),('seo_allow_all_bots','1')");
+$boot->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('askvortsov-pwa.vapid.private','VAPID-PRIV'),('itqan-mailerlite.api_key','ML-KEY'),('itqan-mailerlite.enabled','1'),('custom_header','<h1>Branding</h1>'),('forum_title','Itqan'),('seo_robots_text','User-agent: *\nAllow: /'),('seo_allow_all_bots','1')");
 $boot->exec("INSERT INTO access_tokens VALUES ('dry-tok-1'),('dry-tok-2')");
 $boot = null; // close so the file is releasable on Windows
 register_shutdown_function(function () use ($file) { if (is_file($file)) { @unlink($file); } });
@@ -134,8 +165,14 @@ $dryMailDriver = (string) $reopen->query("SELECT `value` FROM settings WHERE `ke
 ok('dry-run rolled back (mail_driver still smtp)', $dryMailDriver === 'smtp');
 $dryMailPw = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='mail_password'")->fetchColumn();
 ok('dry-run rolled back (mail_password still present)', $dryMailPw === 1);
-$dryAnalytics = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-analytics.tracking_id'")->fetchColumn();
-ok('dry-run rolled back (fof-analytics.tracking_id still present)', $dryAnalytics === 1);
+$dryVapid = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='askvortsov-pwa.vapid.private'")->fetchColumn();
+ok('dry-run rolled back (askvortsov-pwa.vapid.private still present)', $dryVapid === 1);
+$dryMailerliteKey = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='itqan-mailerlite.api_key'")->fetchColumn();
+ok('dry-run rolled back (itqan-mailerlite.api_key still present)', $dryMailerliteKey === 1);
+$dryMailerliteEnabled = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='itqan-mailerlite.enabled'")->fetchColumn();
+ok('dry-run rolled back (itqan-mailerlite.enabled still present)', $dryMailerliteEnabled === 1);
+$dryCustomHeader = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='custom_header'")->fetchColumn();
+ok('dry-run rolled back (custom_header still present)', $dryCustomHeader === 1);
 $dryForumTitle = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='forum_title'")->fetchColumn();
 ok('dry-run rolled back (forum_title unchanged)', $dryForumTitle === 'Itqan');
 $dryRobots = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='seo_robots_text'")->fetchColumn();
