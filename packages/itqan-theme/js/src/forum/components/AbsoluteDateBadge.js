@@ -23,7 +23,9 @@ export default class AbsoluteDateBadge extends Component {
 
     // Posts older than 30 days display explicit calendar dates
     if (diffDays > 30) {
-      const locale = app.data.locale;
+      // dayjs locale keys are short (e.g. 'ar', 'en'); a regional id like
+      // 'ar-SA' would silently fall back to English. Strip the region.
+      const locale = String(app.data.locale || 'en').split('-')[0];
       const formattedDate = d.locale(locale).format('LL');
       const isoTimestamp = d.toISOString();
       const fullTimeStr = d.locale(locale).format('LLLL');
