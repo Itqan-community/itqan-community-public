@@ -63,11 +63,22 @@ function itqan_scrub(PDO $db, array $o = []): array
     ];
     $suffix = $o['email_suffix'] ?? '@staging.invalid';
     $report = [];
+    $dry = !empty($o['dry_run']);
+    $driver = (string) $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 
     // 1. Kill impersonation + device + queued-work channels first.
+    //    On MySQL we use TRUNCATE — instant on InnoDB even for huge tables
+    //    (DELETE FROM t can take many minutes on hundreds of thousands of rows
+    //    and is not what we want here). SQLite doesn't support TRUNCATE, so we
+    //    fall back to DELETE there (tests). In --dry-run we report the row
+    //    count we'd purge without touching the table, so the operator can see
+    //    the size of each table before running for real.
     foreach ($purge as $t) {
         if (!itqan_table_exists($db, $t)) { $report[$t] = 'absent'; continue; }
-        $report[$t] = 'purged:' . $db->exec("DELETE FROM `$t`");
+        $n = (int) $db->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
+        if ($dry) { $report[$t] = 'would-purge:' . $n; continue; }
+        $db->exec($driver === 'mysql' ? "TRUNCATE TABLE `$t`" : "DELETE FROM `$t`");
+        $report[$t] = 'purged:' . $n;
     }
 
     // 2. Fake every email; lock every password behind an unknown random hash
@@ -165,7 +176,12 @@ function itqan_scrub_main(array $argv): int
         'admin_username' => getenv('STAGING_ADMIN_USERNAME') ?: '',
         'admin_password' => getenv('STAGING_ADMIN_PASSWORD') ?: '',
     ];
-    $db->beginTransaction();
+    $opts['dry_run'] = $dry;
+    // Only wrap in a transaction for the dry-run rollback. TRUNCATE is DDL on
+    // MySQL and would implicitly commit, so we cannot keep an enclosing
+    // transaction on the live path — it would also be useless since TRUNCATE
+    // cannot be rolled back anyway.
+    if ($dry) { $db->beginTransaction(); }
     $report = itqan_scrub($db, $opts);
     // Operator guard: if no admin was set, every password is locked behind a
     // random hash from step 2 — no one can log in until an admin is restored.
@@ -174,7 +190,7 @@ function itqan_scrub_main(array $argv): int
         echo "WARNING: no admin credentials set — every password is locked behind a random hash\n";
     }
     if ($dry) { $db->rollBack(); echo "DRY-RUN (rolled back)\n"; }
-    else { $db->commit(); echo "SCRUB COMMITTED\n"; }
+    else { echo "SCRUB COMMITTED\n"; }
     foreach ($report as $k => $v) { echo "  $k: $v\n"; }
     return 0;
 }
