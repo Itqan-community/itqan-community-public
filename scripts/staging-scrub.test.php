@@ -58,7 +58,9 @@ $file = tempnam($tmpdir, 'scrub');
 $boot = new PDO('sqlite:' . $file);
 $boot->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $boot->exec("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, avatar_url TEXT)");
+$boot->exec("CREATE TABLE settings (`key` TEXT PRIMARY KEY, `value` TEXT)");
 $boot->exec("INSERT INTO users VALUES (1,'real','real@itqan.dev','H','https://community.itqan.dev/av/1.png')");
+$boot->exec("INSERT INTO settings (`key`,`value`) VALUES ('mail_driver','smtp'),('mail_password','SECRET'),('fof-analytics.tracking_id','G-XXX'),('forum_title','Itqan')");
 $boot = null; // close so the file is releasable on Windows
 register_shutdown_function(function () use ($file) { if (is_file($file)) { @unlink($file); } });
 
@@ -81,6 +83,14 @@ $reopen = new PDO('sqlite:' . $file);
 $reopen->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $stillReal = (string) $reopen->query("SELECT email FROM users WHERE id=1")->fetchColumn();
 ok('dry-run rolled back (email unchanged)', $stillReal === 'real@itqan.dev');
+$dryMailDriver = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='mail_driver'")->fetchColumn();
+ok('dry-run rolled back (mail_driver still smtp)', $dryMailDriver === 'smtp');
+$dryMailPw = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='mail_password'")->fetchColumn();
+ok('dry-run rolled back (mail_password still present)', $dryMailPw === 1);
+$dryAnalytics = (int) $reopen->query("SELECT COUNT(*) FROM settings WHERE `key`='fof-analytics.tracking_id'")->fetchColumn();
+ok('dry-run rolled back (fof-analytics.tracking_id still present)', $dryAnalytics === 1);
+$dryForumTitle = (string) $reopen->query("SELECT `value` FROM settings WHERE `key`='forum_title'")->fetchColumn();
+ok('dry-run rolled back (forum_title unchanged)', $dryForumTitle === 'Itqan');
 $reopen = null;
 
 ob_start();
