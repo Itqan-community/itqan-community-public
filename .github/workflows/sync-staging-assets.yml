@@ -27,8 +27,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh /tmp/assets
-          printf '%s' "$PROD_KEY"    > ~/.ssh/prod_key;    chmod 600 ~/.ssh/prod_key
-          printf '%s' "$STAGING_KEY" > ~/.ssh/staging_key; chmod 600 ~/.ssh/staging_key
+          echo "$PROD_KEY"    > ~/.ssh/prod_key;    chmod 600 ~/.ssh/prod_key
+          echo "$STAGING_KEY" > ~/.ssh/staging_key; chmod 600 ~/.ssh/staging_key
           ssh-keyscan -H "$PROD_HOST"    >> ~/.ssh/known_hosts 2>/dev/null
           ssh-keyscan -H "$STAGING_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
