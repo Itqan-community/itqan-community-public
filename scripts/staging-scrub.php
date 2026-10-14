@@ -41,9 +41,26 @@ function itqan_col_exists(PDO $db, string $t, string $c): bool
 
 function itqan_scrub(PDO $db, array $o = []): array
 {
-    $purge = ['access_tokens', 'email_tokens', 'password_tokens',
-              'login_providers', 'push_subscriptions',
-              'jobs', 'failed_jobs', 'queue_jobs', 'queue_failed_jobs'];
+    $purge = [
+        // auth / impersonation
+        'access_tokens', 'email_tokens', 'password_tokens', 'registration_tokens',
+        'login_providers',
+        // push / devices
+        'push_subscriptions', 'firebase_push_subscriptions',
+        // queues
+        'queue_jobs', 'queue_failed_jobs', 'jobs', 'failed_jobs',
+        // tracking / outbound
+        'html_headers', 'webhooks',
+        // secrets
+        'api_keys',
+        // PII lists
+        'mailerlite_subscribers', 'digest_subscribers', 'newsletter_subscribers',
+        'digest_sends', 'sent_newsletters',
+        // view data (contains IPs; excluded from the dump anyway)
+        'discussion_views',
+        // admin audit trail (contains IPs / user agents)
+        'admin_audit_logs',
+    ];
     $suffix = $o['email_suffix'] ?? '@staging.invalid';
     $report = [];
 
