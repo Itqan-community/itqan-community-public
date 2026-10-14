@@ -99,12 +99,17 @@ function itqan_scrub(PDO $db, array $o = []): array
     // 3. Rewrite prod hostnames in stored content so staging self-hosts.
     $from = $o['from_host'] ?? ''; $to = $o['to_host'] ?? '';
     if ($from !== '' && $to !== '' && $from !== $to) {
-        foreach ([['posts', 'content'], ['users', 'avatar_url']] as [$t, $c]) {
+        foreach ([['posts', 'content'], ['users', 'avatar_url'], ['fof_upload_files', 'url']] as [$t, $c]) {
             if (itqan_table_exists($db, $t) && itqan_col_exists($db, $t, $c)) {
                 $st = $db->prepare("UPDATE `$t` SET `$c` = REPLACE(`$c`, ?, ?)");
                 $st->execute([$from, $to]);
                 $report["rewrite:$t.$c"] = $st->rowCount();
             }
+        }
+        if (itqan_table_exists($db, 'settings') && itqan_col_exists($db, 'settings', 'value')) {
+            $st = $db->prepare("UPDATE `settings` SET `value` = REPLACE(`value`, ?, ?) WHERE `value` LIKE ?");
+            $st->execute([$from, $to, '%' . $from . '%']);
+            $report['rewrite:settings.value'] = $st->rowCount();
         }
     }
 
