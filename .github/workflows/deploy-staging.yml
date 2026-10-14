@@ -89,6 +89,8 @@ jobs:
 
           sudo -u www-data php flarum migrate
           sudo -u www-data php flarum cache:clear
+          # Fail the deploy if the generated config is not prod-shaped.
+          bash /var/www/flarum/scripts/staging-env-check.sh /var/www/flarum/config.php
 
           # Staging uses the database queue driver for production parity, so a
           # worker must be running. Idempotent; warns if the unit is missing.
