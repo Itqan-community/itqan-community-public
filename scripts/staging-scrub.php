@@ -4,7 +4,8 @@
 // NEVER run against production. Usage:
 //   php staging-scrub.php /var/www/flarum/config.php [--dry-run]
 // Env: SCRUB_DSN / SCRUB_USER / SCRUB_PASS (override config), SCRUB_FROM_HOST,
-//      SCRUB_TO_HOST, STAGING_ADMIN_USERNAME, STAGING_ADMIN_PASSWORD.
+//      SCRUB_TO_HOST, SCRUB_DENY_SETTINGS, SCRUB_DENY_HOSTS,
+//      STAGING_ADMIN_USERNAME, STAGING_ADMIN_PASSWORD.
 
 // Phrase fragments (case-insensitive) that mean "the object I asked for isn't there".
 // Anything else is a real error and must propagate.
@@ -41,7 +42,8 @@ function itqan_col_exists(PDO $db, string $t, string $c): bool
 function itqan_scrub(PDO $db, array $o = []): array
 {
     $purge = ['access_tokens', 'email_tokens', 'password_tokens',
-              'login_providers', 'push_subscriptions', 'jobs', 'failed_jobs'];
+              'login_providers', 'push_subscriptions',
+              'jobs', 'failed_jobs', 'queue_jobs', 'queue_failed_jobs'];
     $suffix = $o['email_suffix'] ?? '@staging.invalid';
     $report = [];
 
@@ -51,13 +53,18 @@ function itqan_scrub(PDO $db, array $o = []): array
         $report[$t] = 'purged:' . $db->exec("DELETE FROM `$t`");
     }
 
-    // 2. Fake every email; null every password (loop = portable, ~2k rows).
+    // 2. Fake every email; lock every password behind an unknown random hash
+    //    (the column is NOT NULL on MySQL). The admin is restored in step 4.
     if (itqan_table_exists($db, 'users') && itqan_col_exists($db, 'users', 'email')) {
         $hasPw = itqan_col_exists($db, 'users', 'password');
-        $sql = "UPDATE `users` SET email = ?" . ($hasPw ? ", password = NULL" : "") . " WHERE id = ?";
+        $lockHash = $hasPw ? password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT) : null;
+        $sql = "UPDATE `users` SET email = ?" . ($hasPw ? ", password = ?" : "") . " WHERE id = ?";
         $up = $db->prepare($sql);
         $ids = $db->query("SELECT id FROM `users`")->fetchAll(PDO::FETCH_COLUMN);
-        foreach ($ids as $id) { $up->execute(["u{$id}{$suffix}", $id]); }
+        foreach ($ids as $id) {
+            $hasPw ? $up->execute(["u{$id}{$suffix}", $lockHash, $id])
+                   : $up->execute(["u{$id}{$suffix}", $id]);
+        }
         $report['users_email'] = 'faked:' . count($ids);
     }
 
@@ -73,9 +80,31 @@ function itqan_scrub(PDO $db, array $o = []): array
         }
     }
 
+    // 3b. Neutralise settings that could reach production.
+    //     mail_* is ALWAYS removed and the driver forced to 'log' so nothing can
+    //     send, even if a default driver is 'smtp'.
+    $denyRaw = $o['deny_settings'] ?? '';
+    if ($denyRaw === '') {
+        $denyRaw = 'fof-analytics,ianm-translate,fof-oauth,fof-upload,'
+            . 'itqan-mailerlite,askvortsov-pwa,fof-webhooks,custom_header,custom_footer';
+    }
+    $denySettings = array_filter(array_map('trim', explode(',', $denyRaw)));
+    if (itqan_table_exists($db, 'settings') && itqan_col_exists($db, 'settings', 'key')) {
+        foreach (array_merge($denySettings, ['mail_']) as $prefix) {
+            $st = $db->prepare("DELETE FROM `settings` WHERE `key` LIKE ?");
+            $st->execute([$prefix . '%']);
+            if ($st->rowCount()) { $report["settings:$prefix"] = 'deleted:' . $st->rowCount(); }
+        }
+        if (itqan_col_exists($db, 'settings', 'value')) {
+            $db->prepare("DELETE FROM `settings` WHERE `key` = 'mail_driver'")->execute();
+            $db->prepare("INSERT INTO `settings` (`key`, `value`) VALUES ('mail_driver', 'log')")->execute();
+            $report['settings:mail_driver'] = 'set:log';
+        }
+    }
+
     // 4. Restore a staging-only admin login.
     $u = $o['admin_username'] ?? ''; $p = $o['admin_password'] ?? '';
-    if ($u !== '' && $p !== '') {
+    if ($u !== '' && $p !== '' && itqan_col_exists($db, 'users', 'password')) {
         $st = $db->prepare("UPDATE `users` SET password = ? WHERE username = ?");
         $st->execute([password_hash($p, PASSWORD_BCRYPT), $u]);
         $report['admin'] = $st->rowCount() ? "set:$u" : "MISSING:$u";
@@ -115,15 +144,17 @@ function itqan_scrub_main(array $argv): int
     $opts = [
         'from_host' => getenv('SCRUB_FROM_HOST') ?: '',
         'to_host' => getenv('SCRUB_TO_HOST') ?: '',
+        'deny_settings' => getenv('SCRUB_DENY_SETTINGS') ?: '',
         'admin_username' => getenv('STAGING_ADMIN_USERNAME') ?: '',
         'admin_password' => getenv('STAGING_ADMIN_PASSWORD') ?: '',
     ];
     $db->beginTransaction();
     $report = itqan_scrub($db, $opts);
-    // Operator guard: if no admin was set, every password is now NULL.
+    // Operator guard: if no admin was set, every password is locked behind a
+    // random hash from step 2 — no one can log in until an admin is restored.
     if (($opts['admin_username'] === '' || $opts['admin_password'] === '')
         && !isset($report['admin'])) {
-        echo "WARNING: no admin credentials set — every password is NULL\n";
+        echo "WARNING: no admin credentials set — every password is locked behind a random hash\n";
     }
     if ($dry) { $db->rollBack(); echo "DRY-RUN (rolled back)\n"; }
     else { $db->commit(); echo "SCRUB COMMITTED\n"; }
