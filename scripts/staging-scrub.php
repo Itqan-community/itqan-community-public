@@ -126,7 +126,7 @@ function itqan_scrub(PDO $db, array $o = []): array
     if (itqan_table_exists($db, 'settings') && itqan_col_exists($db, 'settings', 'key')) {
         $db->prepare("DELETE FROM `settings` WHERE `key` LIKE ?")->execute(['mail_%']);
         $del = $db->prepare("DELETE FROM `settings` WHERE `key` = ?");
-        $n = 0;
+        $deleted = [];
         foreach ($db->query("SELECT `key` FROM `settings`")->fetchAll(PDO::FETCH_COLUMN) as $k) {
             $dot = strrpos($k, '.'); $und = strrpos($k, '_');
             $tailDot = strtolower($dot === false ? $k : substr($k, $dot + 1));
@@ -134,10 +134,12 @@ function itqan_scrub(PDO $db, array $o = []): array
             if (in_array($k, $secretExact, true)
                 || in_array($tailDot, $secretSuffix, true)
                 || in_array($tailUnd, $secretSuffix, true)) {
-                $del->execute([$k]); $n++;
+                $del->execute([$k]); $deleted[] = $k;
             }
         }
-        if ($n) { $report['settings:secrets'] = 'deleted:' . $n; }
+        if ($deleted) {
+            $report['settings:secrets'] = 'deleted:' . count($deleted) . ' [' . implode(', ', $deleted) . ']';
+        }
         if (itqan_col_exists($db, 'settings', 'value')) {
             $db->prepare("DELETE FROM `settings` WHERE `key` = 'mail_driver'")->execute();
             $db->prepare("INSERT INTO `settings` (`key`, `value`) VALUES ('mail_driver', 'log')")->execute();
