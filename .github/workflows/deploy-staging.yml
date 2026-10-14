@@ -16,6 +16,7 @@ jobs:
           SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
           SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
           DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+          BASIC_AUTH: ${{ secrets.STAGING_BASIC_AUTH }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/staging_deploy_key
@@ -26,10 +27,12 @@ jobs:
           # into one remote command string, so raw special characters (this
           # DB password contains &) get re-parsed by the remote shell.
           DB_PASSWORD_B64=$(printf '%s' "$DB_PASSWORD" | base64 | tr -d '\n')
+          BASIC_AUTH_B64=$(printf '%s' "$BASIC_AUTH" | base64 | tr -d '\n')
 
-          ssh -i ~/.ssh/staging_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" <<'REMOTE'
+          ssh -i ~/.ssh/staging_deploy_key "root@$SSH_HOST" bash -s -- "$DB_PASSWORD_B64" "$BASIC_AUTH_B64" <<'REMOTE'
           set -euo pipefail
           DB_PASSWORD=$(printf '%s' "$1" | base64 -d)
+          BASIC_AUTH=$(printf '%s' "$2" | base64 -d)
 
           git config --global --add safe.directory /var/www/flarum
 
@@ -114,6 +117,15 @@ jobs:
           # redirect into the PHP location (location ~ \.php$) inherits it.
           if ! grep -qF 'itqan-staging-noindex' /etc/nginx/sites-available/flarum.conf; then
             sed -i 's|^\(    \)include /etc/nginx/snippets/security-headers.conf;|\1include /etc/nginx/snippets/security-headers.conf;\n\1add_header X-Robots-Tag "noindex, nofollow" always;  # itqan-staging-noindex|' /etc/nginx/sites-available/flarum.conf
+          fi
+
+          # HTTP Basic Auth: gate staging behind a password. The htpasswd line
+          # comes from a repo secret (this repo is public).
+          printf '%s\n' "$BASIC_AUTH" > /etc/nginx/.htpasswd
+          chmod 640 /etc/nginx/.htpasswd
+          chown root:www-data /etc/nginx/.htpasswd
+          if grep -qF '#auth_basic "Restricted";' /etc/nginx/sites-available/flarum.conf; then
+            sed -i 's|^\([[:space:]]*\)#auth_basic "Restricted";|\1auth_basic "Restricted";|; s|^\([[:space:]]*\)#auth_basic_user_file /etc/nginx/.htpasswd;|\1auth_basic_user_file /etc/nginx/.htpasswd;|' /etc/nginx/sites-available/flarum.conf
           fi
           if ! nginx -t; then
             cp /tmp/flarum.conf.bak /etc/nginx/sites-available/flarum.conf
