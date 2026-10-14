@@ -30,3 +30,8 @@ itqan-theme:
       open: فتح الصورة بملء الشاشة
       close: إغلاق
       hint: قرصة للتكبير · نقرتان لملء الشاشة · سحب لأسفل للإغلاق
+
+    toolbar:
+      table_tooltip: إدراج جدول
+      quote_tooltip: إدراج اقتباس
+      code_tooltip: إدراج كتلة كود

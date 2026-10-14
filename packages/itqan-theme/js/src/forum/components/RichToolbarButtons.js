@@ -15,11 +15,11 @@ export default function addRichToolbarButtons() {
 
     items.add(
       'itqanTable',
-      <Tooltip text={app.translator.trans('itqan-composer-tools.forum.toolbar.table_tooltip')}>
+      <Tooltip text={app.translator.trans('itqan-theme.forum.toolbar.table_tooltip')}>
         <Button
           className="Button Button--icon"
           icon="fas fa-table"
-          aria-label={app.translator.trans('itqan-composer-tools.forum.toolbar.table_tooltip')}
+          aria-label={app.translator.trans('itqan-theme.forum.toolbar.table_tooltip')}
           onclick={() => {
             const tableMarkdown = `| Header | Header |
 |--------|--------|
@@ -35,11 +35,11 @@ export default function addRichToolbarButtons() {
 
     items.add(
       'itqanQuote',
-      <Tooltip text={app.translator.trans('itqan-composer-tools.forum.toolbar.quote_tooltip')}>
+      <Tooltip text={app.translator.trans('itqan-theme.forum.toolbar.quote_tooltip')}>
         <Button
           className="Button Button--icon"
           icon="fas fa-quote-left"
-          aria-label={app.translator.trans('itqan-composer-tools.forum.toolbar.quote_tooltip')}
+          aria-label={app.translator.trans('itqan-theme.forum.toolbar.quote_tooltip')}
           onclick={() => {
             const quoteMarkdown = `> Blockquote text here
 `;
@@ -52,11 +52,11 @@ export default function addRichToolbarButtons() {
 
     items.add(
       'itqanCode',
-      <Tooltip text={app.translator.trans('itqan-composer-tools.forum.toolbar.code_tooltip')}>
+      <Tooltip text={app.translator.trans('itqan-theme.forum.toolbar.code_tooltip')}>
         <Button
           className="Button Button--icon"
           icon="fas fa-code"
-          aria-label={app.translator.trans('itqan-composer-tools.forum.toolbar.code_tooltip')}
+          aria-label={app.translator.trans('itqan-theme.forum.toolbar.code_tooltip')}
           onclick={() => {
             const codeMarkdown = `\`\`\`
 // Code goes here

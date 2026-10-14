@@ -6,7 +6,3 @@ itqan-composer-tools:
       hide_button: إخفاء معاينة ماركداون
       empty: ابدأ الكتابة لرؤية المعاينة.
       error: تعذّر عرض المعاينة. ما زالت مسودتك محفوظة.
-    toolbar:
-      table_tooltip: إدراج جدول
-      quote_tooltip: إدراج اقتباس
-      code_tooltip: إدراج كتلة كود
