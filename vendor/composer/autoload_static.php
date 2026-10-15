@@ -310,7 +310,6 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
             'Itqan\\ComposerTools\\' => 20,
             'Itqan\\Llms\\' => 11,
             'Itqan\\PreviewCards\\' => 19,
-            'Itqan\\Statistics\\' => 17,
             'Irmmr\\RTLCss\\' => 13,
             'Irmmr\\FlarumRtlSupport\\' => 23,
             'Intervention\\Image\\' => 19,
@@ -948,10 +947,6 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'Itqan\\PreviewCards\\' =>
         array (
             0 => __DIR__ . '/../..' . '/packages/itqan-preview-cards/src',
-        ),
-        'Itqan\\Statistics\\' =>
-        array (
-            0 => __DIR__ . '/../..' . '/packages/itqan-statistics/src',
         ),
         'Irmmr\\RTLCss\\' =>
         array (
