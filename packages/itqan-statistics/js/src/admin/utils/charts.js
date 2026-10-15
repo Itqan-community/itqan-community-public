@@ -59,7 +59,7 @@ export function renderLineComparisonChart({
   };
 
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((t) => Math.round(maxVal * t));
-  const uniqueTicks = [...new Set(yTicks)];
+  const uniqueTicks = Array.from(new Set(yTicks));
 
   const stepLabel = Math.max(1, Math.ceil(count / 8));
   const xLabelIndices = labels
@@ -205,7 +205,7 @@ export function renderStackedBarChart({
   }
 
   const yFor = (val) => padTop + plotH - ((Number(val) || 0) / maxVal) * plotH;
-  const yTicks = [...new Set([0, 0.25, 0.5, 0.75, 1].map((t) => Math.round(maxVal * t)))];
+  const yTicks = Array.from(new Set([0, 0.25, 0.5, 0.75, 1].map((t) => Math.round(maxVal * t))));
   const slotW = plotW / count;
   const barGroupW = Math.min(54, Math.max(16, slotW * 0.72));
 
@@ -337,7 +337,7 @@ export function renderTeamMetricBarChart({
   const count = Math.max(labels.length, 1);
   const maxVal = Math.max(2, ...forumValues.map(Number), ...teamValues.map(Number));
   const yFor = (val) => padTop + plotH - ((Number(val) || 0) / maxVal) * plotH;
-  const yTicks = [...new Set([0, Math.round(maxVal / 2), Math.round(maxVal)])];
+  const yTicks = Array.from(new Set([0, Math.round(maxVal / 2), Math.round(maxVal)]));
 
   const slotW = plotW / count;
   const barW = Math.min(9, Math.max(3.5, slotW * 0.34));
