@@ -1,0 +1,149 @@
+itqan-statistics:
+  admin:
+    title: الإحصائيات العامة
+    subtitle: لوحة التحليلات والمؤشرات العامة لنشاط المجتمع وتفاعل الأعضاء والفرق.
+
+    nav:
+      dashboard: الإحصائيات العامة
+      teams: إدارة الفرق والأعضاء
+      settings: الإعدادات والصيانة
+
+    period:
+      label: الفترة الزمنية
+      mtd: الشهر الحالي (من أول الشهر حتى اليوم)
+      last_day: آخر يوم (24 ساعة)
+      last_7_days: آخر أسبوع
+      last_30_days: أخر 30 يوم
+      last_90_days: آخر 3 أشهر
+      last_365_days: آخر 365 يوم
+      all_time: كامل الوقت
+      custom: فترة مخصصة
+      apply: تطبيق
+      refresh: تحديث
+      refreshing: جاري التحديث...
+      from: من
+      to: إلى
+      displayed_window: "الفترة المعروضة: من {from} إلى {to} ({days} يوماً)"
+      comparison_window: "الفترة السابقة: من {from} إلى {to} ({days} يوماً)"
+      governs_note: "تحكم هذه الفترة جميع الأقسام بالأسفل باستثناء الرسوم الشهرية التي تعرض دائماً آخر 12 شهراً."
+
+    trend:
+      heading: إحصائيات المجتمع عبر الزمن
+      help: تتبع يومي للأعضاء الجدد والنقاشات والمشاركات وأصوات التأييد والمعارضة، مقارنة بالفترة السابقة المماثلة لها
+      users: الأعضاء
+      discussions: النقاشات
+      posts: المشاركات
+      replies: الردود
+      upvotes: أصوات مؤيدة
+      downvotes: أصوات معارضة
+      users_series: أعضاء جدد
+      discussions_series: نقاشات جديدة
+      posts_series: مشاركات
+      upvotes_series: أصوات مؤيدة
+      downvotes_series: أصوات معارضة
+      period_total: إجمالي الفترة
+      since_start: "الإجمالي منذ بداية المجتمع: {count}"
+      delta_new: جديد
+      delta_tooltip: التغيير مقارنة بالفترة السابقة
+      current_series: الفترة المعروضة
+      previous_series: الفترة السابقة
+      no_data: لا توجد بيانات متاحة للفترة المختارة
+
+    engagement:
+      heading: مستويات تفاعل الأعضاء
+      help: شرائح الأعضاء حسب حجم مشاركاتهم وتفاعلهم خلال الفترة المحددة أعلاه.
+      lurkers: متصفحون
+      lurkers_desc: سجلوا دخولهم في الفترة بدون أي مشاركة أو إعجاب
+      returning_readers: قرّاء عائدون
+      returning_readers_desc: انضموا قبل الفترة وسجلوا دخولهم خلالها
+      active_1: لايك أو منشور أو رد
+      active_1_desc: تفاعلوا بإعجاب واحد أو منشور أو رد على الأقل
+      with_posts: منشور أو رد
+      with_posts_desc: كتبوا منشوراً أو رداً واحداً على الأقل في الفترة
+      active_3: 3 منشورات أو ردود على الأقل
+      active_3_desc: أضافوا 3 مشاركات أو أكثر خلال الفترة
+      active_10: 10 منشورات أو ردود فما فوق
+      active_10_desc: أنشط الأعضاء بـ 10 مشاركات أو أكثر في الفترة
+
+    rolling:
+      heading: نشاط مستويات التفاعل والقرّاء عبر الأشهر
+      badge: ثابت لآخر 12 شهراً
+      help: التوزيع الشهري للقرّاء العائدين وشرائح المتصفحين (Lurkers) ومستويات الفاعلية خلال آخر 12 شهراً
+      volume_title: حجم المحتوى الشهري (النقاشات مقابل الردود)
+      engagement_title: نشاط مستويات التفاعل والقرّاء عبر الأشهر
+      discussions: المواضيع
+      replies: الردود
+      total_items: إجمالي التفاعلات
+
+    teams:
+      heading: إحصائيات الفرق
+      help: نظرة عامة على مساهمات كل فريق مقارنة بإجمالي تفاعل المنتدى خلال الفترة المحددة
+      all_teams: جميع الفرق
+      forum_label: المنتدى
+      manage_btn: إدارة الفرق والأعضاء
+      create_team: فريق جديد
+      edit_team: تعديل اسم الفريق
+      delete_team: حذف الفريق
+      confirm_delete: هل أنت متأكد من حذف هذا الفريق وإزالة ربط أعضائه؟
+      team_name: اسم الفريق الجديد
+      team_desc: الوصف (اختياري)
+      team_color: اللون المميز
+      team_visible: ظاهر في الإحصائيات العامة
+      save_team: حفظ الفريق
+      cancel: إلغاء
+      no_teams: لا توجد فرق مضافة للظهور في الإحصائيات العامة حالياً.
+      show_hidden: إظهار الفرق المخفية
+      members_count: "{count} عضو مسجل"
+      discussions_started: المواضيع (Discussions)
+      replies_posted: الردود (Replies)
+      total_activity: إجمالي التفاعلات
+      share_discussions: "من مواضيع المنتدى ({total})"
+      share_replies: "من ردود المنتدى ({total})"
+      share_total: "من تفاعلات المنتدى ({total})"
+      share_of_forum: "{pct}% من المنتدى"
+      mini_chart_title: مسار النشاط الشهري (الفريق مقابل المنتدى)
+      no_monthly_data: لا توجد بيانات شهرية متاحة
+      member_table_title: تفاصيل مشاركات أعضاء الفرق
+      member_table_help_all: مساهمات أعضاء الفرق مقارنة بنشاط المجتمع خلال الفترة المحددة
+      member_table_help_team: "مساهمات أعضاء ({team}) خلال الفترة المحددة"
+      filter_label: تصفية حسب الفريق
+      member: عضو الفريق
+      col_member: عضو الفريق
+      role: الدور
+      col_role: الدور
+      col_team: الفريق
+      col_discussions: النقاشات (Discussions)
+      col_replies: الردود (Replies)
+      col_total: إجمالي المشاركات
+      col_upvotes: "تأييد 👍"
+      col_downvotes: "معارضة 👎"
+      last_seen: آخر ظهور
+      col_last_seen: آخر ظهور
+      no_members: لا يوجد أعضاء مسجلين في هذا الفريق حالياً.
+      add_members: إضافة أعضاء للفريق
+      add_members_title: إضافة أعضاء إلى الفريق
+      search_placeholder: ابحث باسم المستخدم أو المعرف في المنتدى...
+      role_placeholder: "الدور الاختياري (مثال: مشرف، مراجع، فريق الجودة)"
+      add_selected: حفظ الأعضاء المحددين
+      remove_member: إزالة العضو من الفريق
+
+    settings:
+      heading: الإعدادات وصيانة البيانات المخزنة
+      timezone_label: المنطقة الزمنية للمجتمع
+      timezone_help: تُستخدم لتجميع التوقيتات في الأيام والأشهر بدقة (مثل Asia/Riyadh أو UTC).
+      save_settings: حفظ الإعدادات
+      rebuild_title: مسح وإعادة بناء البيانات اليومية
+      rebuild_help: يمسح السجلات اليومية المجمعة ويعيد حساب إحصائيات آخر 365 يوماً من قاعدة البيانات.
+      rebuild_button: مسح وإعادة بناء (365 يوماً)
+      rebuild_success: "تمت إعادة بناء إحصائيات {days} يوماً بنجاح."
+
+    maintenance:
+      heading: الإعدادات وصيانة البيانات المخزنة
+      timezone_label: المنطقة الزمنية للمجتمع
+      timezone_help: تُستخدم لتجميع التوقيتات في الأيام والأشهر بدقة (مثل Asia/Riyadh أو UTC).
+      save_settings: حفظ الإعدادات
+      rebuild_heading: مسح وإعادة بناء البيانات اليومية
+      rebuild_help: يمسح السجلات اليومية المجمعة ويعيد حساب إحصائيات آخر 365 يوماً من قاعدة البيانات.
+      rebuild_btn: مسح وإعادة بناء (365 يوماً)
+      rebuilding: جاري إعادة البناء…
+      rebuild_success: "تم مسح {purged} سجل وإعادة بناء {rebuilt} يوماً ({from} ← {to})."

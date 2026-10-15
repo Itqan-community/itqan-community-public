@@ -1,0 +1,149 @@
+itqan-statistics:
+  admin:
+    title: General Statistics
+    subtitle: Comprehensive analytics dashboard for community activity over time, member engagement levels, and team contributions.
+
+    nav:
+      dashboard: General Statistics
+      teams: Manage Teams & Members
+      settings: Settings & Maintenance
+
+    period:
+      label: Time Period
+      mtd: Current Month (Month-to-Date)
+      last_day: Last Day (24 Hours)
+      last_7_days: Last Week
+      last_30_days: Last 30 Days
+      last_90_days: Last 3 Months
+      last_365_days: Last 365 Days
+      all_time: All Time
+      custom: Custom Range
+      apply: Apply
+      refresh: Refresh
+      refreshing: Refreshing...
+      from: From
+      to: To
+      displayed_window: "Displayed Period: From {from} to {to} ({days} days)"
+      comparison_window: "Previous Period: From {from} to {to} ({days} days)"
+      governs_note: "This period controls all sections below except the monthly charts, which always display the last 12 months."
+
+    trend:
+      heading: Community Statistics Over Time
+      help: Daily tracking of new members, discussions, posts, upvotes, and downvotes compared to the preceding equal-length period
+      users: Members
+      discussions: Discussions
+      posts: Posts
+      replies: Replies
+      upvotes: Upvotes
+      downvotes: Downvotes
+      users_series: New Members
+      discussions_series: New Discussions
+      posts_series: Posts
+      upvotes_series: Upvotes
+      downvotes_series: Downvotes
+      period_total: Period Total
+      since_start: "Total since community start: {count}"
+      delta_new: New
+      delta_tooltip: Change compared to the previous period
+      current_series: Displayed Period
+      previous_series: Previous Period
+      no_data: No data available for the selected period
+
+    engagement:
+      heading: Member Engagement Levels
+      help: Member segments by contribution volume and activity during the selected period above.
+      lurkers: Lurkers
+      lurkers_desc: Logged in during the period with no posts or likes
+      returning_readers: Returning Readers
+      returning_readers_desc: Joined before the period and logged in during it
+      active_1: Like, Post, or Reply
+      active_1_desc: Interacted with at least 1 like, post, or reply
+      with_posts: Post or Reply
+      with_posts_desc: Wrote at least 1 post or reply during the period
+      active_3: At Least 3 Posts or Replies
+      active_3_desc: Added 3 or more contributions during the period
+      active_10: 10+ Posts or Replies
+      active_10_desc: Most active members with 10 or more contributions in the period
+
+    rolling:
+      heading: Engagement Levels & Returning Readers Across Months
+      badge: Fixed Last 12 Months
+      help: Monthly distribution of returning readers, lurkers, and active engagement tiers over the last 12 months
+      volume_title: Monthly Content Volume (Discussions vs Replies)
+      engagement_title: Engagement Levels & Returning Readers Across Months
+      discussions: Discussions
+      replies: Replies
+      total_items: Total Interactions
+
+    teams:
+      heading: Team Statistics
+      help: Overview of each team's contributions compared to total forum activity during the selected period
+      all_teams: All Teams
+      forum_label: Forum
+      manage_btn: Manage Teams & Members
+      create_team: New Team
+      edit_team: Edit Team
+      delete_team: Delete Team
+      confirm_delete: Are you sure you want to delete this team and its member mappings?
+      team_name: Team Name
+      team_desc: Description (Optional)
+      team_color: Accent Color
+      team_visible: Visible in General Statistics
+      save_team: Save Team
+      cancel: Cancel
+      no_teams: No teams are currently configured to appear in General Statistics.
+      show_hidden: Show hidden teams
+      members_count: "{count} registered members"
+      discussions_started: Discussions
+      replies_posted: Replies
+      total_activity: Total Interactions
+      share_discussions: "of forum discussions ({total})"
+      share_replies: "of forum replies ({total})"
+      share_total: "of forum interactions ({total})"
+      share_of_forum: "{pct}% of forum"
+      mini_chart_title: 12-Month Activity Trend (Team vs Forum)
+      no_monthly_data: No monthly data available
+      member_table_title: Team Members Contribution Breakdown
+      member_table_help_all: Team member contributions compared to community activity during the selected period
+      member_table_help_team: "Contributions of ({team}) members during the selected period"
+      filter_label: Filter by Team
+      member: Team Member
+      col_member: Team Member
+      role: Role
+      col_role: Role
+      col_team: Team
+      col_discussions: Discussions
+      col_replies: Replies
+      col_total: Total Posts
+      col_upvotes: "Upvotes 👍"
+      col_downvotes: "Downvotes 👎"
+      last_seen: Last Seen
+      col_last_seen: Last Seen
+      no_members: No members are currently registered in this team.
+      add_members: Add Members to Team
+      add_members_title: Add Members to Team
+      search_placeholder: Search by username or ID in the forum...
+      role_placeholder: Optional role (e.g. Moderator, Reviewer, QA Team)
+      add_selected: Save Selected Members
+      remove_member: Remove Member from Team
+
+    settings:
+      heading: Configuration & Cache Maintenance
+      timezone_label: Community Timezone
+      timezone_help: Used to group UTC database timestamps into accurate daily and monthly buckets (e.g. Asia/Riyadh or UTC).
+      save_settings: Save Settings
+      rebuild_title: Purge & Rebuild Daily Buckets
+      rebuild_help: Clears all persisted daily buckets and recomputes the last 365 days of history from the database.
+      rebuild_button: Purge & Rebuild (365 Days)
+      rebuild_success: "Successfully rebuilt statistics for {days} days."
+
+    maintenance:
+      heading: Configuration & Cache Maintenance
+      timezone_label: Community Timezone
+      timezone_help: Used to group UTC database timestamps into accurate daily and monthly buckets (e.g. Asia/Riyadh or UTC).
+      save_settings: Save Settings
+      rebuild_heading: Purge & Rebuild Daily Buckets
+      rebuild_help: Clears all persisted daily buckets and recomputes the last 365 days of history from the database.
+      rebuild_btn: Purge & Rebuild (365 Days)
+      rebuilding: Rebuilding buckets…
+      rebuild_success: "Purged {purged} buckets and rebuilt {rebuilt} days ({from} → {to})."
