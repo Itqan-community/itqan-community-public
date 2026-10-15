@@ -30,8 +30,3 @@ itqan-theme:
       open: Open image full screen
       close: Close
       hint: Pinch to zoom · double-tap to fill · drag down to close
-
-    toolbar:
-      table_tooltip: Insert Table
-      quote_tooltip: Insert Blockquote
-      code_tooltip: Insert Code Block

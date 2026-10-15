@@ -124,7 +124,6 @@ return array(
     'Itqan\\ComposerTools\\' => array($vendorDir . '/itqan/flarum-composer-tools/src'),
     'Itqan\\Llms\\' => array($baseDir . '/packages/itqan-llms/src'),
     'Itqan\\PreviewCards\\' => array($baseDir . '/packages/itqan-preview-cards/src'),
-    'Itqan\\Statistics\\' => array($baseDir . '/packages/itqan-statistics/src'),
     'Irmmr\\RTLCss\\' => array($vendorDir . '/irmmr/rtlcss/src'),
     'Irmmr\\FlarumRtlSupport\\' => array($vendorDir . '/irmmr/flarum-ext-rtl/src'),
     'Intervention\\Image\\' => array($vendorDir . '/intervention/image/src/Intervention/Image'),

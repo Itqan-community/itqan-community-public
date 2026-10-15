@@ -6,12 +6,9 @@ import SettingsPage from 'flarum/forum/components/SettingsPage';
 import FieldSet from 'flarum/common/components/FieldSet';
 import Button from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
-import PostMeta from 'flarum/forum/components/PostMeta';
 
 import ThemeSwitcher, { ICONS } from './components/ThemeSwitcher';
 import PwaInstallPrompt from './components/PwaInstallPrompt';
-import AbsoluteDateBadge from './components/AbsoluteDateBadge';
-import addRichToolbarButtons from './components/RichToolbarButtons';
 import addImageLightbox from './addImageLightbox';
 import addReplyAffordances from './addReplyAffordances';
 import { MODES, boot, currentMode, setMode } from './utils/scheme';
@@ -21,8 +18,6 @@ export { default as ThemeSwitcher } from './components/ThemeSwitcher';
 export { default as PwaInstallPrompt } from './components/PwaInstallPrompt';
 export { default as ImageLightbox } from './components/ImageLightbox';
 export { default as addImageLightbox } from './addImageLightbox';
-export { default as AbsoluteDateBadge } from './components/AbsoluteDateBadge';
-export { default as addRichToolbarButtons } from './components/RichToolbarButtons';
 export * from './utils/scheme';
 
 app.initializers.add('itqan-theme', () => {
@@ -87,26 +82,4 @@ app.initializers.add('itqan-theme', () => {
       4
     );
   });
-
-  // ==========================================
-  // Archival post absolute timestamps (moved from itqan-discussions, PR #20)
-  // ==========================================
-  extend(PostMeta.prototype, 'viewItems', function (items) {
-    const post = this.attrs.post;
-    if (!post || !post.createdAt()) return;
-    const time = post.createdAt();
-
-    items.replace(
-      'time',
-      <a className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
-        <AbsoluteDateBadge time={time} />
-      </a>,
-      100
-    );
-  });
-
-  // ==========================================
-  // Rich composer toolbar: table / quote / code buttons (moved from itqan-composer-tools, PR #12)
-  // ==========================================
-  addRichToolbarButtons();
 });
