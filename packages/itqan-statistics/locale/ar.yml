@@ -123,7 +123,7 @@ itqan-statistics:
       add_members: إضافة أعضاء للفريق
       add_members_title: إضافة أعضاء إلى الفريق
       search_placeholder: ابحث باسم المستخدم أو المعرف في المنتدى...
-      role_placeholder: الدور الاختياري (مثال: مشرف، مراجع، فريق الجودة)
+      role_placeholder: "الدور الاختياري (مثال: مشرف، مراجع، فريق الجودة)"
       add_selected: حفظ الأعضاء المحددين
       remove_member: إزالة العضو من الفريق
 
