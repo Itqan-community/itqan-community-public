@@ -1245,6 +1245,15 @@
             'reference' => null,
             'dev_requirement' => false,
         ),
+        'itqan/flarum-statistics' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'flarum-extension',
+            'install_path' => __DIR__ . '/../../packages/itqan-statistics',
+            'aliases' => array(),
+            'reference' => null,
+            'dev_requirement' => false,
+        ),
         'mtareq/flarum-nested-replies' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',

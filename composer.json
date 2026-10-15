@@ -76,11 +76,12 @@
         "itqan/flarum-mailerlite": "@dev",
         "itqan/flarum-notifications": "@dev",
         "itqan/flarum-preview-cards": "@dev",
+        "itqan/flarum-statistics": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
-        "mtareq/flarum-nested-replies": "@dev",
         "justoverclock/newsletter": "*",
         "michaelbelgium/flarum-discussion-views": "^7.4",
+        "mtareq/flarum-nested-replies": "@dev",
         "pipecraft/flarum-ext-id-slug": "*",
         "the-turk/flarum-stickiest": "*",
         "v17development/flarum-seo": "*",
@@ -113,6 +114,10 @@
         "itqan-preview-cards": {
             "type": "path",
             "url": "packages/itqan-preview-cards"
+        },
+        "itqan-statistics": {
+            "type": "path",
+            "url": "packages/itqan-statistics"
         },
         "itqan-theme": {
             "type": "path",
