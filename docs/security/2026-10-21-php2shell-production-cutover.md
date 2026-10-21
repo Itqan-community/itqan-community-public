@@ -1,10 +1,28 @@
 # PHP2Shell — production cutover plan
 
-**Status:** staging is on patched PHP 8.3.36 and the rollback was rehearsed.
-**Production has not been touched.** This document is the sequence to follow
-after explicit owner confirmation.
+**Status: EXECUTED on 2026-10-21.** Production runs patched **PHP 8.3.36** from
+the ondrej PPA, with PHP 8.1 kept installed and hardened for rollback. The
+production deploy gate passed (`OK: PHP 8.3.36…`) and the public site and API
+return 200. This document is kept as the record and as the repeatable plan.
 
-## What is already proven on staging
+## Execution record (2026-10-21)
+
+- **19:10 UTC — first switch failed safely.** nginx moved to 8.3, the homepage
+  returned 500: `Allowed memory size of 134217728 bytes exhausted` in
+  `wikimedia/less.php` during the cold LESS compile. The script's trap restored
+  nginx and the CLI to 8.1 automatically; production stayed up.
+- **19:12 UTC — retry succeeded.** Raised the 8.3 `memory_limit` to **256M**
+  (production 8.1 runs 128M with a warm LESS cache), switched again, and warmed
+  the first request: homepage **200** (483 KB), API **200**, queue and both FPM
+  services active. Session settings: upload progress Off, strict mode On.
+- **19:15 UTC — release deployed.** PR #206 (`staging → main`) merged; the
+  production deploy took a **13 MB DB backup**, the gate printed
+  `OK: PHP 8.3.36 is at or above the 8.3 fix`, both FPM services reloaded, and
+  the origin and public health checks returned 200. Deployed HEAD `a81f2bec`.
+- **Rollback** was pre-staged but not needed after the retry; the first failed
+  switch exercised the automatic rollback path in production.
+
+## What was proven on staging
 
 - PPA package path: **completed**. The jammy amd64 8.3.36 binary published,
   installed on staging, nginx switched to `/run/php/php8.3-fpm.sock`, and the
@@ -150,8 +168,9 @@ Roll back immediately if any of these happen after the switch:
   the app deploy should not proceed until staging mirrors that extension set).
 - Removing 8.1 before soaking (do not).
 
-## Explicit non-actions
+## Execution result
 
-- No production SSH, package install, nginx change, merge to `main`, or
-  production deploy has been performed.
-- No 8.3.35 installation: only the patched 8.3.36 is acceptable.
+Production is on PHP 8.3.36, the 8.1 fallback remains, and the deploy gate
+passes. Keep 8.1 and `/root/flarum.conf.pre-php83` for 24–48 hours, then clean
+up the temporary source build (`/opt/php-8.3.36`), the `/tmp` tarball, and the
+staging PPA/ops scripts if no longer needed.
