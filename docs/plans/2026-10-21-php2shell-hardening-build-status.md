@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-21
 **Branch:** `security/php2shell-hardening` (cut from `origin/main` at `de19fad1`)
-**Commits:** `c46246b3` (gate, hardening, workflows), `b1736c00` (runbook, status), `ae316fdb` (confirmed fixed versions). Merged to `staging` as `c46a0295` (PR #202). **Production untouched.**
+**Commits:** `c46246b3` (gate, hardening, workflows), `b1736c00` (runbook, status), `ae316fdb` (confirmed fixed versions). Released through `staging` (PRs #202–#205) and merged to `main` as PR #206 (`a81f2bec`). **Production is live on PHP 8.3.36.**
 **Topic:** CVE-2026-109618 / CVE-2026-109619 ("PHP2Shell"), CVSS 9.2 RCE
 
 ## What shipped
@@ -50,8 +50,8 @@ Staging is serving **patched PHP 8.3.36** end to end.
 | Gate | `OK: PHP 8.3.36 is at or above the 8.3 fix (8.3.36)` on the real staging FPM |
 | FPM settings | `session.upload_progress.enabled => Off`, `session.use_strict_mode => On`, `memory_limit 256M`, uploads 20M/24M |
 | App proof | Browser fetch to the public MailerLite webhook returned Flarum JSON; the PPA build has `expose_php=Off`, so the version is proven by `php-fpm8.3 -i` / `php8.3 -v` (8.3.36), not a header. Public vhost returns the expected Basic Auth 401 |
-| Deploy | PR #202 merged; deploy run `39621445699` passed the gate and reloaded both `php8.1-fpm` and `php8.3.36-fpm` |
-| Staging commit | `c46a0295` |
+| Deploy | PR #202 merged; later PR #205 moved staging to the package build; deploy run `39645484180` passed the gate |
+| Staging commit | `d34f8bad` (package-managed 8.3.36) |
 
 What was not exercised: the authenticated forum UI (staging is behind Basic Auth; the owner can log in with the existing credentials), and a real image upload. Upload progress being disabled does not affect `file_uploads` (verified `On`).
 
@@ -67,14 +67,23 @@ What was not exercised: the authenticated forum UI (staging is behind Basic Auth
 - Script: `scripts/ops/rollback-php2shell.sh`.
 - Production cutover plan: `docs/security/2026-10-21-php2shell-production-cutover.md`.
 
+### Production (2026-10-21, executed)
+
+| Item | State |
+|---|---|
+| Runtime | **PHP 8.3.36** from the ondrej PPA, `php8.3-fpm`; 8.1 still installed and hardened for rollback |
+| nginx | `fastcgi_pass unix:/run/php/php8.3-fpm.sock`; backup at `/root/flarum.conf.pre-php83` |
+| Queue | `flarum-queue.service` restarted on 8.3 and active |
+| FPM settings | `memory_limit 256M`, uploads 20M/20M, `upload_progress` Off, strict mode On |
+| Deploy | PR #206 merged (`a81f2bec`); gate `OK: PHP 8.3.36…`; 13 MB DB backup; origin and public health 200 |
+| App proof | Browser loaded the homepage and a discussion (`window.app === true`); public and `/api/discussions` return 200 |
+| First attempt | nginx switched, homepage 500 (`memory_limit 128M` exhausted in the cold LESS compile); the trap restored 8.1 automatically. Retry with 256M succeeded |
+| Rollback | Pre-staged at `/root/rollback-php2shell.sh`; not needed after the retry |
+
 ### Not verified
 
-- **Production.** Not touched. It still runs PHP 8.1 and the gate will reject its next deploy.
-- **Uploads / authenticated UI on staging.** The owner can check with the existing Basic Auth credentials; the runtime and Flarum boot are proven.
-- **The source-build replacement path.** When the PPA publishes 8.3.36, switching from `/opt` to the package is documented but not yet executed.
-- **Screenshots of the authenticated UI.** The public webhook JSON was captured in a browser; the UI requires credentials we do not hold.
-- **The exact fixed versions.** Confirmed after the 2026-10-21 14:07 UTC
-  release: 8.2.35, 8.3.36, 8.4.27, 8.5.12. The gate now matches reality.
+- **Authenticated production UI and a real upload.** The public pages and API are verified; login/post/upload remain an owner check.
+- **Soak.** Keep 8.1 and the nginx backup for 24–48 hours before cleanup.
 
 ## Decisions taken
 
@@ -85,16 +94,14 @@ What was not exercised: the authenticated forum UI (staging is behind Basic Auth
 5. **Keep PHP 8.1 installed during the 8.3 upgrade** so the nginx socket change can be rolled back.
 6. **Local Docker forces `pull: true`.** A cached layer is how a "patched" rebuild silently stays vulnerable.
 
-## Blocked on the owner
+## Remaining owner checks
 
-1. **Production upgrade.** Production still runs PHP 8.1 and must move to a patched 8.3. The staging runbook, PPA path and rollback are now exercised; production remains gated on your explicit go-ahead.
-2. **Check the authenticated staging UI** with the existing Basic Auth credentials (login, post, upload).
-3. Rebuild the local Docker image (`docker compose build --pull`) — the tag should now resolve 8.3.36.
-4. Merge the branch to `main` only after production is ready; that merge triggers the production deploy.
+1. **Log in and post on production**, and upload an image — the public pages and API are verified, the authenticated flows are not.
+2. **Soak for 24–48 hours**, watching 5xx, `storage/logs`, the queue, and Cloudflare analytics.
+3. **Local Docker rebuild** (`docker compose build --pull`) so local matches 8.3.36.
+4. After the soak: stop/remove the staging source build under `/opt/php-8.3.36`, remove the `/tmp` tarball, and clean up the temporary staging PPA/ops scripts if no longer needed.
 
 ## Next step
 
-- Production cutover after explicit confirmation: follow
-  `docs/security/2026-10-21-php2shell-production-cutover.md`.
-- Apply the same `.docker/php.ini` block to `itqan-community-v2` (not deployed
-  yet, but it will inherit the same risk).
+- Keep 8.1 and `/root/flarum.conf.pre-php83` until the soak ends. The rollback script is `/root/rollback-php2shell.sh`.
+- Apply the same `.docker/php.ini` block to `itqan-community-v2` (not deployed yet, but it will inherit the same risk).
