@@ -6,12 +6,13 @@ after explicit owner confirmation.
 
 ## What is already proven on staging
 
-- PPA package path: pending. The PPA source for 8.3.36 is published, but the
-  **jammy amd64 binary is still Pending**. Staging currently runs the
-  source-built 8.3.36 under `/opt/php-8.3.36`.
-- Rollback rehearsal: switching nginx + CLI back to 8.1 restored service in
-  **1 second** (one in-flight request still hit an 8.3 worker for under a
-  second); restoring 8.3 took **2 seconds**. See
+- PPA package path: **completed**. The jammy amd64 8.3.36 binary published,
+  installed on staging, nginx switched to `/run/php/php8.3-fpm.sock`, and the
+  source-build FPM stopped. `php8.3 -v` and `php-fpm8.3 -i` both report 8.3.36.
+- Rollback rehearsal on the final PPA runtime: switching nginx + CLI back to 8.1
+  restored service in **under 1 second**; restoring 8.3 took **1 second**.
+  Ubuntu 8.1 has `expose_php=Off`, so verification uses the Flarum response body,
+  not the version header. See
   `docs/plans/2026-10-21-php2shell-hardening-build-status.md`.
 - The rollback script is `scripts/ops/rollback-php2shell.sh`. It switches the
   vhost and CLI only; it does not touch the database or application code.

@@ -42,14 +42,14 @@ Staging is serving **patched PHP 8.3.36** end to end.
 
 | Item | State |
 |---|---|
-| Runtime | PHP 8.3.36 FPM + CLI, source build under `/opt/php-8.3.36` (built in `ubuntu:22.04`), unit `php8.3.36-fpm.service` |
-| Why not the PPA | ondrej's jammy PPA still published only 8.3.35, and Launchpad returned 503s during the release rush. The source build is the bridge; replace it with the PPA package when 8.3.36 is published |
-| nginx | Both `fastcgi_pass` entries point at `/run/php/php8.3.36-fpm.sock`; previous config backed up at `/root/flarum.conf.pre-php836` |
+| Runtime | PHP 8.3.36 FPM + CLI from the **ondrej PPA package**, unit `php8.3-fpm.service`; the source build under `/opt/php-8.3.36` is stopped and kept only as an emergency fallback |
+| PPA | The jammy amd64 8.3.36 binary published at ~16:50 UTC; installed and verified on staging |
+| nginx | Both `fastcgi_pass` entries point at `/run/php/php8.3-fpm.sock`; previous config backed up at `/root/flarum.conf.pre-php836` and `/root/flarum.conf.pre-ppa836` |
 | 8.1 | Still installed and **hardened** (INI drop-in + pool flags) for rollback; not serving |
-| CLI | `update-alternatives` points `php` at `/opt/php-8.3.36/bin/php`; `php8.3.36` / `php-fpm8.3.36` aliases exist for the gate |
+| CLI | `update-alternatives` points `php` at `/usr/bin/php8.3` (package build) |
 | Gate | `OK: PHP 8.3.36 is at or above the 8.3 fix (8.3.36)` on the real staging FPM |
 | FPM settings | `session.upload_progress.enabled => Off`, `session.use_strict_mode => On`, `memory_limit 256M`, uploads 20M/24M |
-| App proof | Browser fetch to the public MailerLite webhook returned Flarum JSON with `x-powered-by: PHP/8.3.36`, `set-cookie: __Host-flarum_session=…` and `401 {"error":"Webhook not configured"}`; public vhost returns the expected Basic Auth 401 |
+| App proof | Browser fetch to the public MailerLite webhook returned Flarum JSON; the PPA build has `expose_php=Off`, so the version is proven by `php-fpm8.3 -i` / `php8.3 -v` (8.3.36), not a header. Public vhost returns the expected Basic Auth 401 |
 | Deploy | PR #202 merged; deploy run `39621445699` passed the gate and reloaded both `php8.1-fpm` and `php8.3.36-fpm` |
 | Staging commit | `c46a0295` |
 
@@ -57,15 +57,14 @@ What was not exercised: the authenticated forum UI (staging is behind Basic Auth
 
 ### Pre-production rehearsal (2026-10-21, staging)
 
-- Rollback script tested end to end: nginx + CLI back to 8.1 restored service in
-  **1 second**; one in-flight request still hit an 8.3 worker for under a second,
-  then the probe proved 8.1 was serving via the Flarum response body (Ubuntu 8.1
-  has `expose_php=Off`, so no version header). Restoring 8.3 took **2 seconds**.
+- PPA path **completed**: the jammy amd64 8.3.36 binary published, installed on
+  staging, nginx switched to `/run/php/php8.3-fpm.sock`, and the source-build
+  FPM stopped. `php8.3 -v` and `php-fpm8.3 -i` both report 8.3.36.
+- Rollback script tested on the final PPA runtime: nginx + CLI back to 8.1
+  restored service in **under 1 second**; restoring 8.3 took **1 second**.
+  Ubuntu's 8.1 has `expose_php=Off`, so verification uses the Flarum response
+  body, not the version header.
 - Script: `scripts/ops/rollback-php2shell.sh`.
-- PPA check: the 8.3.36 source is published, but the **jammy amd64 binary is
-  still Pending**, so the package path could not be rehearsed yet. Staging is
-  still on the source build; production should wait for the PPA binary or use
-  the source build only with explicit approval.
 - Production cutover plan: `docs/security/2026-10-21-php2shell-production-cutover.md`.
 
 ### Not verified
@@ -88,16 +87,14 @@ What was not exercised: the authenticated forum UI (staging is behind Basic Auth
 
 ## Blocked on the owner
 
-1. **Production upgrade.** Production still runs PHP 8.1 and must move to a patched 8.3. The staging runbook and the rollback path are now exercised; production remains gated on your go-ahead.
-2. **Replace the staging source build with the PPA package** once ondrej publishes 8.3.36 (the current build is patched, just not package-managed).
-3. **Check the authenticated staging UI** with the existing Basic Auth credentials (login, post, upload).
-4. Rebuild the local Docker image (`docker compose build --pull`) — the tag should now resolve 8.3.36.
-5. Merge the branch to `main` only after production is ready; that merge triggers the production deploy.
+1. **Production upgrade.** Production still runs PHP 8.1 and must move to a patched 8.3. The staging runbook, PPA path and rollback are now exercised; production remains gated on your explicit go-ahead.
+2. **Check the authenticated staging UI** with the existing Basic Auth credentials (login, post, upload).
+3. Rebuild the local Docker image (`docker compose build --pull`) — the tag should now resolve 8.3.36.
+4. Merge the branch to `main` only after production is ready; that merge triggers the production deploy.
 
 ## Next step
 
-- When the PPA publishes the **jammy amd64 8.3.36 binary**: switch staging from
-  the source build to the package, verify, then follow the production cutover
-  plan. Do not use 8.3.35.
+- Production cutover after explicit confirmation: follow
+  `docs/security/2026-10-21-php2shell-production-cutover.md`.
 - Apply the same `.docker/php.ini` block to `itqan-community-v2` (not deployed
   yet, but it will inherit the same risk).

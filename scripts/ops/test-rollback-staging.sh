@@ -42,21 +42,34 @@ systemctl reload nginx
 update-alternatives --set php "$PREV_PHP"
 code=$(curl -sk -o /dev/null -w '%{http_code}' --max-time 15 \
     -H "Host: $HOST" https://127.0.0.1/ || true)
+headers=$(mktemp)
+body=$(mktemp)
 header=
+body_snip=
+ok=0
 for _ in $(seq 1 15); do
-    header=$(curl -sk -D - -o /dev/null --max-time 15 -X POST \
+    code=$(curl -sk -D "$headers" -o "$body" -w '%{http_code}' --max-time 15 -X POST \
         -H "Host: $HOST" -H 'Content-Type: application/json' -d '{}' \
-        "https://127.0.0.1/api/mailerlite/webhook" | tr -d '\r' | awk -F': ' 'tolower($1)=="x-powered-by"{print $2}')
+        "https://127.0.0.1/api/mailerlite/webhook" || true)
+    header=$(tr -d '\r' < "$headers" | awk -F': ' 'tolower($1)=="x-powered-by"{print $2}')
+    body_snip=$(head -c 120 "$body" | tr '\n' ' ')
     case "$header" in
-        PHP/8.3*) break ;;
+        PHP/8.3*) ok=1; break ;;
+        "")
+            if grep -qiE 'Webhook not configured|method_not_allowed|csrf-token|flarum' "$body"; then
+                ok=1
+                break
+            fi
+            ;;
     esac
     sleep 1
 done
-echo "origin_http=$code x-powered-by=$header"
-case "$header" in
-    PHP/8.3*) ;;
-    *) echo "Restore did not come back on 8.3 after 15s" >&2; exit 1 ;;
-esac
+rm -f "$headers" "$body"
+echo "origin_http=$code x-powered-by=${header:-<none>} body=$body_snip"
+pkg_version=$(php8.3 -r 'echo PHP_VERSION;')
+echo "package_php8.3=$pkg_version"
+[ "$ok" = 1 ] || { echo "Restore did not prove PHP was serving after 15s" >&2; exit 1; }
+[ "$pkg_version" = "8.3.36" ] || { echo "Package runtime is not 8.3.36" >&2; exit 1; }
 restore_seconds=$(( $(date +%s) - start ))
 echo "restore_seconds=$restore_seconds"
 
