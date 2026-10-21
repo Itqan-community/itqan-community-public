@@ -1,0 +1,18 @@
+# Fixed PHP versions for PHP2Shell — CVE-2026-109618 and CVE-2026-109619.
+#
+# PHP ships fixes only for its supported branches (8.2, 8.3, 8.4, 8.5).
+# PHP 8.1 and older are end-of-life and get no upstream fix, so a box on 8.1
+# must move to a supported branch, not just bump a patch level.
+#
+# Format: <major.minor>=<lowest fixed version>
+#
+# These values are the expected next security releases (the previous security
+# release for each branch was 8.2.34 / 8.3.35 / 8.4.26 / 8.5.11 on 2026-09-24).
+# CONFIRM them against https://www.php.net/archive/2026.php at the 2026-10-21
+# 14:00 UTC release before treating a green gate as proof. If the advisory
+# publishes a different fixed version, change the one line here — every deploy
+# gate and test reads this file.
+8.2=8.2.35
+8.3=8.3.36
+8.4=8.4.27
+8.5=8.5.12

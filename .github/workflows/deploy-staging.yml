@@ -36,13 +36,50 @@ jobs:
 
           git config --global --add safe.directory /var/www/flarum
 
+          # PHP2Shell gate. The session INI settings lower exposure but do not
+          # fix CVE-2026-109618/109619; only a patched PHP does, and 8.1 is
+          # end-of-life with no upstream patch. Existing checkouts run the gate
+          # on the *incoming* tree (origin/staging) before the working copy is
+          # replaced, so a vulnerable runtime fails the deploy without leaving
+          # code ahead of the database. Documented emergency override:
+          # PHP2SHELL_ALLOW_VULNERABLE=1.
+          php2shell_gate() { # [git-ref]
+            local ref=${1:-}
+            local src_gate=scripts/security/php-version-gate.sh
+            local src_versions=security/php2shell-fixed-versions.txt
+            local gate=$src_gate versions=$src_versions
+            local fpm_versions ver fpm_bin
+            if [ -n "$ref" ]; then
+              gate=/tmp/php2shell-gate.sh
+              versions=/tmp/php2shell-fixed-versions.txt
+              git show "$ref:$src_gate" > "$gate" || return 1
+              git show "$ref:$src_versions" > "$versions" || return 1
+            fi
+            fpm_versions=$(grep -Rho 'unix:/run/php/php[0-9.]*-fpm.sock' /etc/nginx/sites-enabled/ 2>/dev/null \
+              | sed -E 's#.*php([0-9.]+)-fpm\.sock#\1#' | sort -u)
+            if [ -z "$fpm_versions" ]; then
+              echo "No php-fpm socket in /etc/nginx/sites-enabled; refusing to guess the runtime"
+              return 1
+            fi
+            for ver in $fpm_versions; do
+              fpm_bin=$(command -v "php-fpm$ver" || true)
+              if [ -z "$fpm_bin" ]; then
+                echo "nginx points at php$ver-fpm but php-fpm$ver is not installed"
+                return 1
+              fi
+              PHP2SHELL_FIXED_VERSIONS="$versions" bash "$gate" --fpm "$fpm_bin" || return 1
+            done
+          }
+
           if [ -d /var/www/flarum/.git ]; then
             cd /var/www/flarum
             git fetch origin staging
+            php2shell_gate origin/staging
             git reset --hard origin/staging
           else
             git clone --branch staging https://github.com/Itqan-community/itqan-community-public.git /var/www/flarum
             cd /var/www/flarum
+            php2shell_gate
           fi
 
           cat > /var/www/flarum/config.php <<PHP
@@ -135,7 +172,19 @@ jobs:
           fi
           rm -f /tmp/flarum.conf.bak
           systemctl reload nginx
-          systemctl reload php8.1-fpm
+          # Reload whichever PHP-FPM branches are actually running: the box can
+          # carry more than one during the 8.1 -> 8.3 security upgrade, and a
+          # hard-coded service name would silently skip the one serving traffic.
+          reloaded=0
+          for svc in $(systemctl list-units --type=service --state=running --no-legend 'php*-fpm.service' | awk '{print $1}'); do
+            systemctl reload "$svc"
+            echo "Reloaded $svc"
+            reloaded=1
+          done
+          if [ "$reloaded" = 0 ]; then
+            echo "No running php*-fpm service to reload"
+            exit 1
+          fi
 
           # Rendering dependency for itqan-preview-cards: headless Chromium.
           # The Arabic fonts are bundled with the extension. Idempotent; a

@@ -1,6 +1,12 @@
 # Flarum 1.8 runs on PHP 8.1–8.3. Pinned to 8.3 rather than "latest": on 8.4
 # the dependency tree emits a wall of implicit-nullable deprecations, which
 # buries real errors in the log.
+#
+# The tag floats on purpose: PHP 8.3 is the branch that receives the PHP2Shell
+# fix (CVE-2026-109618 / CVE-2026-109619). Rebuild after that release lands —
+# docker-compose.yml forces a base-image pull so a cached 8.3.35 layer cannot
+# be reused. Do not pin an exact patch level here, or a rebuild stops picking
+# up security releases.
 FROM php:8.3-apache
 
 # gd, pdo_mysql, zip and exif are the extensions Flarum and the installed
