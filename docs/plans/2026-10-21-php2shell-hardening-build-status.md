@@ -55,6 +55,19 @@ Staging is serving **patched PHP 8.3.36** end to end.
 
 What was not exercised: the authenticated forum UI (staging is behind Basic Auth; the owner can log in with the existing credentials), and a real image upload. Upload progress being disabled does not affect `file_uploads` (verified `On`).
 
+### Pre-production rehearsal (2026-10-21, staging)
+
+- Rollback script tested end to end: nginx + CLI back to 8.1 restored service in
+  **1 second**; one in-flight request still hit an 8.3 worker for under a second,
+  then the probe proved 8.1 was serving via the Flarum response body (Ubuntu 8.1
+  has `expose_php=Off`, so no version header). Restoring 8.3 took **2 seconds**.
+- Script: `scripts/ops/rollback-php2shell.sh`.
+- PPA check: the 8.3.36 source is published, but the **jammy amd64 binary is
+  still Pending**, so the package path could not be rehearsed yet. Staging is
+  still on the source build; production should wait for the PPA binary or use
+  the source build only with explicit approval.
+- Production cutover plan: `docs/security/2026-10-21-php2shell-production-cutover.md`.
+
 ### Not verified
 
 - **Production.** Not touched. It still runs PHP 8.1 and the gate will reject its next deploy.
@@ -83,5 +96,8 @@ What was not exercised: the authenticated forum UI (staging is behind Basic Auth
 
 ## Next step
 
-- When `ppa:ondrej/php` has 8.3.36: install it, point nginx at the package socket, remove `/opt/php-8.3.36`, keep 8.1 for rollback.
-- Apply the same `.docker/php.ini` block to `itqan-community-v2` (not deployed yet, but it will inherit the same risk).
+- When the PPA publishes the **jammy amd64 8.3.36 binary**: switch staging from
+  the source build to the package, verify, then follow the production cutover
+  plan. Do not use 8.3.35.
+- Apply the same `.docker/php.ini` block to `itqan-community-v2` (not deployed
+  yet, but it will inherit the same risk).
