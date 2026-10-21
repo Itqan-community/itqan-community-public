@@ -42,7 +42,8 @@ Runtime artefacts from the local boot (`public/assets/*`) were reverted; the wor
 - **A live FPM pool.** The hardening script was exercised against a fake `/etc/php` tree, and the gate against stubbed FPM binaries plus the real container version. Neither proves FPM's effective values on the actual droplet; the runbook's probe page is the honest check.
 - **Screenshots.** The harness desktop window is not visible, so browser verification is DOM/JS state, not a screenshot.
 - **Uploads with upload-progress disabled.** Flarum does not use PHP's upload-progress feature; `file_uploads` is untouched. Not exercised end to end.
-- **The exact fixed versions.** The release was still pending at build time. Values in `security/php2shell-fixed-versions.txt` are the expected next security patches and are marked as such.
+- **The exact fixed versions.** Confirmed after the 2026-10-21 14:07 UTC
+  release: 8.2.35, 8.3.36, 8.4.27, 8.5.12. The gate now matches reality.
 
 ## Decisions taken
 
