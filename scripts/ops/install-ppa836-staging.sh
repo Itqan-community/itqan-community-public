@@ -50,12 +50,23 @@ case "$candidate" in
     *) echo "REFUSING: candidate is not 8.3.36"; exit 1 ;;
 esac
 
-echo "== Installing the package"
-DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
-    -o Dpkg::Options::=--force-confold \
-    php8.3-fpm php8.3-cli php8.3-common php8.3-mysql php8.3-curl \
-    php8.3-mbstring php8.3-xml php8.3-zip php8.3-gd php8.3-intl \
-    php8.3-bcmath php8.3-opcache
+echo "== Installing the package (retry through Launchpad 503s)"
+installed_ok=0
+for attempt in $(seq 1 15); do
+    if DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+        -o Acquire::Retries=20 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 \
+        -o Dpkg::Options::=--force-confold \
+        php8.3-fpm php8.3-cli php8.3-common php8.3-mysql php8.3-curl \
+        php8.3-mbstring php8.3-xml php8.3-zip php8.3-gd php8.3-intl \
+        php8.3-bcmath php8.3-opcache; then
+        installed_ok=1
+        break
+    fi
+    echo "install attempt $attempt failed; refreshing indexes and retrying"
+    apt-get update -qq -o Acquire::Retries=20 || true
+    sleep 10
+done
+[ "$installed_ok" = 1 ] || { echo "could not install php8.3 packages"; exit 1; }
 installed=$(php8.3 -r 'echo PHP_VERSION;')
 echo "installed=$installed"
 [ "$installed" = "8.3.36" ] || { echo "unexpected version: $installed"; exit 1; }
