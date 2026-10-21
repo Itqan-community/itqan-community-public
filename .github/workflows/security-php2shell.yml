@@ -1,0 +1,33 @@
+name: PHP2Shell guards
+
+# The deploy gate and the hardening script are security controls; a regression
+# here silently re-opens CVE-2026-109618/109619. They run without a server, so
+# this is cheap.
+on:
+  push:
+    paths:
+      - 'scripts/security/**'
+      - 'security/**'
+      - '.docker/php.ini'
+      - '.github/workflows/deploy-*.yml'
+      - '.github/workflows/security-php2shell.yml'
+  pull_request:
+    paths:
+      - 'scripts/security/**'
+      - 'security/**'
+      - '.docker/php.ini'
+      - '.github/workflows/deploy-*.yml'
+      - '.github/workflows/security-php2shell.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bash syntax
+        run: bash -n scripts/security/*.sh
+      - name: Version gate
+        run: bash scripts/security/php-version-gate.test.sh
+      - name: Hardening script
+        run: bash scripts/security/harden-php2shell.test.sh

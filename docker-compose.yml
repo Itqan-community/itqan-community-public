@@ -31,6 +31,10 @@ services:
   web:
     build:
       context: .docker
+      # Always check the registry for a newer php:8.3-apache. Security patches
+      # (PHP2Shell, CVE-2026-109618/109619) only reach a rebuild if the base
+      # image is refreshed instead of served from the local layer cache.
+      pull: true
     ports:
       - "8080:80"
     volumes:
