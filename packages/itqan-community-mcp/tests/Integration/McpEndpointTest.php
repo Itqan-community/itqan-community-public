@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Itqan\CommunityMcp\Tests\Integration;
 
+use Flarum\Database\AbstractModel;
+use Flarum\Discussion\Discussion;
+use Flarum\User\Guest;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository as CacheRepository;
 use Itqan\CommunityMcp\Formatter\PostMarkdownFormatter;
@@ -11,9 +14,13 @@ use Itqan\CommunityMcp\Http\Controller\LlmsTxtController;
 use Itqan\CommunityMcp\Http\Controller\McpStreamableController;
 use Itqan\CommunityMcp\Http\Middleware\McpCorsAndRateLimitMiddleware;
 use Itqan\CommunityMcp\Mcp\JsonRpcDispatcher;
+use Itqan\CommunityMcp\Mcp\Resources\ForumOverviewResource;
 use Itqan\CommunityMcp\Mcp\Resources\ForumTaxonomyResource;
 use Itqan\CommunityMcp\Mcp\Tools\GetDiscussionTool;
+use Itqan\CommunityMcp\Mcp\Tools\GetUserProfileAndPostsTool;
 use Itqan\CommunityMcp\Mcp\Tools\ListTagsTool;
+use Itqan\CommunityMcp\Mcp\Tools\SearchDiscussionsTool;
+use Itqan\CommunityMcp\Mcp\Tools\SearchPostsTool;
 use Itqan\CommunityMcp\Search\ForumSearchService;
 use Itqan\CommunityMcp\Support\ArraySettings;
 use Itqan\CommunityMcp\Support\Entity;
@@ -630,6 +637,119 @@ final class McpEndpointTest extends TestCase
     }
 
     // ------------------------------------------------------------------
+    // Vanilla Flarum (zero optional extensions)
+    // ------------------------------------------------------------------
+
+    /**
+     * A bare Flarum install: no tags, nested replies, votes, likes, badges or
+     * approval. `flarum/tags` is treated as installed in `vendor/` but disabled
+     * in the admin panel (its tables exist, its `tags` relation is not booted).
+     */
+    public function testVanillaFlarumWorksWithoutTagsOrOptionalExtensions(): void
+    {
+        $db = $this->db();
+        $guest = new Guest();
+        $settings = new ArraySettings(['extensions_enabled' => '[]']);
+
+        $vanilla = new class($db) extends ForumSearchService {
+            /** @var array<int, string> */
+            private array $hiddenTables = [
+                'tags',
+                'discussion_tag',
+                'post_votes',
+                'post_likes',
+                'badges',
+                'badge_user',
+                'mtareq_nested_replies_parents',
+                'mtareq_nested_replies_votes',
+            ];
+
+            /** @var array<int, string> */
+            private array $hiddenColumns = [
+                'discussions.is_sticky',
+                'discussions.votes',
+                'posts.parent_id',
+                'posts.reply_count',
+                'posts.votes',
+                'posts.detected_lang',
+                'posts.is_approved',
+                'badges.is_visible',
+            ];
+
+            public function __construct($db)
+            {
+                parent::__construct(
+                    new CacheRepository(new ArrayStore()),
+                    new ArraySettings(['extensions_enabled' => '[]']),
+                    $db
+                );
+            }
+
+            public function hasTable(string $table): bool
+            {
+                return ! in_array($table, $this->hiddenTables, true) && parent::hasTable($table);
+            }
+
+            public function hasColumn(string $table, string $column): bool
+            {
+                return ! in_array($table.'.'.$column, $this->hiddenColumns, true)
+                    && parent::hasColumn($table, $column);
+            }
+        };
+
+        // Disabled extension: neither the model relation nor the visibility
+        // scoper is booted, exactly like a bare Flarum install.
+        $this->withoutTagsExtension(function () use ($vanilla, $guest, $settings, $db): void {
+            $tags = (new ListTagsTool($vanilla))->execute([], $guest);
+
+            $this->assertStringContainsString('No primary categories available', $tags);
+            $this->assertStringContainsString('No secondary topic tags available', $tags);
+            $this->assertStringNotContainsString('`general`', $tags);
+
+            $search = (new SearchDiscussionsTool($vanilla))->execute(['limit' => 3], $guest);
+            $this->assertStringStartsWith('# البحث في المناقشات', $search);
+
+            // No tags at all: the tag filter must match nothing, not explode.
+            $filtered = (new SearchDiscussionsTool($vanilla))->execute(['tag' => 'general', 'limit' => 3], $guest);
+            $this->assertStringContainsString('**النتائج (Results):** 0', $filtered);
+
+            $posts = (new SearchPostsTool($vanilla))->execute(['query' => 'ا', 'limit' => 3], $guest);
+            $this->assertStringStartsWith('#', $posts);
+
+            $username = (string) $db->table('users')->value('username');
+            $profile = (new GetUserProfileAndPostsTool($vanilla))->execute(
+                ['username' => $username !== '' ? $username : 'admin', 'limit' => 3],
+                $guest
+            );
+            $this->assertNotEmpty(trim($profile));
+
+            $discussionId = FlarumApp::discussionId();
+
+            if ($discussionId > 0) {
+                $discussion = (new GetDiscussionTool($vanilla))->execute(
+                    ['discussion_id' => $discussionId, 'post_limit' => 2],
+                    $guest
+                );
+
+                $this->assertStringContainsString('معرف المناقشة', $discussion);
+                $this->assertStringNotContainsString('RelationNotFoundException', $discussion);
+            }
+
+            $stats = $vanilla->getForumStatistics($guest);
+            $this->assertSame(0, $stats['tags']);
+            $this->assertGreaterThan(0, $stats['discussions']);
+
+            $overview = (new ForumOverviewResource($vanilla, $settings))->render($guest);
+            $this->assertStringContainsString('الأقسام والوسوم (Tags):** 0', $overview);
+
+            $llms = (new LlmsTxtController($vanilla, new CacheRepository(new ArrayStore())))->content();
+            $this->assertStringContainsString('AI & MCP Integration', $llms);
+            $this->assertStringContainsString('No public tags available', $llms);
+            $this->assertStringContainsString('Featured & Recent Discussions', $llms);
+        });
+    }
+
+    // ------------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------------
 
@@ -650,6 +770,49 @@ final class McpEndpointTest extends TestCase
             new ArraySettings(),
             $this->db()
         );
+    }
+
+    /**
+     * Run the callback as if `flarum/tags` were installed in `vendor/` but
+     * disabled in the admin panel: Flarum does not boot the extension, so both
+     * the `tags` relation on `Discussion` and its visibility scoper are absent.
+     */
+    private function withoutTagsExtension(callable $test): void
+    {
+        if (
+            ! property_exists(AbstractModel::class, 'customRelations')
+            || ! property_exists(Discussion::class, 'visibilityScopers')
+        ) {
+            // Flarum 2 may register relations/scopers differently; the service
+            // behaviour is still exercised through `extensions_enabled`.
+            $test();
+
+            return;
+        }
+
+        $savedRelations = AbstractModel::$customRelations;
+
+        $scopersProperty = new \ReflectionProperty(Discussion::class, 'visibilityScopers');
+        $scopersProperty->setAccessible(true);
+        $savedScopers = $scopersProperty->getValue();
+
+        $relations = $savedRelations;
+        unset($relations[Discussion::class]['tags']);
+
+        $scopers = $savedScopers;
+        // `Extend\ModelVisibility(Discussion::class)->scopeAll(...)` from
+        // flarum/tags is the only `*` scoper registered for Discussion.
+        $scopers[Discussion::class]['*'] = [];
+
+        AbstractModel::$customRelations = $relations;
+        $scopersProperty->setValue(null, $scopers);
+
+        try {
+            $test();
+        } finally {
+            AbstractModel::$customRelations = $savedRelations;
+            $scopersProperty->setValue(null, $savedScopers);
+        }
     }
 
     private function handle(ServerRequestInterface $request): ResponseInterface

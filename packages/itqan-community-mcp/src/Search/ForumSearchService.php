@@ -211,6 +211,84 @@ class ForumSearchService
     // ------------------------------------------------------------------
 
     /**
+     * Whether `flarum/tags` is installed, migrated **and** enabled.
+     *
+     * The extension can stay in `vendor/` while being disabled in the admin
+     * panel: its tables still exist, but Flarum does not boot its extenders,
+     * so `Discussion` has no `tags` relation. Everything tag-related is
+     * therefore gated behind this check. When `extensions_enabled` is absent
+     * (isolated unit tests, CLI tools) the schema is the best available
+     * signal.
+     */
+    private function tagsEnabled(): bool
+    {
+        if (! class_exists(Tag::class) || ! $this->hasTable('tags') || ! $this->hasTable('discussion_tag')) {
+            return false;
+        }
+
+        try {
+            $raw = $this->settings->get('extensions_enabled');
+        } catch (\Throwable) {
+            $raw = null;
+        }
+
+        if (is_string($raw) && trim($raw) !== '') {
+            $enabled = json_decode($raw, true);
+
+            if (is_array($enabled)) {
+                return in_array('flarum-tags', $enabled, true);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether the `tags` relation is currently booted on `Discussion`.
+     *
+     * Flarum 1.x registers package relations through
+     * `Extend\Model()->belongsToMany('tags', ...)`, which lands in a static
+     * custom-relation map rather than a real method. Laravel's `isRelation()`
+     * does not see those entries, so the map is inspected directly and the
+     * relation is built once as a last resort (building it does not query the
+     * database). A disabled extension leaves all of these empty, which is what
+     * prevents `RelationNotFoundException` from `with(['tags'])` or
+     * `whereHas('tags', ...)`.
+     */
+    private function discussionHasTagsRelation(): bool
+    {
+        try {
+            $discussion = new Discussion();
+
+            if (method_exists($discussion, 'isRelation') && $discussion->isRelation('tags')) {
+                return true;
+            }
+
+            if (method_exists($discussion, 'tags')) {
+                return true;
+            }
+
+            if (property_exists(Discussion::class, 'customRelations')) {
+                $classes = array_merge([Discussion::class], class_parents(Discussion::class) ?: []);
+
+                foreach ($classes as $class) {
+                    $relations = Discussion::$customRelations[$class] ?? null;
+
+                    if (is_array($relations) && array_key_exists('tags', $relations)) {
+                        return true;
+                    }
+                }
+            }
+
+            $relation = $discussion->tags();
+
+            return $relation instanceof \Illuminate\Database\Eloquent\Relations\Relation;
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
      * Category/topic taxonomy split into primary categories (with their child
      * categories) and secondary topic tags.
      *
@@ -258,7 +336,7 @@ class ForumSearchService
     {
         $empty = ['primary' => [], 'secondary' => [], 'all' => [], 'count' => 0];
 
-        if (! class_exists(Tag::class)) {
+        if (! $this->tagsEnabled()) {
             return $empty;
         }
 
@@ -788,9 +866,25 @@ class ForumSearchService
     private function applyDiscussionFilters($query, ?string $tagSlug, ?string $authorUsername): void
     {
         if ($tagSlug !== null) {
-            $query->whereHas('tags', static function ($tagQuery) use ($tagSlug): void {
-                $tagQuery->where('tags.slug', $tagSlug);
-            });
+            if ($this->tagsEnabled() && $this->discussionHasTagsRelation()) {
+                $query->whereHas('tags', static function ($tagQuery) use ($tagSlug): void {
+                    $tagQuery->where('tags.slug', $tagSlug);
+                });
+            } elseif ($this->hasTable('discussion_tag') && $this->hasTable('tags')) {
+                // The extension is installed and migrated but not enabled, so
+                // the `tags` relation is not booted. Filter through the pivot
+                // table directly instead of touching the relation.
+                $query->whereExists(static function ($sub) use ($tagSlug): void {
+                    $sub->selectRaw('1')
+                        ->from('discussion_tag')
+                        ->join('tags', 'tags.id', '=', 'discussion_tag.tag_id')
+                        ->whereColumn('discussion_tag.discussion_id', 'discussions.id')
+                        ->where('tags.slug', $tagSlug);
+                });
+            } else {
+                // No tags at all: a tag filter can never match.
+                $query->whereRaw('1 = 0');
+            }
         }
 
         if ($authorUsername !== null) {
@@ -2150,7 +2244,7 @@ class ForumSearchService
         }
 
         try {
-            if (class_exists(Tag::class)) {
+            if ($this->tagsEnabled()) {
                 $query = Tag::query();
                 $this->applyTagVisibility($query, $actor);
 
@@ -2433,7 +2527,7 @@ class ForumSearchService
     {
         $relations = ['user', 'firstPost'];
 
-        if (class_exists(Tag::class)) {
+        if ($this->tagsEnabled() && $this->discussionHasTagsRelation()) {
             $relations[] = 'tags';
         }
 

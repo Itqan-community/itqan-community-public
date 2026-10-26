@@ -22,12 +22,15 @@ hidden discussions and soft-deleted posts never leak into a result.
 | --- | --- |
 | PHP | 8.1+ |
 | Flarum core | 1.8+ or 2.0 |
-| `flarum/tags` | any version compatible with your Flarum core |
+
+`flarum/tags` is optional. When it is missing — or installed in `vendor/` but
+disabled in the admin panel — `list_tags` returns an empty taxonomy, tag
+filtering matches nothing, and every other tool keeps working.
 
 The extension is designed for community installs with optional extras —
 nested/branched replies, community votes, likes, badges, discussion language and
-sticky discussions. Every optional column is detected at runtime, so the same
-code works with or without those extensions.
+sticky discussions. Every optional table and column is detected at runtime, so
+the same code works with or without those extensions.
 
 ---
 
