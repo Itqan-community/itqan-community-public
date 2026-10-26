@@ -1,0 +1,39 @@
+{
+  "name": "itqan/community-mcp",
+  "description": "Model Context Protocol (MCP) Server & LLM Markdown endpoints for Itqan Community (Flarum 1.x & 2.x)",
+  "keywords": ["flarum", "mcp", "ai", "itqan", "quran", "llm"],
+  "type": "flarum-extension",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Itqan Community",
+      "email": "a.abduraghman@itqan.dev"
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "flarum/core": "^1.8.0 || ^2.0",
+    "flarum/tags": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Itqan\\CommunityMcp\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Itqan\\CommunityMcp\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "flarum-extension": {
+      "title": "Itqan Community MCP",
+      "category": "feature",
+      "icon": {
+        "name": "fas fa-robot",
+        "backgroundColor": "#0d9488",
+        "color": "#ffffff"
+      }
+    }
+  }
+}

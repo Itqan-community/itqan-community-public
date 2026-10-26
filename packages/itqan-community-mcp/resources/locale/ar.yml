@@ -1,0 +1,9 @@
+itqan-community-mcp:
+  admin:
+    settings:
+      enabled_label: "تمكين خادم MCP ونقاط وصول الذكاء الاصطناعي"
+      enabled_help: "إتاحة خادم بروتوكول سياق النموذج (MCP) على المسار /api/mcp ونقاط وصول Markdown للنماذج اللغوية. عطِّل الخيار لإيقاف نقاط الوصول مؤقتاً دون إزالة الإضافة."
+      rate_limit_per_minute_label: "الطلبات في الدقيقة"
+      rate_limit_per_minute_help: "الحد الأقصى لطلبات MCP ونقاط وصول النماذج اللغوية لكل عميل في الدقيقة. اضبطه على 0 لتعطيل الحد."
+      max_search_results_label: "الحد الأقصى لنتائج البحث"
+      max_posts_per_page_label: "الحد الأقصى للمشاركات في الصفحة"
