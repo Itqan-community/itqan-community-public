@@ -1,0 +1,93 @@
+fof-badges:
+  admin:
+    tabs:
+      badges: الأوسمة
+      categories: الفئات
+      recalculation: إعادة الاحتساب
+      settings: الإعدادات
+
+    permissions:
+      moderate: إدارة الأوسمة
+      give_manually: منح الأوسمة يدويًا
+      view_list: عرض قائمة الأوسمة
+      view_user_badges: عرض أوسمة الأعضاء
+
+  forum:
+    nav:
+      badges: الأوسمة
+
+    badges_title: الأوسمة
+    badges_subtitle: احصل على الأوسمة بالمشاركة في المجتمع!
+    all_badges: كل الأوسمة
+    toggle_category_dropdown: فتح/إغلاق قائمة الفئات
+    no_badges: لا توجد أوسمة بعد.
+    other_badges: أوسمة أخرى
+    earned_by: "{count, plural, one {# عضو} other {# أعضاء}}"
+    new_tag: جديد
+    loading: جارٍ التحميل...
+    my_badges: أوسمتي
+    owned_badge: أنت تملك هذا الوسام
+
+    earned_users: الحاصلون عليه
+    no_users_earned: لم يحصل على هذا الوسام أحد بعد. كن الأول!
+    more_users_earned: والمزيد...
+
+    user:
+      badges_tab: الأوسمة
+      badges_title: "أوسمة {username}"
+      badges_count: "{count, plural, one {# وسام} other {# أوسمة}}"
+      no_badges: لم يحصل هذا العضو على أي وسام بعد.
+      earned_on: "حصل عليه في {date}"
+      manually_awarded: مُنح يدويًا
+      recalculate: إعادة احتساب الأوسمة
+      recalculate_success: "تمت إعادة احتساب الأوسمة! مُنح: {awarded}، سُحب: {revoked}، أُعيد تطبيقه: {reapplied}"
+      recalculate_reapplied: "أُعيد تطبيق الإجراءات على {reapplied} وسامًا"
+      recalculate_error: تعذّرت إعادة احتساب الأوسمة. حاول مرة أخرى.
+      load_more: تحميل المزيد
+      view_all_badges: عرض كل الأوسمة
+      badge_actions: إجراءات الوسام
+      set_favorite: اجعله مفضلًا
+      remove_favorite: إزالة من المفضلة
+      show_badge: إظهار في الملف الشخصي
+      hide_badge: إخفاء من الملف الشخصي
+      favorite_badge: الوسام المفضل
+      hidden_badge: مخفي من الملف الشخصي
+      revoke_badge: سحب الوسام
+      revoke_confirm: هل أنت متأكد من سحب وسام "{badge}" من هذا العضو؟
+      badge_revoked: سُحب وسام "{badge}".
+      revoke_error: تعذّر سحب الوسام.
+
+      assign_badge: منح وسام
+      assign_badge_title: "منح وسام إلى {username}"
+      no_badges_available: لا توجد أوسمة متاحة.
+      select_badge: اختر وسامًا...
+      select_badge_label: اختر الوسام
+      assign_reason: السبب (اختياري)
+      assign_reason_placeholder: لماذا يُمنح هذا الوسام؟
+      assign_reason_help: سيظهر هذا السبب على وسام العضو.
+      assign_button: منح الوسام
+      cancel: إلغاء
+      badge_assigned: "مُنح وسام \"{badge}\" إلى {username}!"
+
+      recalculate_modal:
+        title: إعادة احتساب الأوسمة
+        badge_label: الوسام المراد إعادة احتسابه
+        all_badges: كل الأوسمة التلقائية
+        manual: يدوي
+        no_revoke_label: لا تسحب الأوسمة الحالية
+        no_revoke_help: عند التفعيل، يحتفظ العضو بأوسمته حتى لو لم يعد يستوفي الشروط.
+        reapply_actions_label: إعادة تطبيق الإجراءات على الأوسمة الحالية
+        reapply_actions_help: إعادة تطبيق إجراءات الوسام (مثل الإضافة إلى مجموعة) إن كان العضو يحمله.
+        submit: إعادة الاحتساب
+
+    notification:
+      badge_earned: "حصلت على {badge}"
+      a_badge: وسام
+
+  lib:
+    rarity_legendary: أسطوري
+    rarity_epic: ملحمي
+    rarity_rare: نادر
+    rarity_uncommon: غير شائع
+    rarity_common: شائع
+    rarity_explain: "{percent}% من الأعضاء يملكون هذا الوسام"
