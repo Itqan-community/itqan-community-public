@@ -59,7 +59,6 @@
         "fof/pwa": "^2.0",
         "fof/reactions": "*",
         "fof/share-social": "*",
-        "fof/sitemap": "*",
         "fof/socialprofile": "*",
         "fof/upload": "*",
         "fof/user-bio": "*",
@@ -78,7 +77,8 @@
         "resofire/mobile-search": "*",
         "v17development/flarum-seo": "*",
         "xxb5724/id-slug": "*",
-        "itqan/lang-arabic": "@dev"
+        "itqan/lang-arabic": "@dev",
+        "itqan/sitemap": "@dev"
     },
     "config": {
         "preferred-install": "dist",
@@ -122,6 +122,10 @@
         {
             "type": "path",
             "url": "packages/itqan-lang-arabic"
+        },
+        {
+            "type": "path",
+            "url": "packages/itqan-sitemap"
         }
     ],
     "minimum-stability": "beta",

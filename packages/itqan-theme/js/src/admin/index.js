@@ -1,7 +1,9 @@
 import app from 'flarum/admin/app';
 
 app.initializers.add('itqan-theme', () => {
-  app.extensionData.for('itqan-theme').registerSetting({
+  const registry = app.registry || app.extensionData;
+
+  registry.for('itqan-theme').registerSetting({
     setting: 'itqan-theme.default_mode',
     type: 'select',
     options: {

@@ -10,11 +10,8 @@ app.initializers.add('itqan-statistics', () => {
     widgets.add('itqan-statistics', <MiniItqanStatsWidget />, 15);
   });
 
-  if (app.extensionData && typeof app.extensionData.for === 'function') {
-    // Flarum 1.8.x
-    app.extensionData.for('itqan-statistics').registerPage(ItqanStatisticsPage);
-  } else if (app.registry && typeof app.registry.for === 'function') {
-    // Flarum 2.0+
-    app.registry.for('itqan-statistics').registerPage(ItqanStatisticsPage);
+  const registry = app.registry || app.extensionData;
+  if (registry && typeof registry.for === 'function') {
+    registry.for('itqan-statistics').registerPage(ItqanStatisticsPage);
   }
 });

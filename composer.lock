@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0527aa848105d6af5f6fa227a2ee9a6",
+    "content-hash": "21570bbf3b6859261bb875f2f4a4f7a3",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -5914,109 +5914,6 @@
             "time": "2026-10-23T10:21:35+00:00"
         },
         {
-            "name": "fof/sitemap",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/FriendsOfFlarum/sitemap.git",
-                "reference": "1971b04a4c1509e2bbd2f69624f63eeeb807a428"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfFlarum/sitemap/zipball/1971b04a4c1509e2bbd2f69624f63eeeb807a428",
-                "reference": "1971b04a4c1509e2bbd2f69624f63eeeb807a428",
-                "shasum": ""
-            },
-            "require": {
-                "flarum/core": "^2.0.0",
-                "guzzlehttp/guzzle": "*"
-            },
-            "replace": {
-                "flagrow/sitemap": "*"
-            },
-            "require-dev": {
-                "flarum/phpstan": "^2.0.0",
-                "flarum/tags": "^2.0.0",
-                "flarum/testing": "^2.0.0",
-                "fof/pages": "^2.0.0"
-            },
-            "suggest": {
-                "flarum/tags": "List tags in the sitemap",
-                "fof/pages": "List pages in the sitemap"
-            },
-            "type": "flarum-extension",
-            "extra": {
-                "flarum-cli": {
-                    "modules": {
-                        "githubActions": true,
-                        "backendTesting": true
-                    }
-                },
-                "branch-alias": {
-                    "dev-main": "2.x-dev"
-                },
-                "flarum-extension": {
-                    "icon": {
-                        "name": "fas fa-sitemap",
-                        "color": "#fff",
-                        "backgroundColor": "#e74c3c"
-                    },
-                    "title": "FoF Sitemap",
-                    "category": "feature",
-                    "optional-dependencies": [
-                        "flarum/tags",
-                        "fof/pages",
-                        "v17development/flarum-seo"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "FoF\\Sitemap\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Clark Winkelmann",
-                    "email": "clark.winkelmann@gmail.com",
-                    "homepage": "https://clarkwinkelmann.com/"
-                },
-                {
-                    "name": "Daniël Klabbers",
-                    "email": "daniel@klabbers.email",
-                    "homepage": "http://luceos.com"
-                },
-                {
-                    "name": "IanM",
-                    "email": "ian@flarum.org"
-                }
-            ],
-            "description": "Generate a sitemap",
-            "homepage": "https://friendsofflarum.org",
-            "keywords": [
-                "Sitemap",
-                "extension",
-                "flagrow",
-                "flarum"
-            ],
-            "support": {
-                "forum": "https://discuss.flarum.org/d/14941",
-                "issues": "https://github.com/FriendsOfFlarum/sitemap/issues",
-                "source": "https://github.com/FriendsOfFlarum/sitemap"
-            },
-            "funding": [
-                {
-                    "url": "https://opencollective.com/fof/donate",
-                    "type": "website"
-                }
-            ],
-            "time": "2026-10-23T16:56:26+00:00"
-        },
-        {
             "name": "fof/socialprofile",
             "version": "2.0.0",
             "source": {
@@ -9359,6 +9256,129 @@
                 "MIT"
             ],
             "description": "Itqan Arabic strings for extensions the upstream pack does not cover (Messages, Audit).",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "itqan/sitemap",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-sitemap",
+                "reference": "40d8686d8eda6af3ea91e80e7dce8176b63755f6"
+            },
+            "require": {
+                "flarum/core": "^2.0.0",
+                "guzzlehttp/guzzle": "*"
+            },
+            "replace": {
+                "flagrow/sitemap": "*"
+            },
+            "require-dev": {
+                "flarum/phpstan": "^2.0.0",
+                "flarum/tags": "^2.0.0",
+                "flarum/testing": "^2.0.0",
+                "fof/pages": "^2.0.0"
+            },
+            "suggest": {
+                "flarum/tags": "List tags in the sitemap",
+                "fof/pages": "List pages in the sitemap"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.x-dev"
+                },
+                "flarum-extension": {
+                    "title": "FoF Sitemap",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fas fa-sitemap",
+                        "backgroundColor": "#e74c3c",
+                        "color": "#fff"
+                    },
+                    "optional-dependencies": [
+                        "flarum/tags",
+                        "fof/pages"
+                    ]
+                },
+                "flarum-cli": {
+                    "modules": {
+                        "githubActions": true,
+                        "backendTesting": true
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FoF\\Sitemap\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "FoF\\Sitemap\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "analyse:phpstan": [
+                    "phpstan analyse"
+                ],
+                "clear-cache:phpstan": [
+                    "phpstan clear-result-cache"
+                ],
+                "test": [
+                    "@test:unit",
+                    "@test:integration"
+                ],
+                "test:unit": [
+                    "phpunit -c tests/phpunit.unit.xml"
+                ],
+                "test:integration": [
+                    "phpunit -c tests/phpunit.integration.xml"
+                ],
+                "test:setup": [
+                    "@php tests/integration/setup.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Clark Winkelmann",
+                    "email": "clark.winkelmann@gmail.com",
+                    "homepage": "https://clarkwinkelmann.com/"
+                },
+                {
+                    "name": "Daniël Klabbers",
+                    "email": "daniel@klabbers.email",
+                    "homepage": "http://luceos.com"
+                },
+                {
+                    "name": "IanM",
+                    "email": "ian@flarum.org"
+                }
+            ],
+            "description": "Sitemap (fof/sitemap fork; drops the circular optional dependency on flarum-seo)",
+            "homepage": "https://friendsofflarum.org",
+            "keywords": [
+                "extension",
+                "flagrow",
+                "flarum",
+                "sitemap"
+            ],
+            "support": {
+                "issues": "https://github.com/FriendsOfFlarum/sitemap/issues",
+                "source": "https://github.com/FriendsOfFlarum/sitemap",
+                "forum": "https://discuss.flarum.org/d/14941"
+            },
+            "funding": [
+                {
+                    "type": "website",
+                    "url": "https://opencollective.com/fof/donate"
+                }
+            ],
             "transport-options": {
                 "relative": true
             }
@@ -17974,6 +17994,7 @@
         "itqan/flarum-theme": 20,
         "itqan/flarum-typography": 20,
         "itqan/lang-arabic": 20,
+        "itqan/sitemap": 20,
         "mtareq/flarum-nested-replies": 20
     },
     "prefer-stable": true,

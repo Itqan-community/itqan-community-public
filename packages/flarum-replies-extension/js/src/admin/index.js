@@ -1,7 +1,7 @@
 import app from 'flarum/admin/app';
 
 app.initializers.add('mtareq-nested-replies', () => {
-  app.extensionData
+  (app.registry || app.extensionData)
     .for('mtareq-nested-replies')
     .registerSetting({
       setting: 'mtareq-nested-replies.enabled',
