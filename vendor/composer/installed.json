@@ -18247,6 +18247,53 @@
                 "relative": true
             },
             "install-path": "../itqan/flarum-statistics"
+        },
+        {
+            "name": "itqan/community-mcp",
+            "version": "dev-feat/itqan-mcp",
+            "version_normalized": "dev-feat/itqan-mcp",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-community-mcp",
+                "reference": "feat/itqan-mcp"
+            },
+            "require": {
+                "php": "^8.1",
+                "flarum/core": "^1.8.0 || ^2.0"
+            },
+            "suggest": {
+                "flarum/tags": "Enables tag taxonomy and tag filtering in MCP tools"
+            },
+            "type": "flarum-extension",
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\CommunityMcp\\": "src/"
+                }
+            },
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Community MCP",
+                    "category": "feature",
+                    "optional-dependencies": [
+                        "flarum-tags",
+                        "fof-user-bio",
+                        "v17development-user-badges",
+                        "flarum-likes",
+                        "flarum-sticky",
+                        "flarum-approval"
+                    ],
+                    "icon": {
+                        "name": "fas fa-robot",
+                        "color": "#ffffff",
+                        "backgroundColor": "#0d9488"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../itqan/community-mcp"
         }
     ],
     "dev": true,

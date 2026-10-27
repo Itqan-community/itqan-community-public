@@ -308,6 +308,7 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
             'Itqan\\MailerLite\\' => 17,
             'Itqan\\Discussions\\' => 18,
             'Itqan\\ComposerTools\\' => 20,
+            'Itqan\\CommunityMcp\\' => 19,
             'Itqan\\Llms\\' => 11,
             'Itqan\\PreviewCards\\' => 19,
             'Itqan\\Statistics\\' => 17,
@@ -940,6 +941,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'Itqan\\ComposerTools\\' =>
         array (
             0 => __DIR__ . '/..' . '/itqan/flarum-composer-tools/src',
+        ),
+        'Itqan\\CommunityMcp\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/itqan/community-mcp/src',
         ),
         'Itqan\\Llms\\' =>
         array (
