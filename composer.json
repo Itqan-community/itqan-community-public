@@ -77,7 +77,8 @@
         "mtareq/flarum-nested-replies": "@dev",
         "resofire/mobile-search": "*",
         "v17development/flarum-seo": "*",
-        "xxb5724/id-slug": "*"
+        "xxb5724/id-slug": "*",
+        "itqan/lang-arabic": "@dev"
     },
     "config": {
         "preferred-install": "dist",
@@ -117,6 +118,10 @@
         {
             "type": "path",
             "url": "packages/flarum-replies-extension"
+        },
+        {
+            "type": "path",
+            "url": "packages/itqan-lang-arabic"
         }
     ],
     "minimum-stability": "beta",

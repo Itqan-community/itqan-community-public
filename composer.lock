@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7c46ac215dde4e7db8fbd07878dab290",
+    "content-hash": "e0527aa848105d6af5f6fa227a2ee9a6",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -9334,6 +9334,36 @@
             }
         },
         {
+            "name": "itqan/lang-arabic",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-lang-arabic",
+                "reference": "0b6dc5fa7f8d7acd8e74fa1be7e7e30d869616f7"
+            },
+            "require": {
+                "flarum/core": "^1.8 || ^2.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Arabic",
+                    "category": "language"
+                },
+                "flarum-locale": {
+                    "code": "ar",
+                    "title": "Arabic (Itqan)"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Itqan Arabic strings for extensions the upstream pack does not cover (Messages, Audit).",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "jaybizzle/crawler-detect",
             "version": "v1.4.2",
             "source": {
@@ -17943,6 +17973,7 @@
         "itqan/flarum-statistics": 20,
         "itqan/flarum-theme": 20,
         "itqan/flarum-typography": 20,
+        "itqan/lang-arabic": 20,
         "mtareq/flarum-nested-replies": 20
     },
     "prefer-stable": true,

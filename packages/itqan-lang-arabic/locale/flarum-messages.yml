@@ -1,0 +1,80 @@
+flarum-messages:
+
+  # تُستخدم في لوحة الإدارة.
+  admin:
+    permissions:
+      send_messages_label: إرسال الرسائل الخاصة
+      message_users_without_permission_label: مراسلة الأعضاء الذين لا يملكون صلاحية المراسلة
+      delete_own_messages_label: حذف رسائله
+      send_without_throttle_label: إرسال الرسائل دون حدّ
+      view_ips_label: عرض عناوين IP للرسائل
+
+  # تُستخدم في واجهة المنتدى.
+  forum:
+    composer:
+      discard_confirmation: لم ترسل رسالتك. هل أنت متأكد من رغبتك في تجاهلها؟
+      placeholder: اكتب رسالة...
+      recipients: المستلمون
+      submit_button: إرسال الرسالة
+      to: "إلى:"
+
+    dialog_list:
+      load_more_button: => core.ref.load_more
+      mark_as_read_tooltip: تعليم كمقروء
+      own_last_message_preview: "أنت: {content}"
+      title: الرسائل
+      unread_count_text: "{count} غير مقروءة"
+      view_all: عرض كل الرسائل
+
+    dialog_section:
+      back_label: رجوع
+      cannot_reply_text: لا يمكن لهذا العضو الرد
+      controls:
+        details_button: التفاصيل
+      controls_toggle_label: إجراءات المحادثة
+      details_modal:
+        created_at: تاريخ الإنشاء
+        recipients: المشاركون
+        title: تفاصيل المحادثة
+
+    header:
+      dropdown_tooltip: الرسائل
+
+    index:
+      messages_link: الرسائل
+
+    index_sort:
+      latest_button: الأحدث
+      newest_button: الأجدد
+      oldest_button: الأقدم
+
+    message_controls:
+      delete_button: حذف
+      delete_confirmation: هل أنت متأكد من حذف هذه الرسالة؟ لا يمكن التراجع عن هذا الإجراء.
+
+    messages_page:
+      cannot_send_message_button: لا يمكن إرسال رسالة
+      empty_text: لا رسائل جديدة
+      hero:
+        title: الرسائل
+        subtitle: محادثاتك الخاصة مع بقية الأعضاء
+      mark_all_as_read_tooltip: تعليم الكل كمقروء
+      refresh_tooltip: تحديث
+      send_message_button: إرسال رسالة
+      stream:
+        load_previous_button: تحميل الرسائل السابقة
+        load_next_button: تحميل الرسائل التالية
+        start_of_the_conversation: بداية المحادثة
+        time_lapsed_text: => core.forum.post_stream.time_lapsed_text
+      title: الرسائل
+
+    recipient_selection_modal:
+      cannot_reply_text: لا يمكن الرد على الرسائل
+      title: اختر مستلمي هذه الرسالة
+
+    search_source:
+      conversation_with: "محادثة مع {username}"
+      heading: الرسائل
+
+    settings:
+      notify_message_received_label: يرسل لي أحدهم رسالة
