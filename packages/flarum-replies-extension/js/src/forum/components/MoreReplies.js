@@ -1,6 +1,6 @@
 import Component from 'flarum/common/Component';
 import app from 'flarum/forum/app';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../../common/icon';
 import { formatArabicPlural } from '../utils/arabicPlural';
 
 // "Show more replies" control for a folded sibling group. `indent` is the

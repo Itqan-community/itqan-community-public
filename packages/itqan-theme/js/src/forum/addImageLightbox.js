@@ -92,7 +92,7 @@ function markImages(element) {
 }
 
 export default function addImageLightbox() {
-  extend(CommentPost.prototype, 'refreshContent', function () {
+  extend('flarum/forum/components/CommentPost', 'refreshContent', function () {
     markImages(this.element);
   });
 

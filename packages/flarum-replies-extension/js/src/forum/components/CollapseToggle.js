@@ -1,6 +1,6 @@
 import Component from 'flarum/common/Component';
 import app from 'flarum/forum/app';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../../common/icon';
 
 export default class CollapseToggle extends Component {
   view() {

@@ -10,7 +10,7 @@ function isDiscussionComposer(composer) {
 }
 
 export default function addRichToolbarButtons() {
-  extend(TextEditor.prototype, 'controlItems', function (items) {
+  extend('flarum/common/components/TextEditor', 'controlItems', function (items) {
     if (!isDiscussionComposer(this.attrs.composer)) return;
 
     items.add(

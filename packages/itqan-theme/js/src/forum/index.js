@@ -33,11 +33,11 @@ app.initializers.add('itqan-theme', () => {
 
   // Next to search and notifications: the same place the language selector
   // lives, which is the closest existing analogue to this control.
-  extend(HeaderSecondary.prototype, 'items', function (items) {
+  extend('flarum/forum/components/HeaderSecondary', 'items', function (items) {
     items.add('itqanTheme', <ThemeSwitcher />, 25);
   });
 
-  extend(SessionDropdown.prototype, 'items', function (items) {
+  extend('flarum/forum/components/SessionDropdown', 'items', function (items) {
     items.add(
       'pwaInstall',
       <Button
@@ -52,7 +52,7 @@ app.initializers.add('itqan-theme', () => {
 
   // The header control is the fast path; this is where a reader looks when
   // they go hunting for a setting they half-remember.
-  extend(SettingsPage.prototype, 'settingsItems', function (items) {
+  extend('flarum/forum/components/SettingsPage', 'settingsItems', function (items) {
     items.add(
       'itqanTheme',
       <FieldSet className="Settings-theme" label={app.translator.trans('itqan-theme.forum.settings.heading')}>
@@ -91,12 +91,14 @@ app.initializers.add('itqan-theme', () => {
   // ==========================================
   // Archival post absolute timestamps (moved from itqan-discussions, PR #20)
   // ==========================================
-  extend(PostMeta.prototype, 'viewItems', function (items) {
+  extend('flarum/forum/components/PostMeta', 'viewItems', function (items) {
     const post = this.attrs.post;
     if (!post || !post.createdAt()) return;
     const time = post.createdAt();
 
-    items.replace(
+    // Flarum 2.0 removed ItemList::replace(); remove + add is the equivalent.
+    items.remove('time');
+    items.add(
       'time',
       <a className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
         <AbsoluteDateBadge time={time} />

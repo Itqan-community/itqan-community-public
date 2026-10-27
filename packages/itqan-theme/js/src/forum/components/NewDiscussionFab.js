@@ -1,6 +1,6 @@
 import app from 'flarum/forum/app';
 import Component from 'flarum/common/Component';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../../common/icon';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
 

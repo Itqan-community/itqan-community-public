@@ -1,7 +1,7 @@
 import { extend, override } from 'flarum/common/extend';
 import Link from 'flarum/common/components/Link';
 import app from 'flarum/forum/app';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../common/icon';
 import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Post from 'flarum/forum/components/Post';
@@ -146,7 +146,7 @@ app.initializers.add('mtareq-nested-replies', () => {
     };
   }
 
-  override(PostStreamScrubber.prototype, 'oninit', function (original, vnode) {
+  override('flarum/forum/components/PostStreamScrubber', 'oninit', function (original, vnode) {
     const stream = vnode.attrs && vnode.attrs.stream;
 
     if (stream && stream.discussion) {
@@ -171,14 +171,14 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   // The list rail needs the discussion's original post (and its votes/userVote).
   // Requested client-side so it works on both Flarum 1.8 and 2.0.
-  override(DiscussionListState.prototype, 'requestParams', function (original) {
+  override('flarum/forum/states/DiscussionListState', 'requestParams', function (original) {
     if (!settings.showVotes) return original();
     return withFirstPostInclude(original());
   });
 
   // The list dropdown is built from this map's keys. We swap core's `top`
   // (replies) for our `replies` key and add `votes`; see discussionSortMap.js.
-  override(DiscussionListState.prototype, 'sortMap', function (original) {
+  override('flarum/forum/states/DiscussionListState', 'sortMap', function (original) {
     return withCatalogSorts(original());
   });
 
@@ -400,7 +400,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   // Ensure every post has a Reply action. flarum/mentions supplies one when it
   // is enabled; otherwise we add our own so threading still works.
-  extend(CommentPost.prototype, 'actionItems', function (items) {
+  extend('flarum/forum/components/CommentPost', 'actionItems', function (items) {
     if (items.has('reply')) return;
 
     const post = this.attrs.post;
@@ -613,7 +613,7 @@ app.initializers.add('mtareq-nested-replies', () => {
   // Flarum's discussion-list links resume at the first unread post. Optionally
   // open discussions at the top so readers start with the original post.
   if (settings.startAtFirstPost) {
-    override(DiscussionListItem.prototype, 'getJumpTo', function (original) {
+    override('flarum/forum/components/DiscussionListItem', 'getJumpTo', function (original) {
       // Keep search-result jumps so the matched post is still highlighted.
       if (this.attrs.params && this.attrs.params.q) return original();
 
@@ -625,7 +625,7 @@ app.initializers.add('mtareq-nested-replies', () => {
   // Core scrolls the native flat stream to `near`, but our tree then replaces
   // that stream (loadAllPosts -> swap), which reflows the page and drops the
   // viewport off the target. We re-apply the scroll once the tree is rendered.
-  override(DiscussionPage.prototype, 'oninit', function (original, vnode) {
+  override('flarum/forum/components/DiscussionPage', 'oninit', function (original, vnode) {
     const raw = m.route.param('near');
     const parsed = raw && raw !== 'reply' ? parseInt(raw, 10) : NaN;
 
@@ -642,7 +642,7 @@ app.initializers.add('mtareq-nested-replies', () => {
   // which lands you mid-page over the not-yet-rendered stream and fights our
   // loader/target scrolling. Force manual restoration for discussions so our own
   // scroll is the only movement.
-  override(DiscussionPage.prototype, 'oncreate', function (original, vnode) {
+  override('flarum/forum/components/DiscussionPage', 'oncreate', function (original, vnode) {
     const result = original(vnode);
 
     if (typeof history !== 'undefined' && 'scrollRestoration' in history) {
@@ -662,7 +662,7 @@ app.initializers.add('mtareq-nested-replies', () => {
   // loading, a composer already open, a leftover form…), so navigating back and
   // forth between discussions keeps working. A manual close stays closed, and a
   // posted comment closes the form through the inline form's own `onSubmitted`.
-  extend(DiscussionPage.prototype, 'onupdate', function () {
+  extend('flarum/forum/components/DiscussionPage', 'onupdate', function () {
     const discussion = this.discussion;
 
     if (!discussion) return;
@@ -697,7 +697,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   // Vote rail on the discussion list. It votes the discussion's first post — the
   // same model the details page votes — so the two views stay in sync.
-  extend(DiscussionListItem.prototype, 'contentItems', function (items) {
+  extend('flarum/forum/components/DiscussionListItem', 'contentItems', function (items) {
     if (!settings.showVotes) return;
 
     const discussion = this.attrs.discussion;
@@ -711,7 +711,7 @@ app.initializers.add('mtareq-nested-replies', () => {
   // DiscussionListItem caches its subtree and only rebuilds on read-state
   // changes, so key it on the first post's vote too. Without this a vote
   // updates the model but the row keeps the old score until a full re-render.
-  extend(DiscussionListItem.prototype, 'oninit', function () {
+  extend('flarum/forum/components/DiscussionListItem', 'oninit', function () {
     this.subtree.check(() => {
       const discussion = this.attrs.discussion;
       const firstPost = discussion && typeof discussion.firstPost === 'function' ? discussion.firstPost() : null;
@@ -994,7 +994,7 @@ app.initializers.add('mtareq-nested-replies', () => {
   // Flarum's post stream is a flat list. A nested-reply layout wants the original
   // post in its own card and every reply inside a second card, so regroup the
   // rendered vnodes without touching core.
-  override(PostStream.prototype, 'view', function (original) {
+  override('flarum/forum/components/PostStream', 'view', function (original) {
     const nextDiscussion = this.discussion;
 
     if (nextDiscussion !== currentDiscussion) {
@@ -1171,24 +1171,24 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   // While the reply form is inline, hide the fixed composer shell and disable
   // the shell's layout side effects (page padding, phone backdrop, resizing).
-  override(Composer.prototype, 'view', function (original) {
+  override('flarum/forum/components/Composer', 'view', function (original) {
     // Keep the same root tag so Mithril reuses the shell's DOM node (and the
     // lifecycle handlers bound in oncreate) instead of orphaning them.
     if (isInlineComposer()) return m('div.Composer.Composer--nestedInlineHidden');
     return original();
   });
 
-  override(Composer.prototype, 'updateBodyPadding', function (original) {
+  override('flarum/forum/components/Composer', 'updateBodyPadding', function (original) {
     if (isInlineComposer()) return;
     return original();
   });
 
-  override(Composer.prototype, 'animatePositionChange', function (original) {
+  override('flarum/forum/components/Composer', 'animatePositionChange', function (original) {
     if (isInlineComposer()) return;
     return original();
   });
 
-  override(Composer.prototype, 'updateHeight', function (original) {
+  override('flarum/forum/components/Composer', 'updateHeight', function (original) {
     if (isInlineComposer()) return;
     return original();
   });
@@ -1416,7 +1416,7 @@ app.initializers.add('mtareq-nested-replies', () => {
     forceRedraw();
   }
 
-  extend(Post.prototype, 'oncreate', function () {
+  extend('flarum/forum/components/Post', 'oncreate', function () {
     mounted.add(this);
     decorate(this);
 
@@ -1432,17 +1432,17 @@ app.initializers.add('mtareq-nested-replies', () => {
     }
   });
 
-  extend(Post.prototype, 'onupdate', function () {
+  extend('flarum/forum/components/Post', 'onupdate', function () {
     decorate(this);
   });
 
-  extend(Post.prototype, 'onremove', function () {
+  extend('flarum/forum/components/Post', 'onremove', function () {
     mounted.delete(this);
   });
 
   // Surface who a reply answers as a tag in the header, instead of the inline
   // mention Flarum renders at the start of the body.
-  extend(CommentPost.prototype, 'headerItems', function (items) {
+  extend('flarum/forum/components/CommentPost', 'headerItems', function (items) {
     if (!settings.showReplyTag) return;
 
     const post = this.attrs.post;
@@ -1487,7 +1487,7 @@ app.initializers.add('mtareq-nested-replies', () => {
   // an "N more replies" line underneath a folded comment.
   // CommentPost defines its own actionItems() and does not call the base
   // Post.actionItems(), so this must target CommentPost.
-  extend(CommentPost.prototype, 'actionItems', function (items) {
+  extend('flarum/forum/components/CommentPost', 'actionItems', function (items) {
     const post = this.attrs.post;
     if (!post) return;
 
@@ -1519,7 +1519,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   // Remove Like and Reply actions on deleted posts — they should not be
   // interactive. This runs after core and extensions add their items.
-  extend(CommentPost.prototype, 'actionItems', function (items) {
+  extend('flarum/forum/components/CommentPost', 'actionItems', function (items) {
     const post = this.attrs.post;
     if (!post) return;
     if (!post.isDeleted || !post.isDeleted()) return;
@@ -1528,7 +1528,7 @@ app.initializers.add('mtareq-nested-replies', () => {
     items.delete('reply');
   });
 
-  extend(CommentPost.prototype, 'footerItems', function (items) {
+  extend('flarum/forum/components/CommentPost', 'footerItems', function (items) {
     const post = this.attrs.post;
     if (!post) return;
 

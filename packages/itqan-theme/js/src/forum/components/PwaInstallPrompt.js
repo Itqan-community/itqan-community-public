@@ -1,7 +1,7 @@
 import Modal from 'flarum/common/components/Modal';
 import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../../common/icon';
 
 let deferredPrompt = null;
 

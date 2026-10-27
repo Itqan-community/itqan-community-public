@@ -1,7 +1,7 @@
 import app from 'flarum/forum/app';
 import Component from 'flarum/common/Component';
-import avatar from 'flarum/common/helpers/avatar';
-import icon from 'flarum/common/helpers/icon';
+import avatar from '../../common/avatar';
+import icon from '../../common/icon';
 import ReplyComposer from 'flarum/forum/components/ReplyComposer';
 
 /**
