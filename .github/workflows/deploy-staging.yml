@@ -71,6 +71,24 @@ jobs:
             done
           }
 
+          # Flarum 2.0 requires PHP >= 8.3, and both PHP2Shell advisories need a
+          # supported branch. Install 8.4 if absent and point nginx at it BEFORE
+          # the gate inspects the running runtime.
+          if ! command -v php8.4 >/dev/null 2>&1; then
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq || true
+            apt-get install -y -qq software-properties-common ca-certificates curl
+            add-apt-repository -y ppa:ondrej/php
+            apt-get update -qq
+            apt-get install -y -qq php8.4-fpm php8.4-cli php8.4-mysql php8.4-gd \
+              php8.4-curl php8.4-mbstring php8.4-xml php8.4-zip php8.4-intl
+          fi
+          update-alternatives --set php /usr/bin/php8.4 >/dev/null 2>&1 || true
+          if [ -f /etc/nginx/sites-available/flarum.conf ]; then
+            sed -i -E 's#php8\.[0-9]+-fpm\.sock#php8.4-fpm.sock#g' /etc/nginx/sites-available/flarum.conf
+          fi
+          systemctl enable --now php8.4-fpm
+
           if [ -d /var/www/flarum/.git ]; then
             cd /var/www/flarum
             git fetch origin staging
@@ -82,12 +100,31 @@ jobs:
             php2shell_gate
           fi
 
+          # Flarum 2.0 dependencies are no longer committed; install from the
+          # lock before touching the database.
+          if ! command -v composer >/dev/null 2>&1; then
+            curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+          fi
+          rm -rf /var/www/flarum/vendor
+          composer install --no-dev --prefer-dist --no-interaction --no-progress \
+            --working-dir=/var/www/flarum
+
+          # Flarum 2.0 distinguishes MySQL from MariaDB; the wrong driver fails
+          # at boot. Detect from the server itself.
+          DB_FLAVOR=$(php8.4 -r '
+            try {
+              $p = new PDO("mysql:host=10.107.0.2;port=3306;dbname=flarum", "flarum", $argv[1]);
+              $v = $p->query("SELECT VERSION()")->fetchColumn();
+              echo stripos($v, "mariadb") !== false ? "mariadb" : "mysql";
+            } catch (Throwable $e) { echo "mysql"; }
+          ' "$DB_PASSWORD")
+
           cat > /var/www/flarum/config.php <<PHP
           <?php return array (
             'debug' => false,
             'queue' => array('driver' => 'database'),
             'database' => array(
-              'driver' => 'mysql',
+              'driver' => '${DB_FLAVOR}',
               'database' => 'flarum',
               'prefix' => '',
               'prefix_indexes' => true,
