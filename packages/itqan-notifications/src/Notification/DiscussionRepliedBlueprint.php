@@ -2,6 +2,11 @@
 
 namespace Itqan\Notifications\Notification;
 
+use Flarum\User\User;
+
+use Flarum\Notification\AlertableInterface;
+use Flarum\Database\AbstractModel;
+
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Notification\MailableInterface;
 use Flarum\Post\Post;
@@ -14,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * view namespace, because the W2 reply notifications have moved out of the
  * discussions extension.
  */
-class DiscussionRepliedBlueprint implements BlueprintInterface, MailableInterface
+class DiscussionRepliedBlueprint implements BlueprintInterface, MailableInterface, AlertableInterface
 {
     /**
      * @var Post The new reply post.
@@ -29,7 +34,7 @@ class DiscussionRepliedBlueprint implements BlueprintInterface, MailableInterfac
     /**
      * The model that triggered the activity (the new reply itself).
      */
-    public function getSubject()
+    public function getSubject(): ?AbstractModel
     {
         return $this->post;
     }
@@ -37,7 +42,7 @@ class DiscussionRepliedBlueprint implements BlueprintInterface, MailableInterfac
     /**
      * The user that performed the action (the replier).
      */
-    public function getFromUser()
+    public function getFromUser(): ?User
     {
         return $this->post->user;
     }
@@ -45,7 +50,7 @@ class DiscussionRepliedBlueprint implements BlueprintInterface, MailableInterfac
     /**
      * Payload stored alongside the notification record.
      */
-    public function getData()
+    public function getData(): mixed
     {
         return ['postNumber' => (int) $this->post->number];
     }
@@ -53,15 +58,15 @@ class DiscussionRepliedBlueprint implements BlueprintInterface, MailableInterfac
     /**
      * Blade view used for the email body.
      */
-    public function getEmailView()
+    public function getEmailViews(): array
     {
-        return ['text' => 'itqan-notifications::emails.discussionReplied'];
+        return ['text' => 'itqan-notifications::emails.discussionReplied', 'html' => 'itqan-notifications::emails.discussionReplied'];
     }
 
     /**
      * Localized email subject line.
      */
-    public function getEmailSubject(TranslatorInterface $translator)
+    public function getEmailSubject(TranslatorInterface $translator): string
     {
         return $translator->trans('itqan-notifications.email.discussion_replied.subject', [
             '{poster_display_name}' => $this->post->user?->display_name ?? '',
@@ -69,12 +74,12 @@ class DiscussionRepliedBlueprint implements BlueprintInterface, MailableInterfac
         ]);
     }
 
-    public static function getType()
+    public static function getType(): string
     {
         return 'discussionReplied';
     }
 
-    public static function getSubjectModel()
+    public static function getSubjectModel(): string
     {
         return Post::class;
     }

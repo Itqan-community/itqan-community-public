@@ -1,6 +1,6 @@
 {
     "name": "itqan/flarum-theme",
-    "description": "Itqan community theme — per-user light, dark and automatic colour schemes",
+    "description": "Itqan community theme \u2014 per-user light, dark and automatic colour schemes",
     "keywords": [
         "flarum",
         "theme",
@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "flarum/core": "^1.8.0"
+        "flarum/core": "^1.8 || ^2.0"
     },
     "autoload": {
         "psr-4": {

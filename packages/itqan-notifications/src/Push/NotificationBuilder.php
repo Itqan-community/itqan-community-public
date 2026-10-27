@@ -2,7 +2,7 @@
 
 namespace Itqan\Notifications\Push;
 
-use Askvortsov\FlarumPWA\NotificationBuilder as Base;
+use FoF\PWA\NotificationBuilder as Base;
 use Flarum\Discussion\Discussion;
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Post\Post;

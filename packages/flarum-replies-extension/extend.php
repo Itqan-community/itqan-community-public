@@ -60,11 +60,17 @@ $extenders = [
     (new Extend\Policy())
         ->modelPolicy(Post::class, PostPolicy::class),
 
-    // --- Discussion-list sorts: votes (+ core's commentCount) ----------------
+    (new Extend\Event())
+        ->listen(Saving::class, StoreReplyParent::class),
+
+    new Extend\Locales(__DIR__.'/locale'),
+];
+
+if (! class_exists(\Flarum\Api\Resource\PostResource::class)) {
+    // --- Flarum 1.x only (these APIs were removed in 2.0) --------------------
     // Prime the first-post scores for the whole page in one query so the list's
-    // vote rails do not N+1. (prepareDataForSerialization's callback receives
-    // ($controller, $data, $request, $document) on Flarum 1.x.)
-    (new Extend\ApiController(ListDiscussionsController::class))
+    // vote rails do not N+1.
+    $extenders[] = (new Extend\ApiController(ListDiscussionsController::class))
         ->addSortField('votes')
         ->prepareDataForSerialization(function ($controller, $data, $request) {
             $ids = [];
@@ -79,19 +85,16 @@ $extenders = [
             if ($ids) {
                 VoteCounts::primeIds($ids, \Flarum\Http\RequestUtil::getActor($request));
             }
-        }),
+        });
 
-    // The details page serializes a whole post stream; prime it once.
-    (new Extend\ApiController(\Flarum\Api\Controller\ShowDiscussionController::class))
+    $extenders[] = (new Extend\ApiController(\Flarum\Api\Controller\ShowDiscussionController::class))
         ->prepareDataForSerialization(function ($controller, $discussion, $request) {
             if ($discussion && $discussion->id) {
                 VoteCounts::primeOwnForDiscussion((int) $discussion->id, \Flarum\Http\RequestUtil::getActor($request));
             }
-        }),
+        });
 
-    // Posts fetched directly (the reply tree uses /api/posts) are serialized
-    // outside the discussion include; prime the page in one go.
-    (new Extend\ApiController(\Flarum\Api\Controller\ListPostsController::class))
+    $extenders[] = (new Extend\ApiController(\Flarum\Api\Controller\ListPostsController::class))
         ->prepareDataForSerialization(function ($controller, $data, $request) {
             $ids = [];
             foreach ($data as $post) {
@@ -102,22 +105,26 @@ $extenders = [
             if ($ids) {
                 VoteCounts::primeIds($ids, \Flarum\Http\RequestUtil::getActor($request));
             }
-        }),
+        });
 
-    // --- Server sort map (the preloaded first page) --------------------------
-    (new Extend\ServiceProvider())
-        ->register(SortMapProvider::class),
+    $extenders[] = (new Extend\ServiceProvider())
+        ->register(SortMapProvider::class);
 
-    (new Extend\Routes('api'))
-        ->post('/mtareq-nested-replies/posts/{id}/vote', 'mtareq-nested-replies.vote', VotePostController::class),
-
-    (new Extend\Event())
-        ->listen(Saving::class, StoreReplyParent::class),
-
-    new Extend\Locales(__DIR__.'/locale'),
-];
+    $extenders[] = (new Extend\Routes('api'))
+        ->post('/mtareq-nested-replies/posts/{id}/vote', 'mtareq-nested-replies.vote', VotePostController::class);
+}
 
 if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
+    // Flarum 2.x — votes sort is declared on the discussion resource.
+    $extenders[] = (new Extend\ApiResource(\Flarum\Api\Resource\DiscussionResource::class))
+        ->sorts(function () {
+            return [
+                \Flarum\Api\Sort\SortColumn::make('votes')
+                    ->ascendingAlias('votes')
+                    ->descendingAlias('-votes'),
+            ];
+        });
+
     // Flarum 2.x
     $extenders[] = (new Extend\ApiResource(\Flarum\Api\Resource\PostResource::class))
         ->fields(function () {

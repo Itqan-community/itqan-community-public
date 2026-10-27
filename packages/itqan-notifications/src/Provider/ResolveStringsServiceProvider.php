@@ -2,7 +2,7 @@
 
 namespace Itqan\Notifications\Provider;
 
-use Askvortsov\FlarumPWA\NotificationBuilder as BaseBuilder;
+use FoF\PWA\NotificationBuilder as BaseBuilder;
 use Flarum\Foundation\AbstractServiceProvider;
 use Itqan\Notifications\Push\NotificationBuilder;
 

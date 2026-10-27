@@ -50,11 +50,11 @@ return [
     (new Extend\View)->namespace('itqan-notifications', __DIR__.'/views'),
 
     (new Extend\Notification)
-        ->type(DiscussionRepliedBlueprint::class, PostSerializer::class, ['alert', 'email', 'push'])
-        ->type(CommentRepliedBlueprint::class, PostSerializer::class, ['alert', 'email', 'push'])
-        ->type(PostApprovedBlueprint::class, PostSerializer::class, ['alert', 'email', 'push'])
-        ->type(DiscussionStickiedBlueprint::class, DiscussionSerializer::class, ['alert', 'email', 'push'])
-        ->type(DiscussionRetaggedBlueprint::class, DiscussionSerializer::class, ['alert', 'email', 'push'])
+        ->type(DiscussionRepliedBlueprint::class, ['alert', 'email', 'push'])
+        ->type(CommentRepliedBlueprint::class, ['alert', 'email', 'push'])
+        ->type(PostApprovedBlueprint::class, ['alert', 'email', 'push'])
+        ->type(DiscussionStickiedBlueprint::class, ['alert', 'email', 'push'])
+        ->type(DiscussionRetaggedBlueprint::class, ['alert', 'email', 'push'])
         ->beforeSending(FilterDiscussionAuthorFromNewPost::class),
 
     (new Extend\Event())

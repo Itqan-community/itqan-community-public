@@ -1,7 +1,12 @@
 {
     "name": "itqan/flarum-composer-tools",
     "description": "Writing and preview tools for the Itqan community composer",
-    "keywords": ["flarum", "composer", "markdown", "preview"],
+    "keywords": [
+        "flarum",
+        "composer",
+        "markdown",
+        "preview"
+    ],
     "type": "flarum-extension",
     "license": "MIT",
     "authors": [
@@ -11,7 +16,7 @@
         }
     ],
     "require": {
-        "flarum/core": "^1.8.0"
+        "flarum/core": "^1.8 || ^2.0"
     },
     "autoload": {
         "psr-4": {

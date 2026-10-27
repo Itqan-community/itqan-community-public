@@ -1,4 +1,4 @@
-# Flarum 1.8 runs on PHP 8.1–8.3. Pinned to 8.3 rather than "latest": on 8.4
+# Flarum 2.0 requires PHP 8.3+; 8.4 is required by discussion-views v8.
 # the dependency tree emits a wall of implicit-nullable deprecations, which
 # buries real errors in the log.
 #
@@ -7,7 +7,7 @@
 # docker-compose.yml forces a base-image pull so a cached 8.3.35 layer cannot
 # be reused. Do not pin an exact patch level here, or a rebuild stops picking
 # up security releases.
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # gd, pdo_mysql, zip and exif are the extensions Flarum and the installed
 # extensions need beyond what this image already carries (curl, dom, fileinfo,

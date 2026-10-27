@@ -158,7 +158,9 @@
     --button-inverted-bg-active: lighten(@t-body-bg, 10%);
   }
 
-  & when (@config-colored-header = false) {
+  // Flarum 2.0 removed the compile-time coloured-header flag: it is now a
+  // runtime attribute on <html>, so the scheme can switch without recompiling.
+  &[data-colored-header='false'] {
     --header-bg:            @t-body-bg;
     --header-color:         @t-primary-ui;
     --header-control-bg:    @t-control-bg;
@@ -166,7 +168,7 @@
 
     .light-contents-vars(@t-control-color, @t-control-bg, @t-control-color, 'header-colored');
   }
-  & when (@config-colored-header = true) {
+  &[data-colored-header='true'] {
     @t-header-color: contrast(@t-primary-ui, @body-bg-dark, @body-bg-light);
 
     --header-bg:            @t-primary-ui;

@@ -2,6 +2,9 @@
 
 namespace Itqan\Notifications\Notification;
 
+use Flarum\Notification\AlertableInterface;
+use Flarum\Database\AbstractModel;
+
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Notification\MailableInterface;
 use Flarum\Post\Post;
@@ -14,7 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * reply (push notifications + bell deep-links use `subject()`), and the
  * parent post number is preserved in `getData()` for the email body.
  */
-class CommentRepliedBlueprint implements BlueprintInterface, MailableInterface
+class CommentRepliedBlueprint implements BlueprintInterface, MailableInterface, AlertableInterface
 {
     /**
      * @var Post The new reply post.
@@ -48,7 +51,7 @@ class CommentRepliedBlueprint implements BlueprintInterface, MailableInterface
      * The model that is the subject of this activity — the NEW reply.
      * The parent post is still on the blueprint and also in getData().
      */
-    public function getSubject()
+    public function getSubject(): ?AbstractModel
     {
         return $this->post;
     }
@@ -67,9 +70,9 @@ class CommentRepliedBlueprint implements BlueprintInterface, MailableInterface
     /**
      * Blade view used for the email body.
      */
-    public function getEmailView(): array
+    public function getEmailViews(): array
     {
-        return ['text' => 'itqan-notifications::emails.commentReplied'];
+        return ['text' => 'itqan-notifications::emails.commentReplied', 'html' => 'itqan-notifications::emails.commentReplied'];
     }
 
     /**
