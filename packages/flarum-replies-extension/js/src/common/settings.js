@@ -32,7 +32,10 @@ export function readSettings(app) {
     startAtFirstPost: Boolean(read('nestedRepliesStartAtFirstPost', true)),
     visibleReplies: Number(read('nestedRepliesVisibleReplies', 2)) || 2,
     showScrubber: Boolean(read('nestedRepliesShowScrubber', true)),
-    replyForm: read('nestedRepliesReplyForm', 'quick') === 'composer' ? 'composer' : 'quick',
+    // The inline host always uses the quick editor: the core composer body cannot
+    // be mounted inline on Flarum 2.0 (its TextEditor builds into the global
+    // composer DOM). The quick editor has the same formatting/preview tools.
+    replyForm: 'quick',
     highlightColor: String(read('nestedRepliesHighlightColor', '#00c853')),
     legacyMentions: Boolean(read('nestedRepliesLegacyMentions', false)),
   };
