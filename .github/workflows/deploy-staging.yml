@@ -210,6 +210,22 @@ jobs:
           if grep -qF '#auth_basic "Restricted";' /etc/nginx/sites-available/flarum.conf; then
             sed -i 's|^\([[:space:]]*\)#auth_basic "Restricted";|\1auth_basic "Restricted";|; s|^\([[:space:]]*\)#auth_basic_user_file /etc/nginx/.htpasswd;|\1auth_basic_user_file /etc/nginx/.htpasswd;|' /etc/nginx/sites-available/flarum.conf
           fi
+          # --- Staging throughput ------------------------------------------------
+          # The staging origin is reached directly (no CDN in front of it), and
+          # the path to it throttles per-connection throughput hard. Two cheap
+          # fixes that stay inside nginx:
+          #   1. nginx's default `gzip_types` is text/html only, so forum.js
+          #      (1 MB), the CSS bundles and JSON were all sent uncompressed.
+          #   2. HTTP/2 multiplexes everything over one TCP connection, which is
+          #      exactly the shape this path throttles; the usual six parallel
+          #      HTTP/1.1 connections measured ~4.5x faster.
+          # Keep this staging-only: production sits behind Cloudflare, which
+          # already compresses and speaks HTTP/2/3 to browsers.
+          cp scripts/nginx/staging-compression.conf /etc/nginx/conf.d/zz-flarum-compression.conf
+          if ! grep -qF 'itqan-staging-http1' /etc/nginx/sites-available/flarum.conf; then
+            sed -i -E 's|^([[:space:]]*listen [0-9.:]+ ssl) http2;.*|\1;  # itqan-staging-http1|' /etc/nginx/sites-available/flarum.conf
+          fi
+
           if ! nginx -t; then
             cp /tmp/flarum.conf.bak /etc/nginx/sites-available/flarum.conf
             echo "nginx config invalid after normalization; restored previous config"
