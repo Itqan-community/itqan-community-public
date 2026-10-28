@@ -6,7 +6,7 @@ import TextEditor from 'flarum/common/components/TextEditor';
 import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
 
 function isDiscussionComposer(composer) {
-  return composer.bodyMatches(DiscussionComposer);
+  return composer.bodyMatches("flarum/forum/components/DiscussionComposer");
 }
 
 export default function addRichToolbarButtons() {

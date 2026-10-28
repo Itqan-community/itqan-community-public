@@ -125,6 +125,13 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
             ];
         });
 
+    // Flarum 2.0 stopped including the first post in the list payload, which
+    // left the list-card vote rail with no post to read votes from.
+    $extenders[] = (new Extend\ApiResource(\Flarum\Api\Resource\DiscussionResource::class))
+        ->endpoint(\Flarum\Api\Endpoint\Index::class, function ($endpoint) {
+            return $endpoint->defaultInclude(['firstPost']);
+        });
+
     // Flarum 2.x
     $extenders[] = (new Extend\ApiResource(\Flarum\Api\Resource\PostResource::class))
         ->fields(function () {
