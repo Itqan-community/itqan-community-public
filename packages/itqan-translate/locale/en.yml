@@ -1,11 +1,15 @@
 itqan-translate:
   forum:
-    translate_button: Translate
-    translating: Translating...
-    label: Translation
-    show_original: Show original
-    show_translation: Show translation
-    error: Could not translate this post. Try again later.
-    select_language: Translate to…
-    show: Show
-    hide: Hide
+    unknown-language: "[not detected]"
+    detected-language: "This post is in {postLang}"
+    translate-button-label: Translate
+    discussion:
+      post:
+        close-translation: Close translation
+        translated-header: "AI translation from {from} to {to}"
+        translated-updated: "Translation last updated {time} using {provider}"
+      title:
+        detected-language: "{postLang}"
+  lib:
+    providers:
+      google-free: Google Translate

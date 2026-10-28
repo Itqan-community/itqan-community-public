@@ -5,6 +5,7 @@ namespace Itqan\Translate\Api;
 use Flarum\Http\RequestUtil;
 use Flarum\Post\PostRepository;
 use Itqan\Translate\PostTranslation;
+use Itqan\Translate\TranslationProvider;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,8 +14,10 @@ use Throwable;
 
 class TranslatePostController implements RequestHandlerInterface
 {
-    public function __construct(protected PostRepository $posts)
-    {
+    public function __construct(
+        protected PostRepository $posts,
+        protected TranslationProvider $provider,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -30,6 +33,7 @@ class TranslatePostController implements RequestHandlerInterface
 
         $body = (array) $request->getParsedBody();
         $language = $this->normaliseLanguage($body['language'] ?? null);
+        $refresh = (bool) ($body['refresh'] ?? false);
 
         if ($language === null) {
             return new JsonResponse(['error' => 'invalid language'], 400);
@@ -37,7 +41,7 @@ class TranslatePostController implements RequestHandlerInterface
 
         $detected = strtolower((string) $post->detected_lang);
 
-        if ($detected !== '' && str_starts_with($detected, strtolower(substr($language, 0, 2)))) {
+        if ($detected !== '' && str_starts_with($detected, $language)) {
             return new JsonResponse(['sameLanguage' => true, 'language' => $language]);
         }
 
@@ -46,12 +50,8 @@ class TranslatePostController implements RequestHandlerInterface
             ->where('language', $language)
             ->first();
 
-        if ($cached && ! $cached->update_needed && trim((string) $cached->content) !== '') {
-            return new JsonResponse([
-                'translation' => $cached->content,
-                'language' => $language,
-                'cached' => true,
-            ]);
+        if (! $refresh && $cached && ! $cached->update_needed && trim((string) $cached->content) !== '') {
+            return new JsonResponse($this->payload($cached->content, $language, $cached->provider));
         }
 
         $text = $this->plainText((string) $post->content);
@@ -61,7 +61,7 @@ class TranslatePostController implements RequestHandlerInterface
         }
 
         try {
-            $translation = $this->translate($text, $language);
+            $translation = $this->provider->translate($text, $language);
         } catch (Throwable $e) {
             resolve('log')->error('itqan-translate: '.$e->getMessage(), ['post_id' => $post->id, 'language' => $language]);
 
@@ -76,11 +76,17 @@ class TranslatePostController implements RequestHandlerInterface
             ['content' => $translation, 'provider' => 'google-free', 'update_needed' => 0]
         );
 
-        return new JsonResponse([
+        return new JsonResponse($this->payload($translation, $language, 'google-free'));
+    }
+
+    private function payload(string $translation, string $language, string $provider): array
+    {
+        return [
             'translation' => $translation,
             'language' => $language,
-            'cached' => false,
-        ]);
+            'provider' => $provider,
+            'updatedAt' => gmdate('c'),
+        ];
     }
 
     private function normaliseLanguage(mixed $language): ?string
@@ -105,69 +111,5 @@ class TranslatePostController implements RequestHandlerInterface
         $text = preg_replace('/[ \t]+/u', ' ', $text) ?? $text;
 
         return trim($text);
-    }
-
-    private function translate(string $text, string $language): string
-    {
-        $chunks = mb_strlen($text) <= 4000 ? [$text] : (preg_split('/\n{2,}/u', $text) ?: [$text]);
-        $out = [];
-        $buffer = '';
-
-        foreach ($chunks as $chunk) {
-            if ($buffer !== '' && mb_strlen($buffer) + mb_strlen($chunk) > 4000) {
-                $out[] = $this->request($buffer, $language);
-                $buffer = $chunk;
-            } else {
-                $buffer = $buffer === '' ? $chunk : $buffer."\n\n".$chunk;
-            }
-        }
-
-        if ($buffer !== '') {
-            $out[] = $this->request($buffer, $language);
-        }
-
-        return implode("\n\n", $out);
-    }
-
-    private function request(string $text, string $language): string
-    {
-        $url = 'https://translate.googleapis.com/translate_a/single'
-            .'?client=gtx&sl=auto&dt=t&tl='.rawurlencode($language)
-            .'&q='.rawurlencode($text);
-
-        $ch = curl_init($url);
-
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_TIMEOUT => 12,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; ItqanTranslate/1.0)',
-        ]);
-
-        $body = curl_exec($ch);
-        $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-
-        curl_close($ch);
-
-        if ($body === false || $status >= 400) {
-            throw new \RuntimeException("provider failed (status={$status}, error={$error})");
-        }
-
-        $json = json_decode($body, true);
-        $translated = '';
-
-        foreach (($json[0] ?? []) as $part) {
-            if (is_array($part) && isset($part[0])) {
-                $translated .= $part[0];
-            }
-        }
-
-        if (trim($translated) === '') {
-            throw new \RuntimeException('provider returned an empty translation');
-        }
-
-        return $translated;
     }
 }

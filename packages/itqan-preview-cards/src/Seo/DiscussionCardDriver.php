@@ -5,6 +5,9 @@ namespace Itqan\PreviewCards\Seo;
 use Flarum\Discussion\Discussion;
 use Flarum\Http\RequestUtil;
 use Flarum\Settings\SettingsRepositoryInterface;
+use FoF\Seo\Page\PageDriverInterface;
+use FoF\Seo\SeoMeta\SeoMeta;
+use FoF\Seo\SeoProperties;
 use Illuminate\Contracts\Queue\Queue;
 use Itqan\PreviewCards\Cache\CardCache;
 use Itqan\PreviewCards\Card\CardFactory;
@@ -13,9 +16,6 @@ use Itqan\PreviewCards\Job\GenerateCardJob;
 use Itqan\PreviewCards\Render\CardTemplate;
 use Itqan\PreviewCards\Settings;
 use Psr\Http\Message\ServerRequestInterface;
-use V17Development\FlarumSeo\Page\PageDriverInterface;
-use V17Development\FlarumSeo\SeoMeta\SeoMeta;
-use V17Development\FlarumSeo\SeoProperties;
 
 class DiscussionCardDriver implements PageDriverInterface
 {
@@ -39,7 +39,7 @@ class DiscussionCardDriver implements PageDriverInterface
         return ['discussion'];
     }
 
-    public function handle(ServerRequestInterface $request, SeoProperties $properties)
+    public function handle(ServerRequestInterface $request, SeoProperties $properties): void
     {
         if (! $this->settings->enabled()) {
             return;

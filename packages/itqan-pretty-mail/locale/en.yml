@@ -1,0 +1,15 @@
+itqan-pretty-mail:
+  admin:
+    settings:
+      heading: Email templates
+      help: These templates wrap every email the forum sends. They are rendered as Blade, so `{{ $settings->get('forum_title') }}` and `{!! $body !!}` work like they did before the upgrade.
+      mailhtml_label: Outer HTML template
+      mailhtml_help: The shell around every email. `{!! $body !!}` is where the message goes.
+      newPost_label: New reply notification
+      newPost_help: Leave empty to use Flarum's default notification layout.
+      postMentioned_label: Post mention notification
+      postMentioned_help: Leave empty to use Flarum's default notification layout.
+      userMentioned_label: User mention notification
+      userMentioned_help: Leave empty to use Flarum's default notification layout.
+      includeCSS_label: Inline the forum stylesheet
+      includeCSS_help: Adds the compiled forum CSS to emails so they match the forum. Makes messages larger.

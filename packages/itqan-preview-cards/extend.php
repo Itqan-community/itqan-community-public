@@ -1,6 +1,6 @@
 <?php
 
-use Flarum\Api\Serializer\ForumSerializer;
+use Flarum\Api\Resource\ForumResource;
 use Flarum\Discussion\Event\Deleted as DiscussionDeleted;
 use Flarum\Discussion\Event\Renamed;
 use Flarum\Extend;
@@ -9,10 +9,10 @@ use Flarum\Post\Event\Hidden as PostHidden;
 use Flarum\Post\Event\Posted;
 use Flarum\Post\Event\Restored as PostRestored;
 use Flarum\Post\Event\Revised;
-use Flarum\Settings\SettingsRepositoryInterface;
 use Itqan\PreviewCards\Api\ClearCacheController;
 use Itqan\PreviewCards\Api\DeleteBackgroundController;
 use Itqan\PreviewCards\Api\DeleteCardLogoController;
+use Itqan\PreviewCards\Api\ForumResourceFields;
 use Itqan\PreviewCards\Api\UploadBackgroundController;
 use Itqan\PreviewCards\Api\UploadCardLogoController;
 use Itqan\PreviewCards\Console\BrandCommand;
@@ -23,7 +23,7 @@ use Itqan\PreviewCards\Controller\CardController;
 use Itqan\PreviewCards\Listener\CardInvalidationListener;
 use Itqan\PreviewCards\PreviewCardsServiceProvider;
 use Itqan\PreviewCards\Seo\DiscussionCardDriver;
-use V17Development\FlarumSeo\Extend\SEO;
+use FoF\Seo\Extend\SEO;
 
 return [
     (new Extend\Frontend('admin'))
@@ -41,27 +41,8 @@ return [
         ->delete('/itqan-preview-cards/background', 'itqan-preview-cards.background.delete', DeleteBackgroundController::class)
         ->post('/itqan-preview-cards/clear-cache', 'itqan-preview-cards.clear-cache', ClearCacheController::class),
 
-    (new Extend\ApiSerializer(ForumSerializer::class))
-        ->attribute('itqanPreviewCardsLogoUrl', function () {
-            $path = (string) resolve(SettingsRepositoryInterface::class)
-                ->get('itqan-preview-cards.logo_path', '');
-
-            if ($path === '') {
-                return null;
-            }
-
-            return resolve('filesystem')->disk('flarum-assets')->url($path);
-        })
-        ->attribute('itqanPreviewCardsBackgroundUrl', function () {
-            $path = (string) resolve(SettingsRepositoryInterface::class)
-                ->get('itqan-preview-cards.background_path', '');
-
-            if ($path === '') {
-                return null;
-            }
-
-            return resolve('filesystem')->disk('flarum-assets')->url($path);
-        }),
+    (new Extend\ApiResource(ForumResource::class))
+        ->fields(ForumResourceFields::class),
 
     (new SEO())
         ->addExtender('itqan_preview_cards', DiscussionCardDriver::class),

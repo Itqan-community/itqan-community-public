@@ -1,65 +1,127 @@
-.ItqanTranslation-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.ItqanTranslation-icon {
-  color: var(--muted-color);
-  font-size: 12px;
-}
-
-.ItqanTranslation-select {
-  width: auto;
-  min-width: 140px;
-  height: 30px;
-  padding-block: 0;
-  font-size: 12px;
-}
-
-.ItqanTranslation-actions {
-  margin-top: 6px;
-}
-
-.ItqanTranslation-button {
-  font-size: 12px;
-  color: var(--muted-color);
-  padding: 2px 0;
-
-  &:hover {
-    color: var(--primary-color);
+.CommentPost {
+  .Post-header {
+    .item-lang {
+      display: inline-block;
+    }
   }
 }
 
-.ItqanTranslation {
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-inline-start: 3px solid var(--primary-color);
-  background: color-mix(in srgb, var(--control-bg) 45%, transparent);
-  border-radius: var(--border-radius);
+.Translation--meta {
+  font-size: 80%;
+
+  .icon {
+    color: var(--primary-color);
+    margin-right: 3px;
+    font-size: 100%;
+  }
 }
 
-.ItqanTranslation-label {
-  margin-bottom: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--muted-color);
-  text-transform: uppercase;
+.Post-footer {
+  width: 100%;
+
+  .CommentPost--translated {
+    padding: 0px 10px 0;
+    background-color: var(--control-bg);
+    margin-top: 20px;
+    border-radius: var(--border-radius);
+
+    .Post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .Post-body {
+      color: var(--text-color);
+      word-break: break-word;
+    }
+
+    .CommentPost {
+      min-height: auto;
+    }
+  }
 }
 
-.ItqanTranslation-text {
-  white-space: pre-line;
-  line-height: 1.7;
+.DiscussionTitle-container {
+  .DiscussionHero-title {
+    display: inline-block;
+    margin-right: 8px;
+    margin-bottom: 0px;
+  }
+
+  .DetectedLanguageLabel {
+    font-size: 80%;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+
+  .DiscussionTranslationAction {
+    font-size: 90%;
+    display: block;
+    margin-top: 0px;
+
+    .Button {
+      color: var(--contrast-color, var(--body-bg));
+    }
+  }
 }
 
-.ItqanTranslation-toggle {
-  margin-top: 8px;
-  font-size: 12px;
+.DiscussionTitle {
+  &--translated {
+    border-radius: var(--border-radius);
+
+    .Title-header {
+      display: flex; 
+      align-items: center;
+      justify-content: space-between;
+
+      .Translation--meta {
+        display: inline-block;
+        margin-right: 5px;
+      }
+
+      .TitleMeta.TitleTranslation--action-items {
+        display: inline-block;
+        font-size: 80%;
+        vertical-align: middle;
+
+        .Button { 
+          padding: 2px 4px;
+          font-size: 90%;
+          margin: 0 2px;
+          width: auto;
+        }
+
+        .icon {
+          font-size: 100%;
+        }
+      }
+    }
+
+    .Title-body {
+      color: var(--text-color);
+      word-break: break-word;
+    }
+
+    .DiscussionTitle {
+      min-height: auto;
+    }
+  }
 }
 
-.ItqanTranslation--error {
-  border-inline-start-color: var(--error-color, #b91c1c);
-  color: var(--error-color, #b91c1c);
+.TitleMeta.TitleTranslation--action-items {
+  display: inline-block;
+  font-size: 80%;
+  vertical-align: middle;
+
+  .Button { 
+    padding: 2px 4px;
+    font-size: 90%;
+    margin: 0 2px;
+    width: auto;
+  }
+
+  .icon { 
+    font-size: 80%;
+  }
 }
