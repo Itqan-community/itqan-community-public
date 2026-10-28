@@ -6,3 +6,6 @@ itqan-translate:
     show_original: Show original
     show_translation: Show translation
     error: Could not translate this post. Try again later.
+    select_language: Translate to…
+    show: Show
+    hide: Hide
