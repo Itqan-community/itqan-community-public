@@ -1,0 +1,51 @@
+name: Staging test access (temporary)
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: allow or deny
+        required: true
+        default: allow
+      ip:
+        description: Public IP to allow through Basic Auth
+        required: true
+
+jobs:
+  toggle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Toggle IP access
+        env:
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+          ACTION: ${{ inputs.action }}
+          TEST_IP: ${{ inputs.ip }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/k
+          chmod 600 ~/.ssh/k
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh -i ~/.ssh/k "root@$SSH_HOST" bash -s -- "$ACTION" "$TEST_IP" <<'REMOTE'
+          set -euo pipefail
+          action=$1
+          ip=$2
+          conf=/etc/nginx/sites-available/flarum.conf
+          backup=/etc/nginx/flarum.conf.test-access.bak
+
+          if [ "$action" = "allow" ]; then
+            cp "$conf" "$backup"
+            if ! grep -q 'itqan-test-access' "$conf"; then
+              sed -i "/auth_basic \"Restricted\";/i\\    # itqan-test-access\\n    satisfy any;\\n    allow $ip;\\n    deny all;" "$conf"
+            else
+              sed -i "s/    allow .*;/    allow $ip;/" "$conf"
+            fi
+          else
+            if [ -f "$backup" ]; then cp "$backup" "$conf"; fi
+          fi
+
+          nginx -t
+          systemctl reload nginx
+          echo "action=$action ip=$ip"
+          grep -nA4 'itqan-test-access' "$conf" || true
+          REMOTE
