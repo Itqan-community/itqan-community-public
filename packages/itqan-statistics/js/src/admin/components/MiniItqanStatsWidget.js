@@ -2,7 +2,7 @@ import app from 'flarum/admin/app';
 import DashboardWidget from 'flarum/admin/components/DashboardWidget';
 import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../../common/icon';
 import { formatNumber } from '../utils/charts';
 
 export default class MiniItqanStatsWidget extends DashboardWidget {

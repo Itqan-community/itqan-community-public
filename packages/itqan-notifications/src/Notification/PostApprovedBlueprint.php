@@ -2,13 +2,16 @@
 
 namespace Itqan\Notifications\Notification;
 
+use Flarum\Notification\AlertableInterface;
+use Flarum\Database\AbstractModel;
+
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Notification\MailableInterface;
 use Flarum\Post\Post;
 use Flarum\User\User;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PostApprovedBlueprint implements BlueprintInterface, MailableInterface
+class PostApprovedBlueprint implements BlueprintInterface, MailableInterface, AlertableInterface
 {
     public Post $post;
 
@@ -22,7 +25,7 @@ class PostApprovedBlueprint implements BlueprintInterface, MailableInterface
         return null; // System / Moderation notification
     }
 
-    public function getSubject()
+    public function getSubject(): ?AbstractModel
     {
         return $this->post;
     }
@@ -32,9 +35,9 @@ class PostApprovedBlueprint implements BlueprintInterface, MailableInterface
         return ['postNumber' => (int) $this->post->number];
     }
 
-    public function getEmailView(): array
+    public function getEmailViews(): array
     {
-        return ['text' => 'itqan-notifications::emails.postApproved'];
+        return ['text' => 'itqan-notifications::emails.postApproved', 'html' => 'itqan-notifications::emails.postApproved'];
     }
 
     public function getEmailSubject(TranslatorInterface $translator): string

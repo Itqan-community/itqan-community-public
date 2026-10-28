@@ -1,7 +1,7 @@
 import Component from 'flarum/common/Component';
 import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../../common/icon';
 import ComposerPostPreview from 'flarum/forum/components/ComposerPostPreview';
 import { applyMarkdown } from '../utils/markdownFormat';
 import { detectMention } from '../utils/mentionQuery';

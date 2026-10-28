@@ -19,13 +19,13 @@ import ReplyDock from './components/ReplyDock';
  * them in place is both simpler and safer.
  */
 export default function addReplyAffordances() {
-  extend(DiscussionPage.prototype, 'view', function (view) {
+  extend('flarum/forum/components/DiscussionPage', 'view', function (view) {
     if (!view || !this.discussion) return;
 
     appendChild(view, <ReplyDock discussion={this.discussion} />);
   });
 
-  extend(IndexPage.prototype, 'view', function (view) {
+  extend('flarum/forum/components/IndexPage', 'view', function (view) {
     if (!view) return;
 
     appendChild(view, <NewDiscussionFab />);

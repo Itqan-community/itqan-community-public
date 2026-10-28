@@ -2,7 +2,7 @@ import app from 'flarum/admin/app';
 import Component from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../../common/icon';
 
 export default class TeamManagementSection extends Component {
   oninit(vnode) {

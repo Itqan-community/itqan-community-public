@@ -1,0 +1,19 @@
+{
+    "name": "itqan/lang-arabic",
+    "description": "Itqan Arabic strings for extensions the upstream pack does not cover (Messages, Audit).",
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": "^1.8 || ^2.0"
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Arabic",
+            "category": "language"
+        },
+        "flarum-locale": {
+            "code": "ar",
+            "title": "Arabic (Itqan)"
+        }
+    }
+}

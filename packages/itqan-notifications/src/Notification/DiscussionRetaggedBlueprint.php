@@ -2,13 +2,16 @@
 
 namespace Itqan\Notifications\Notification;
 
+use Flarum\Notification\AlertableInterface;
+use Flarum\Database\AbstractModel;
+
 use Flarum\Discussion\Discussion;
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Notification\MailableInterface;
 use Flarum\User\User;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class DiscussionRetaggedBlueprint implements BlueprintInterface, MailableInterface
+class DiscussionRetaggedBlueprint implements BlueprintInterface, MailableInterface, AlertableInterface
 {
     public Discussion $discussion;
     public ?User $actor;
@@ -26,7 +29,7 @@ class DiscussionRetaggedBlueprint implements BlueprintInterface, MailableInterfa
         return $this->actor;
     }
 
-    public function getSubject()
+    public function getSubject(): ?AbstractModel
     {
         return $this->discussion;
     }
@@ -39,9 +42,9 @@ class DiscussionRetaggedBlueprint implements BlueprintInterface, MailableInterfa
         ];
     }
 
-    public function getEmailView(): array
+    public function getEmailViews(): array
     {
-        return ['text' => 'itqan-notifications::emails.discussionRetagged'];
+        return ['text' => 'itqan-notifications::emails.discussionRetagged', 'html' => 'itqan-notifications::emails.discussionRetagged'];
     }
 
     public function getEmailSubject(TranslatorInterface $translator): string

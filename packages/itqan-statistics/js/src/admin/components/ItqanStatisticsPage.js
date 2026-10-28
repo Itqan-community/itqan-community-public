@@ -4,7 +4,7 @@ import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
-import icon from 'flarum/common/helpers/icon';
+import icon from '../../common/icon';
 
 import {
   formatNumber,

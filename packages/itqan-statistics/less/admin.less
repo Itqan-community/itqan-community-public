@@ -31,7 +31,7 @@
     }
     .ItqanStats-subtitle {
       margin: 0;
-      color: @muted-color;
+      color: var(--muted-color);
       font-size: 13px;
     }
   }
@@ -46,7 +46,7 @@
   .ItqanStats-langSwitchGroup {
     display: inline-flex;
     align-items: center;
-    background: @control-bg;
+    background: var(--control-bg);
     border: 1px solid rgba(148, 163, 184, 0.3);
     border-radius: 8px;
     padding: 3px;
@@ -57,7 +57,7 @@
   .ItqanStats-langBtn {
     border: none;
     background: transparent;
-    color: @muted-color;
+    color: var(--muted-color);
     font-size: 11.5px;
     font-weight: 800;
     padding: 4px 10px;
@@ -66,17 +66,17 @@
     transition: all 0.15s ease;
 
     &:hover {
-      color: @text-color;
+      color: var(--text-color);
     }
 
     &.is-active {
-      background: @primary-color;
+      background: var(--primary-color);
       color: #ffffff;
     }
   }
 
   .ItqanStats-periodBar {
-    background: @control-bg;
+    background: var(--control-bg);
     border-radius: 12px;
     padding: 12px 16px;
     margin-bottom: 20px;
@@ -122,7 +122,7 @@
   .ItqanStats-customRangeLabel {
     font-size: 12px;
     font-weight: 700;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
   .ItqanStats-refreshBtn {
@@ -148,7 +148,7 @@
   }
 
   .ItqanStats-card {
-    background: @body-bg;
+    background: var(--body-bg);
     border: 1px solid rgba(148, 163, 184, 0.25);
     border-radius: 14px;
     padding: 20px 22px;
@@ -163,7 +163,7 @@
   .ItqanStats-cardBannerHeader {
     padding: 14px 20px;
     border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-    background: fade(@control-bg, 50%);
+    background: color-mix(in srgb, var(--control-bg) 50%, transparent);
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -206,7 +206,7 @@
   .ItqanStats-cardHelp {
     margin: 0;
     font-size: 12px;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
   .ItqanStats-windowChips {
@@ -224,14 +224,14 @@
     border-radius: 999px;
     font-size: 11px;
     font-weight: 700;
-    background: fade(@control-bg, 80%);
-    color: @muted-color;
+    background: color-mix(in srgb, var(--control-bg) 80%, transparent);
+    color: var(--muted-color);
     border: 1px solid rgba(148, 163, 184, 0.25);
 
     &--primary {
-      background: fade(@primary-color, 10%);
-      color: @primary-color;
-      border-color: fade(@primary-color, 25%);
+      background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+      color: var(--primary-color);
+      border-color: color-mix(in srgb, var(--primary-color) 25%, transparent);
     }
   }
 
@@ -246,7 +246,7 @@
 
   .ItqanStats-metricPill {
     text-align: start;
-    background: fade(@control-bg, 65%);
+    background: color-mix(in srgb, var(--control-bg) 65%, transparent);
     border: 1px solid transparent;
     border-radius: 12px;
     padding: 9px 14px;
@@ -257,11 +257,11 @@
     align-items: flex-start;
     gap: 3px;
     opacity: 0.65;
-    color: @muted-color;
+    color: var(--muted-color);
 
     &:hover {
       opacity: 0.92;
-      background: @control-bg;
+      background: var(--control-bg);
     }
 
     &.is-active {
@@ -461,7 +461,7 @@
   .ItqanStats-engagementValue {
     font-size: 24px;
     font-weight: 900;
-    color: @text-color;
+    color: var(--text-color);
     line-height: 1.15;
     margin-bottom: 4px;
     font-variant-numeric: tabular-nums;
@@ -469,7 +469,7 @@
 
   .ItqanStats-engagementDesc {
     font-size: 11px;
-    color: @muted-color;
+    color: var(--muted-color);
     line-height: 1.35;
   }
 
@@ -494,8 +494,8 @@
     transition: all 0.15s ease;
 
     &.is-hidden {
-      background: fade(@control-bg, 60%);
-      color: @muted-color;
+      background: color-mix(in srgb, var(--control-bg) 60%, transparent);
+      color: var(--muted-color);
       opacity: 0.45;
     }
 
@@ -552,7 +552,7 @@
     gap: 14px;
     margin-bottom: 8px;
     font-size: 12px;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
   .ItqanStats-legendItem {
@@ -619,14 +619,14 @@
     gap: 4px;
     padding: 4px;
     border-radius: 12px;
-    background: fade(@control-bg, 80%);
+    background: color-mix(in srgb, var(--control-bg) 80%, transparent);
     border: 1px solid rgba(148, 163, 184, 0.25);
   }
 
   .ItqanStats-teamFilterPill {
     border: none;
     background: transparent;
-    color: @muted-color;
+    color: var(--muted-color);
     font-size: 12px;
     font-weight: 700;
     padding: 6px 12px;
@@ -635,11 +635,11 @@
     transition: all 0.15s ease;
 
     &:hover {
-      color: @text-color;
+      color: var(--text-color);
     }
 
     &.is-active {
-      background: @primary-color;
+      background: var(--primary-color);
       color: #ffffff;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     }
@@ -683,20 +683,20 @@
     font-weight: 800;
     padding: 3px 10px;
     border-radius: 8px;
-    background: fade(@primary-color, 12%);
-    color: @primary-color;
-    border: 1px solid fade(@primary-color, 25%);
+    background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+    color: var(--primary-color);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 25%, transparent);
   }
 
   .ItqanStats-teamMembersCount {
     font-size: 12px;
-    color: @muted-color;
+    color: var(--muted-color);
     font-weight: 600;
   }
 
   .ItqanStats-teamDescInline {
     font-size: 12px;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
   .ItqanStats-teamHiddenBadge {
@@ -722,7 +722,7 @@
   }
 
   .ItqanStats-teamMetricCard {
-    background: @body-bg;
+    background: var(--body-bg);
     border: 1px solid rgba(148, 163, 184, 0.25);
     border-radius: 12px;
     padding: 14px 16px;
@@ -732,8 +732,8 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 
     &--highlight {
-      background: fade(@primary-color, 4%);
-      border-color: fade(@primary-color, 25%);
+      background: color-mix(in srgb, var(--primary-color) 4%, transparent);
+      border-color: color-mix(in srgb, var(--primary-color) 25%, transparent);
     }
   }
 
@@ -747,17 +747,17 @@
   .ItqanStats-teamMetricCardTitle {
     font-size: 12px;
     font-weight: 700;
-    color: @muted-color;
+    color: var(--muted-color);
 
     &--primary {
-      color: @primary-color;
+      color: var(--primary-color);
     }
   }
 
   .ItqanStats-teamMetricCardValue {
     font-size: 24px;
     font-weight: 900;
-    color: @text-color;
+    color: var(--text-color);
     margin-top: 2px;
     font-variant-numeric: tabular-nums;
   }
@@ -792,7 +792,7 @@
 
   .ItqanStats-teamShareSub {
     font-size: 10px;
-    color: @muted-color;
+    color: var(--muted-color);
     margin-top: 3px;
   }
 
@@ -810,7 +810,7 @@
     gap: 12px;
     margin-bottom: 4px;
     font-size: 10.5px;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
   .ItqanStats-teamBarLegendItem {
@@ -841,8 +841,8 @@
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 999px;
-    background: @control-bg;
-    color: @muted-color;
+    background: var(--control-bg);
+    color: var(--muted-color);
     margin-inline-start: 8px;
   }
 
@@ -850,7 +850,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
   .ItqanStats-teamSelect {
@@ -888,21 +888,21 @@
     }
 
     th {
-      background: fade(@control-bg, 45%);
+      background: color-mix(in srgb, var(--control-bg) 45%, transparent);
       font-size: 12px;
       font-weight: 800;
-      color: @muted-color;
+      color: var(--muted-color);
       cursor: pointer;
       user-select: none;
       white-space: nowrap;
 
       &:hover {
-        color: @text-color;
+        color: var(--text-color);
       }
     }
 
     tbody tr:hover {
-      background: fade(@control-bg, 30%);
+      background: color-mix(in srgb, var(--control-bg) 30%, transparent);
     }
   }
 
@@ -923,7 +923,7 @@
     }
 
     &--active {
-      color: @primary-color;
+      color: var(--primary-color);
       font-weight: 900;
     }
   }
@@ -939,17 +939,17 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: @text-color;
+    color: var(--text-color);
     text-decoration: none;
 
     &:hover {
-      color: @primary-color;
+      color: var(--primary-color);
     }
   }
 
   .ItqanStats-memberHandle {
     font-size: 11.5px;
-    color: @muted-color;
+    color: var(--muted-color);
     font-family: monospace;
   }
 
@@ -963,8 +963,8 @@
     font-weight: 700;
     padding: 2px 7px;
     border-radius: 999px;
-    background: @control-bg;
-    color: @muted-color;
+    background: var(--control-bg);
+    color: var(--muted-color);
   }
 
   .ItqanStats-numBadge {
@@ -1007,18 +1007,18 @@
   .ItqanStats-emptyCell {
     text-align: center !important;
     padding: 28px !important;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
   .ItqanStats-muted {
-    color: @muted-color;
+    color: var(--muted-color);
     font-size: 12px;
   }
 
   .ItqanStats-emptyState {
     text-align: center;
     padding: 28px;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
 
@@ -1041,7 +1041,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    background: fade(@control-bg, 50%);
+    background: color-mix(in srgb, var(--control-bg) 50%, transparent);
 
     h4 {
       margin: 0;
@@ -1056,7 +1056,7 @@
   .ItqanStats-tmCreateBox {
     padding: 12px 16px;
     border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-    background: fade(@primary-color, 6%);
+    background: color-mix(in srgb, var(--primary-color) 6%, transparent);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -1079,12 +1079,12 @@
     transition: all 0.15s ease;
 
     &:hover {
-      background: fade(@control-bg, 55%);
+      background: color-mix(in srgb, var(--control-bg) 55%, transparent);
     }
 
     &.is-selected {
-      background: fade(@primary-color, 10%);
-      border-inline-start: 4px solid @primary-color;
+      background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+      border-inline-start: 4px solid var(--primary-color);
     }
 
     &.is-hidden-team {
@@ -1108,12 +1108,12 @@
   .ItqanStats-tmTeamName {
     font-weight: 800;
     font-size: 13.5px;
-    color: @text-color;
+    color: var(--text-color);
   }
 
   .ItqanStats-tmTeamMeta {
     font-size: 11.5px;
-    color: @muted-color;
+    color: var(--muted-color);
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -1136,7 +1136,7 @@
     border-radius: 6px;
     border: none;
     background: transparent;
-    color: @muted-color;
+    color: var(--muted-color);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -1144,8 +1144,8 @@
     transition: all 0.15s ease;
 
     &:hover {
-      background: @control-bg;
-      color: @text-color;
+      background: var(--control-bg);
+      color: var(--text-color);
     }
 
     &.is-visible {
@@ -1167,7 +1167,7 @@
   .ItqanStats-tmAddDrawer {
     padding: 16px 20px;
     border-bottom: 1px solid rgba(148, 163, 184, 0.25);
-    background: fade(@control-bg, 35%);
+    background: color-mix(in srgb, var(--control-bg) 35%, transparent);
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -1185,8 +1185,8 @@
     font-weight: 800;
     padding: 2px 9px;
     border-radius: 999px;
-    background: fade(@primary-color, 14%);
-    color: @primary-color;
+    background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+    color: var(--primary-color);
   }
 
   .ItqanStats-tmSelectedChips {
@@ -1203,9 +1203,9 @@
     border-radius: 999px;
     font-size: 11.5px;
     font-weight: 700;
-    background: fade(@primary-color, 12%);
-    color: @primary-color;
-    border: 1px solid fade(@primary-color, 25%);
+    background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+    color: var(--primary-color);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 25%, transparent);
 
     button {
       border: none;
@@ -1241,7 +1241,7 @@
     padding: 10px 14px;
     border-radius: 10px;
     border: 1px solid rgba(148, 163, 184, 0.25);
-    background: fade(@control-bg, 35%);
+    background: color-mix(in srgb, var(--control-bg) 35%, transparent);
   }
 
   .ItqanStats-tmMemberCardLeft {
@@ -1255,8 +1255,8 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: fade(@primary-color, 15%);
-    color: @primary-color;
+    background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+    color: var(--primary-color);
     font-weight: 800;
     font-size: 12px;
     display: inline-flex;
@@ -1279,7 +1279,7 @@
 
     span {
       font-size: 11px;
-      color: @muted-color;
+      color: var(--muted-color);
       font-family: monospace;
     }
   }
@@ -1290,7 +1290,7 @@
     border-radius: 8px;
     border: none;
     background: transparent;
-    color: @muted-color;
+    color: var(--muted-color);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -1325,11 +1325,11 @@
   cursor: pointer;
 
   &:hover {
-    background: @control-bg;
+    background: var(--control-bg);
   }
 
   &.is-selected {
-    background: fade(@primary-color, 10%);
+    background: color-mix(in srgb, var(--primary-color) 10%, transparent);
   }
 
   &.is-existing {
@@ -1344,7 +1344,7 @@
 
 .ItqanStats-userSearchCounts {
   font-size: 12px;
-  color: @muted-color;
+  color: var(--muted-color);
 }
 
 .ItqanStats-MiniWidget-body {
@@ -1361,7 +1361,7 @@
   .ItqanStats-MiniWidget-range {
     margin-inline-start: 10px;
     font-size: 12px;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 
   .ItqanStats-MiniWidget-grid {
@@ -1371,7 +1371,7 @@
   }
 
   .ItqanStats-MiniWidget-item {
-    background: @control-bg;
+    background: var(--control-bg);
     border-radius: 8px;
     padding: 10px 14px;
     display: flex;
@@ -1381,7 +1381,7 @@
   .ItqanStats-MiniWidget-label {
     font-size: 11.5px;
     font-weight: 700;
-    color: @muted-color;
+    color: var(--muted-color);
     text-transform: uppercase;
   }
 
@@ -1393,6 +1393,6 @@
 
   .ItqanStats-MiniWidget-sub {
     font-size: 11px;
-    color: @muted-color;
+    color: var(--muted-color);
   }
 }

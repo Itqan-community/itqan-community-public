@@ -1,0 +1,119 @@
+flarum-audit:
+    admin:
+        permissions:
+            view: عرض سجل التدقيق
+            viewLimited: عرض سجل التدقيق المحدود
+        header:
+            title: التدقيق
+        limitedSettings:
+            configure: إعداد
+            title: إعدادات الوصول المحدود
+            introduction: حدّد ما يمكن للأعضاء ذوي صلاحية الوصول المحدود رؤيته
+            requiresExtension: يتطلب الإضافة {extension}
+        settings:
+            limitedIpAddress: عرض عنوان IP
+
+    forum:
+        link:
+            all-audit: سجل التدقيق
+            discussion-audit: سجل التدقيق
+            user-audit: سجل التدقيق (تعديلات الحساب)
+            actor-audit: سجل التدقيق (العضو كفاعل)
+        modal:
+            all-title: سجل التدقيق
+            discussion-title: سجل تدقيق النقاش
+            user-title: سجل تدقيق العضو
+            actor-title: سجل تدقيق الفاعل
+
+    lib:
+        browser:
+            filterPlaceholder: تصفية السجلات
+            filterApply: تطبيق
+            filterClear: مسح التصفية
+            refresh: تحديث
+            filtersHint: 'التصفية:'
+            filters:
+                actor: من نفّذ الإجراء. استخدم actor:guest لإجراءات النظام أو غير المسجّلين.
+                user: العضو الذي تأثر بالإجراء، باسم المستخدم.
+                action: نوع الإجراء، مثل action:post.created.
+                client: طريقة تنفيذ الطلب.
+                ip: عنوان IP الذي جاء منه الإجراء.
+                discussion: الإجراءات التي تخص نقاشًا معينًا، بالمعرّف.
+            help:
+                toggle: مساعدة البحث
+                multiple: 'اجمع القيم بفواصل لمطابقة أيٍّ منها، مثل action:post.created,post.deleted'
+                negate: 'ضع علامة ناقص قبل التصفية لاستثناء المطابقات، مثل -client:cli'
+            empty: لا نتائج
+            loadMore: تحميل المزيد
+            withoutActor: => core.group.guest
+            deletedResource:
+                discussion: 'النقاش #{id}'
+                group: 'المجموعة #{id}'
+                post: 'المشاركة #{id}'
+                tag: 'الوسم #{id}'
+                user: 'العضو #{id}'
+            genericResource:
+                comment: تعليق
+                post: مشاركة
+            permissionGroup:
+                everyone: => core.admin.permissions_controls.everyone_button
+                members: => core.admin.permissions_controls.members_button
+            noValue: (بلا قيمة)
+            noReason: (بلا سبب)
+            core: النواة
+            client:
+                session: جلسة ويب
+                api_key: مفتاح API
+                access_token: رمز وصول
+                cli: سطر الأوامر
+                unknown: عميل غير معروف
+            controls:
+                title: إجراءات
+                hideRaw: إخفاء السجل الخام
+                showRaw: عرض السجل الخام
+                filterActor: عرض سجلات هذا الفاعل
+                filterIp: عرض سجلات عنوان IP هذا
+                filterClient: عرض سجلات هذا النوع من العملاء
+                filterAction: عرض سجلات الإجراء نفسه
+                filterUser: عرض السجلات التي تخص العضو نفسه
+                filterDiscussion: عرض السجلات التي تخص النقاش نفسه
+            audit_log_cleared: تم مسح {deleted_count} مدخلًا من سجلات التدقيق
+            cache_cleared: تم مسح الذاكرة المؤقتة يدويًا
+            developer_token_created: تم إنشاء رمز وصول للمطوّر "{title}" للعضو {username}
+            discussion:
+                created: بدأ النقاش {discussion}
+                deleted: حذف النقاش {discussion}
+                hidden: أخفى النقاش {discussion}
+                renamed: أعاد تسمية النقاش من {old_title} إلى {new_title}
+                restored: استعاد النقاش {discussion}
+            extension:
+                disabled: عطّل الإضافة {package}
+                enabled: فعّل الإضافة {package}
+                uninstalled: أزال الإضافة {package}
+            queue:
+                paused: أوقف معالجة الصف على {queue} ({connection})
+                resumed: استأنف معالجة الصف على {queue} ({connection})
+            group:
+                created: أنشأ المجموعة {name}
+                deleted: حذف المجموعة {name}
+                renamed: أعاد تسمية المجموعة من {old_name} إلى {new_name}
+            permission_changed: عدّل الصلاحية {permission} من {old_groups} إلى {new_groups}
+            post:
+                created: أنشأ {post} في {discussion}
+                deleted: حذف {post} للعضو {postuser} في {discussion}
+                hidden: أخفى {post} للعضو {postuser} في {discussion}
+                restored: استعاد {post} للعضو {postuser} في {discussion}
+                revised: عدّل {post} للعضو {postuser} في {discussion}
+            setting_changed: عدّل الإعداد {key}
+            setting_changed_with_values: عدّل الإعداد {key} من {old_value} إلى {new_value}
+            settings_reset: أعاد ضبط الإعدادات {keys} للإضافة {extension}
+            user:
+                activated: فعّل حساب {username} يدويًا
+                activated_with_email: فعّل حساب {username} عبر رابط التأكيد
+                avatar_changed: غيّر صورة {username}
+                avatar_removed: أزال صورة {username}
+                created: أنشأ حساب {username}
+                deleted: حذف {username}
+                email_changed: غيّر بريد {username} من {old_email} إلى {new_email}
+                email_change_requested: طلب تغيير بريد {username} إلى {new_email}
+                groups_changed: غيّر مجموعات {username} من {old_groups} إلى {new_groups}
