@@ -10,7 +10,7 @@
 // The palette itself, though, reaches components as custom properties declared
 // on `:root` — so it can be replaced at runtime. Both blocks below match the
 // same element as `:root` (`<html>`) and win on specificity, which means the
-// scheme changes the moment `data-itqan-theme` changes, with no reload and no
+// scheme changes the moment `data-theme` changes, with no reload and no
 // recompile.
 //
 // Both schemes are declared explicitly rather than only overriding "the other
@@ -180,10 +180,10 @@
   }
 }
 
-html[data-itqan-theme='light'] {
+html[data-theme='light'], html[data-theme='light-hc'] {
   .itqan-scheme-vars(false);
 }
 
-html[data-itqan-theme='dark'] {
+html[data-theme^='dark'] {
   .itqan-scheme-vars(true);
 }
