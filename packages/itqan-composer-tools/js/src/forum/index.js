@@ -13,15 +13,15 @@ export { default as MarkdownPreviewDrawer } from './components/MarkdownPreviewDr
 const PREVIEW_ID = 'itqan-markdown-preview';
 
 function isDiscussionComposer(composer) {
-  return composer.bodyMatches(DiscussionComposer);
+  return composer.bodyMatches("flarum/forum/components/DiscussionComposer");
 }
 
 app.initializers.add('itqan-composer-tools', () => {
-  extend(TextEditor.prototype, 'oninit', function () {
+  extend('flarum/common/components/TextEditor', 'oninit', function () {
     this.itqanMarkdownPreviewOpen = false;
   });
 
-  extend(TextEditor.prototype, 'controlItems', function (items) {
+  extend('flarum/common/components/TextEditor', 'controlItems', function (items) {
     if (!isDiscussionComposer(this.attrs.composer)) return;
 
     const open = this.itqanMarkdownPreviewOpen;
@@ -41,7 +41,7 @@ app.initializers.add('itqan-composer-tools', () => {
           aria-pressed={open ? 'true' : 'false'}
           onclick={() => {
             this.itqanMarkdownPreviewOpen = !this.itqanMarkdownPreviewOpen;
-            m.redraw.sync();
+            m.redraw();
           }}
         />
       </Tooltip>,
@@ -49,7 +49,7 @@ app.initializers.add('itqan-composer-tools', () => {
     );
   });
 
-  extend(TextEditor.prototype, 'view', function (vdom) {
+  extend('flarum/common/components/TextEditor', 'view', function (vdom) {
     if (!isDiscussionComposer(this.attrs.composer)) return;
 
     vdom.attrs.className = classList(vdom.attrs.className, {

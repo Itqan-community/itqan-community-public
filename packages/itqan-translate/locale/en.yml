@@ -1,0 +1,8 @@
+itqan-translate:
+  forum:
+    translate_button: Translate
+    translating: Translating...
+    label: Translation
+    show_original: Show original
+    show_translation: Show translation
+    error: Could not translate this post. Try again later.

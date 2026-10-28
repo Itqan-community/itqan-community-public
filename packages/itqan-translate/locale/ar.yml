@@ -1,0 +1,8 @@
+itqan-translate:
+  forum:
+    translate_button: ترجمة
+    translating: جارٍ الترجمة...
+    label: الترجمة
+    show_original: عرض الأصل
+    show_translation: عرض الترجمة
+    error: تعذّرت ترجمة هذه المشاركة. حاول لاحقًا.

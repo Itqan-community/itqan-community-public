@@ -78,7 +78,8 @@
         "v17development/flarum-seo": "*",
         "xxb5724/id-slug": "*",
         "itqan/lang-arabic": "@dev",
-        "itqan/sitemap": "@dev"
+        "itqan/sitemap": "@dev",
+        "itqan/translate": "@dev"
     },
     "config": {
         "preferred-install": "dist",
@@ -126,6 +127,10 @@
         {
             "type": "path",
             "url": "packages/itqan-sitemap"
+        },
+        {
+            "type": "path",
+            "url": "packages/itqan-translate"
         }
     ],
     "minimum-stability": "beta",

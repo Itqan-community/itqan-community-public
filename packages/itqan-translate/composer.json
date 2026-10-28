@@ -1,0 +1,26 @@
+{
+    "name": "itqan/translate",
+    "description": "On-demand post translation for Flarum 2.0, reusing the ianm/translate cache tables.",
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": "^2.0",
+        "stichoza/google-translate-php": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\Translate\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Translate (Itqan)",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-language",
+                "color": "#fff",
+                "backgroundColor": "#146C60"
+            }
+        }
+    }
+}

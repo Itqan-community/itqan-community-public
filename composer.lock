@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21570bbf3b6859261bb875f2f4a4f7a3",
+    "content-hash": "8f8189b83a99fe9b4e4953c80561ed5c",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -9384,6 +9384,43 @@
             }
         },
         {
+            "name": "itqan/translate",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-translate",
+                "reference": "89b9474852990b374f08264695527756f1ba4cf6"
+            },
+            "require": {
+                "flarum/core": "^2.0",
+                "stichoza/google-translate-php": "^4.1"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Translate (Itqan)",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fas fa-language",
+                        "color": "#fff",
+                        "backgroundColor": "#146C60"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Translate\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "On-demand post translation for Flarum 2.0, reusing the ianm/translate cache tables.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "jaybizzle/crawler-detect",
             "version": "v1.4.2",
             "source": {
@@ -14457,6 +14494,86 @@
             "time": "2017-06-19T16:48:17+00:00"
         },
         {
+            "name": "stichoza/google-translate-php",
+            "version": "v4.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Stichoza/google-translate-php.git",
+                "reference": "14f6a9c84cd860910706ee3a668fba8a0a1aac0f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Stichoza/google-translate-php/zipball/14f6a9c84cd860910706ee3a668fba8a0a1aac0f",
+                "reference": "14f6a9c84cd860910706ee3a668fba8a0a1aac0f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "guzzlehttp/guzzle": "~6.0|~7.0",
+                "php": "^7.1|^8"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Stichoza\\GoogleTranslate\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Levan Velijanashvili",
+                    "email": "me@stichoza.com"
+                }
+            ],
+            "description": "Free Google Translate API PHP Package",
+            "homepage": "https://github.com/Stichoza/google-translate-php",
+            "keywords": [
+                "google",
+                "php",
+                "translate",
+                "translating",
+                "translator"
+            ],
+            "support": {
+                "issues": "https://github.com/Stichoza/google-translate-php/issues",
+                "source": "https://github.com/Stichoza/google-translate-php/tree/v4.1.7"
+            },
+            "funding": [
+                {
+                    "url": "https://btc.com/bc1qc25j4x7yahghm8nnn6lypnw59nptylsw32nkfl",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.paypal.me/stichoza",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://ko-fi.com/stichoza",
+                    "type": "ko_fi"
+                },
+                {
+                    "url": "https://liberapay.com/stichoza",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "https://opencollective.com/stichoza",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://www.patreon.com/stichoza",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2022-11-25T11:17:52+00:00"
+        },
+        {
             "name": "symfony/clock",
             "version": "v8.0.8",
             "source": {
@@ -17995,6 +18112,7 @@
         "itqan/flarum-typography": 20,
         "itqan/lang-arabic": 20,
         "itqan/sitemap": 20,
+        "itqan/translate": 20,
         "mtareq/flarum-nested-replies": 20
     },
     "prefer-stable": true,
