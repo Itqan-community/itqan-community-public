@@ -166,6 +166,10 @@ jobs:
 
           sudo -u www-data php flarum migrate
           sudo -u www-data php flarum cache:clear
+          # Flarum 2.0 code-splits lazy components into public/assets/js/**.
+          # Without this the top-level forum.js is rebuilt but the chunks stay
+          # from an older build (breaking dropdowns, composers, share, fonts).
+          sudo -u www-data php flarum assets:publish
           # Fail the deploy if the generated config is not prod-shaped.
           bash /var/www/flarum/scripts/staging-env-check.sh /var/www/flarum/config.php
 

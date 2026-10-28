@@ -72,9 +72,46 @@ flarum-messages:
       cannot_reply_text: لا يمكن الرد على الرسائل
       title: اختر مستلمي هذه الرسالة
 
+    user_controls:
+      send_message_button: إرسال رسالة
+      cannot_reply_text: لا يمكن لهذا العضو الرد
+
     search_source:
       conversation_with: "محادثة مع {username}"
       heading: الرسائل
 
     settings:
       notify_message_received_label: يرسل لي أحدهم رسالة
+
+    notifications:
+      message_received_text: "إشعار «رسالة مستلمة» من {user}"
+
+  email:
+    message_received:
+      subject: "أرسل لك {user_display_name} رسالة"
+      plain:
+        body: |
+          أرسل لك {user_display_name} رسالة جديدة.
+
+          {url}
+
+          ---
+
+          {content}
+
+          ---
+
+          لن تصلك رسائل أخرى عن هذه المحادثة حتى تقرأها.
+      html:
+        body: |
+          أرسل لك {user_display_name} [رسالة جديدة]({url}).
+
+          لن تصلك رسائل أخرى عن هذه المحادثة حتى تقرأها.
+
+  lib:
+    dialog:
+      title: "محادثة مع {username}"
+    no_other_members_message: لا يوجد أحد آخر في هذه المحادثة.
+    recipient_cannot_reply_message: "{username} لا يمكنه الرد على الرسائل."
+    recipient_unavailable_message: "{username} لا يمكنه استقبال الرسائل."
+

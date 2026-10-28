@@ -24,4 +24,8 @@ export default class DiscussionRetaggedNotification extends Notification {
 
     return app.translator.trans('itqan-notifications.forum.notifications.discussion_retagged_text', { title, new_tag: newTag });
   }
+
+  excerpt() {
+    return null;
+  }
 }
