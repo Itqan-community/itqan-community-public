@@ -8,7 +8,18 @@ const pending = new Set();
 const errors = new Set();
 
 const localeOf = () => String(app.data.locale || 'en').split('-')[0].toLowerCase();
-const keyFor = (post, locale) => `${post.id()}:${locale}`;
+const keyFor = (post, target) => `${post.id()}:${target}`;
+
+// Bilingual forum: translate into the reader's language when the post is in the
+// other one, and into the other language when it already matches the reader's.
+const targetFor = (post) => {
+  const detected = String(post.attribute('detectedLang') || '').split('-')[0].toLowerCase();
+  const locale = localeOf();
+
+  if (detected && detected !== locale) return locale;
+
+  return locale === 'ar' ? 'en' : 'ar';
+};
 
 /**
  * On-demand translation appended under a post. Mirrors the behaviour of the
@@ -24,22 +35,17 @@ export default class TranslationBlock extends Component {
 
   view() {
     const post = this.attrs.post;
-    const locale = localeOf();
-    const detected = String(post.attribute('detectedLang') || '').split('-')[0].toLowerCase();
 
-    // Nothing to offer when the post is already in the reader's language.
-    if (detected && detected === locale) {
-      return null;
-    }
     if (!post.id() || post.isHidden?.()) {
       return null;
     }
 
-    const key = keyFor(post, locale);
+    const target = targetFor(post);
+    const key = keyFor(post, target);
     const translation = post.attribute('itqanTranslation');
     const translationLocale = String(post.attribute('itqanTranslationLocale') || '').toLowerCase();
 
-    if (translation && translationLocale === locale) {
+    if (translation && translationLocale === target) {
       return (
         <div className="ItqanTranslation">
           <div className="ItqanTranslation-label">{app.translator.trans('itqan-translate.forum.label')}</div>
@@ -93,8 +99,8 @@ export default class TranslationBlock extends Component {
 
   async translate() {
     const post = this.attrs.post;
-    const locale = localeOf();
-    const key = keyFor(post, locale);
+    const target = targetFor(post);
+    const key = keyFor(post, target);
 
     if (pending.has(key)) return;
 
@@ -106,13 +112,13 @@ export default class TranslationBlock extends Component {
       const data = await app.request({
         method: 'POST',
         url: `${app.forum.attribute('apiUrl')}/itqan-translate/posts/${post.id()}`,
-        body: { language: app.data.locale },
+        body: { language: target },
       });
 
       if (data && data.translation) {
         post.pushAttributes({
           itqanTranslation: data.translation,
-          itqanTranslationLocale: locale,
+          itqanTranslationLocale: target,
         });
       } else if (!(data && data.sameLanguage)) {
         errors.add(key);

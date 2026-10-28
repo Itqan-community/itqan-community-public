@@ -22,4 +22,8 @@ export default class DiscussionStickiedNotification extends Notification {
 
     return app.translator.trans('itqan-notifications.forum.notifications.discussion_stickied_text', { title });
   }
+
+  excerpt() {
+    return null;
+  }
 }
