@@ -79,7 +79,9 @@
         "xxb5724/id-slug": "*",
         "itqan/lang-arabic": "@dev",
         "itqan/sitemap": "@dev",
-        "itqan/translate": "@dev"
+        "itqan/translate": "@dev",
+        "itqan/flarum-preview-cards": "@dev",
+        "itqan/pretty-mail": "@dev"
     },
     "config": {
         "preferred-install": "dist",
@@ -131,6 +133,14 @@
         {
             "type": "path",
             "url": "packages/itqan-translate"
+        },
+        {
+            "type": "path",
+            "url": "packages/itqan-preview-cards"
+        },
+        {
+            "type": "path",
+            "url": "packages/itqan-pretty-mail"
         }
     ],
     "minimum-stability": "beta",

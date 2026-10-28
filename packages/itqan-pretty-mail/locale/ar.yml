@@ -1,0 +1,15 @@
+itqan-pretty-mail:
+  admin:
+    settings:
+      heading: قوالب البريد الإلكتروني
+      help: هذه القوالب تحيط بكل رسالة يرسلها المنتدى. تُعالَج بصيغة Blade، لذا يعمل `{{ $settings->get('forum_title') }}` و`{!! $body !!}` كما كانا قبل الترقية.
+      mailhtml_label: القالب الخارجي HTML
+      mailhtml_help: الهيكل المحيط بكل رسالة. `{!! $body !!}` هو موضع نص الرسالة.
+      newPost_label: إشعار رد جديد
+      newPost_help: اتركه فارغًا لاستخدام تخطيط فلارم الافتراضي للإشعارات.
+      postMentioned_label: إشعار الإشارة إلى مشاركة
+      postMentioned_help: اتركه فارغًا لاستخدام تخطيط فلارم الافتراضي للإشعارات.
+      userMentioned_label: إشعار الإشارة إلى عضو
+      userMentioned_help: اتركه فارغًا لاستخدام تخطيط فلارم الافتراضي للإشعارات.
+      includeCSS_label: تضمين ملف أنماط المنتدى
+      includeCSS_help: يضيف أنماط المنتدى المترجمة إلى الرسائل لتطابق شكل المنتدى، لكنه يزيد حجم الرسالة.

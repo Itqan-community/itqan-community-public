@@ -1,13 +1,13 @@
 {
-  "name": "@itqan/flarum-preview-cards",
-  "private": true,
-  "devDependencies": {
-    "flarum-webpack-config": "^2.0.0",
-    "webpack": "^5.0.0",
-    "webpack-cli": "^5.0.0"
-  },
-  "scripts": {
-    "dev": "webpack --mode development --watch",
-    "build": "webpack --mode production"
-  }
+    "name": "@itqan/flarum-preview-cards",
+    "private": true,
+    "dependencies": {
+        "flarum-webpack-config": "^3.0.0",
+        "webpack": "^5.104.1",
+        "webpack-cli": "^5.1.4"
+    },
+    "scripts": {
+        "dev": "webpack --mode development --watch",
+        "build": "webpack --mode production"
+    }
 }

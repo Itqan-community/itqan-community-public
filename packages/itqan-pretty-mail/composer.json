@@ -1,0 +1,32 @@
+{
+    "name": "itqan/pretty-mail",
+    "description": "Admin-editable HTML email templates, ported from fof/pretty-mail to Flarum 2.0",
+    "keywords": ["flarum", "email", "mail", "template"],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\PrettyMail\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Pretty Mail (Itqan)",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-envelope-open-text",
+                "color": "#ffffff",
+                "backgroundColor": "#064e3b"
+            }
+        }
+    }
+}
