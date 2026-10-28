@@ -2,7 +2,6 @@ import app from 'flarum/forum/app';
 import Component from 'flarum/common/Component';
 import avatar from '../../common/avatar';
 import icon from '../../common/icon';
-import ReplyComposer from 'flarum/forum/components/ReplyComposer';
 
 /**
  * A reply shortcut pinned to the bottom of a phone screen, always visible while

@@ -1,41 +1,28 @@
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
-import HeaderSecondary from 'flarum/forum/components/HeaderSecondary';
-import SessionDropdown from 'flarum/forum/components/SessionDropdown';
-import SettingsPage from 'flarum/forum/components/SettingsPage';
 import FieldSet from 'flarum/common/components/FieldSet';
 import Button from 'flarum/common/components/Button';
-import classList from 'flarum/common/utils/classList';
-import PostMeta from 'flarum/forum/components/PostMeta';
 
-import ThemeSwitcher, { ICONS } from './components/ThemeSwitcher';
 import PwaInstallPrompt from './components/PwaInstallPrompt';
 import AbsoluteDateBadge from './components/AbsoluteDateBadge';
 import addRichToolbarButtons from './components/RichToolbarButtons';
 import addImageLightbox from './addImageLightbox';
 import addReplyAffordances from './addReplyAffordances';
-import { MODES, boot, currentMode, setMode } from './utils/scheme';
 import { applyArabicCountOverrides } from './utils/arabicCounts';
 
-export { default as ThemeSwitcher } from './components/ThemeSwitcher';
 export { default as PwaInstallPrompt } from './components/PwaInstallPrompt';
 export { default as ImageLightbox } from './components/ImageLightbox';
 export { default as addImageLightbox } from './addImageLightbox';
 export { default as AbsoluteDateBadge } from './components/AbsoluteDateBadge';
 export { default as addRichToolbarButtons } from './components/RichToolbarButtons';
-export * from './utils/scheme';
 
 app.initializers.add('itqan-theme', () => {
-  boot();
   applyArabicCountOverrides(app);
   addImageLightbox();
   addReplyAffordances();
 
-  // Next to search and notifications: the same place the language selector
-  // lives, which is the closest existing analogue to this control.
-  extend('flarum/forum/components/HeaderSecondary', 'items', function (items) {
-    items.add('itqanTheme', <ThemeSwitcher />, 25);
-  });
+  // Colour scheme switching is Flarum 2.0's own (header + settings), driven by
+  // `data-theme`. The theme styles that attribute; it does not manage it.
 
   extend('flarum/forum/components/SessionDropdown', 'items', function (items) {
     items.add(
@@ -50,29 +37,7 @@ app.initializers.add('itqan-theme', () => {
     );
   });
 
-  // The header control is the fast path; this is where a reader looks when
-  // they go hunting for a setting they half-remember.
   extend('flarum/forum/components/SettingsPage', 'settingsItems', function (items) {
-    items.add(
-      'itqanTheme',
-      <FieldSet className="Settings-theme" label={app.translator.trans('itqan-theme.forum.settings.heading')}>
-        <div className="Settings-theme-options">
-          {MODES.map((mode) => (
-            <Button
-              key={mode}
-              className={classList('Button', { active: mode === currentMode() })}
-              icon={ICONS[mode]}
-              aria-current={mode === currentMode() ? 'true' : undefined}
-              onclick={() => setMode(mode)}
-            >
-              {app.translator.trans(`itqan-theme.forum.switcher.${mode}`)}
-            </Button>
-          ))}
-        </div>
-      </FieldSet>,
-      5
-    );
-
     items.add(
       'itqanPwa',
       <FieldSet className="Settings-pwa" label="تطبيق مجتمع إتقان">

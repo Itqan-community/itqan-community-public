@@ -1419,67 +1419,20 @@ body:has(.DeleteConfirmModal) .Modal-backdrop {
 }
 
 // ---------------------------------------------------------------------------
-// Discussion list — vote column (leading edge, top-aligned)
+// Discussion list — vote column (leading edge, vertically centred)
 // ---------------------------------------------------------------------------
-// NOTE: gutter math matches Flarum 1.x's floated `.DiscussionListItem-content`
-// and will need revisiting for 2.x's flex layout.
-// Core reserves the leading gutter on `.DiscussionListItem-content` for the
-// floated avatar. Widening that padding by one column moves the avatar, badges,
-// main and count along with it, so only the wider padding and the control's
-// negative margin need stating. Physical properties on purpose: Flarum compiles
-// a separate RTL stylesheet by flipping `left` to `right`, matching core's own
-// physical rules here. All rules below are gated on `.NestedRepliesShowVotes`
-// so the wider gutter disappears when votes are turned off.
+// Flarum 2.0 lays `.DiscussionListItem-content` out as a flex row, so the rail is
+// simply the first flex child. (1.x used floats and a negative-margin gutter;
+// that math pushed the card contents off-screen on 2.0.)
 .NestedRepliesShowVotes {
-  @nested-vote-column: 34px;
-
-  // Floats do not contribute to their container's height unless it establishes a
-  // block formatting context. Without this, a rail taller than the row content
-  // spills out below the card. `flow-root` contains the float and lets the card
-  // grow to fit it (no clipping, so dropdowns still escape).
-  .DiscussionListItem-content {
-    display: flow-root;
-  }
-
   .DiscussionListItem-content > .NestedRepliesVoteRail {
-    float: left;
+    display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 2px;
     padding: 4px 6px;
-    // The row has no vertical padding of its own, so inset the rail equally on
-    // both sides (flow-root makes the card grow to include the bottom margin).
-    margin-top: 12px;
-    margin-bottom: 12px;
-  }
-
-  @media @phone {
-    .DiscussionListItem-content {
-      padding-left: 15px + 45px + @nested-vote-column;
-    }
-
-    .DiscussionListItem-content > .NestedRepliesVoteRail {
-      margin-left: -(45px + @nested-vote-column);
-    }
-  }
-
-  @media @tablet-up {
-    .DiscussionListItem-content {
-      padding-left: 52px + @nested-vote-column;
-    }
-
-    .DiscussionListItem-content > .NestedRepliesVoteRail {
-      margin-left: -(52px + @nested-vote-column);
-    }
-
-    // The list also renders in the pane beside an open discussion, where core
-    // scopes a wider leading gutter (52px + the 15px row bleed).
-    .DiscussionPage-list .DiscussionListItem-content {
-      padding-left: 52px + 15px + @nested-vote-column;
-    }
-
-    .DiscussionPage-list .DiscussionListItem-content > .NestedRepliesVoteRail {
-      margin-left: -(52px + @nested-vote-column);
-    }
+    min-width: 34px;
+    align-self: center;
   }
 }
 

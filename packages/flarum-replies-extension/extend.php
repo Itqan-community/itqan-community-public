@@ -7,7 +7,7 @@ use Flarum\Extend;
 use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
 use Mtareq\NestedReplies\Access\PostPolicy;
-use Mtareq\NestedReplies\Api\VotePostController;
+use Mtareq\NestedReplies\Api\VotePostHandler;
 use Mtareq\NestedReplies\Listener\StoreReplyParent;
 use Mtareq\NestedReplies\PostReply;
 use Mtareq\NestedReplies\PostVote;
@@ -109,10 +109,12 @@ if (! class_exists(\Flarum\Api\Resource\PostResource::class)) {
 
     $extenders[] = (new Extend\ServiceProvider())
         ->register(SortMapProvider::class);
-
-    $extenders[] = (new Extend\Routes('api'))
-        ->post('/mtareq-nested-replies/posts/{id}/vote', 'mtareq-nested-replies.vote', VotePostController::class);
 }
+
+// Registered on both 1.8 and 2.0: the handler is PSR-15 and returns 204, which
+// the vote adapter already accepts.
+$extenders[] = (new Extend\Routes('api'))
+    ->post('/mtareq-nested-replies/posts/{id}/vote', 'mtareq-nested-replies.vote', VotePostHandler::class);
 
 if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
     // Flarum 2.x — votes sort is declared on the discussion resource.

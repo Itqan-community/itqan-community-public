@@ -1,8 +1,6 @@
 import app from 'flarum/forum/app';
 import Component from 'flarum/common/Component';
 import icon from '../../common/icon';
-import LogInModal from 'flarum/forum/components/LogInModal';
-import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
 
 /**
  * A thumb-reach "start a discussion" button for phones.
@@ -37,12 +35,13 @@ export default class NewDiscussionFab extends Component {
 
   start() {
     if (app.session.user) {
-      app.composer.load(DiscussionComposer, { user: app.session.user });
-      app.composer.show();
+      app.composer
+        .load(() => import('flarum/forum/components/DiscussionComposer'), { user: app.session.user })
+        .then(() => app.composer.show());
 
       return;
     }
 
-    app.modal.show(LogInModal);
+    app.modal.show(() => import('flarum/forum/components/LogInModal'));
   }
 }

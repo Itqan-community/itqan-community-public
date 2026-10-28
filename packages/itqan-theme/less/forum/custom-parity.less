@@ -24,7 +24,7 @@ body {
   background: rgba(6, 41, 31, 0.03);
 }
 
-html[data-itqan-theme='dark'] body {
+html[data-theme^='dark'] body {
   background: var(--body-bg, #0b0f13) !important;
 }
 
@@ -281,7 +281,9 @@ html[data-itqan-theme='dark'] body {
 
 @media (min-width: 1100px) {
   .container {
-    width: 1200px;
+    // A fixed 1200px overflowed any viewport narrower than 1200 and, in RTL,
+    // pushed the discussion list (and its stats column) off the left edge.
+    max-width: 1200px;
   }
 }
 
@@ -421,7 +423,7 @@ button.Post.ReplyPlaceholder {
 }
 
 // Dark Mode for ReplyPlaceholder
-html[data-itqan-theme='dark'] {
+html[data-theme^='dark'] {
   .ReplyPlaceholder,
   button.Post.ReplyPlaceholder {
     background: #181c20 !important;
