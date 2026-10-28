@@ -226,6 +226,19 @@ jobs:
             sed -i -E 's|^([[:space:]]*listen [0-9.:]+ ssl) http2;.*|\1;  # itqan-staging-http1|' /etc/nginx/sites-available/flarum.conf
           fi
 
+          # Staging is reached directly, over a path that throttles per-connection
+          # throughput. CUBIC collapses on that shape; BBR keeps the window open.
+          # Reversible: removing the sysctl file and reloading returns to cubic.
+          modprobe tcp_bbr 2>/dev/null || true
+          if sysctl -n net.ipv4.tcp_available_congestion_control | grep -qw bbr; then
+            printf 'net.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr\n' > /etc/sysctl.d/99-itqan-bbr.conf
+            sysctl -w net.core.default_qdisc=fq >/dev/null
+            sysctl -w net.ipv4.tcp_congestion_control=bbr >/dev/null
+            echo "TCP congestion control: $(sysctl -n net.ipv4.tcp_congestion_control)"
+          else
+            echo "WARNING: tcp_bbr unavailable; staying on $(sysctl -n net.ipv4.tcp_congestion_control)"
+          fi
+
           if ! nginx -t; then
             cp /tmp/flarum.conf.bak /etc/nginx/sites-available/flarum.conf
             echo "nginx config invalid after normalization; restored previous config"
