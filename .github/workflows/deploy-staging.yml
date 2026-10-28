@@ -190,6 +190,11 @@ jobs:
           cp /etc/nginx/sites-available/flarum.conf /tmp/flarum.conf.bak
           python3 scripts/normalize-nginx-locations.py /etc/nginx/sites-available/flarum.conf
 
+          # Flarum 2.0 fonts and code-split chunks have stable filenames. Serving
+          # them as immutable for a year left browsers on stale glyphs/chunks
+          # after a deploy (broken icons, dead lazy components), so revalidate.
+          sed -i 's/expires 1y;/expires off;/; s/add_header Cache-Control "public, immutable";/add_header Cache-Control "no-cache";/' /etc/nginx/sites-available/flarum.conf
+
           # Staging must never be indexed. fof-sitemap generates robots.txt and
           # allows crawling. Put the header at server level so the internal
           # redirect into the PHP location (location ~ \.php$) inherits it.

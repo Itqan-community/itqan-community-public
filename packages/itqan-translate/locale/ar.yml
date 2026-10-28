@@ -6,3 +6,6 @@ itqan-translate:
     show_original: عرض الأصل
     show_translation: عرض الترجمة
     error: تعذّرت ترجمة هذه المشاركة. حاول لاحقًا.
+    select_language: ترجمة إلى…
+    show: عرض
+    hide: إخفاء

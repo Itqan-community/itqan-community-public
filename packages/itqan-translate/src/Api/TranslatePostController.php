@@ -9,7 +9,6 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Stichoza\GoogleTranslate\GoogleTranslate;
 use Throwable;
 
 class TranslatePostController implements RequestHandlerInterface
@@ -64,6 +63,8 @@ class TranslatePostController implements RequestHandlerInterface
         try {
             $translation = $this->translate($text, $language);
         } catch (Throwable $e) {
+            resolve('log')->error('itqan-translate: '.$e->getMessage(), ['post_id' => $post->id, 'language' => $language]);
+
             return new JsonResponse([
                 'error' => 'translation provider unavailable',
                 'detail' => config('debug') ? $e->getMessage() : null,
@@ -108,19 +109,13 @@ class TranslatePostController implements RequestHandlerInterface
 
     private function translate(string $text, string $language): string
     {
-        $translator = new GoogleTranslate($language);
-
-        if (mb_strlen($text) <= 4500) {
-            return (string) $translator->translate($text);
-        }
-
-        $chunks = preg_split('/\n{2,}/u', $text) ?: [$text];
+        $chunks = mb_strlen($text) <= 4000 ? [$text] : (preg_split('/\n{2,}/u', $text) ?: [$text]);
         $out = [];
         $buffer = '';
 
         foreach ($chunks as $chunk) {
-            if ($buffer !== '' && mb_strlen($buffer) + mb_strlen($chunk) > 4500) {
-                $out[] = (string) $translator->translate($buffer);
+            if ($buffer !== '' && mb_strlen($buffer) + mb_strlen($chunk) > 4000) {
+                $out[] = $this->request($buffer, $language);
                 $buffer = $chunk;
             } else {
                 $buffer = $buffer === '' ? $chunk : $buffer."\n\n".$chunk;
@@ -128,9 +123,51 @@ class TranslatePostController implements RequestHandlerInterface
         }
 
         if ($buffer !== '') {
-            $out[] = (string) $translator->translate($buffer);
+            $out[] = $this->request($buffer, $language);
         }
 
         return implode("\n\n", $out);
+    }
+
+    private function request(string $text, string $language): string
+    {
+        $url = 'https://translate.googleapis.com/translate_a/single'
+            .'?client=gtx&sl=auto&dt=t&tl='.rawurlencode($language)
+            .'&q='.rawurlencode($text);
+
+        $ch = curl_init($url);
+
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT => 12,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; ItqanTranslate/1.0)',
+        ]);
+
+        $body = curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+
+        curl_close($ch);
+
+        if ($body === false || $status >= 400) {
+            throw new \RuntimeException("provider failed (status={$status}, error={$error})");
+        }
+
+        $json = json_decode($body, true);
+        $translated = '';
+
+        foreach (($json[0] ?? []) as $part) {
+            if (is_array($part) && isset($part[0])) {
+                $translated .= $part[0];
+            }
+        }
+
+        if (trim($translated) === '') {
+            throw new \RuntimeException('provider returned an empty translation');
+        }
+
+        return $translated;
     }
 }
