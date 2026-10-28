@@ -31,17 +31,18 @@ jobs:
           action=$1
           ip=$2
           conf=/etc/nginx/sites-available/flarum.conf
-          backup=/etc/nginx/flarum.conf.test-access.bak
 
+          # Only the four lines this workflow owns are added/removed. Restoring a
+          # full-file backup here used to roll back unrelated nginx changes made
+          # by the deploy workflow (compression, HTTP version, cache headers).
           if [ "$action" = "allow" ]; then
-            cp "$conf" "$backup"
             if ! grep -q 'itqan-test-access' "$conf"; then
               sed -i "/auth_basic \"Restricted\";/i\\    # itqan-test-access\\n    satisfy any;\\n    allow $ip;\\n    deny all;" "$conf"
             else
               sed -i "s/    allow .*;/    allow $ip;/" "$conf"
             fi
           else
-            if [ -f "$backup" ]; then cp "$backup" "$conf"; fi
+            sed -i '/# itqan-test-access/,+3d' "$conf"
           fi
 
           nginx -t
