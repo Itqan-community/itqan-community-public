@@ -175,8 +175,12 @@ jobs:
 
           # Staging uses the database queue driver for production parity, so a
           # worker must be running. Idempotent; warns if the unit is missing.
+          # Restart (not just enable) because the worker caches settings in
+          # memory: after a config change it would keep sending with the old
+          # values until recycled.
           if systemctl cat flarum-queue.service >/dev/null 2>&1; then
-            systemctl enable --now flarum-queue
+            systemctl enable flarum-queue
+            systemctl restart flarum-queue
           else
             echo "WARNING: flarum-queue.service not installed; queued jobs will not run"
           fi
