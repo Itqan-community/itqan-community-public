@@ -271,7 +271,12 @@ app.initializers.add('mtareq-nested-replies', () => {
       if (!op) return originalReplyAction.apply(this, args);
 
       openInlineReply(op);
-      return undefined;
+
+      // Flarum 2's reply control treats the action's return value as a promise
+      // (`DiscussionControls.replyAction(...).catch(...)`), so returning
+      // undefined throws "Cannot read properties of undefined (reading
+      // 'catch')". Resolve instead.
+      return Promise.resolve();
     };
   }
 
