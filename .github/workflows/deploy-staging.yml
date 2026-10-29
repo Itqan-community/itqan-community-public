@@ -202,14 +202,21 @@ jobs:
             sed -i 's|^\(    \)include /etc/nginx/snippets/security-headers.conf;|\1include /etc/nginx/snippets/security-headers.conf;\n\1add_header X-Robots-Tag "noindex, nofollow" always;  # itqan-staging-noindex|' /etc/nginx/sites-available/flarum.conf
           fi
 
-          # HTTP Basic Auth: gate staging behind a password. The htpasswd line
-          # comes from a repo secret (this repo is public).
+          # HTTP Basic Auth is DISABLED (temporarily, from 2026-10-29) so the
+          # browser stops prompting. The htpasswd file is still written from the
+          # repo secret, so re-enabling is only the sed below + a push.
+          # RESTORE: swap the two sed expressions back to uncommenting the
+          # directives (git history has the exact line).
           printf '%s\n' "$BASIC_AUTH" > /etc/nginx/.htpasswd
           chmod 640 /etc/nginx/.htpasswd
           chown root:www-data /etc/nginx/.htpasswd
-          if grep -qF '#auth_basic "Restricted";' /etc/nginx/sites-available/flarum.conf; then
-            sed -i 's|^\([[:space:]]*\)#auth_basic "Restricted";|\1auth_basic "Restricted";|; s|^\([[:space:]]*\)#auth_basic_user_file /etc/nginx/.htpasswd;|\1auth_basic_user_file /etc/nginx/.htpasswd;|' /etc/nginx/sites-available/flarum.conf
-          fi
+          sed -i 's|^\([[:space:]]*\)auth_basic "Restricted";|\1#auth_basic "Restricted";|; s|^\([[:space:]]*\)auth_basic_user_file /etc/nginx/.htpasswd;|\1#auth_basic_user_file /etc/nginx/.htpasswd;|' /etc/nginx/sites-available/flarum.conf
+
+          # Drop any leftover IP allow-list from the temporary test-access
+          # workflow: with auth_basic commented out, its `satisfy any; allow
+          # <ip>; deny all;` would answer 403 to everyone else instead of
+          # opening the site.
+          sed -i '/# itqan-test-access/,+3d' /etc/nginx/sites-available/flarum.conf
           # --- Staging throughput ------------------------------------------------
           # The staging origin is reached directly (no CDN in front of it), and
           # the path to it throttles per-connection throughput hard. Two cheap
