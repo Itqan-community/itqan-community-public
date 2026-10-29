@@ -250,6 +250,17 @@ jobs:
             echo "WARNING: tcp_bbr unavailable; staying on $(sysctl -n net.ipv4.tcp_congestion_control)"
           fi
 
+          # Newsletter (itqan-mailerlite) loads its web fonts and one helper
+          # script from MailerLite's CDNs. Without these the popup works but
+          # loses its fonts and the phone-field mask.
+          if ! grep -qF 'itqan-mailerlite-csp' /etc/nginx/snippets/security-headers.conf; then
+            sed -i \
+              -e "s|script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://groot.mailerlite.com;|script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://groot.mailerlite.com https://static.mailerlite.com;  # itqan-mailerlite-csp|" \
+              -e "s|style-src 'self' 'unsafe-inline' https://assets.mlcdn.com https://fonts.googleapis.com;|style-src 'self' 'unsafe-inline' https://assets.mlcdn.com https://fonts.googleapis.com https://fonts.mailerlite.com;|" \
+              -e "s|font-src 'self' data: https://assets.mlcdn.com https://fonts.gstatic.com;|font-src 'self' data: https://assets.mlcdn.com https://fonts.gstatic.com https://fonts.mailerlite.com;|" \
+              /etc/nginx/snippets/security-headers.conf
+          fi
+
           if ! nginx -t; then
             cp /tmp/flarum.conf.bak /etc/nginx/sites-available/flarum.conf
             echo "nginx config invalid after normalization; restored previous config"
