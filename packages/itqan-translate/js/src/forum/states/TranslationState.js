@@ -47,14 +47,6 @@ export default class TranslationState {
         body: { language: code, refresh },
       })
       .then((response) => {
-        if (response && response.sameLanguage) {
-          this.loading = false;
-          this.showing = false;
-          m.redraw();
-
-          return;
-        }
-
         this.currentTranslation = response.translation || null;
         this.language = response.language || code;
         this.provider = response.provider || 'google-free';

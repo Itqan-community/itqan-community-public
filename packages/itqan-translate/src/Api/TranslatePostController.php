@@ -39,11 +39,9 @@ class TranslatePostController implements RequestHandlerInterface
             return new JsonResponse(['error' => 'invalid language'], 400);
         }
 
-        $detected = strtolower((string) $post->detected_lang);
-
-        if ($detected !== '' && str_starts_with($detected, $language)) {
-            return new JsonResponse(['sameLanguage' => true, 'language' => $language]);
-        }
+        // Translating into the post's own language is allowed on purpose: the
+        // reader may want the text rendered in the other script/normalised, and
+        // the old extension offered both languages unconditionally.
 
         $cached = PostTranslation::query()
             ->where('post_id', $post->id)

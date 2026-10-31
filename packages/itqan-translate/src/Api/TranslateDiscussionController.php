@@ -38,11 +38,7 @@ class TranslateDiscussionController implements RequestHandlerInterface
             return new JsonResponse(['error' => 'invalid language'], 400);
         }
 
-        $detected = strtolower((string) $discussion->detected_lang);
-
-        if ($detected !== '' && str_starts_with($detected, $language)) {
-            return new JsonResponse(['sameLanguage' => true, 'language' => $language]);
-        }
+        // See the post controller: same-language translation is intentional.
 
         $cached = DiscussionTranslation::query()
             ->where('discussion_id', $discussion->id)
