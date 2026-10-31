@@ -207,6 +207,12 @@
   }
 }
 
+// The stream item wrapper draws a 1px separator through `::after`; hiding only
+// the article inside leaves that rule (and its 1px height) behind.
+.PostStream-item[data-hidden="true"] {
+  display: none;
+}
+
 // Fade the "just posted" highlight out over three seconds. Only the background
 // is animated so nothing is drawn over the thread guide lines. The colour comes
 // from the admin setting via --nested-replies-highlight-rgb.

@@ -782,8 +782,15 @@ app.initializers.add('mtareq-nested-replies', () => {
     if (collapsed.has(id)) element.dataset.collapsed = 'true';
     else delete element.dataset.collapsed;
 
-    if (hidden) element.dataset.hidden = 'true';
-    else delete element.dataset.hidden;
+    if (hidden) {
+      element.dataset.hidden = 'true';
+      // The wrapper draws the separator line via ::after, so hiding only the
+      // article leaves a 1px rule behind. Hide the whole stream item.
+      if (item) item.dataset.hidden = 'true';
+    } else {
+      delete element.dataset.hidden;
+      if (item) delete item.dataset.hidden;
+    }
 
     syncLikedClass(element, post);
 
@@ -996,6 +1003,75 @@ app.initializers.add('mtareq-nested-replies', () => {
     stream.loadPage = function () {};
   }
 
+  // ---------------------------------------------------------------------------
+  // Position tracking: URL + read state
+  // ---------------------------------------------------------------------------
+  // Core's PostStream computes the visible post numbers in `onscroll`, but it
+  // returns early while `stream.paused` — and we pause the flat stream as soon
+  // as the tree owns the layout. Without this, scrolling never updates the URL
+  // and posts are never marked read. Mirror core's emit from our own DOM.
+  let lastPosition = { start: null, end: null };
+  let positionTimer = null;
+
+  function emitTreePosition(component) {
+    const items = treeItems();
+    if (!items.length) return;
+
+    const viewportHeight = window.innerHeight;
+    let start = null;
+    let end = null;
+
+    for (const el of items) {
+      const rect = el.getBoundingClientRect();
+      if (rect.height === 0) continue;
+      if (rect.bottom <= 0) continue;
+      if (rect.top >= viewportHeight) break;
+
+      const number = parseInt(el.getAttribute('data-number'), 10);
+      if (!number) continue;
+
+      if (start === null) start = number;
+      end = number;
+    }
+
+    if (start === null) return;
+    if (start === lastPosition.start && end === lastPosition.end) return;
+
+    lastPosition = { start, end };
+
+    const onPositionChange = component.attrs && component.attrs.onPositionChange;
+    if (typeof onPositionChange === 'function') onPositionChange(start, end, start);
+  }
+
+  override('flarum/forum/components/PostStream', 'oncreate', function (original, vnode) {
+    const result = original(vnode);
+
+    const handler = () => {
+      clearTimeout(positionTimer);
+      positionTimer = setTimeout(() => emitTreePosition(this), 120);
+    };
+
+    this.__treePositionHandler = handler;
+    window.addEventListener('scroll', handler, { passive: true });
+
+    // Short discussions can be fully on screen without a scroll event. Skip the
+    // initial emit when a deep link is still pending, or it would rewrite the
+    // URL before our re-scroll lands.
+    if (!deepLinkNear) setTimeout(() => emitTreePosition(this), 600);
+
+    return result;
+  });
+
+  override('flarum/forum/components/PostStream', 'onremove', function (original, vnode) {
+    if (this.__treePositionHandler) {
+      window.removeEventListener('scroll', this.__treePositionHandler);
+      this.__treePositionHandler = null;
+    }
+    clearTimeout(positionTimer);
+
+    return original(vnode);
+  });
+
   // Flarum's post stream is a flat list. A nested-reply layout wants the original
   // post in its own card and every reply inside a second card, so regroup the
   // rendered vnodes without touching core.
@@ -1020,6 +1096,8 @@ app.initializers.add('mtareq-nested-replies', () => {
       inlineReply = null;
       composerPreview = false;
       opComposerAutoOpen.reset();
+      // New discussion: the previous positions no longer apply.
+      lastPosition = { start: null, end: null };
     }
 
     // Kick off loading every page so the tree can be ordered. The flat native
