@@ -5,6 +5,7 @@ namespace Itqan\Translate\Api;
 use Flarum\Discussion\Discussion;
 use Flarum\Http\RequestUtil;
 use Itqan\Translate\DiscussionTranslation;
+use Itqan\Translate\Text;
 use Itqan\Translate\TranslationProvider;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -46,11 +47,18 @@ class TranslateDiscussionController implements RequestHandlerInterface
             ->first();
 
         if (! $refresh && $cached && ! $cached->update_needed && trim((string) $cached->translation) !== '') {
-            return new JsonResponse($this->payload($cached->translation, $language, $cached->provider));
+            $value = Text::sanitize((string) $cached->translation);
+
+            if ($value !== (string) $cached->translation) {
+                $cached->translation = $value;
+                $cached->save();
+            }
+
+            return new JsonResponse($this->payload($value, $language, $cached->provider));
         }
 
         try {
-            $translated = $this->translate((string) $discussion->title, $language);
+            $translated = Text::sanitize($this->translate((string) $discussion->title, $language));
         } catch (Throwable $e) {
             resolve('log')->error('itqan-translate: discussion '.$discussion->id.': '.$e->getMessage());
 

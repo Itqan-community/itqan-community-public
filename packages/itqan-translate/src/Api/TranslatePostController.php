@@ -3,8 +3,10 @@
 namespace Itqan\Translate\Api;
 
 use Flarum\Http\RequestUtil;
+use Flarum\Post\Post;
 use Flarum\Post\PostRepository;
 use Itqan\Translate\PostTranslation;
+use Itqan\Translate\Text;
 use Itqan\Translate\TranslationProvider;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -49,17 +51,26 @@ class TranslatePostController implements RequestHandlerInterface
             ->first();
 
         if (! $refresh && $cached && ! $cached->update_needed && trim((string) $cached->content) !== '') {
-            return new JsonResponse($this->payload($cached->content, $language, $cached->provider));
+            // Rows cached by the 1.8 extension still contain s9e/HTML markup.
+            // Heal them on the way out so the reader never sees tags.
+            $content = Text::sanitize((string) $cached->content);
+
+            if ($content !== (string) $cached->content) {
+                $cached->content = $content;
+                $cached->save();
+            }
+
+            return new JsonResponse($this->payload($content, $language, $cached->provider));
         }
 
-        $text = $this->plainText((string) $post->content);
+        $text = $this->plainText($post, $request);
 
         if ($text === '') {
             return new JsonResponse(['translation' => null, 'language' => $language, 'empty' => true]);
         }
 
         try {
-            $translation = $this->provider->translate($text, $language);
+            $translation = Text::sanitize($this->provider->translate($text, $language));
         } catch (Throwable $e) {
             resolve('log')->error('itqan-translate: '.$e->getMessage(), ['post_id' => $post->id, 'language' => $language]);
 
@@ -97,17 +108,20 @@ class TranslatePostController implements RequestHandlerInterface
         return strtolower(substr($language, 0, 2));
     }
 
-    private function plainText(string $content): string
+    /**
+     * The post as plain text: format it first (so mentions, links and code are
+     * resolved), then strip the markup.
+     */
+    private function plainText(Post $post, ?ServerRequestInterface $request = null): string
     {
-        $text = str_replace(
-            ['</p>', '</li>', '<br>', '<br/>', '<br />'],
-            ["\n\n", "\n", "\n", "\n", "\n"],
-            $content
-        );
+        try {
+            $html = method_exists($post, 'formatContent')
+                ? $post->formatContent($request)
+                : (string) $post->content;
+        } catch (Throwable) {
+            $html = (string) $post->content;
+        }
 
-        $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $text = preg_replace('/[ \t]+/u', ' ', $text) ?? $text;
-
-        return trim($text);
+        return Text::sanitize($html);
     }
 }
