@@ -4,10 +4,12 @@ use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Approval\Event\PostWasApproved;
 use Flarum\Extend;
+use Flarum\Messages\DialogMessage;
 use Flarum\Messages\Notification\MessageReceivedBlueprint;
 use Flarum\Post\Event\Posted;
 use Flarum\Sticky\Event\DiscussionWasStickied;
 use Flarum\Tags\Event\DiscussionWasTagged;
+use Itqan\Notifications\Listener\SendMessageAlerts;
 use Itqan\Notifications\Listener\SendModerationNotifications;
 use Itqan\Notifications\Listener\SendReplyNotifications;
 use Itqan\Notifications\Notification\CommentRepliedBlueprint;
@@ -15,6 +17,7 @@ use Itqan\Notifications\Notification\DiscussionRepliedBlueprint;
 use Itqan\Notifications\Notification\DiscussionRetaggedBlueprint;
 use Itqan\Notifications\Notification\DiscussionStickiedBlueprint;
 use Itqan\Notifications\Notification\FilterDiscussionAuthorFromNewPost;
+use Itqan\Notifications\Notification\MessageAlertedBlueprint;
 use Itqan\Notifications\Notification\PostApprovedBlueprint;
 use Itqan\Notifications\Provider\ResolveStringsServiceProvider;
 
@@ -72,12 +75,17 @@ return [
         // Re-registered with the full channel set. This extension declares
         // `flarum/messages` as a dependency, so it always loads after it and
         // this list replaces the upstream `['email']` one.
-        ->type(MessageReceivedBlueprint::class, ['alert', 'email', 'push'])
+        ->type(MessageReceivedBlueprint::class, ['email', 'push'])
+        // Alert-only type for the bell. Upstream's blueprint is not alertable,
+        // so this is the row the DM page's web column actually drives.
+        ->type(MessageAlertedBlueprint::class, ['alert'])
         ->beforeSending(FilterDiscussionAuthorFromNewPost::class),
 
     (new Extend\Event())
         // Reply notifications (unchanged behaviour).
         ->listen(Posted::class, SendReplyNotifications::class)
+        // Bell entries for private messages (email and push stay with upstream).
+        ->listen(DialogMessage\Event\Created::class, SendMessageAlerts::class)
         // Moderation notifications. The approval/sticky/tags event classes are
         // referenced as strings, so minimal installs without those extensions
         // simply never dispatch them.

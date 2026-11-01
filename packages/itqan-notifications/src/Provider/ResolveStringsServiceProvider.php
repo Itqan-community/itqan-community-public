@@ -15,18 +15,15 @@ class ResolveStringsServiceProvider extends AbstractServiceProvider
         // container, so this binding makes them use our subclass.
         $this->container->bind(BaseBuilder::class, NotificationBuilder::class);
 
-        // Direct messages ship with the `email` driver only. The blueprint
-        // registration in `extend.php` asks for alert + push as well, but
-        // blueprint arrays are replaced (not merged) by whichever extension
-        // loads last, so the guarantee is made here instead of relying on
-        // extension ordering: merge the extra channels into the resolved map.
+        // Push is the channel upstream never opted into; the bell is handled by
+        // our own alertable blueprint, so only push is merged here. Blueprint
+        // arrays are replaced (not merged) by whichever extension loads last,
+        // so the guarantee is made at resolve time instead of relying on order.
         $this->container->extend('flarum.notification.blueprints', function (array $blueprints) {
             $blueprint = MessageReceivedBlueprint::class;
 
             if (isset($blueprints[$blueprint])) {
-                $blueprints[$blueprint] = array_values(
-                    array_unique(array_merge($blueprints[$blueprint], ['alert', 'push']))
-                );
+                $blueprints[$blueprint] = array_values(array_unique(array_merge($blueprints[$blueprint], ['push'])));
             }
 
             return $blueprints;
