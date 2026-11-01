@@ -1,0 +1,65 @@
+fof-reactions:
+  forum:
+    modal:
+      load_more: تحميل المزيد
+      others_count: "+ {count, plural, one {# آخر} other {# آخرين}}"
+      remove_all_reaction_type: "إزالة كل تفاعلات {reaction}"
+      remove_user_reaction: إزالة التفاعل
+      confirm_remove_all_reaction_type: "هل أنت متأكد من إزالة كل تفاعلات {reaction} من هذه المشاركة؟ لا يمكن التراجع عن هذا الإجراء."
+      confirm_remove_user_reaction: "هل أنت متأكد من إزالة تفاعل {reaction} الخاص بـ{username} من هذه المشاركة؟ لا يمكن التراجع عن هذا الإجراء."
+    unreact_button_label: إزالة التفاعل
+    reaction_button_label: "تفاعل بـ{reaction}"
+    reacted_with_label: "{count, plural, one {{reaction} (# تفاعل)} other {{reaction} (# تفاعلات)}}"
+
+  admin:
+    permissions:
+      react_posts_label: التفاعل مع المشاركات
+      see_reactions_label: عرض من تفاعل مع المشاركات
+      delete_post_reactions_label: حذف التفاعلات من المشاركات
+    page:
+      cdn:
+        title: CDN
+        help: "نقدّم ملفات التفاعلات افتراضيًا من شبكة CDN الخاصة بـCloudflare. ويمكنك أيضًا تحديد أي عنوان CDN آخر\nحسب الحاجة. وسيُستبدل <code>[codepoint]</code> برمز الرمز التعبيري.\n\nمثلًا، للانتقال إلى Noto Emoji عبر jsdelivr، أدخل <code>https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@v2.040/svg/emoji_u[codepoint].svg</code>.\n\nيجب أن تدعم شبكة CDN لديك Emoji/Unicode {emojibase} أو أحدث. استخدم [twemoji] لاستبدال إصدار Twemoji.\n"
+        label: الرابط
+        default-url: "الافتراضي: {url}"
+      reactions:
+        title: التفاعلات
+        reactions: التفاعلات الحالية
+        Helptext: أدخل اسم (معرّف) الرمز التعبيري أو أيقونة Font Awesome، واختر النوع الذي تريده.
+        help:
+          display: العرض
+          identifier: المعرّف
+        delete_confirmation: هل أنت متأكد من حذف هذا التفاعل؟ لا يمكن التراجع عن هذا الإجراء.
+        delete_reaction_button: حذف التفاعل
+        add_reaction_button: إضافة تفاعل
+        add_reaction_label: إضافة تفاعل جديد
+        header:
+          display: النص المعروض
+          identifier: معرّف الأيقونة/الرمز التعبيري
+          type: النوع
+          enabled: مفعّل
+          action: الإجراء
+          preview: معاينة
+      convert:
+        help: إذا حدّثت الإضافة للتو، فستحتاج تفاعلاتك إلى تحويل. أما إذا كنت قد ثبّتتها للتو، فيمكنك تجاهل هذه الرسالة بأمان.
+        button: تحويل التفاعلات القديمة
+        converting: جارٍ تحويل تفاعلاتك الآن. حدّث موقعك بعد بضع دقائق لترى أن العملية اكتملت. (قد يستغرق التحويل وقتًا حسب إجمالي عدد تفاعلاتك)
+        converted: "تم تحويل {number} من الإعجابات بنجاح"
+      settings:
+        react_own_posts_help: عند التفعيل، ووفقًا للصلاحيات، يمكن للأعضاء التفاعل مع مشاركاتهم في المنتدى. ولمنع ذلك، عطّل هذا الإعداد.
+        react_own_posts_label: يمكن للأعضاء التفاعل مع مشاركاتهم،
+        allow-anonymous: السماح بتفاعلات الزوار المجهولة
+        allow-anonymous-help: عند التفعيل، يمكن للزوار والمستخدمين المجهولين التفاعل مع المشاركات. لاحظ أن التفاعلات المجهولة لن تُربط بحساب عضو وستُجمَع في قائمة التفاعلات.
+        integrations:
+          legend: التكاملات
+          warning: <strong>لا يمكن</strong> تحويل التفاعل نفسه إلى إعجاب <strong>و</strong>تصويت إيجابي في الوقت ذاته
+          gamification:
+            legend: التلعيب
+            upvoteLabel: تحويل التفاعلات إلى تصويتات إيجابية
+            upvoteHelptext: أدخل معرّف التفاعل الذي تريد تحويله تلقائيًا إلى تصويت إيجابي
+            downvoteLabel: تحويل التفاعلات إلى تصويتات سلبية
+            downvoteHelptext: أدخل معرّف التفاعل الذي تريد تحويله تلقائيًا إلى تصويت سلبي
+          likes:
+            legend: الإعجابات
+            Label: تحويل التفاعلات إلى إعجابات
+            Helptext: أدخل معرّف التفاعل الذي تريد تحويله تلقائيًا إلى إعجاب

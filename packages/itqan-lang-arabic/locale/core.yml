@@ -1,0 +1,535 @@
+core:
+  api:
+    invalid_username_message: "يمكن أن يحتوي اسم المستخدم على الحروف والأرقام والشرطات فقط، مع حرف واحد على الأقل."
+
+  ref:
+    dark_hc_mode_label: الوضع الداكن عالي التباين
+    dark_mode_label: الوضع الداكن
+    light_hc_mode_label: الوضع الفاتح عالي التباين
+    light_mode_label: الوضع الفاتح
+    invalid_login_message: بيانات الدخول غير صحيحة.
+    latest: الأحدث
+    newest: الأجدد
+    oldest: الأقدم
+    refresh: تحديث
+    relevance: الأكثر صلة
+    remember_me_label: تذكّرني
+    title_az: العنوان (أ–ي)
+    title_za: العنوان (ي–أ)
+    too_many_login_attempts_message: محاولات دخول فاشلة كثيرة. انتظر بضع دقائق ثم حاول مجددًا.
+    top: الأعلى
+    username_or_email_placeholder: اسم المستخدم أو البريد الإلكتروني
+    search_users: ابحث عن مستخدمين
+
+  lib:
+    assets_updated:
+      message: يتوفّر إصدار أحدث من هذه الصفحة.
+      reload_button: إعادة التحميل
+    connection_restored_message: عاد اتصالك بالإنترنت.
+    data_segment:
+      label: "{label}:"
+    datetime_formats:
+      fullTime: LLLL
+      humanTimeLong: ll
+      humanTimeShort: D MMM
+      scrubber: MMMM YYYY
+      userListJoinDate: LLL
+    error:
+      db_error_message: فشل استعلام قاعدة البيانات. قد يكون السبب تعارضًا بين إضافة وبرنامج تشغيل قاعدة البيانات.
+      extension_runtime_failed_message: واجهت {extension} خطأً أثناء التشغيل. راجع وحدة تحكّم المتصفح لمزيد من التفاصيل.
+      network_message: يبدو أن هناك مشكلة في اتصالك. تحقّق من الشبكة وحاول مجددًا.
+      offline_message: يبدو أنك غير متّصل بالإنترنت. تحقّق من اتصالك وحاول مجددًا.
+    gambits:
+      discussions:
+        author:
+          hint: اسم مستخدم أو قائمة أسماء مفصولة بفواصل
+          key: الكاتب
+        created:
+          hint: 2020-12-31 أو 2020-12-31..2021-09-30
+          key: تاريخ الإنشاء
+        hidden:
+          key: المخفية
+        unread:
+          key: غير المقروءة
+      group_keys:
+        allows: يسمح
+        has: لديه
+        is: هو
+      posts:
+        discussion:
+          hint: معرّف الموضوع
+          key: الموضوع
+      users:
+        email:
+          hint: example@machine.local
+          key: البريد الإلكتروني
+        group:
+          hint: أسماء المجموعات مفردة أو جمعًا
+          key: المجموعة
+    group_selector:
+      placeholder: اختر مجموعة
+    index_sort:
+      az_button: => core.ref.title_az
+      latest_button: => core.ref.latest
+      newest_button: => core.ref.newest
+      oldest_button: => core.ref.oldest
+      relevance_button: => core.ref.relevance
+      top_button: => core.ref.top
+      za_button: => core.ref.title_za
+    input:
+      clear_button: مسح الإدخال
+    multi_select:
+      placeholder: اختر عدة خيارات
+    nav:
+      pin_pane_button: تثبيت قائمة المواضيع
+    notices:
+      bisecting: يجري تشغيل عملية تقسيم الإضافات لتحديد الإضافة المسبّبة للمشكلة.
+      bisecting_continue: متابعة التقسيم
+      maintenance_mode_low: متوقّف للصيانة. لا يمكن الوصول إلا للمشرفين.
+      maintenance_mode_safe: متوقّف للصيانة مع الوضع الآمن. لا يمكن الوصول إلا للمشرفين ولا تُحمّل أي إضافات.
+    overflowing_list:
+      toggle_accessible_label: عناصر إضافية
+    pagination:
+      back_button: الصفحة السابقة
+      first_button: الانتقال إلى الصفحة الأولى
+      go_to_page_textbox_a11y_label: الانتقال مباشرة إلى رقم الصفحة
+      last_button: الانتقال إلى الصفحة الأخيرة
+      next_button: الصفحة التالية
+      page_counter: صفحة {current} من {total}
+    search:
+      gambit_minus_button_a11y_label: إضافة مرشّح استبعاد
+      gambit_plus_button_a11y_label: إضافة مرشّح تضمين
+      no_results_text: يبدو أنه لا توجد نتائج هنا.
+      no_search_text: لم تبحث عن أي شيء بعد.
+      options_heading: خيارات البحث
+      placeholder: ابحث...
+      preview_heading: معاينة البحث
+      search_active_button_accessible_label: "تغيير البحث: {query}"
+      search_clear_button_accessible_label: مسح عبارة البحث
+      title: بحث
+    search_source:
+      discussions:
+        all_button: 'ابحث في كل المواضيع عن "{query}"'
+        heading: => core.ref.discussions
+      posts:
+        all_button: 'ابحث في كل المشاركات عن "{query}"'
+        heading: => core.ref.posts
+      users:
+        heading: => core.ref.users
+    user_selection_modal:
+      empty_results: لم يُعثر على مستخدمين مطابقين لبحثك.
+      max_items_to_select: "{count, plural, one {اختر مستخدمًا واحدًا} two {اختر مستخدمين} few {اختر حتى # مستخدمين} many {اختر حتى # مستخدمًا} other {اختر حتى # مستخدم}}"
+      search_placeholder: => core.ref.search_users
+      submit_button: => core.ref.okay
+      title: اختر المستخدمين المعنيين
+
+  forum:
+    discussion_list:
+      skip_discussion_list_pane: تجاوز لوحة قائمة المواضيع
+    header:
+      locale_dropdown_accessible_label: تغيير لغة المجتمع
+      theme_switcher_accessible_label: تغيير المظهر
+    index:
+      refresh_tooltip: => core.ref.refresh
+      skip_to_main_content: تجاوز إلى المحتوى الرئيسي
+    index_sort:
+      az_button: => core.ref.title_az
+      newest_button: => core.ref.newest
+      oldest_button: => core.ref.oldest
+      popular_button: الأكثر شعبية
+      relevance_button: => core.ref.relevance
+      unpopular_button: الأقل شعبية
+      za_button: => core.ref.title_za
+    log_in:
+      invalid_login_message: => core.ref.invalid_login_message
+      remember_me_label: => core.ref.remember_me_label
+      too_many_attempts_message: => core.ref.too_many_login_attempts_message
+      username_or_email_placeholder: => core.ref.username_or_email_placeholder
+    notifications:
+      delete_all_confirm: هل تريد حذف كل الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.
+    post_list:
+      empty_text: يبدو أنه لا توجد مشاركات هنا.
+      in_discussion_text: في {discussion}
+      load_more_button: => core.ref.load_more
+    posts:
+      meta_title_text: نتائج البحث في المشاركات
+      refresh_tooltip: => core.ref.refresh
+    posts_sort:
+      newest_button: => core.ref.newest
+      oldest_button: => core.ref.oldest
+      relevance_button: => core.ref.relevance
+    security:
+      browser_on_operating_system: "{browser} على {os}"
+      token_item_title: "{title} - {token}"
+      token_title_placeholder: /
+    settings:
+      color_scheme_heading: نظام الألوان
+      color_schemes:
+        auto_mode_label: تفضيل النظام
+        dark_hc_mode_label: => core.ref.dark_hc_mode_label
+        dark_mode_label: => core.ref.dark_mode_label
+        light_hc_mode_label: => core.ref.light_hc_mode_label
+        light_mode_label: => core.ref.light_mode_label
+      device_heading: الجهاز
+      haptic_feedback_help: متاح فقط على الأجهزة المحمولة المدعومة
+      haptic_feedback_label: تفعيل الاهتزاز عند اللمس
+      reset_notifications_button: استعادة الإعدادات الافتراضية
+
+  views:
+    error:
+      maintenance_mode_link: دخول المشرف
+      maintenance_mode_message: هذا المنتدى متوقّف حاليًا للصيانة. يرجى العودة لاحقًا.
+      maintenance_mode_title: صيانة
+      method_not_allowed: هذه الصفحة لا تدعم طريقة الطلب هذه.
+    layout:
+      skip_to_content: تجاوز إلى المحتوى
+    log_in:
+      invalid_login_message: => core.ref.invalid_login_message
+      password_placeholder: => core.ref.password
+      remember_me_label: => core.ref.remember_me_label
+      submit_button: => core.ref.log_in
+      title: => core.ref.log_in
+      too_many_attempts_message: => core.ref.too_many_login_attempts_message
+      username_or_email_placeholder: => core.ref.username_or_email_placeholder
+    unsubscribe_email:
+      confirm_button: تأكيد
+      confirm_message: طلبت إلغاء الاشتراك في إشعارات "{type}" من {forumTitle}.
+      immediate_helptext: سيُلغى اشتراكك فورًا بعد التأكيد.
+      invalid_message: رابط إلغاء الاشتراك غير صالح أو استُخدم من قبل. لأي تغيير في إشعاراتك البريدية من {forumTitle}، [راجع إعداداتك]({settingsLink}).
+      return_to_forum: العودة إلى {forumTitle}
+      success_message: أُلغي اشتراكك في إشعار "{type}" من {forumTitle}. إن رغبت في استلامها مجددًا، [حدّث إعداداتك]({settingsLink}).
+      title: تأكيد إلغاء الاشتراك
+
+  email:
+    abandoned_extensions:
+      body_intro: "الإضافات المثبّتة التالية صُنّفت كمهجورة:"
+      body_outro: راجع هذه الإضافات وفكّر في الانتقال إلى بدائل متاحة.
+      line_no_replacement: "{package} (لا يوجد بديل متاح)"
+      line_with_replacement: "{package} (البديل المقترح: {replacement})"
+      subject: "إجراء مطلوب: رُصدت إضافات مهجورة"
+    activate_account:
+      body: |
+        قام شخص ما (نأمل أن تكون أنت!) بالتسجيل في {forum} بهذا البريد الإلكتروني.
+
+        إن كنت أنت، فاضغط على الرابط التالي وسيُفعَّل حسابك:
+        {url}
+
+        وإن لم تكن أنت من سجّل، فتجاهل هذه الرسالة.
+    confirm_email:
+      body: |
+        قام شخص ما (نأمل أن تكون أنت!) بتغيير بريده الإلكتروني في {forum} إلى هذا العنوان.
+
+        إن كنت أنت، فاضغط على الرابط التالي ليُؤكَّد بريدك الجديد:
+        {url}
+
+        وإن لم تكن أنت، فتجاهل هذه الرسالة.
+    greeting: مرحبًا {displayName}،
+    informational:
+      default_title: معلومات
+      footer: أُرسل هذا البريد إلى {userEmail} كخدمة معلوماتية متعلقة بحسابك على [{forumTitle}]({forumUrl}).
+      footer_plain: أُرسل هذا البريد إلى {userEmail} كخدمة معلوماتية متعلقة بحسابك على {forumTitle}.
+    notification:
+      default_title: إشعار
+      footer:
+        main_text: أُرسل هذا البريد إلى {email} لأنك مشترك في إشعارات "{type}" على [{forumTitle}]({forumUrl}).
+        main_text_plain: أُرسل هذا البريد إلى {email} لأنك مشترك في إشعارات "{type}" على {forumTitle}.
+        settings_text: يمكنك إدارة إعدادات الإشعارات [من هنا]({settingsLink}).
+        settings_text_plain: "يمكنك إدارة إعدادات الإشعارات من هنا: {settingsLink}"
+        unsubscribe_text: لإيقاف استلام هذا النوع من الإشعارات، [ألغِ الاشتراك من هنا]({unsubscribeLink}).
+        unsubscribe_text_plain: "لإيقاف استلام هذا النوع من الإشعارات، ألغِ الاشتراك من هنا: {unsubscribeLink}"
+    reset_password:
+      body: |
+        طلب شخص ما (نأمل أن تكون أنت!) إعادة تعيين كلمة المرور لحسابك على {forum}.
+
+        إن كنت أنت، فاضغط على الرابط التالي لإعادة تعيين كلمة المرور:
+        {url}
+
+        وإن لم ترغب في تغيير كلمة المرور، فتجاهل هذه الرسالة ولن يحدث شيء.
+    send_test:
+      body: هذه رسالة اختبار للتأكد من أن إعدادات البريد في فلارم تعمل بشكل صحيح.
+    signoff: فريق {forumTitle}
+
+  admin:
+    advanced:
+      description: إعدادات متقدّمة لمنتداك.
+      fontawesome:
+        cdn_url_help: الرابط الكامل لملف CSS الخاص بـ FontAwesome على شبكة توصيل المحتوى
+        cdn_url_label: رابط CDN
+        config_override:
+          help: إعدادات FontAwesome محدّدة حاليًا في ملف config.php ولا يمكن تغييرها من هنا.
+          label: تجاوز الإعدادات
+        forced_style_help: 'إجبار كل الأيقونات على نمط FontAwesome معيّن، مثل "fa-duotone fa-light" أو "fa-regular". يستبدل النمط المعلن في النواة والإضافات (لا تتغيّر أيقونات العلامات التجارية). يجب أن يدعم مصدر الأيقونات النمط المطلوب: الأيقونات المرفقة هي FontAwesome Free التي تغطّي بضع مئات من الأيقونات خارج النمط الصلب، لذا قد تظهر معظم الأيقونات فارغة عند فرض نمط آخر. تتوفّر كل الأنماط عبر CDN أو Kit من FontAwesome Pro. اتركه فارغًا للتعطيل.'
+        forced_style_label: نمط الأيقونات المفروض
+        kit_url_help: رابط سكربت FontAwesome Kit (من kit.fontawesome.com)
+        kit_url_label: رابط Kit
+        preview:
+          button: معاينة الأيقونات
+          fa5_fa6_label: أسماء FA5/FA6 البديلة
+          fa7_label: أصناف FA7
+          help: تحقّق من إعداد FontAwesome. الأيقونة الظاهرة تعني توفّر هذا المستوى، والمربّع المكسور يعني أنه غير محمّل.
+          label: معاينة الأيقونات
+          pro_label: لنسخة Pro فقط
+        section_label: أيقونات FontAwesome
+        source_cdn: CDN
+        source_help: اختر كيفية تحميل أيقونات FontAwesome. «محلي» يستخدم الخطوط المرفقة، و«CDN» يحمّلها من شبكة توصيل، و«Kit» يستخدم FontAwesome Kits مع أيقونات مخصّصة.
+        source_kit: FontAwesome Kit
+        source_label: مصدر الأيقونات
+        source_local: محلي (مرفق)
+      maintenance:
+        bisect:
+          begin_button_text: بدء التقسيم
+          continue_button_text: متابعة التقسيم
+          help: يساعد في تحديد الإضافة المسبّبة لمشكلة لاحظتها. يضع المنتدى تلقائيًا في وضع الصيانة (المنخفض) حتى انتهاء العملية.
+          label: تقسيم الإضافات
+        bisect_modal:
+          description: يضع هذا المنتدى في وضع الصيانة (المنخفض) حتى انتهاء العملية. في كل خطوة تُعطَّل بعض الإضافات حتى نجد المسبّبة للمشكلة، فلا تتفاجأ بغياب ميزات أو اختلاف التصميم. أبقِ هذه الصفحة مفتوحة، وحاول إعادة إنتاج المشكلة بعد كل خطوة في صفحة منفصلة.
+          end_button: إغلاق والانتقال إلى صفحة الإضافات
+          issue_question: هل ما زالت المشكلة تحدث؟
+          issue_question_help: حاول إعادة إنتاج المشكلة في صفحة منفصلة وأجب بناءً على النتيجة.
+          no_button: لا
+          result_description: 'لم يعد المنتدى في وضع الصيانة، وانتهى تقسيم الإضافات. بناءً على إجاباتك في كل خطوة، السبب هو الإضافة التالية:'
+          start_button: بدء التقسيم
+          steps_left: "الخطوات المتبقية: {steps}"
+          stop_button: إيقاف التقسيم
+          title: تقسيم الإضافات
+          total_steps: "ستستغرق العملية نحو {steps} خطوات."
+          yes_button: نعم
+        config_override:
+          help: يمكنك تغيير هذه الإعدادات هنا، لكنها لن تسري حتى تضبط <code>offline</code> على <code>0</code> في ملف <code>config.php</code>.
+          label: ملف <code>config.php</code> يتجاوز هذه الإعدادات.
+        help: ضع منتداك في وضع الصيانة لمنع المستخدمين من الوصول إليه.
+        options:
+          high: وضع صيانة عالٍ. لا يمكن لأحد الوصول إلى المنتدى (يُفعّل عبر config.php فقط).
+          low: وضع صيانة منخفض. يمكن للمشرفين الوصول إلى المنتدى.
+          none: بلا صيانة.
+          safe: الوضع الآمن. لا تُحمّل أي إضافات ولا يصل إلا المشرفون.
+        safe_mode_extensions: الإضافات المسموح بتحميلها في الوضع الآمن
+        safe_mode_extensions_override_help: هذا الإعداد متجاوز بواسطة المفتاح <code>safe_mode_extensions</code> في ملف <code>config.php</code>. (<b>{extensions}</b>)
+        section_label: الصيانة
+      pgsql:
+        search_configuration: إعداد البحث المستخدم
+      queue:
+        backoff_help: مدة الانتظار قبل إعادة محاولة مهمة فاشلة. الافتراضي 0 ثانية.
+        backoff_label: التراجع (ثوانٍ)
+        custom_driver: يستخدم منتداك برنامج تشغيل الطابور {driver} الموفّر من إضافة.
+        memory_help: أقصى ذاكرة يمكن لعامل الطابور استخدامها قبل إعادة التشغيل. الافتراضي 128 ميجابايت.
+        memory_label: حدّ الذاكرة (ميجابايت)
+        pause_all_label: إيقاف كل الطوابير مؤقتًا
+        pause_help: أثناء الإيقاف يتوقف العاملون عن سحب مهام جديدة من الطوابير المتأثرة، وتتراكم المهام حتى يُستأنف المعالجة. المهام الجارية لا تتأثر.
+        pause_label: إيقاف معالجة الطابور مؤقتًا
+        pause_queue_label: إيقاف طابور {queue} مؤقتًا
+        rest_help: مدة الانتظار بين معالجة المهام. الافتراضي 0 ثانية.
+        rest_label: مدة الراحة (ثوانٍ)
+        retries_help: أقصى عدد لمحاولات تنفيذ المهمة قبل اعتبارها فاشلة. الافتراضي 1.
+        retries_label: محاولات المهمة
+        section_label: الطابور
+        sync_help: لأداء وتجربة أفضل، فكّر في استخدام برنامج تشغيل طابور قاعدة البيانات. اعرف المزيد في التوثيق.
+        sync_info: يستخدم منتداك برنامج الطابور المتزامن، وتُعالج المهام فورًا داخل العملية الرئيسية.
+        timeout_help: أقصى مدة يمكن أن تعمل فيها المهمة قبل انتهاء المهلة. الافتراضي 60 ثانية.
+        timeout_label: مهلة المهمة (ثوانٍ)
+      search:
+        cjk_mode_help: فعّله إذا كان منتداك بالصينية أو اليابانية أو الكورية أساسًا. بحث قاعدة البيانات الكلمي لا يطابق أجزاء النص CJK، لذا يتحوّل هذا الخيار إلى مطابقة جزئية، لكنه أبطأ في المنتديات الكبيرة.
+        cjk_mode_label: تحسين البحث للغات CJK
+        driver_heading: "برنامج البحث: {model}"
+        driver_options:
+          default: بحث قاعدة البيانات الافتراضي
+        driver_text: اختر برنامج التشغيل المستخدم للبحث في هذا النموذج.
+        no_other_drivers: لا تتوفّر برامج بحث أخرى بعد. ثبّت إضافة برنامج بحث لتتمكّن من ضبطه.
+        section_label: برامج البحث
+      title: متقدّم
+    announcements:
+      about: آخر الأخبار والإعلانات من مجتمع Flarum الرسمي على discuss.flarum.org.
+      comments_label: "{count, plural, zero {بلا تعليقات} one {تعليق واحد} two {تعليقان} few {# تعليقات} many {# تعليقًا} other {# تعليق}}"
+      description: آخر الأخبار والإعلانات من فريق Flarum.
+      empty: لا توجد إعلانات.
+      hide: إخفاء الإعلانات
+      load_error: تعذّر تحميل الإعلانات. حاول لاحقًا.
+      read_more: اقرأ المزيد
+      refresh: تحديث الإعلانات
+      retry: إعادة المحاولة
+      show: إظهار الإعلانات
+      title: الإعلانات
+      view_all: عرض الكل على discuss.flarum.org
+    appearance:
+      allow_user_color_scheme_label: السماح للمستخدمين باختيار نظام الألوان الخاص بهم
+      color_scheme_label: نظام الألوان (الافتراضي)
+      color_schemes:
+        auto_mode_label: نظام المستخدم أو التفضيل المضبوط
+        dark_hc_mode_label: => core.ref.dark_hc_mode_label
+        dark_mode_label: => core.ref.dark_mode_label
+        light_hc_mode_label: => core.ref.light_hc_mode_label
+        light_mode_label: => core.ref.light_mode_label
+      email_logo_heading: شعار البريد الإلكتروني
+      email_logo_text: ارفع صورة تظهر أعلى الرسائل. تُحفظ بصيغة تعرضها كل عملاء البريد. إن لم ترفع صورة، تُستخدم نسخة من شعارك.
+      logo_dark_mode_heading: شعار الوضع الداكن
+      logo_dark_mode_text: ارفع شعارًا بديلًا يظهر عند تفعيل الوضع الداكن.
+      show_theme_selector_help: يتيح للمستخدمين التبديل بين أنظمة الألوان المتاحة من زر في الترويسة.
+      show_theme_selector_label: إظهار مبدّل المظهر
+    basics:
+      abandoned_extensions_heading: الإضافات المهجورة
+      abandoned_extensions_notify_admins_label: إشعار المشرفين عند رصد إضافة مهجورة أثناء الفحص الأسبوعي
+      abandoned_extensions_sync_button: فحص الآن
+      abandoned_extensions_sync_error: تعذّر جلب قائمة الإضافات المهجورة. حاول لاحقًا.
+      abandoned_extensions_sync_success: "حُدّثت قائمة الإضافات المهجورة. عُثر على {count} إضافة مثبّتة مطابقة."
+      abandoned_extensions_text: يحتفظ Flarum بـ<a>قائمة مجتمعية للإضافات المهجورة</a>. عند ظهور إضافة مثبّتة في القائمة تُوسم في لوحة الإدارة.
+      avatar_driver_heading: صور الأعضاء
+      avatar_driver_options:
+        default: افتراضي
+      avatar_driver_text: اختر برنامجًا يُستخدم لصور الأعضاء عند غياب صورة مرفوعة. افتراضيًا لا تظهر صورة إن لم يرفع العضو واحدة.
+      display_name_driver_options:
+        username: اسم المستخدم
+      slug_driver_heading: "برنامج الروابط: {model}"
+      slug_driver_options:
+        discussions:
+          default: المعرّف مع الاسم اللطيف
+          utf8: المعرّف مع اسم UTF-8
+        users:
+          default: اسم المستخدم
+          id: المعرّف
+          id_with_display_name: المعرّف مع اسم العرض
+    create_user:
+      email_placeholder: => core.ref.email
+    dashboard:
+      clear_cache_modal:
+        chunks: "أُعيد بناء الأجزاء المنفصلة لـ {frontend} ({count} تغيّر)"
+        cleared: "تم مسح {name}"
+        cleared_files: "تم مسح {name} ({count} ملف)"
+        empty: "{bundle} لا يحتوي على ما يُترجم"
+        failed: "تعذّرت إعادة بناء {step}: {message}"
+        rebuilt: "أُعيد بناء {bundle}"
+        reload_button: إعادة التحميل
+        rewritten: "أُعيدت كتابة {bundle}"
+        title: مسح الذاكرة المؤقتة
+        took: "{time} م.ث"
+        unchanged: "{bundle} كان محدّثًا بالفعل"
+        working: إعادة بناء الأصول المترجمة. قد يستغرق هذا وقتًا في المنتديات الكبيرة.
+      info_button: معلومات النظام
+      info_modal:
+        copy_button: نسخ إلى الحافظة
+        copy_error: تعذّر النسخ إلى الحافظة
+        copy_success: نُسخت معلومات النظام إلى الحافظة
+        title: معلومات النظام
+      queue_paused_all_warning: كل معالجة الطابور متوقّفة مؤقتًا. ستتراكم المهام حتى الاستئناف.
+      queue_paused_manage: إدارة
+      queue_paused_warning: "معالجة الطابور متوقّفة مؤقتًا (الطابور: {queues}). ستتراكم المهام حتى الاستئناف."
+      toggle_advanced_page_button: إظهار الصفحة المتقدّمة
+    database-driver-mismatch-warning:
+      detail: ملف <code>config.php</code> مضبوط على برنامج قاعدة بيانات <code>{configured}</code>، لكن Flarum اكتشف أن خادم قاعدة البيانات فعليًا <code>{actual}</code>.
+      label: عدم تطابق برنامج قاعدة البيانات
+    database-version-warning:
+      below-recommended-detail: "خادم {server} لديك يعمل بالإصدار <code>{version}</code>. هذا مدعوم، لكن Flarum يوصي بـ {server} <code>{recommended}</code> أو أحدث لأفضل أداء والبقاء على إصدار مدعوم. راجع <link>توثيق Flarum</link>."
+      below-recommended-label: إصدار قاعدة البيانات قديم
+    edit_group:
+      icon_label: => core.ref.icon
+      icon_text: => core.ref.icon_text
+    email:
+      driver_heading: اختر برنامج التشغيل
+      driver_label: برنامج التشغيل
+      format:
+        html_option: HTML
+        multipart_option: متعدّد الأجزاء (موصى به)
+        plain_option: نص عادي
+      format_heading: صيغة البريد الصادر
+      format_help: اختر صيغة الرسائل الصادرة. الخيار الموصى به هو <code>multipart</code> ليتيح لعميل بريد المستخدم عرض الصيغة الأنسب.
+      mail_encryption_none_help: بلا تشفير. غير موصى به في الإنتاج.
+      mail_encryption_ssl_help: الاتصال مشفّر من البداية (TLS ضمني). يُستخدم عادة مع المنفذ 465.
+      mail_encryption_tls_help: يبدأ الاتصال غير مشفّر ثم يترقّى إلى TLS (STARTTLS). يُستخدم عادة مع المنفذ 587 أو 25.
+      mail_postmark_message_stream_label: مسار الرسائل
+      mail_postmark_token_label: رمز الخادم
+      mail_smtp_verify_peer_help: التحقّق من شهادة SSL للخادم عند استخدام تشفير TLS أو SSL. عطّله فقط إذا كان خادم البريد يستخدم شهادة موقّعة ذاتيًا.
+      mail_smtp_verify_peer_label: التحقّق من شهادة SSL
+      mailgun_heading: إعدادات Mailgun
+      postmark_description: إرسال البريد عبر واجهة Postmark. يمكنك تحديد مسار رسائل لاستخدام مسار غير الافتراضي.
+      postmark_heading: إعدادات Postmark
+      smtp_description: اضبط اتصال SMTP. الإعدادات الشائعة — المنفذ 587 مع TLS، أو المنفذ 465 مع SSL.
+    extension:
+      abandoned_no_replacement: هذه الإضافة لم تعد تُصان من مؤلّفها وقد لا تتلقّى تحديثات.
+      abandoned_with_replacement: استُبدلت هذه الإضافة بـ {replacement}. فكّر في الانتقال إلى الحزمة البديلة.
+      database_driver_mismatch: هذه الإضافة لا تدعم برنامج قاعدة البيانات المضبوط.
+      deprecated: مهجورة
+      replaced: مستبدلة
+      reset_settings:
+        button: استعادة الإعدادات
+        cancel_button: إلغاء
+        confirm_button: استعادة
+        title: استعادة الإعدادات
+        title_extension: "استعادة إعدادات {extensionTitle}"
+        warning: لا يمكن التراجع عن هذا الإجراء. ستُحذف الإعدادات أدناه نهائيًا من قاعدة البيانات وتعود إلى قيمها الافتراضية. لا تتأثّر بيانات الإضافة.
+      safe_mode_warning: الوضع الآمن مفعّل حاليًا. لا تُحمّل الإضافات ولذلك يتعذّر الوصول إلى إعداداتها.
+    extensions-health-widget:
+      abandoned_no_replacement: لا يوجد بديل متاح
+      abandoned_with_replacement: مستبدلة بـ {replacement}
+      all_healthy: كل الإضافات سليمة.
+      section_abandoned_empty: لا مشكلات.
+      section_abandoned_heading: تحتاج انتباهًا
+      section_abandoned_help: هذه الإضافات لم تعد تُصان أو قد تواجه مشكلات توافق. فكّر في تحديثها أو استبدالها أو إزالتها.
+      section_disabled_empty: كل الإضافات مفعّلة.
+      section_disabled_heading: معطّلة
+      section_disabled_help: هذه الإضافات مثبّتة لكنها غير مفعّلة حاليًا. فعّلها من صفحة إعداداتها أو أزلها إن لم تكن بحاجتها.
+      section_suggested_empty: لا اقتراحات.
+      section_suggested_heading: مقترحة
+      section_suggested_help: يمكن لإضافات Flarum إضافة ميزات اختيارية عبر تحديد إضافات أو حزم أخرى، وقد تضيف ميزات أو تكاملات إضافية.
+      suggested_by: مقترحة من {extension}
+      title: سلامة الإضافات
+    failed_jobs:
+      delete: حذف
+      details: التفاصيل
+      meta: "الطابور {queue} · فشلت {time}"
+      none: لا مهام فاشلة.
+      retry: إعادة المحاولة
+      retry_all: إعادة محاولة الكل
+      title: المهام الفاشلة
+    header:
+      search_placeholder: ابحث...
+      search_role_label: بحث
+    models:
+      discussions: => core.ref.discussions
+      posts: => core.ref.posts
+      users: => core.ref.users
+    nav:
+      advanced_button: => core.admin.advanced.title
+      advanced_title: => core.admin.advanced.description
+      categories:
+        analytics: التحليلات
+        forum-widget: ودجات المنتدى
+        infrastructure: البنية التحتية
+    permissions:
+      allow_hide_own_posts_label: السماح بحذف مشاركاته
+      create_access_token_label: إنشاء رمز وصول
+      edit_own_avatar_label: تعديل صورته
+      moderate_access_tokens_label: إدارة رموز الوصول
+      remove_scope_confirmation: "هل تريد إزالة نطاق {scope}؟"
+      remove_scope_label: "إزالة نطاق {scope}"
+    permissions_controls:
+      allow_never_button: => core.ref.never
+      members_button: => core.group.members
+    queue_widget:
+      failed: فاشلة
+      pending: في الانتظار
+      refresh: تحديث
+      reserved: قيد التنفيذ
+      title: الطابور
+    search_source:
+      general:
+        heading: عام
+    settings:
+      select_dropdown_custom_label: مخصّص
+    upload_image:
+      remove_button: => core.ref.remove
+    users:
+      create_user_button: عضو جديد
+      grid:
+        columns:
+          display_name:
+            title: اسم العرض
+          email:
+            title: => core.ref.email
+          user_actions:
+            edit_user:
+              button: => core.ref.edit
+              tooltip: "تعديل {username}"
+            title: الإجراءات
+          username:
+            title: => core.ref.username
+      search_placeholder: => core.ref.search_users
+      title: => core.ref.users

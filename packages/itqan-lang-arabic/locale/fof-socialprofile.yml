@@ -1,0 +1,9 @@
+fof-socialprofile:
+  admin:
+    permissions:
+      view: عرض الملف الاجتماعي
+      editOwn: تعديل ملفي الاجتماعي
+      editAny: تعديل أي ملف اجتماعي
+    settings:
+      allow_external_favicons_label: السماح بأيقونات المواقع الخارجية (تستخدم واجهة أيقونات مزوّد خارجي)
+      favicon_provider_label: مزوّد الأيقونات الخارجي

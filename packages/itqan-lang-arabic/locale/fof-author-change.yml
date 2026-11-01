@@ -1,0 +1,24 @@
+fof-author-change:
+  forum:
+    controls:
+      edit: تعديل الكاتب والتاريخ
+    modal:
+      title-post: تعديل كاتب المشاركة وتاريخها
+      title-discussion: تعديل كاتب النقاش وتاريخه
+      user: الكاتب
+      created_at: وقت الإنشاء
+      edited_at: وقت التعديل
+      sync-with-discussion: المزامنة مع النقاش
+      sync-with-post: المزامنة مع المشاركة الأولى
+      sync-impossible: تعذّر العثور على المشاركة الأولى. جرّب التمرير إلى بداية النقاش.
+      submit: حفظ
+      cancel: إلغاء
+    search:
+      placeholder: ابحث عن أعضاء
+      type-more: اكتب 3 أحرف للبحث في قاعدة البيانات
+      no-results: لا نتائج
+
+  admin:
+    permissions:
+      edit-user: تحديث كاتب النقاش والمشاركة
+      edit-date: تحديث تاريخ النقاش والمشاركة

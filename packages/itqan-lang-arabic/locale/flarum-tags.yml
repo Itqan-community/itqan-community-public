@@ -1,0 +1,31 @@
+flarum-tags:
+  admin:
+    basics:
+      slug_driver_options:
+        default: افتراضي
+        id_with_slug: المعرّف مع المسار النصي
+
+    edit_tag:
+      default_sort_label: الترتيب الافتراضي
+      default_sort_none: استخدام الافتراضي في المنتدى
+      default_sort_text: كيفية ترتيب نقاشات هذا الوسم عندما يصل أحدهم دون اختيار ترتيب بنفسه.
+      default_sort_unavailable: '{sort} (لم يعد متاحًا)'
+
+    settings:
+      button_text: => flarum-tags.ref.choose_tags
+
+    tags:
+      edit_tag_label: تعديل الوسم {tag}
+
+  forum:
+    deck:
+      column_label: الوسم
+      tag_label: الوسم
+      tag_placeholder: ابحث عن وسم
+
+  lib:
+    gambits:
+      discussions:
+        tag:
+          key: الوسم
+          hint: اسم وسم، أو قائمة بأسماء وسوم مفصولة بفواصل، أو «untagged»

@@ -84,11 +84,11 @@ flarum-messages:
       notify_message_received_label: يرسل لي أحدهم رسالة
 
     notifications:
-      message_received_text: "إشعار «رسالة مستلمة» من {user}"
+      message_received_text: "أرسل لك {user} رسالة"
 
   email:
     message_received:
-      subject: "أرسل لك {user_display_name} رسالة"
+      subject: "رسالة جديدة من {user_display_name}"
       plain:
         body: |
           أرسل لك {user_display_name} رسالة جديدة.

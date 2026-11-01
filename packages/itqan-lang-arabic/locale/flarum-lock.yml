@@ -1,0 +1,6 @@
+flarum-lock:
+  lib:
+    gambits:
+      discussions:
+        locked:
+          key: مغلق

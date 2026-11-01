@@ -1,0 +1,110 @@
+fof-linguist:
+  admin:
+    permissions:
+      view_string_keys: عرض مفاتيح نصوص الترجمة
+
+    tabs:
+      strings: الترجمات
+      coverage: التغطية
+      export: تصدير
+      import: استيراد
+
+    buttons:
+      apply: تطبيق
+      reset: استعادة الأصل
+      copy-original: نسخ النص الأصلي
+      load-more: تحميل المزيد
+      delete-redundant: حذف الترجمات الزائدة
+      delete-redundant-confirm: "سيؤدي هذا إلى حذف {count} ترجمة تتطابق قيمتها الأصلية مع قيمتها المخصصة. قد يفيد ذلك في التنظيف بعد تحديث حزمة اللغة.\n"
+      delete-all: حذف جميع الترجمات
+      delete-all-confirm: "سيؤدي هذا إلى حذف جميع ترجماتك المخصصة وعددها {count}. تأكد من تصدير أو نسخ احتياطي لكل ما تريد الاحتفاظ به.\n"
+
+    locales:
+      all: الكل
+
+    placeholder:
+      not-translated: غير مترجم
+      all-locales: النص المعرّف هنا يظهر في جميع اللغات
+      hint: 'القيمة الأصلية:'
+
+    filters:
+      search: ابحث في نصوص الترجمة...
+      with-own-translations: ترجماتي
+      missing: العثور على الترجمات الناقصة
+      missing-middle-label: ترجمات في
+      for-extension: لإضافة
+      frontend: للواجهة
+      frontend-all-except-admin: الكل ما عدا الإدارة
+      mass-edit: تعديل جماعي
+      results: 'عرض {shown} من {total} ترجمة مطابقة'
+      negation-options:
+        with: مع
+        without: بدون
+      type-options:
+        any: الأصلية أو المخصصة
+        original: الأصلية
+        own: المخصصة
+      operation-options:
+        or: أي من
+        and: كل من
+
+    clear-cache:
+      text: "لم تُطبّق الترجمات الجديدة بعد. ملاحظة: قد يؤدي مسح ذاكرة التخزين المؤقت إلى إبطاء منتداك لحظيًا.\n"
+      button: مسح ذاكرة التخزين المؤقت الآن
+
+    coverage:
+      column-options:
+        locale: حسب اللغة
+        namespace: حسب الواجهة
+      total-options:
+        percent: النسبة
+        count: العدد
+      columns:
+        namespace: مساحة الاسم
+        total: الإجمالي
+        all-except-admin: المنتدى والواجهات الأخرى
+        all-frontends: عرض جميع الواجهات
+      count:
+        percent: '{percent} %'
+        total: '{translated} / {total}'
+        details: '{total} إجمالي / {original} أصلي / {custom} مخصص'
+      all-namespaces: الكل
+      apply-missing-filter: عرض الترجمات الناقصة المطابقة
+
+    export:
+      title: تصدير
+      locale: اللغة
+      locale-all: اللغة الزائفة «All»
+      namespace: مساحة الاسم
+      namespace-all: الكل
+      include-originals: تضمين الترجمات الأصلية
+      include-all: تضمين الترجمات المعرّفة للغات «All»
+      output: الناتج
+      output-loading: جارٍ تحميل الناتج...
+      output-empty: الناتج فارغ
+      download: تنزيل
+
+    import:
+      title: استيراد
+      input: المدخل
+      input-placeholder: اسحب وأفلت ملف YAML هنا أو الصقه
+      locale: اللغة
+      locale-all: اللغة الزائفة «All»
+      override-existing: تجاوز ترجماتي المخصصة الحالية
+      results: "اكتمل الاستيراد. استُوردت {imported} نصًا، وتُخطّي {identical} نصًا مطابقًا و{empty} نصًا فارغًا. ستُحدّث الصفحة الآن لعرض الترجمات الجديدة.\n"
+      results-with-ignore: "اكتمل الاستيراد. استُوردت {imported} نصًا، وتُجوهلت {ignored} نصًا موجودًا، وتُخطّي {identical} نصًا مطابقًا و{empty} نصًا فارغًا. ستُحدّث الصفحة الآن لعرض الترجمات الجديدة.\n"
+
+    known-namespace:
+      core: نواة Flarum
+      validation: أخطاء التحقق
+
+    known-frontend:
+      forum: المنتدى
+      admin: الإدارة
+      lib: Lib (يُستخدم في المنتدى والإدارة معًا)
+      ref: Ref (يُعاد استخدامه في مفاتيح أخرى)
+      api: API
+
+  api:
+    invalid_icu_syntax: الترجمة ليست بصيغة رسائل ICU صالحة، مثلًا لأن قوسًا غير مغلق.
+    cannot_change_key_or_locale: لا يمكن تغيير مفتاح ترجمة محفوظة أو لغتها.

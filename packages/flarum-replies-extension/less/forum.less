@@ -87,7 +87,6 @@
     padding-inline: var(--gutter) 0;
     border-radius: 4px;
     background: transparent;
-    transition: background 0.15s ease;
   }
 
   // Core renders a 64px avatar, absolutely positioned 85px left of the content
@@ -119,9 +118,8 @@
     }
   }
 
-  &:hover > .NestedRepliesPost-container {
-    background: transparent;
-  }
+  // Post cards deliberately have no hover background. See itqan-theme
+  // `compatibility.less` for the dark-scheme counterpart.
 
   // Briefly highlight the reply the reader just posted so they can spot it.
   // The tint is a pseudo-element that starts after the thread gutter, so it

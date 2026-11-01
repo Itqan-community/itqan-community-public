@@ -1,0 +1,62 @@
+acpl-mobile-tab:
+  admin:
+    available_items: العناصر المتاحة
+    available_items_help: اسحب العناصر من هذه القائمة إلى أي نسخة لإضافتها إلى تبويب الجوال.
+    create_new_item_button: إنشاء عنصر
+    edit_item:
+      modal_title: تعديل العنصر
+      help: تحتاج إلى أكثر من رابط؟ راجع <a>وثائق المطوّرين</a> للعناصر المخصّصة وسلوكها.
+      label: التسمية
+      label_placeholder: عنصري المخصّص
+      path: المسار
+      url: الرابط
+      url_help:
+        internal: "الجزء من العنوان بعد {baseUrl}، ويبدأ بشرطة مائلة."
+        external: العنوان الكامل، بما في ذلك <code>https://</code>.
+      icon: الأيقونة
+      icon_help: أدخل اسم أي صنف أيقونة من <a>FontAwesome</a>، بما في ذلك البادئة <code>fas fa-</code>.
+      type:
+        heading: وظيفة هذا الرابط
+        internal:
+          label: ينتقل إلى صفحة داخل هذا المنتدى
+          help: يُفتح دون إعادة تحميل الصفحة.
+        external:
+          label: ينتقل إلى موقع آخر
+          help: يفتح عنوانًا خارج هذا المنتدى.
+      open_new_tab_checkbox: فتح الرابط في تبويب جديد
+      submit_button: حفظ
+      delete_button: حذف
+      delete_item_confirmation: هل أنت متأكد من حذف هذا العنصر؟
+    variants:
+      heading: نسخ تبويب الجوال
+      empty_help: اسحب العناصر إلى هنا لإضافتها إلى هذه النسخة.
+      help: "تُفحص النسخ من الأعلى إلى الأسفل، ويرى العضو أول نسخة مفعّلة يملك صلاحية عرضها. ضع الأدوار الأكثر تحديدًا أولًا، مثلًا: #1 المشرفون العامّون، #2 المشرفون، #3 الأعضاء، #4 الجميع. اترك نسخة فارغة لإخفاء التبويب كليًا عن المجموعات المحددة."
+      number: "#{number}"
+      enabled: مفعّل
+      visible_to: مرئي لـ
+      reorder: إعادة ترتيب النسخة
+      delete: حذف النسخة
+      delete_confirmation: هل أنت متأكد من حذف هذه النسخة؟ لا يمكن التراجع عن هذا الإجراء.
+      create: إنشاء نسخة
+    scroll_settings:
+      toggle_label: إظهار/إخفاء عند التمرير
+      threshold_label: حدّ التمرير (بكسل)
+      threshold_help: المسافة التي تُمرَّر من الموضع الحالي لإظهار الشريط أو إخفائه.
+
+  forum: لا شيء
+
+  lib:
+    item:
+      home: الرئيسية
+      all_discussions: النقاشات
+      new_discussion: نقاش جديد
+      notifications: الإشعارات
+      session: الجلسة
+      search: البحث
+      log_in: تسجيل الدخول
+      profile: الملف الشخصي
+      tags: الوسوم
+      messages: الرسائل
+      flags: البلاغات
+      fof-byobu: خاص
+      ramon-chat: الدردشة

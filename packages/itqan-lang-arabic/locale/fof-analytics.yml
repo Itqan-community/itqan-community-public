@@ -1,0 +1,42 @@
+fof-analytics:
+  admin:
+    popup:
+      section:
+        googleAnalytics: Google Analytics
+        piwik: Matomo
+      field:
+        statusGoogle: تفعيل Google Analytics (UA/GA4)
+        optTrackingCode: تحسين شيفرة التتبع (اختياري)
+        googleTrackingCode: معرّف شيفرة التتبع
+        googleGTMCode: معرّف شيفرة GTM (اختياري)
+        statusPiwik: تفعيل Matomo
+        piwikUrl: نطاق Matomo أو رابطه
+        piwikSiteId: معرّف الموقع
+        piwikTrackSubdomain: تتبع الزوار عبر جميع النطاقات الفرعية لـFlarum
+        piwikPrependDomain: إضافة نطاق الموقع قبل عنوان الصفحة عند التتبع
+        piwikHideAliasUrl: في تقرير «الروابط الصادرة»، إخفاء النقرات على الروابط البديلة المعروفة
+        piwikAliasUrl: الرابط البديل
+        piwikTrackAccounts: تتبع حسابات الأعضاء فرديًا
+        piwikAuthToken: رمز المصادقة
+      placeholder:
+        piwikAuthToken: "املأ هذا الرمز لتفعيل أداة إحصاءات Matomo في لوحة التحكم.\nتجدها في الإعدادات > شخصي > رمز مصادقة API.\n"
+      trackAccounts:
+        none: عدم التتبع
+        username: التتبع باسم المستخدم
+        email: التتبع بالبريد الإلكتروني
+    matomo-widget:
+      title: Matomo
+
+  forum:
+    consent:
+      cookies:
+        ga: يميّز الزيارات، حتى لا تُحتسب الزيارات المتكررة زوارًا جددًا.
+        gat: يحدّ من تكرار إرسال البيانات إلى Google.
+        gid: يميّز الزيارات، ويُحفظ لمدة 24 ساعة.
+        utm: ملفات تعريف ارتباط أقدم لـGoogle Analytics، تسجّل كيف وصلت إلى الموقع.
+        pk_id: يميّز الزيارات، حتى لا تُحتسب الزيارات المتكررة زوارًا جددًا.
+        pk_ses: يتتبع الزيارة الحالية، ويُحفظ لمدة 30 دقيقة.
+        pk_ref: يسجّل كيف وصلت إلى الموقع.
+        pk_cvar: يخزّن تفاصيل مخصّصة عن الزيارة الحالية.
+        pk_hsr: يسجّل الزيارة الحالية للخرائط الحرارية وتسجيل الجلسات.
+        matomo_sessid: يحفظ جلسة Matomo أثناء تسجيلها.

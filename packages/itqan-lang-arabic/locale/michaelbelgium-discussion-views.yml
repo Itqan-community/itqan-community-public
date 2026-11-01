@@ -1,0 +1,38 @@
+michaelbelgium-discussion-views:
+  forum:
+    modal_resetviews:
+      title: إعادة تعيين عدد مشاهدات النقاش
+      submit_button: نعم، احذف الكل
+      label: "{count, plural, one {سيؤدي هذا إلى حذف {count} مشاهدة لهذا النقاش. هل تريد المتابعة؟} other {سيؤدي هذا إلى حذف {count} مشاهدات لهذا النقاش. هل تريد المتابعة؟}}"
+    discussion_controls:
+      resetviews_button: إعادة تعيين المشاهدات
+    viewlist:
+      title: أحدث المشاهدين
+      guest: زائر
+    post:
+      viewed_by: "{users} شاهدوا هذا."
+      you: => core.ref.you
+      others_link: => core.ref.some_others
+      modal_title_text: الأعضاء الذين شاهدوا هذا النقاش آخر مرة
+
+  admin:
+    permissions:
+      reset_views_label: إعادة تعيين مشاهدات النقاش
+      view_number_label: عرض عدد مشاهدات النقاش
+      view_list_label: عرض قوائم مشاهدات النقاش (الشريط الجانبي + التذييل)
+    settings:
+      title: إعدادات مشاهدات النقاش
+      track_unique_label: تتبع المشاهدات الفريدة
+      track_unique_text: زيادة المشاهدات حسب عنوان IP
+      track_guests_label: تتبع الزوار
+      abbr_numbers_label: اختصار أرقام المشاهدات
+      abbr_numbers_text: عند التفعيل، تُختصر أرقام المشاهدات الكبيرة (مثل 1000 = 1K)
+      show_filter_label: تفعيل حقل الفرز حسب الشهرة
+      max_viewcount_label: الحد الأقصى لعناصر قائمة المشاهدات
+      max_viewcount_text: حدّد الحد الأقصى لعدد الأعضاء في قائمة المشاهدات (ينطبق على قائمة التذييل والشريط الجانبي)
+      show_viewlist_label: تفعيل قائمة المشاهدات
+      show_viewlist_text: تفعيل قائمة بأحدث المشاهدين في الشريط الجانبي للنقاش
+      show_footer_viewlist_label: تفعيل قائمة مشاهدات التذييل
+      show_footer_viewlist_text: تفعيل قائمة مشاهدين في تذييل المشاركة الأولى للنقاش
+      ignore_crawlers_label: تجاهل الروبوتات/الزاحفات
+      ignore_crawlers_text: يمنع الروبوتات والزاحفات من زيادة عدد المشاهدات

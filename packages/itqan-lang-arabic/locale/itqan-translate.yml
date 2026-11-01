@@ -1,0 +1,15 @@
+itqan-translate:
+  forum:
+    unknown-language: "[لم يُتعرَّف على اللغة]"
+    detected-language: هذا المنشور بلغة {postLang}
+    translate-button-label: ترجمة
+    discussion:
+      post:
+        close-translation: إغلاق الترجمة
+        translated-header: ترجمة بالذكاء الاصطناعي من {from} إلى {to}
+        translated-updated: آخر تحديث للترجمة {time} باستخدام {provider}
+      title:
+        detected-language: "{postLang}"
+  lib:
+    providers:
+      google-free: ترجمة Google

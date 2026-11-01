@@ -1,0 +1,95 @@
+ianm-html-head:
+  admin:
+    create_button: إنشاء
+
+    help:
+      intro: أضف وسومًا مخصصة لحقنها في HTML منتدالك. تُخزّن العناصر مؤقتًا وتُقدّم بكفاءة — بلا استعلامات قاعدة بيانات عند تحميل الصفحة.
+      preconnect: وسوم link وscript التي تشير إلى أصول خارجية تحصل تلقائيًا على تلميحات preconnect وdns-prefetch، ما يهيّئ الاتصال قبل أن يحتاجه المتصفح.
+      cache: يُخزّن HTML الناتج مؤقتًا عند الحفظ، وتسري التغييرات فورًا دون مسح ذاكرة التخزين المؤقت للموقع كاملًا.
+      pages: يمكن لكل عنصر أن يستهدف واجهة المنتدى أو لوحة الإدارة أو كليهما.
+      location: يمكن حقن العناصر في head أو في نهاية body.
+
+    table:
+      drag_handle: اسحب لإعادة الترتيب
+      description_label: الوصف
+      type_label: النوع
+      location_label: الموضع
+      pages_label: الصفحات
+      active_label: مفعّل
+      empty_text: لا توجد عناصر بعد. انقر «إنشاء» لإضافة أول عنصر head.
+      delete_button: حذف
+      edit_button: تعديل
+      delete_confirm: هل تريد بالتأكيد حذف هذا العنصر؟
+
+    modal:
+      create_title: إنشاء عنصر head
+      edit_title: تعديل عنصر head
+      description_label: الوصف
+      description_help: تسمية لمرجعك الشخصي — لا تُحقن في الصفحة.
+      type_label: النوع
+      location_label: الحقن في
+      location_help: "Head: يُحمّل قبل عرض الصفحة، وهو الأنسب للأنماط والبيانات الوصفية الحرجة. Footer: يُحمّل بعد محتوى الصفحة، وهو الأنسب للسكربتات غير الحرجة."
+      pages_label: تطبيق على
+      save_button: حفظ
+      preview_label: معاينة
+      preview_empty: املأ الحقول أعلاه لرؤية معاينة.
+
+      type:
+        meta: وسم Meta
+        link: Link
+        script: Script
+        style: Style
+        raw: HTML خام
+
+      location:
+        head: Head
+        foot: Footer
+
+      pages:
+        forum: المنتدى
+        admin: لوحة الإدارة
+
+      meta:
+        variant_label: الصيغة
+        name_label: 'name=""'
+        name_placeholder: اختر اسمًا أو اكتبه
+        name_help: العناصر المسماة description أو viewport أو theme-color تستبدل الوسم الذي يُخرجه Flarum بالفعل بدلًا من إضافة وسم ثانٍ.
+        property_label: 'property="" (Open Graph)'
+        property_placeholder: اختر خاصية أو اكتبها
+        content_label: المحتوى
+
+      link:
+        rel_label: 'rel=""'
+        href_label: 'href="" (URL)'
+        as_label: 'as=""'
+        as_help: يخبر المتصفح بنوع المورد الذي يُحمّل مسبقًا ليضبط ترويسات الطلب الصحيحة. مطلوب مع rel=preload.
+        crossorigin_label: 'إضافة crossorigin="anonymous"'
+        crossorigin_help: مطلوب للخطوط والسكربتات المحمّلة من نطاق آخر حتى يتمكن المتصفح من مشاركة الاتصال. فعّله إذا كان المورد على أصل مختلف.
+        fetchpriority_label: 'fetchpriority=""'
+        fetchpriority_default: الافتراضي في المتصفح
+        fetchpriority_help: "تلميح للمتصفح حول الأولوية النسبية لهذا المورد. high: يُحمّل أسرع (مثل الصورة الرئيسية أو ورقة أنماط حرجة). low: يُحمّل لاحقًا (مثل مورد أسفل الصفحة). اتركه دون تعيين ليقرر المتصفح."
+        extras_label: سمات إضافية
+        extras_add: إضافة سمة
+        extras_remove: إزالة
+
+      script:
+        external_label: خارجي (src)
+        inline_label: مضمّن
+        src_label: 'src="" (URL)'
+        inline_content_label: محتوى السكربت
+        defer_label: defer
+        defer_help: يعمل السكربت بعد تحليل الصفحة دون تعطيل العرض، وهو الأنسب لمعظم السكربتات.
+        async_label: async
+        async_help: يعمل السكربت فور تنزيله وبترتيب غير مضمون، وهو الأنسب للسكربتات المستقلة مثل التحليلات.
+        module_label: 'type="module"'
+        module_help: 'فعّله إذا نصّت وثائق مزوّد السكربت على استخدام type="module". تُحمّل الوحدات بعد الصفحة دون تعطيلها.'
+        crossorigin_label: 'crossorigin="anonymous"'
+        crossorigin_help: مطلوب عند تحميل سكربتات من نطاق آخر تحتاج وصول CORS.
+
+      style:
+        inline_label: محتوى CSS
+        inline_help: يُطبّق عمومًا على كل صفحة يستهدفها هذا العنصر. أبقِ القواعد محددة لتجنب آثار جانبية غير مقصودة.
+
+      raw:
+        content_label: HTML
+        help_text: أدخل HTML خامًا. تُولّد تلميحات preconnect تلقائيًا لأي وسوم link أو script من أصل مختلف تجدها هنا. يعمل ترتيب الفرز ومفتاح التفعيل كالمعتاد، لكن الميزات الخاصة بكل نوع (fetchpriority وdefer وغيرها) غير متاحة — استخدم نوعًا منظّمًا إذا احتجت إليها.

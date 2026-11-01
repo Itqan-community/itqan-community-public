@@ -37,6 +37,8 @@ itqan-notifications:
       title: "Discussion Pinned! 📌"
     discussion_retagged:
       title: "Category Updated 🏷️"
+    message_received:
+      title: "{username} sent you a message"
 
   email:
     discussion_replied:
@@ -105,3 +107,15 @@ itqan-notifications:
 
         To view the discussion:
         {url}
+
+    # Private messages — same channels and wording as the rest of the system.
+    message_received:
+      body: |
+        Hey {recipient_display_name}!
+
+        {sender_display_name} sent you a new message on the Itqan community.
+
+        To read the conversation and reply, open the link below:
+        {url}
+
+        You won't receive any more emails about this conversation until you've read it.

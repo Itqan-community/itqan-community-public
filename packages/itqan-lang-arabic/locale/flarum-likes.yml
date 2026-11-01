@@ -1,0 +1,11 @@
+flarum-likes:
+  forum:
+    post_likes:
+      load_more_button: => core.ref.load_more
+
+  lib:
+    gambits:
+      posts:
+        likedBy:
+          key: أُعجب به
+          hint: معرّف العضو أو اسم مستخدمه

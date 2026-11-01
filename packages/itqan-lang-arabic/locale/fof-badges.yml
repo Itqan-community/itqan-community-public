@@ -12,6 +12,232 @@ fof-badges:
       view_list: عرض قائمة الأوسمة
       view_user_badges: عرض أوسمة الأعضاء
 
+    settings:
+      display_title: إعدادات العرض
+      new_badge_highlight: إظهار وسم «جديد» على الأوسمة المكتسبة حديثًا
+      new_badge_highlight_help: يعرض وسم «جديد» على الأوسمة التي كُسبت خلال آخر 7 أيام.
+      primary_badge_display: طريقة عرض الوسام الأساسي
+      primary_badge_display_help: كيف يظهر الوسام الأساسي للعضو بجوار اسمه.
+      primary_badge_hidden: مخفي
+      primary_badge_icon: الأيقونة فقط
+      primary_badge_icon_name: الأيقونة والاسم
+      show_badges_on_user_card: إظهار الأوسمة على بطاقة العضو
+      show_badges_on_user_card_help: عرض الوسام المفضل أو الأكثر ندرة للعضو على بطاقات الأعضاء وصفحات الملف الشخصي.
+      post_badge_display_limit: حد عرض الأوسمة تحت المشاركات
+      post_badge_display_limit_help: أقصى عدد من الأوسمة يُعرض تحت المشاركات. اضبطه على 0 للتعطيل.
+      save: حفظ الإعدادات
+      saved: تم حفظ الإعدادات بنجاح.
+      save_error: تعذّر حفظ الإعدادات.
+      integrations_title: تكاملات الإضافات
+      integrations_help: مقاييس الأوسمة التي تعتمد على إضافات أخرى. ثبّت الإضافة لفتح المقياس المقابل.
+    create_badge: إنشاء وسام
+    create_category: إنشاء فئة
+    recalculate: إعادة الاحتساب
+    recalculate_confirm: سيُعاد احتساب جميع الأوسمة التلقائية لجميع الأعضاء. ستجري العملية في الخلفية. هل تريد المتابعة؟
+    recalculate_success: 'اكتملت إعادة الاحتساب! مُنح: {awarded}، سُحب: {revoked}، أعضاء جرى معالجتهم: {users}'
+    recalculate_error: تعذّرت إعادة احتساب الأوسمة. حاول مرة أخرى.
+    recalculation:
+      pending: جارٍ التحضير لإعادة الاحتساب...
+      running: جارٍ إعادة احتساب الأوسمة...
+      completed: اكتملت إعادة الاحتساب!
+      failed: فشلت إعادة الاحتساب
+      cancelled: أُلغيت إعادة الاحتساب
+      started: بدأت إعادة احتساب الأوسمة. ستجري العملية في الخلفية.
+      already_running: هناك عملية إعادة احتساب جارية بالفعل.
+      cancel: إلغاء
+      cancel_confirm: هل أنت متأكد من إلغاء إعادة الاحتساب؟ سيُفقد التقدم الحالي.
+      cancel_error: تعذّر إلغاء إعادة الاحتساب.
+      dismiss: تجاهل
+      progress: '{processed} / {total} عملية تقييم ({percentage}%)'
+      chunks: 'الدفعات: {processed} / {total}'
+      stats: 'مُنح: {awarded} | سُحب: {revoked}'
+      auto_refresh_on: التحديث التلقائي مفعّل
+      auto_refresh_off: تحديث تلقائي
+    recalculate_tab:
+      title: بدء إعادة الاحتساب
+      info: تعالج إعادة الاحتساب الأعضاء على دفعات لتجنّب انتهاء مهلة قائمة الانتظار. تُنفّذ كل دفعة كمهمة خلفية مستقلة.
+      badge_label: الوسام المراد إعادة احتسابه
+      badge_help: اختر وسامًا محددًا أو أعد احتساب كل الأوسمة التلقائية.
+      all_badges: كل الأوسمة التلقائية
+      chunk_size_label: حجم الدفعة
+      chunk_size_help: عدد الأعضاء المعالجين في كل مهمة. الدفعات الأصغر أكثر موثوقية لكنها تستغرق وقتًا أطول.
+      default: افتراضي
+      no_revoke_label: لا تسحب الأوسمة الحالية
+      no_revoke_help: عند التفعيل، يحتفظ الأعضاء الذين لم يعودوا يستوفون الشروط بأوسمتهم.
+      reapply_actions_label: إعادة تطبيق الإجراءات على الحاصلين على الوسام
+      reapply_actions_help: عند التفعيل، تُعاد إجراءات الوسام (مثل الإضافة إلى مجموعة) على الأعضاء الذين يملكون الوسام بالفعل. مفيد عند إضافة إجراءات جديدة لوسام موجود.
+      total_users: إجمالي الأعضاء
+      estimated_chunks: الدفعات المتوقعة
+      badges_to_check: الأوسمة المطلوب فحصها
+      start: بدء إعادة الاحتساب
+      no_automatic_badges: لا توجد أوسمة تلقائية مضبوطة. أنشئ وسامًا بشروط تشغيل أولًا.
+      jobs_title: سجل المهام
+      jobs_empty: لا توجد مهام إعادة احتساب بعد.
+      show_more: عرض {count} إضافية
+      sync_counts_title: مزامنة أعداد الأوسمة
+      sync_counts_info: إعادة احتساب «عدد المكتسبين» لكل الأوسمة استنادًا إلى سجلات user_badges الفعلية. استخدم هذا إذا أصبحت الأعداد غير صحيحة بعد إعادة الاحتساب.
+      sync_counts: مزامنة أعداد الأوسمة
+      sync_counts_success: تمت مزامنة أعداد الأوسمة! صُحّح {corrected} من {total} وسامًا.
+      sync_counts_error: تعذّرت مزامنة أعداد الأوسمة.
+    recalculation_jobs:
+      button: المهام
+      title: مهام إعادة الاحتساب
+      empty: لا توجد مهام إعادة احتساب.
+      stuck: متعطلة
+      users: '{processed} / {total} عملية تقييم'
+      results: 'مُنح: {awarded} | سُحب: {revoked}'
+      cancel: إلغاء
+      force_cancel: إلغاء قسري
+      mark_failed: وضع علامة فاشلة
+      cancelled: أُلغيت المهمة بنجاح.
+      marked_failed: وُضعت علامة فاشلة على المهمة.
+      cancel_error: تعذّر إلغاء المهمة.
+      mark_failed_error: تعذّر وضع علامة فاشلة على المهمة.
+      status:
+        pending: قيد الانتظار
+        running: قيد التنفيذ
+        completed: مكتملة
+        failed: فاشلة
+        cancelled: ملغاة
+    headers:
+      order: الترتيب
+      icon: الأيقونة
+      name: الاسم
+      type: النوع
+      earned: المكتسبون
+      rarity: الندرة
+      status: الحالة
+      description: الوصف
+      badges: الأوسمة
+    no_badges: لا توجد أوسمة بعد. أنشئ وسامك الأول!
+    install_defaults: تثبيت الأوسمة الافتراضية
+    install_defaults_success: ثُبِّتت الأوسمة الافتراضية بنجاح!
+    install_defaults_error: تعذّر تثبيت الأوسمة الافتراضية.
+    no_categories: لا توجد فئات بعد. أنشئ فئتك الأولى!
+    uncategorized: غير مصنّفة
+    automatic: تلقائي
+    manual: يدوي
+    active: نشط
+    inactive: غير نشط
+    enabled: مفعّل
+    disabled: معطّل
+    earned_count: '{count} مكتسب'
+    badge_count: '{count, plural, zero {لا أوسمة} one {وسام واحد} two {وسامان} few {# أوسمة} many {# وسامًا} other {# وسام}}'
+    rarity: ندرة {percent}%
+    edit: تعديل
+    delete: حذف
+    assign: منح
+    move_up: أعلى
+    move_down: أسفل
+    delete_badge_confirm: هل أنت متأكد من حذف الوسام «{name}»؟ سيُزال أيضًا من جميع الأعضاء الذين حصلوا عليه.
+    delete_category_confirm: هل أنت متأكد من حذف الفئة «{name}»؟
+    delete_category_confirm_with_badges: 'هل أنت متأكد من حذف الفئة «{name}»؟ {count, plural, zero {لن تصبح أي أوسمة غير مصنّفة} one {سيصبح وسام واحد غير مصنّف} two {سيصبح وسامان غير مصنّفين} few {ستصبح # أوسمة غير مصنّفة} many {سيصبح # وسامًا غير مصنّف} other {سيصبح # وسام غير مصنّف}}'
+    edit_badge: تعديل الوسام
+    badge_name: الاسم
+    badge_name_placeholder: 'مثال: "خبير 100 مشاركة"'
+    badge_slug: المُعرّف
+    badge_slug_placeholder: 'مثال: "100-posts-master"'
+    badge_slug_help: معرّف صديق للروابط. يُولّد تلقائيًا من الاسم إذا تُرك فارغًا.
+    badge_description: الوصف
+    badge_description_placeholder: صف كيف يُكسب هذا الوسام...
+    badge_category: الفئة
+    no_category: بلا فئة
+    appearance: المظهر
+    preview: معاينة
+    icon_color: لون الأيقونة
+    background_color: لون الخلفية
+    status: الحالة
+    is_active: نشط
+    is_active_help: الأوسمة غير النشطة لا تُمنح تلقائيًا للأعضاء.
+    is_visible: ظاهر في قائمة الأوسمة
+    is_visible_help: الأوسمة المخفية لا تظهر في قائمة الأوسمة العامة لكن يمكن للأعضاء كسبها.
+    save: حفظ
+    cancel: إلغاء
+    validation:
+      tag_required: يجب اختيار وسم عند استخدام مقياس «مشاركات في وسم».
+    icon_picker:
+      expand: إظهار منتقي الأيقونات
+      collapse: إخفاء منتقي الأيقونات
+      hint: انقر أيقونة لاختيارها، أو اكتب اسم صنف Font Awesome أعلاه.
+    trigger_config: التشغيل التلقائي
+    trigger_config_help: اضبط شروط منح الوسام تلقائيًا. اتركه فارغًا للأوسمة اليدوية فقط.
+    trigger_builder:
+      no_conditions_info: لا شروط محددة. لا يمكن منح هذا الوسام إلا يدويًا من المشرفين.
+      add_condition: إضافة شرط
+      remove_condition: إزالة الشرط
+      logic: عند تعدد الشروط
+      and: يجب تحققها كلها (AND)
+      or: يكفي تحقق أحدها (OR)
+      and_help: يجب أن يستوفي العضو كل الشروط معًا لكسب هذا الوسام.
+      or_help: يجب أن يستوفي العضو شرطًا واحدًا على الأقل لكسب هذا الوسام.
+      use_date_range: التقييد بنطاق زمني
+      date_range_help: احتسب النشاط ضمن هذا النطاق الزمني فقط. مفيد لأوسمة الفعاليات.
+      date_start: تاريخ البداية
+      date_end: تاريخ النهاية
+      tag_filter: تصفية الوسوم
+      tag_filter_help: مطلوب عند استخدام مقياس «مشاركات في وسم».
+      select_tag: اختر وسمًا...
+      loading_tags: جارٍ تحميل الوسوم...
+    metrics:
+      post_count: عدد المشاركات
+      discussion_count: النقاشات التي بدأها
+      likes_received: الإعجابات المستلمة
+      likes_given: الإعجابات الممنوحة
+      member_days: أيام العضوية
+      has_avatar: يملك صورة شخصية
+      has_bio: يملك نبذة
+      has_nickname: يملك لقبًا
+      tag_posts: مشاركات في وسم
+      edit_count: المشاركات المحرّرة
+      best_answers_received: أفضل الإجابات المستلمة
+      files_uploaded: الملفات المرفوعة
+      polls_created: الاستطلاعات المنشأة
+      polls_voted: الاستطلاعات المصوّت عليها
+      private_discussions_created: النقاشات الخاصة المنشأة
+      reactions_received: التفاعلات المستلمة
+      reactions_given: التفاعلات الممنوحة
+      upvotes_received: التصويتات الإيجابية المستلمة
+      upvotes_given: التصويتات الإيجابية الممنوحة
+      downvotes_received: التصويتات السلبية المستلمة
+      downvotes_given: التصويتات السلبية الممنوحة
+    actions: الإجراءات عند كسب الوسام
+    send_notification: إرسال إشعار للعضو
+    add_to_group: إضافة العضو إلى مجموعة
+    add_to_group_help: أضف العضو تلقائيًا إلى هذه المجموعة عند كسبه الوسام.
+    no_group: عدم الإضافة إلى مجموعة
+    edit_category: تعديل الفئة
+    category_name: الاسم
+    category_name_placeholder: 'مثال: "أوسمة الإنجاز"'
+    category_slug: المُعرّف
+    category_slug_placeholder: 'مثال: "achievements"'
+    category_slug_help: معرّف صديق للروابط الخاص بالفئة.
+    category_description: الوصف
+    category_description_placeholder: صف هذه الفئة من الأوسمة...
+    category_enabled: مفعّلة
+    category_enabled_help: الفئات المعطّلة وأوسمتها لا تظهر في قائمة الأوسمة.
+    assign_badge: 'منح: {badge}'
+    select_user: اختيار عضو
+    search_user_placeholder: ابحث باسم المستخدم أو الاسم المعروض...
+    no_users_found: لم يُعثر على أعضاء
+    clear_selection: مسح الاختيار
+    assign_reason: السبب (اختياري)
+    assign_reason_placeholder: لماذا يُمنح هذا الوسام؟
+    assign_reason_help: سيظهر هذا السبب على وسام العضو.
+    badge_assigned: مُنح وسام «{badge}» إلى {username}!
+    tab_assign: منح
+    tab_holders: الحاصلون عليه ({count})
+    search_holders_placeholder: ابحث في الحاصلين عليه...
+    no_holders_found: لا يوجد حاصلون على هذا الوسام يطابقون بحثك.
+    no_holders: لم يحصل على هذا الوسام أحد بعد.
+    granted_by_system: النظام
+    revoke: سحب
+    revoke_confirm: هل أنت متأكد من سحب وسام «{badge}» من {username}؟
+    badge_revoked: سُحب وسام «{badge}» من {username}.
+    revoke_error: تعذّر سحب الوسام.
+    previous: السابق
+    next: التالي
+    showing_holders: عرض {from}-{to} من {total}
+
   forum:
     nav:
       badges: الأوسمة
@@ -91,3 +317,46 @@ fof-badges:
     rarity_uncommon: غير شائع
     rarity_common: شائع
     rarity_explain: "{percent}% من الأعضاء يملكون هذا الوسام"
+
+  defaults:
+    categories:
+      getting-started:
+        name: البداية
+        description: أوسمة للأعضاء الجدد في خطواتهم الأولى
+      milestones:
+        name: الإنجازات
+        description: أوسمة للوصول إلى إنجازات مهمة
+      posting:
+        name: المشاركة
+        description: أوسمة لبلوغ محطات في المشاركة والمساهمات
+    badges:
+      first-post:
+        name: أول مشاركة
+        description: اكتب أول رد لك
+      conversation-starter:
+        name: بادئ النقاش
+        description: ابدأ أول نقاش لك
+      profile-picture:
+        name: الصورة الشخصية
+        description: ارفع صورة شخصية لملفك
+      first-week:
+        name: الأسبوع الأول
+        description: كن عضوًا لمدة 7 أيام
+      regular:
+        name: عضو منتظم
+        description: كن عضوًا لمدة 30 يومًا
+      anniversary:
+        name: الذكرى السنوية
+        description: كن عضوًا لمدة سنة
+      active-member:
+        name: عضو نشط
+        description: اكتب 50 ردًا
+      prolific:
+        name: غزير المشاركة
+        description: اكتب 200 رد
+      topic-starter:
+        name: بادئ المواضيع
+        description: ابدأ 10 نقاشات
+      editor:
+        name: محرّر
+        description: حرّر 10 مشاركات لتحسينها

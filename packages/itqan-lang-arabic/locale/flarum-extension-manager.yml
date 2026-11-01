@@ -1,0 +1,172 @@
+flarum-extension-manager:
+  admin:
+    auth_config:
+      add_label: إضافة طريقة مصادقة جديدة
+      add_modal:
+        host_label: المضيف
+        host_placeholder: 'مثال: bearer.flarum.org'
+        token_label: الرمز
+        type_label: النوع
+        unchanged_token_placeholder: (دون تغيير)
+      delete_confirmation: هل أنت متأكد من حذف طريقة المصادقة هذه؟
+      delete_label: حذف طريقة المصادقة
+      edit_label: تعديل طريقة المصادقة
+      fields:
+        host: المضيف
+        token: الرمز
+      no_auth_methods_configured: لا توجد طرق مصادقة مُعدّة. هذه ميزة متقدمة اختيارية تتيح التثبيت من مستودعات خاصة.
+      remove_button_label: إزالة طريقة المصادقة
+      title: طرق المصادقة
+      types:
+        github-oauth: GitHub OAuth
+        gitlab-oauth: GitLab OAuth
+        gitlab-token: GitLab Token
+        bearer: HTTP Bearer
+
+    composer:
+      add_repository_label: إضافة مستودع
+      delete_repository_confirmation: هل أنت متأكد من حذف هذا المستودع؟ ستُزال كل الإضافات المثبّتة منه.
+      delete_repository_label: حذف المستودع
+      edit_repository_label: تعديل المستودع
+      title: Composer
+      minimum_stability:
+        label: الحد الأدنى للاستقرار
+        help: نوع الحِزم المسموح بتثبيتها. لا تغيّر هذا الإعداد إلا إذا كنت تعرف ما تفعله.
+        options:
+          stable: مستقر (موصى به)
+          rc: إصدار مرشّح (RC)
+          beta: بيتا
+          alpha: ألفا
+          dev: تطوير
+      repositories:
+        label: المستودعات
+        help: أضف مستودعات إضافية لتثبيت الحِزم منها. هذه ميزة متقدمة، لا تضف مستودعات غير موثوقة، إذ يمكن استخدامها لتنفيذ تعليمات برمجية ضارة على خادمك.\n
+        types:
+          composer: composer
+          vcs: vcs
+          path: path
+        add_modal:
+          name_label: الاسم
+          type_label: النوع
+          url: الرابط
+
+    exceptions:
+      composer_command_failure: تعذّر التنفيذ. راجع سجلات Composer في storage/logs/composer.
+      extension_already_installed: الإضافة مثبّتة بالفعل.
+      extension_not_directly_dependency: الإضافة مثبّتة كاعتماد لإضافة أخرى، ولا يمكن إزالتها مباشرة.
+      extension_not_installed: لم يُعثر على الإضافة.
+      guessed_cause:
+        extension_incompatible_with_instance: على الأرجح أن الإضافة غير متوافقة مع نسخة Flarum الحالية.
+        extension_not_found: لم يُعثر على الإضافة أو أنها غير موجودة.
+        extensions_incompatible_with_new_major: بعض الإضافات المثبّتة غير متوافقة مع أحدث إصدار رئيسي. انتظر حتى يحدّث المؤلفون إضافاتهم لتكون متوافقة، أو أزلها قبل المتابعة.\n
+
+    extensions:
+      already_installed: هذه الإضافة مثبّتة بالفعل
+      check_why_it_failed_updating: اعرض سبب عدم تحديثها إلى الأحدث.
+      install: تثبيت إضافة جديدة
+      install_help: أدخل اسم حزمة الإضافة للمتابعة. يمكنك تحديد <semantic_link>إصدار دلالي</semantic_link> بالصيغة <code>vendor/package-name:version</code>. زُر {link} لتصفّح الحِزم المتاحة.\n
+      proceed: متابعة
+      remove: إلغاء التثبيت
+      successful_install: 'تم تثبيت {extension} بنجاح، جارٍ إعادة التوجيه..'
+      successful_remove: أُزيلت الإضافة بنجاح.
+      successful_update: 'تم تحديث {extension} بنجاح، جارٍ إعادة التوجيه..'
+      update: تحديث
+      update_soft_label: تحديث مرن
+      update_hard_label: تحديث كامل
+
+    file_permissions: 'يتطلب مدير الإضافات صلاحيات القراءة والكتابة على الملفات والمجلدات التالية: composer.json, composer.lock, vendor, storage, storage/.composer\n'
+
+    major_updater:
+      description: تحديثات Flarum الرئيسية غير متوافقة مع الإصدارات السابقة، أي أن بعض الإضافات المثبّتة حاليًا والتعديلات اليدوية قد لا تعمل مع هذا الإصدار الجديد. تأكد من أخذ نسخة احتياطية من قاعدة البيانات والملفات قبل المتابعة.\n
+      dry_run: تشغيل تجريبي
+      dry_run_help: التشغيل التجريبي يحاكي التحديث لمعرفة ما إذا كان إعدادك الحالي يستطيع التحديث بأمان، وهذا لا يعني أن تعديلاتك اليدوية ستعمل في الإصدار الأحدث.
+      failure:
+        desc: فشل آخر تحديث رئيسي، إذ إن بعض الإضافات المثبّتة غير متوافقة مع الإصدار الرئيسي الجديد.
+        why: معرفة المزيد
+      title: يتوفر تحديث رئيسي لـ Flarum {version}
+      update: تحديث
+
+    minor_update_confirmation:
+      content: سيؤدي هذا أيضًا إلى تحديث أي إضافات أو حِزم أخرى لديها تحديثات متاحة.
+
+    required_php_functions: 'يتطلب مدير الإضافات تفعيل دوال PHP التالية: <code>{functions}</code>. إذا لم يكن لديك وصول إلى إعدادات PHP، فتواصل مع مزوّد الاستضافة.\n'
+
+    sections:
+      discover:
+        description: أضف ميزات وتكاملات جديدة إلى منتدى Flarum الخاص بك عبر الإضافات.
+        empty_results: يبدو أنه لا توجد إضافات متاحة.
+        extension:
+          badges:
+            abandoned: مهجورة
+            fof: Friends Of Flarum
+            flarum: Flarum
+          downloads: '{count, plural, zero {{formattedCount} تنزيل} one {{formattedCount} تنزيل} two {{formattedCount} تنزيل} few {{formattedCount} تنزيلات} many {{formattedCount} تنزيلًا} other {{formattedCount} تنزيل}}'
+        search: بحث...
+        server_error: الخدمة غير متاحة حاليًا، يُرجى المحاولة لاحقًا.
+        sort:
+          top: الأكثر تنزيلًا
+        tabs:
+          discover: استكشاف
+          extensions: الإضافات
+          languages: اللغات
+          themes: المظاهر
+        title: الإضافات
+
+      queue:
+        columns:
+          details: التفاصيل
+          elapsed_time: اكتمل في
+          peak_memory_used: أقصى استهلاك للذاكرة
+          operation: العملية
+          package: الحزمة
+          status: الحالة
+        none: لا توجد مهام بعد.
+        operations:
+          extension_install: تثبيت إضافة
+          extension_remove: إزالة إضافة
+          extension_update: تحديث إضافة
+          update_check: التحقق من التحديثات
+          update_global: تحديث كل حِزم البرامج
+          update_major: تحديث رئيسي
+          update_minor: تحديث فرعي
+          why_not: تحليل سبب تعذّر تحديث حزمة
+        output_modal:
+          cause_unknown: غير معروف
+          command: أمر Composer
+          guessed_cause: السبب
+          output: المخرجات
+        refresh: تحديث قائمة المهام
+        statuses:
+          success: ناجحة
+          failure: فاشلة
+          pending: قيد الانتظار
+          running: قيد التشغيل
+        task_just_started: بدأت المهمة للتو
+        title: قائمة الانتظار
+
+      settings:
+        title: الإعدادات وقائمة الانتظار
+        description: اضبط مدير الإضافات وتابع العمليات في قائمة الانتظار.
+
+    settings:
+      access_warning: احرص على من تمنحه حق الوصول إلى لوحة الإدارة، فقد يُساء استخدام مدير الإضافات من قبل أطراف سيئة لتثبيت حِزم تؤدي إلى ثغرات أمنية.
+      debug_mode_warning: أنت تعمل في وضع التصحيح، ولا يستطيع مدير الإضافات تثبيت حِزم التطوير المحلية وتحديثها بشكل صحيح. يُرجى استخدام سطر الأوامر لهذه الأغراض.
+      queue_jobs: تشغيل العمليات في قائمة الانتظار في الخلفية
+      queue_jobs_help: يمكنك الاطلاع على تنفيذ <basic_impl_link>قائمة انتظار بسيطة</basic_impl_link> أو <adv_impl_link>أكثر تقدمًا</adv_impl_link>. تأكد من أن نسخة PHP المستخدمة لقائمة الانتظار هي {php_version}. وتأكد من ضبط <folder_perms_link>صلاحيات المجلدات</folder_perms_link> بشكل صحيح.\n
+      task_retention_days: مدة الاحتفاظ بالمهام (أيام)
+      task_retention_days_help: عدد الأيام التي تُحفظ فيها المهام المكتملة في قاعدة البيانات. تُحذف المهام الأقدم من ذلك. اضبطه على 0 للاحتفاظ بكل المهام.\n
+
+    updater:
+      up_to_date: لا توجد تحديثات معلّقة.
+      check_for_updates: التحقق من التحديثات
+      flarum: نواة Flarum
+      global_update_successful: تم تحديث كل الحِزم بنجاح.
+      last_update_checked_at: 'آخر تحقق من التحديثات: '
+      run_global_update: تشغيل التحديث الشامل
+      updater_title: التحديثات
+      updater_help: يتحقق من وجود تحديثات جديدة للإضافات ولـ Flarum.
+
+    update_successful: تم تحديث Flarum بنجاح.
+
+    why_not_modal:
+      title: لماذا لا يمكن التحديث

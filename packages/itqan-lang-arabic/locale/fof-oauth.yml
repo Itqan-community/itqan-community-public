@@ -1,0 +1,132 @@
+fof-oauth:
+  admin:
+    configure_button_label: الإعداد عبر FoF OAuth
+    settings_accessibility_label: 'إعدادات {name}'
+
+    permissions:
+      moderate_user_providers: الإشراف على الحسابات المرتبطة للأعضاء
+
+    settings:
+      only_icons_label: عرض أيقونات زر تسجيل الدخول فقط (تخطيط بديل)
+      update_email_from_provider_label: تحديث البريد الإلكتروني من المزوّد
+      update_email_from_provider_help: عند التفعيل، وعند تسجيل الدخول عبر مزوّد OAuth يختلف بريده المؤكد عن بريد العضو في المنتدى، يُرسل رابط تأكيد إلى العنوان الجديد وإشعار إلى العنوان الحالي، ويتغيّر البريد بعد اتباع الرابط. ولا تغيّر المزوّدات التي لا تستطيع تأكيد العنوان — بما فيها المزوّدات الخارجية غير المحدّثة لدعم ذلك — عنوان البريد.
+      oauth_only_label: السماح فقط بتسجيل الدخول وإنشاء الحساب عبر مزوّدات OAuth
+      oauth_only_help: "عند التفعيل، لا يمكن للأعضاء بعدها تسجيل الدخول أو إنشاء حساب أو إعادة تعيين كلمة المرور بكلمة مرور، بل يستخدمون المزوّدات المفعّلة. ويحتفظ المشرفون بتسجيل الدخول بكلمة المرور عبر رابط «تسجيل دخول المشرف» في نافذة تسجيل الدخول. ويُربط الأعضاء الحاليون الذين لا مزوّد مرتبط لهم عند أول تسجيل دخول عبر مزوّد إذا أكّد المزوّد عنوان البريد نفسه، ويحتاج غيرهم إلى مساعدة مشرف. ولا يكون لهذا أثر ما دام لا يوجد مزوّد مفعّل. أبقِ «إنشاء حساب» على «مفتوح» في الأذونات، وإلا فلن يستطيع الأعضاء الجدد التسجيل عبر مزوّد أيضًا.\n"
+      oauth_only_sign_up_closed_warning: إنشاء الحساب مضبوط على «مغلق» في <a>الأذونات</a>. يستخدم Flarum هذا الإعداد للتسجيل عبر المزوّدات أيضًا، لذا لا يمكن لأحد الانضمام ما دام مغلقًا.
+      disable_avatars_label: تعطيل الصور الرمزية من المزوّد
+      disable_avatars_help: "عند التفعيل، لن تُحدّث صورة العضو الرمزية لتطابق صورة المزوّد عند التسجيل. لاحظ أن هذا يؤثر في التسجيلات المستقبلية فقط، ولن يغيّر صورة الأعضاء الحاليين.\n"
+
+      advanced:
+        heading: متقدمة
+        log-oauth-errors-label: تسجيل أخطاء OAuth
+        log-oauth-errors-help: عند التفعيل، تُسجّل أخطاء OAuth في سجل Flarum. قد يساعد ذلك في تشخيص مشكلات OAuth، لكنه قد يتضمن معلومات حساسة.
+
+      providers:
+        callback_url_text: 'إذا لزم الأمر، اضبط رابط الاستدعاء العكسي على {url}.'
+        group_label: تعيين مجموعة
+        group_help: اختر مجموعة تُعيَّن تلقائيًا للأعضاء الذين يسجّلون باستخدام هذا المزوّد.
+        no_group_label: بلا تعيين مجموعة
+
+        discord:
+          description: 'أنشئ تطبيقًا على {link}. أضف رابط إعادة التوجيه في تبويب OAuth2.'
+          client_id_label: "=> fof-oauth.ref.settings.client_id"
+          client_secret_label: "=> fof-oauth.ref.settings.client_secret"
+
+        facebook:
+          description: 'أنشئ تطبيقًا على {link}.'
+          app_id_label: "=> fof-oauth.ref.settings.app_id"
+          app_secret_label: "=> fof-oauth.ref.settings.app_secret"
+
+        github:
+          description: 'أنشئ تطبيق OAuth على {link}.'
+          client_id_label: "=> fof-oauth.ref.settings.client_id"
+          client_secret_label: "=> fof-oauth.ref.settings.client_secret"
+
+        gitlab:
+          description: 'أنشئ تطبيقًا على {link}. وامنح التطبيق النطاق <code>read_user</code>.'
+          client_id_label: "=> fof-oauth.ref.settings.app_id"
+          client_secret_label: "=> fof-oauth.ref.settings.app_secret"
+          domain_label: نطاق GitLab
+
+        google:
+          description: 'أنشئ تطبيقًا على {link}.'
+          client_id_label: "=> fof-oauth.ref.settings.client_id"
+          client_secret_label: "=> fof-oauth.ref.settings.client_secret"
+          hosted_domain_label: النطاق المستضاف (G suite/Google Apps for Business، اختياري)
+
+        linkedin:
+          description: 'أنشئ تطبيقًا على {link}.'
+          client_id_label: "=> fof-oauth.ref.settings.client_id"
+          client_secret_label: "=> fof-oauth.ref.settings.client_secret"
+
+  forum:
+    log_in:
+      unverified_email_in_use: 'لم يؤكّد {provider} عنوان البريد هذا، لذا لا يمكننا استخدامه لتسجيل دخولك. إن كان لديك حساب بالفعل، فسجّل الدخول أدناه ثم اربط {provider} من إعدادات حسابك.'
+      unverified_email_in_use_oauth_only: 'لم يؤكّد {provider} عنوان البريد هذا، لذا لا يمكننا استخدامه لتسجيل دخولك. أكّد العنوان عبر {provider} وحاول مرة أخرى، أو اطلب المساعدة من مشرف.'
+      admin_log_in_link: تسجيل دخول المشرف
+      with_discord_button: "=> fof-oauth.forum.log_in.with_button"
+      with_facebook_button: "=> fof-oauth.forum.log_in.with_button"
+      with_github_button: "=> fof-oauth.forum.log_in.with_button"
+      with_gitlab_button: "=> fof-oauth.forum.log_in.with_button"
+      with_google_button: "=> fof-oauth.forum.log_in.with_button"
+      with_linkedin_button: "=> fof-oauth.forum.log_in.with_button"
+
+    user:
+      settings:
+        linked-account:
+          label: الحسابات المرتبطة
+          last-used-label: آخر استخدام
+          link-created-label: تاريخ الربط
+          identification-label: 'معرّف {provider}'
+          identifier-label: 'معرّف {provider}'
+          orphaned-account: لقد سجّلت الدخول عبر هذا المزوّد سابقًا، لكن المنتدى عطّل تسجيل الدخول بهذه الطريقة منذ ذلك الحين.
+          help: تتيح لك هذه الحسابات المرتبطة تسجيل الدخول إلى المنتدى عبر مزوّدات أخرى.
+          unlink-confirm: 'هل تريد بالتأكيد إزالة الربط مع {provider}؟ لن تتمكن بعدها من تسجيل الدخول إلى هذا المنتدى إلا إذا أعدت المصادقة مستقبلًا.'
+
+    providers:
+      discord: "=> fof-oauth.lib.providers.discord"
+      facebook: "=> fof-oauth.lib.providers.facebook"
+      github: "=> fof-oauth.lib.providers.github"
+      gitlab: "=> fof-oauth.lib.providers.gitlab"
+      google: "=> fof-oauth.lib.providers.google"
+      linkedin: "=> fof-oauth.lib.providers.linkedin"
+
+    account_linked:
+      title: تم ربط الحساب
+      body: 'حسابك في {forum} <strong>{username}</strong> مرتبط الآن بـ {provider}. يمكنك تسجيل الدخول بكلمة مرور المنتدى أو عبر {provider} من الآن.'
+      dismiss_button: فهمت
+
+    signup:
+      username_help: يُرجى اختيار اسم مستخدم ليعرفك به الأعضاء هنا
+
+    unlink: إزالة الربط
+
+    error:
+      bad_verification_code: رمز تحقق غير صالح أو منتهي الصلاحية. يُرجى المحاولة مرة أخرى.
+      invalid_state: حالة غير صالحة. يُرجى المحاولة مرة أخرى.
+      already_linked: هذا الحساب مرتبط بعضو آخر بالفعل.
+
+  email:
+    provider_email_change_notice:
+      subject: طلب تغيير عنوان البريد الإلكتروني
+      body: "بعد تسجيل دخولك إلى {forum} عبر {provider}، طُلب تغيير عنوان بريد حسابك إلى {new_email}. يسري التغيير بعد تأكيد العنوان الجديد.\n\nإن لم يكن هذا أنت، فقد يكون حسابك في {provider} مخترقًا. أمّن حسابك وتواصل مع مشرفي {forum}.\n"
+
+  lib:
+    providers:
+      discord: Discord
+      facebook: Facebook
+      github: GitHub
+      gitlab: GitLab
+      google: Google
+      linkedin: LinkedIn
+    gambits:
+      sso:
+        key: sso
+        hint: مزوّد تسجيل دخول
+
+  ref:
+    settings:
+      app_id: معرّف التطبيق
+      app_secret: سر التطبيق
+      client_id: معرّف العميل
+      client_secret: سر العميل

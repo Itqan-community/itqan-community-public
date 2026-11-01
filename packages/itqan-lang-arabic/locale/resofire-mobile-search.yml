@@ -1,0 +1,7 @@
+resofire-mobile-search:
+  admin:
+    settings:
+      mobile_search_style_label: نمط البحث في الجوال
+      mobile_search_style_help: اختر كيف يظهر البحث في شريط أدوات صفحة الفهرس على الجوال.
+      mobile_search_style_option_bar: شريط بحث بعرض كامل
+      mobile_search_style_option_icon: أيقونة عدسة البحث فقط
