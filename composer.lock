@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "922020676bc8f6edde3bec3198e182f5",
+    "content-hash": "cbde5e73d4ca902988052473e493596e",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -9519,6 +9519,53 @@
             }
         },
         {
+            "name": "itqan/user-badges",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-user-badges",
+                "reference": "1863e360ce1e89a85bab038bdfcb08fe8bcd2124"
+            },
+            "require": {
+                "flarum/core": "^2.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan User Badges",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fas fa-user-tag",
+                        "color": "#ffffff",
+                        "backgroundColor": "#0D9488"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\UserBadges\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "User badges with image artwork, ported from v17development/flarum-user-badges to Flarum 2.0",
+            "keywords": [
+                "badges",
+                "flarum",
+                "recognition"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "jaybizzle/crawler-detect",
             "version": "v1.4.2",
             "source": {
@@ -18213,6 +18260,7 @@
         "itqan/pretty-mail": 20,
         "itqan/sitemap": 20,
         "itqan/translate": 20,
+        "itqan/user-badges": 20,
         "mtareq/flarum-nested-replies": 20
     },
     "prefer-stable": true,
