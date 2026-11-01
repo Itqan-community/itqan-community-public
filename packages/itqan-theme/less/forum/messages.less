@@ -428,11 +428,18 @@
     }
   }
 
-  .Post-meta,
-  .Post-meta a {
+  // Core's class is `.PostMeta`; the time sits inside its dropdown toggle.
+  .PostMeta,
+  .PostMeta a,
+  .PostMeta time,
+  .Post-header .item-meta {
     white-space: nowrap;
     font-size: var(--fs-ui-xs);
     color: var(--text-faint);
+  }
+
+  .Post-header .item-meta {
+    flex: none;
   }
 
   .Post-body {
