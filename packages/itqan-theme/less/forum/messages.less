@@ -80,7 +80,10 @@
   border-radius: var(--r-xl);
   background: var(--surface-card);
   box-shadow: var(--elev-1);
-  overflow: hidden;
+  // The conversation header's menu opens outside the pane and must not be
+  // clipped, so the card cannot clip at all. Each pane rounds (and clips) its
+  // own outer corners instead — see below.
+  overflow: visible;
 
   @media @phone {
     height: auto;
@@ -149,9 +152,6 @@
       flex-direction: column;
       height: auto;
       min-height: 0;
-      // Sits above the custom footer / install prompt that the forum appends
-      // to <body>, which would otherwise paint over the conversation.
-      z-index: 1;
       // `inset-block-end` already stops above the tab bar; the extra padding is
       // the home indicator area inside it.
       padding-block-end: 0;
@@ -184,6 +184,24 @@
       min-height: 0;
       background: var(--surface-card);
     }
+
+    // Core turns `.Dropdown-menu` into a bottom sheet on phones, pinned to the
+    // viewport bottom. Our tab bar lives there, so the sheet is lifted clear of
+    // it — and rounded, so it reads as a sheet rather than a strip of the page.
+    .Dropdown .Dropdown-menu {
+      bottom: ~"calc(var(--mobile-tab-height, 0px) + var(--sp-8))";
+      padding-block: var(--sp-6) !important;
+      border-start-start-radius: var(--r-xl);
+      border-start-end-radius: var(--r-xl);
+      box-shadow: var(--elev-menu);
+    }
+
+    // Core's dropdown backdrop whitens everything under the sheet, including
+    // the tab bar. Keeping it under the bar leaves the navigation legible while
+    // the sheet is open.
+    .dropdown-backdrop {
+      z-index: 999;
+    }
   }
 }
 
@@ -195,6 +213,10 @@
   flex-direction: column;
   background: var(--surface-sunken);
   border-inline-end: 1px solid var(--border-subtle);
+  // Outer corners of the card, on the list's side.
+  border-start-start-radius: var(--r-xl);
+  border-end-start-radius: var(--r-xl);
+  overflow: hidden;
 
   // Core hides the list while a dialog is open on small screens; undo the
   // desktop `display: block` so the flex column keeps its toolbar pinned.
@@ -350,6 +372,8 @@
     flex: none;
     gap: var(--sp-12);
     margin: 0;
+    // Matches the card's outer corner on the conversation side.
+    border-start-end-radius: var(--r-xl);
     padding: var(--sp-12) var(--sp-16);
     border-bottom: 1px solid var(--border-subtle);
     background: var(--surface-card);
@@ -395,6 +419,8 @@
   min-height: 0;
   overscroll-behavior: contain;
   margin: 0;
+  display: flex;
+  flex-direction: column;
   padding: var(--sp-16);
   background: var(--surface-sunken);
   // Core clamps and fades the stream inside a fixed-height page; inside the
@@ -402,6 +428,8 @@
   mask-image: none;
   max-height: none;
   overflow-y: auto;
+  // Bottom outer corner of the card on the conversation side.
+  border-end-end-radius: var(--r-xl);
   --avatar-column-width: 0;
   --additional-gap: 0;
 
@@ -411,6 +439,32 @@
 }
 
 // "Start of the conversation" and the day separators share one pill.
+// A conversation shorter than the pane still ends at the reply bar, not
+// halfway down: the stream is a column, the log grows into the free space, and
+// the reply bar sits after it at the bottom. `flex: none` keeps messages at
+// their natural height, so a long conversation grows the log and scrolls
+// instead of being squeezed.
+.MessageStream {
+  display: flex;
+  flex-direction: column;
+}
+
+.MessageStream-log {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  min-height: 0;
+
+  > * {
+    flex: none;
+  }
+}
+
+// The reply bar is a sibling of the log, not part of it.
+.MessageStream > .MessageStream-item {
+  flex: none;
+}
+
 .MessageStream .PostStream-timeGap {
   margin: var(--sp-8) 0 var(--sp-16);
   text-align: center;
