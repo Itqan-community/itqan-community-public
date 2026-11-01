@@ -18,8 +18,9 @@ export default class MessageAlertedNotification extends Notification {
   href() {
     const data = this.attrs.notification.content() || {};
 
+    // The client route is `dialog`, not the server's `messages.dialog`.
     if (data.dialogId) {
-      return app.route('messages.dialog', { id: data.dialogId });
+      return app.route('dialog', { id: data.dialogId });
     }
 
     return app.route('messages');
