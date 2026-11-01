@@ -8,6 +8,7 @@ import AbsoluteDateBadge from './components/AbsoluteDateBadge';
 import addRichToolbarButtons from './components/RichToolbarButtons';
 import addImageLightbox from './addImageLightbox';
 import addReplyAffordances from './addReplyAffordances';
+import addMessagePolish from './addMessagePolish';
 import { applyArabicCountOverrides } from './utils/arabicCounts';
 
 export { default as PwaInstallPrompt } from './components/PwaInstallPrompt';
@@ -20,6 +21,7 @@ app.initializers.add('itqan-theme', () => {
   applyArabicCountOverrides(app);
   addImageLightbox();
   addReplyAffordances();
+  addMessagePolish();
 
   // Colour scheme switching is Flarum 2.0's own (header + settings), driven by
   // `data-theme`. The theme styles that attribute; it does not manage it.

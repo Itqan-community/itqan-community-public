@@ -1,0 +1,573 @@
+// ---------------------------------------------------------------------------
+// Private messages
+// ---------------------------------------------------------------------------
+//
+// `flarum/messages` ships a usable but flat layout: a 280px list, plain posts
+// with a gutter avatar, and no visual distinction between the reader's messages
+// and everyone else's. In a conversation that reads as a document — you have to
+// re-read the names to know who said what.
+//
+// This file turns the page into a two-pane messenger:
+//
+//   ┌───────────────┬──────────────────────────────────┐
+//   │ conversations │ header · stream · reply bar      │
+//   └───────────────┴──────────────────────────────────┘
+//
+// Bubbles are the only new concept. Incoming messages sit at the inline start
+// on a card surface; the reader's own messages sit at the inline end on an
+// accent tint with the avatar dropped, which is the shape every chat app uses
+// and the fastest way to scan a thread. `data-own`, `data-grouped` and
+// `data-day` are written by `addMessagePolish.js`.
+//
+// Both schemes come from the token layer (`tokens.less`), so there are no
+// literals here and the dark scheme needs no separate block.
+
+// --- Page shell ------------------------------------------------------------
+
+.MessagesPage {
+  // The hero is a page header, not a banner: accent-tinted and short, so it
+  // leads into the conversation instead of pushing it below the fold.
+  .Page-hero {
+    padding-block: var(--sp-20);
+    background: linear-gradient(180deg, var(--accent-faint), transparent);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .Hero-title {
+    font-size: var(--fs-title-lg);
+    font-weight: var(--fw-bold);
+    color: var(--text-strong);
+
+    .icon {
+      margin-inline-end: var(--sp-8);
+      color: var(--accent);
+    }
+  }
+
+  .Hero-subtitle {
+    margin-block-start: var(--sp-4);
+    color: var(--text-muted);
+    font-size: var(--fs-body-sm);
+  }
+
+  @media @phone {
+    .Page-hero {
+      padding-block: var(--sp-12);
+    }
+
+    .Hero-title {
+      font-size: var(--fs-title);
+    }
+  }
+}
+
+// The sidebar nav already has its own armour; keep it compact above the panes.
+.MessagesPage-nav {
+  margin-block-end: var(--sp-16);
+
+  @media @phone {
+    margin-block-end: var(--sp-12);
+  }
+}
+
+// --- Two panes -------------------------------------------------------------
+
+.MessagesPage-content {
+  gap: 0;
+  // A fixed pane height is what lets the list and the stream scroll inside the
+  // card instead of growing the page. Phones use the document scroll instead.
+  height: ~"min(72vh, 760px)";
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  background: var(--surface-card);
+  box-shadow: var(--elev-1);
+  overflow: hidden;
+
+  @media @phone {
+    height: auto;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+}
+
+// --- Conversation list -----------------------------------------------------
+
+.MessagesPage-sidebar {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-sunken);
+  border-inline-end: 1px solid var(--border-subtle);
+
+  // Core hides the list while a dialog is open on small screens; undo the
+  // desktop `display: block` so the flex column keeps its toolbar pinned.
+  @media @tablet-up {
+    display: flex;
+  }
+
+  @media @phone {
+    width: 100%;
+    border-inline-end: 0;
+    background: var(--surface-card);
+  }
+
+  .IndexPage-toolbar {
+    flex: none;
+    margin: 0;
+    padding: var(--sp-8) var(--sp-10);
+    border-bottom: 1px solid var(--border-subtle);
+    background: transparent;
+  }
+}
+
+.DialogList {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--sp-6);
+  // Core clamps the list to the viewport so it never grows past the panes.
+  max-height: none;
+  --additional-gap: 0;
+}
+
+.DialogList-list {
+  gap: 2px;
+
+  .Avatar {
+    --size: 40px;
+  }
+}
+
+.DialogListItem {
+  &-button {
+    position: relative;
+    padding: var(--sp-10) var(--sp-12);
+    border-radius: var(--r-lg);
+    gap: var(--sp-10);
+    align-items: flex-start;
+    border: 1px solid transparent;
+
+    &:hover {
+      background: var(--surface-hover);
+    }
+
+    &.active {
+      background: var(--surface-card);
+      border-color: var(--border-subtle);
+      box-shadow: var(--elev-1);
+
+      // Accent rail on the inline start marks the open conversation.
+      &::before {
+        content: '';
+        position: absolute;
+        inset-block: var(--sp-10);
+        inset-inline-start: 0;
+        width: 3px;
+        border-radius: var(--r-pill);
+        background: var(--accent);
+      }
+    }
+  }
+
+  // A long display name used to be cut to "…min_Staging_2" because the title
+  // row gave the timestamp a fixed width. Let the name take what is left.
+  &-title {
+    gap: var(--sp-8);
+
+    .username {
+      flex: 1 1 auto;
+      min-width: 0;
+      max-width: none;
+      font-size: var(--fs-body-sm);
+      font-weight: var(--fw-semibold);
+      color: var(--text-strong);
+    }
+
+    time {
+      flex: none;
+      font-size: var(--fs-ui-xs);
+      font-weight: var(--fw-medium);
+      line-height: 1.6;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--text-faint);
+    }
+  }
+
+  &-content {
+    padding-block-start: 1px;
+  }
+
+  &-lastMessage {
+    margin-block-start: 2px;
+    font-size: var(--fs-ui);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  &-avatar {
+    margin-block-start: 2px;
+
+    .Bubble {
+      inset-inline-end: -3px;
+      box-shadow: 0 0 0 2px var(--surface-card);
+    }
+  }
+
+  // Unread conversations read by weight and by an accent dot, not by a wash
+  // across the whole row.
+  &--unread &-button:not(:hover) {
+    background: transparent;
+  }
+
+  &--unread &-title .username {
+    font-weight: var(--fw-bold);
+  }
+
+  &--unread &-lastMessage {
+    color: var(--text-default);
+  }
+
+  &--unread &-button::after {
+    content: '';
+    position: absolute;
+    inset-block-start: var(--sp-16);
+    inset-inline-end: var(--sp-8);
+    width: 7px;
+    height: 7px;
+    border-radius: var(--r-pill);
+    background: var(--accent);
+  }
+}
+
+// --- Conversation pane -----------------------------------------------------
+
+.DialogSection {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-inline-start: 0;
+
+  &-header {
+    flex: none;
+    gap: var(--sp-12);
+    margin: 0;
+    padding: var(--sp-12) var(--sp-16);
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--surface-card);
+
+    &-info {
+      gap: var(--sp-10);
+      min-width: 0;
+    }
+
+    &-info-title {
+      font-size: var(--fs-title-sm);
+      font-weight: var(--fw-semibold);
+      line-height: 1.4;
+
+      a {
+        color: var(--text-strong);
+      }
+    }
+
+    &-info-helperText {
+      font-size: var(--fs-ui-sm);
+      color: var(--text-muted);
+    }
+
+    .Avatar {
+      --size: 36px;
+    }
+
+    @media @phone {
+      padding: var(--sp-10) var(--sp-12);
+    }
+  }
+
+  &-header-actions {
+    gap: var(--sp-4);
+  }
+}
+
+// --- Message stream --------------------------------------------------------
+
+.MessageStream {
+  flex: 1 1 auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: var(--sp-16);
+  background: var(--surface-sunken);
+  // Core clamps and fades the stream inside a fixed-height page; inside the
+  // panes it scrolls on its own, so both the mask and the height cap go.
+  mask-image: none;
+  max-height: none;
+  overflow-y: auto;
+  --avatar-column-width: 0;
+  --additional-gap: 0;
+
+  @media @phone {
+    padding: var(--sp-12);
+  }
+}
+
+// "Start of the conversation" and the day separators share one pill.
+.MessageStream .PostStream-timeGap {
+  margin: var(--sp-8) 0 var(--sp-16);
+  text-align: center;
+
+  span {
+    display: inline-block;
+    padding: 3px var(--sp-12);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-pill);
+    background: var(--surface-card);
+    color: var(--text-faint);
+    font-size: var(--fs-ui-xs);
+  }
+}
+
+.MessageStream-item {
+  &[data-day]::before {
+    content: attr(data-day);
+    display: block;
+    width: fit-content;
+    margin: var(--sp-16) auto var(--sp-12);
+    padding: 3px var(--sp-12);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-pill);
+    background: var(--surface-card);
+    color: var(--text-faint);
+    font-size: var(--fs-ui-xs);
+    line-height: 1.8;
+  }
+}
+
+.Message.Post {
+  padding: 0;
+  margin: 0 0 var(--sp-10);
+  background: none;
+  border: 0;
+  box-shadow: none;
+  top: 0;
+
+  > .Post-container {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--sp-8);
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  // Core floats the actions over the post gutter; inside a bubble they belong
+  // beside the meta line, revealed on hover of the bubble.
+  .Post-actions {
+    position: absolute;
+    inset-block-start: -2px;
+    inset-inline-end: -6px;
+    float: none;
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  &:hover .Post-actions,
+  &:focus-within .Post-actions {
+    opacity: 1;
+  }
+}
+
+.Message.Post .Post-main {
+  position: relative;
+  max-width: ~"min(72ch, 78%)";
+  padding: var(--sp-8) var(--sp-12) var(--sp-10);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  // The corner nearest the avatar is squared off, the chat-app convention that
+  // ties the bubble to its author.
+  border-start-start-radius: var(--r-xs);
+  background: var(--surface-card);
+  box-shadow: var(--elev-1);
+  color: var(--text-default);
+  font-size: var(--fs-body-sm);
+
+  // The header keeps the name and the time; the avatar and the online dot are
+  // already in the gutter, so repeating them inside the bubble is noise.
+  .Post-header {
+    margin: 0 0 var(--sp-4);
+    padding: 0;
+    border: 0;
+    line-height: 1.5;
+  }
+
+  .Post-header > ul {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-8);
+  }
+
+  .PostUser-name {
+    font-size: var(--fs-ui-sm);
+    font-weight: var(--fw-semibold);
+    line-height: 1.5;
+    color: var(--text-strong);
+
+    .PostUser-avatar,
+    .UserOnline {
+      display: none;
+    }
+  }
+
+  .Post-meta,
+  .Post-meta a {
+    font-size: var(--fs-ui-xs);
+    color: var(--text-faint);
+  }
+
+  .Post-body {
+    margin: 0;
+    padding: 0;
+    line-height: 1.75;
+    color: inherit;
+
+    p {
+      margin: 0;
+    }
+
+    p + p {
+      margin-block-start: var(--sp-8);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  .Post-footer,
+  .Post-footer .Post-edited {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: var(--fs-ui-xs);
+    color: var(--text-faint);
+  }
+
+  @media @phone {
+    max-width: 84%;
+    border-radius: var(--r-lg);
+    border-start-start-radius: var(--r-xs);
+  }
+}
+
+// The reader's own messages: opposite side, accent tint, no avatar.
+.MessageStream-item[data-own] {
+  .Message.Post > .Post-container {
+    justify-content: flex-end;
+  }
+
+  .Message.Post .Post-side {
+    display: none;
+  }
+
+  .Message.Post .Post-main {
+    margin-inline-start: auto;
+    border-color: var(--accent-border);
+    border-start-start-radius: var(--r-xl);
+    border-start-end-radius: var(--r-xs);
+    background: var(--accent-faint);
+    box-shadow: none;
+
+    .Post-header {
+      display: none;
+    }
+
+    @media @phone {
+      border-radius: var(--r-lg);
+      border-start-end-radius: var(--r-xs);
+    }
+  }
+
+  // Grouped runs share the author, so the name is shown once at the top.
+  &[data-grouped] .Message.Post {
+    margin-block-start: calc(-1 * var(--sp-4));
+  }
+}
+
+// Consecutive messages from the same author: no repeated name line.
+.MessageStream-item[data-grouped]:not([data-own]) .Post-header {
+  display: none;
+}
+
+// --- Reply bar -------------------------------------------------------------
+
+.MessageStream .ReplyPlaceholder,
+.MessageStream button.Post.ReplyPlaceholder {
+  width: 100%;
+  margin: var(--sp-12) 0 0;
+  padding: var(--sp-8) var(--sp-12);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--r-pill);
+  background: var(--surface-card);
+  box-shadow: none;
+  color: var(--text-faint);
+  text-align: start;
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--accent-border);
+    border-style: solid;
+    background: var(--surface-card);
+    color: var(--text-default);
+  }
+
+  .Post-container {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-10);
+  }
+
+  .Post-side {
+    float: none;
+    margin: 0;
+    width: auto;
+  }
+
+  .Avatar {
+    --size: 28px;
+  }
+
+  .Post-main .Post-header {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    font-size: var(--fs-body-sm);
+    line-height: 1.6;
+  }
+
+  @media @phone {
+    margin-block-start: var(--sp-8);
+  }
+}
+
+// --- Composer --------------------------------------------------------------
+
+.ComposerBody--message {
+  .MessageComposer-recipients {
+    gap: var(--sp-10);
+    padding-block: var(--sp-4);
+    border-bottom: 1px solid var(--border-subtle);
+
+    &-list {
+      gap: var(--sp-6);
+    }
+  }
+}
