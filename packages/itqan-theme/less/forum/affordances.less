@@ -95,16 +95,35 @@
   position: fixed;
   inset-inline: 0;
   bottom: 0;
-  bottom: ~"calc(var(--mobile-tab-height, 0px) + env(safe-area-inset-bottom, 0px))";
+  // `--mobile-tab-height` already folds in the home-indicator inset (see the
+  // mobile-tab extension), so adding it again left the bar floating on iOS.
+  bottom: var(--mobile-tab-height, 0px);
   padding: var(--sp-10, 10px) var(--sp-16, 16px);
   border-inline: 0;
   border-radius: 0;
   box-shadow: 0 -6px 18px fade(#000, 7%);
   z-index: 999;
+  // Same duration and easing as `.MobileTab`'s `transition: translate 0.2s`.
+  transition: translate 0.2s;
 
   // Wide screens open the original post's composer inline instead.
   @media @tablet-up {
     display: none;
+  }
+}
+
+// The bar is one object with the browser-style tab bar underneath it: when the
+// tab bar slides away on scroll it takes the bar with it, in the same 200ms and
+// with the same easing, so nothing is left hovering over an empty strip. The
+// distance is the bar's own height plus the tab bar's, which is what it has to
+// travel to clear the viewport from its `bottom` offset.
+html:has(.MobileTab--hidden) {
+  .ReplyDock--bar {
+    translate: 0 calc(100% + var(--mobile-tab-height, 0px));
+  }
+
+  .NewDiscussionFab {
+    translate: 0 calc(100% + var(--mobile-tab-height, 0px) + 14px);
   }
 }
 
@@ -116,7 +135,7 @@
   position: fixed;
   z-index: @affordance-z;
   inset-inline-end: var(--sp-16, 16px);
-  bottom: ~"calc(var(--mobile-tab-height, 0px) + env(safe-area-inset-bottom, 0px) + 14px)";
+  bottom: ~"calc(var(--mobile-tab-height, 0px) + 14px)";
   display: grid;
   place-items: center;
   width: 54px;
@@ -129,7 +148,7 @@
   font-size: 20px;
   cursor: pointer;
   box-shadow: 0 8px 20px fade(#000, 24%);
-  transition: transform var(--dur-fast, 120ms) var(--ease-out, ease);
+  transition: transform var(--dur-fast, 120ms) var(--ease-out, ease), translate 0.2s;
 
   &:hover {
     transform: translateY(-1px);
