@@ -73,7 +73,8 @@
 .MessagesPage-content {
   gap: 0;
   // A fixed pane height is what lets the list and the stream scroll inside the
-  // card instead of growing the page. Phones use the document scroll instead.
+  // card instead of growing the page. On phones the height comes from the flex
+  // chain below, which fills whatever the viewport leaves.
   height: ~"min(72vh, 760px)";
   border: 1px solid var(--border-subtle);
   border-radius: var(--r-xl);
@@ -87,6 +88,102 @@
     border-radius: 0;
     box-shadow: none;
     background: transparent;
+  }
+}
+
+// --- Phone: one screen, conversation scrolls inside -------------------------
+//
+// Without this the chat pane grows with its messages: the document becomes
+// several screens tall, the pane ends where the last message happens to end,
+// and the only way to scroll is to drag outside the conversation. Phones get a
+// fixed-height stack instead — header, then a pane that fills the rest of the
+// viewport above the tab bar — so the message list is the only thing that
+// scrolls and the page behind it never moves.
+@media @phone {
+  // A conversation is an app screen, not a document: nothing outside the pane
+  // scrolls. This also keeps the custom footer / install prompt that the forum
+  // appends to <body> from stretching the page behind the chat.
+  html:has(.MessagesPage) {
+    overflow: hidden;
+
+    // The custom footer appends a newsletter block and an install prompt
+    // straight to <body>, and the newsletter popup leaves a full-width backdrop
+    // there. On a chat screen they add ~700px of document height and can be
+    // revealed by an overscroll (which also makes the tab bar think the page
+    // scrolled and hide itself).
+    //
+    // Their own stylesheet pins `display: flex !important` on the footer, so the
+    // blocks are taken out of flow instead of hidden: absolute + far above the
+    // viewport removes their height without a specificity fight.
+    body > .container,
+    #pwaInstallPrompt,
+    #newsletter-popup-backdrop {
+      position: absolute;
+      inset-block-start: -10000px;
+      pointer-events: none;
+    }
+  }
+
+  // The pane reserves the tab bar itself, so Flarum's page-wide bottom padding
+  // would leave a 50px strip below the fold.
+  html:has(.MessagesPage) .App {
+    padding-bottom: 0;
+  }
+
+  .MessagesPage {
+    // The desktop navigation column collapses to an empty strip on a phone
+    // (the same links live in the drawer), and its margin plus the container
+    // gap cost ~60px of conversation height.
+    .Page-sidebar {
+      display: none;
+    }
+
+    // Pinned between the app bar and the tab bar, so nothing outside the pane
+    // can move it: the footer and install prompt the forum appends to <body>
+    // stay behind it, and a stray scroll cannot drag the conversation away.
+    .Page-main {
+      position: fixed;
+      inset-block: var(--header-height-phone, 46px) var(--mobile-tab-height, 0px);
+      inset-inline: 0;
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      min-height: 0;
+      // Sits above the custom footer / install prompt that the forum appends
+      // to <body>, which would otherwise paint over the conversation.
+      z-index: 1;
+      // `inset-block-end` already stops above the tab bar; the extra padding is
+      // the home indicator area inside it.
+      padding-block-end: 0;
+    }
+
+    .Page-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      gap: 0;
+      // Full-bleed: a chat pane with 15px gutters reads as a card, not a chat.
+      // As a flex item, the container's own `margin: 0 auto` turns into a
+      // shrink-to-fit width, so the auto margins are reset explicitly.
+      padding-inline: 0;
+      margin-inline: 0;
+      width: 100%;
+    }
+
+    .Page-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      margin-top: 0;
+    }
+
+    .MessagesPage-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      background: var(--surface-card);
+    }
   }
 }
 
@@ -442,7 +539,11 @@
     flex: none;
   }
 
+  // Core makes `.Post-body` a scroll container (`overflow: auto`) for the wide
+  // post layout. Inside a narrow bubble that shows a scrollbar for a pixel of
+  // rounding, so the bubble lets its content flow instead.
   .Post-body {
+    overflow: visible;
     margin: 0;
     padding: 0;
     line-height: 1.75;
