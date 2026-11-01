@@ -84,7 +84,7 @@ flarum-messages:
       notify_message_received_label: يرسل لي أحدهم رسالة
 
     notifications:
-      message_received_text: "أرسل لك {user} رسالة"
+      message_received_text: "أرسل لك {username} رسالة"
 
   email:
     message_received:

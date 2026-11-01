@@ -51,12 +51,10 @@
   }
 
   @media @phone {
+    // The header bar above already says "الرسائل"; the hero only eats the
+    // half-screen a conversation needs.
     .Page-hero {
-      padding-block: var(--sp-12);
-    }
-
-    .Hero-title {
-      font-size: var(--fs-title);
+      display: none;
     }
   }
 }
@@ -410,9 +408,15 @@
     display: flex;
     align-items: center;
     gap: var(--sp-8);
+    flex-wrap: nowrap;
+    min-width: 0;
   }
 
   .PostUser-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: var(--fs-ui-sm);
     font-weight: var(--fw-semibold);
     line-height: 1.5;
@@ -426,6 +430,7 @@
 
   .Post-meta,
   .Post-meta a {
+    white-space: nowrap;
     font-size: var(--fs-ui-xs);
     color: var(--text-faint);
   }
@@ -485,7 +490,12 @@
     background: var(--accent-faint);
     box-shadow: none;
 
-    .Post-header {
+    // The reader knows who they are: keep the time, drop the name.
+    .Post-header > ul {
+      justify-content: flex-end;
+    }
+
+    .PostUser {
       display: none;
     }
 
@@ -494,11 +504,19 @@
       border-start-end-radius: var(--r-xs);
     }
   }
+}
 
-  // Grouped runs share the author, so the name is shown once at the top.
-  &[data-grouped] .Message.Post {
-    margin-block-start: calc(-1 * var(--sp-4));
-  }
+// Grouped runs share the author, so the avatar and the name line are shown once.
+.MessageStream-item[data-grouped] .Message .Post-side {
+  visibility: hidden;
+}
+
+.MessageStream-item[data-grouped] .Message.Post {
+  margin-block-start: calc(-1 * var(--sp-4));
+}
+
+.MessageStream-item[data-own][data-grouped] .Post-header {
+  display: none;
 }
 
 // Consecutive messages from the same author: no repeated name line.
