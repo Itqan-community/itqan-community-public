@@ -216,8 +216,12 @@ html[data-theme^='dark'] {
     background: var(--body-bg-light, #23272e) !important;
   }
 
+  // Post cards must not tint on hover: hovering a discussion's main post,
+  // comments or replies is not a clickable affordance, and the colour shift
+  // read as an accidental selection. The reply/preview cards keep their own
+  // hover states; only the post envelope stays flat.
   .NestedRepliesPost:hover > .NestedRepliesPost-container {
-    background: rgba(255, 255, 255, 0.03) !important;
+    background: transparent !important;
   }
 
   .NestedRepliesPost .Post-body,
