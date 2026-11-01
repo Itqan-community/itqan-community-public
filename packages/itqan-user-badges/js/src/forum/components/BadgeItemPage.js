@@ -65,7 +65,13 @@ export default class BadgeItemPage extends Page {
 
         {!this.loading && badge && (
           <div className="BadgeUserListInfo">
-            <i className={badge.icon()} />
+            {/* Production's badges are images, not FontAwesome icons, so the
+                artwork belongs at the top of its own page too. */}
+            {badge.image() ? (
+              <img src={badge.image()} className="UserBadgeImage BadgeUserListInfo-image" alt={badge.name()} />
+            ) : (
+              <i className={badge.icon()} />
+            )}
 
             <div className="BadgeUserListInfo-meta">
               <h3>{badge.name()}</h3>

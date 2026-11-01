@@ -4,6 +4,7 @@ use Flarum\Api\Endpoint;
 use Flarum\Api\Resource;
 use Flarum\Api\Schema;
 use Flarum\Extend;
+use Flarum\Search\Database\DatabaseSearchDriver;
 use Flarum\User\User;
 use Itqan\UserBadges\Access\UserPolicy;
 use Itqan\UserBadges\Api\Controller\OrderBadgeCategoriesController;
@@ -13,6 +14,9 @@ use Itqan\UserBadges\Api\Resource\BadgeResource;
 use Itqan\UserBadges\Api\Resource\UserBadgeResource;
 use Itqan\UserBadges\Controllers\BadgeOverviewController;
 use Itqan\UserBadges\Notification\BadgeReceivedBlueprint;
+use Itqan\UserBadges\Search\Filter\BadgeFilter;
+use Itqan\UserBadges\Search\Filter\UserFilter;
+use Itqan\UserBadges\Search\UserBadgeSearcher;
 use Itqan\UserBadges\UserBadge\UserBadge;
 
 return [
@@ -35,6 +39,13 @@ return [
     new Extend\ApiResource(BadgeResource::class),
     new Extend\ApiResource(BadgeCategoryResource::class),
     new Extend\ApiResource(UserBadgeResource::class),
+
+    // Query filters (`filter[badge]`, `filter[user]`) go through a model
+    // searcher: Flarum 2 refuses them on a database resource.
+    (new Extend\SearchDriver(DatabaseSearchDriver::class))
+        ->addSearcher(UserBadge::class, UserBadgeSearcher::class)
+        ->addFilter(UserBadgeSearcher::class, BadgeFilter::class)
+        ->addFilter(UserBadgeSearcher::class, UserFilter::class),
 
     // Non-CRUD endpoints keep their 1.8 URLs so the ported admin JS is unchanged.
     (new Extend\Routes('api'))

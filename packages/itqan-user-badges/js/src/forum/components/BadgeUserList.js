@@ -58,7 +58,7 @@ export default class BadgeUserList extends Component {
                 <li>
                   <Link
                     href={app.route('user.badges', {
-                      username: userBadge.user().username(),
+                      username: userBadge.user().slug(),
                     })}
                     className={'BadgeUserList-user'}
                   >

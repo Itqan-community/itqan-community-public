@@ -9,12 +9,10 @@ use Flarum\Api\Schema;
 use Flarum\Api\Sort\SortColumn;
 use Flarum\Foundation\ValidationException;
 use Flarum\Notification\NotificationSyncer;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Itqan\UserBadges\Badge\Badge;
 use Itqan\UserBadges\Notification\BadgeReceivedBlueprint;
 use Itqan\UserBadges\UserBadge\UserBadge;
-use Tobyz\JsonApiServer\Context as OriginalContext;
 
 /**
  * @extends AbstractDatabaseResource<UserBadge>
@@ -35,21 +33,10 @@ class UserBadgeResource extends AbstractDatabaseResource
         return UserBadge::class;
     }
 
-    public function scope(Builder $query, OriginalContext $context): void
-    {
-        // The badge page asks for `filter[badge]=<id>`; the profile reads the
-        // user's own badges through the users relationship instead.
-        $filter = (array) ($context->request->getQueryParams()['filter'] ?? []);
-
-        if (! empty($filter['badge'])) {
-            $query->where('badge_id', (int) $filter['badge']);
-        }
-
-        if (! empty($filter['user'])) {
-            $query->where('user_id', (int) $filter['user']);
-        }
-    }
-
+    /**
+     * Filters (`filter[badge]`, `filter[user]`) live in
+     * `Itqan\UserBadges\Search` — Flarum 2 refuses them on a database resource.
+     */
     public function endpoints(): array
     {
         return [

@@ -15,6 +15,17 @@
     font-size: 40px;
   }
 
+  // The artwork is a PNG, not an icon font glyph. Logical margin keeps the
+  // gap on the correct side in the Arabic RTL layout.
+  .BadgeUserListInfo-image {
+    height: 64px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-inline-end: 25px;
+  }
+
   .BadgeUserListInfo-meta {
     flex-grow: 1;
 
