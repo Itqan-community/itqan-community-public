@@ -101,6 +101,11 @@ class NotificationBuilder extends Base
                     '{title}' => $discussionTitle,
                 ]);
 
+            case 'messageReceived':
+                return $this->translator->trans('itqan-notifications.push.message_received.title', [
+                    '{username}' => $username,
+                ]);
+
             case 'discussionStickied':
                 return $this->translator->trans('itqan-notifications.push.discussion_stickied.title', [
                     '{title}' => $discussionTitle,
@@ -120,6 +125,12 @@ class NotificationBuilder extends Base
     {
         $post = null;
         $subject = $blueprint->getSubject();
+
+        // Private messages carry their own body; the shared excerpt helper is
+        // reused so a DM push reads exactly like a reply push.
+        if ($blueprint->getType() === 'messageReceived' && isset($blueprint->message)) {
+            return $this->formatExcerpt($blueprint->message->content);
+        }
 
         if ($subject instanceof Post) {
             $post = $subject;
@@ -141,6 +152,14 @@ class NotificationBuilder extends Base
 
     protected function getUrl(BlueprintInterface $blueprint): string
     {
+        // A DM must open the conversation it was sent in, not the forum home.
+        if ($blueprint->getType() === 'messageReceived' && isset($blueprint->message)) {
+            return $this->url->to('forum')->route('messages.dialog', [
+                'id'   => $blueprint->message->dialog_id,
+                'near' => $blueprint->message->id,
+            ]);
+        }
+
         $post = null;
         $subject = $blueprint->getSubject();
 

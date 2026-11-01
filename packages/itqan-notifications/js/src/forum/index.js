@@ -8,6 +8,7 @@ import CommentRepliedNotification from './components/CommentRepliedNotification'
 import PostApprovedNotification from './components/PostApprovedNotification';
 import DiscussionStickiedNotification from './components/DiscussionStickiedNotification';
 import DiscussionRetaggedNotification from './components/DiscussionRetaggedNotification';
+import MessageReceivedNotification from './components/MessageReceivedNotification';
 
 app.initializers.add('itqan-notifications', () => {
   extend(NotificationList.prototype, 'controlItems', function (items) {
@@ -30,4 +31,5 @@ app.initializers.add('itqan-notifications', () => {
   app.notificationComponents.postApproved = PostApprovedNotification;
   app.notificationComponents.discussionStickied = DiscussionStickiedNotification;
   app.notificationComponents.discussionRetagged = DiscussionRetaggedNotification;
+  app.notificationComponents.messageReceived = MessageReceivedNotification;
 });

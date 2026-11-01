@@ -37,6 +37,8 @@ itqan-notifications:
       title: "تم تثبيت نقاشك! 📌"
     discussion_retagged:
       title: "تغيير قسم النقاش 🏷️"
+    message_received:
+      title: "رسالة من {username}"
 
   email:
     discussion_replied:
@@ -106,3 +108,15 @@ itqan-notifications:
 
         لعرض النقاش في قسمه الجديد:
         {url}
+
+    # الرسائل الخاصة — نفس القنوات والصياغة المستخدمة في بقية الإشعارات.
+    message_received:
+      body: |
+        مرحبًا {recipient_display_name}!
+
+        أرسل لك {sender_display_name} رسالة جديدة على مجتمع إتقان.
+
+        لعرض المحادثة والرد عليها، افتح الرابط التالي:
+        {url}
+
+        لن تصلك رسائل أخرى عن هذه المحادثة حتى تقرأها.
