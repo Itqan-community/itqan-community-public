@@ -1,0 +1,28 @@
+flarum-mentions:
+  admin:
+    permissions:
+      mention_groups_label: الإشارة إلى المجموعات
+
+  email:
+    post_mentioned:
+      plain:
+        body: '{replier_display_name} ردّ على مشاركتك (#{post_number}) في {title}.\n\n{url}\n\n---\n\n{content}\n'
+      html:
+        body: '{replier_display_name} ردّ على مشاركتك (#{post_number}) في [{title}]({url}).'
+    user_mentioned:
+      plain:
+        body: '{mentioner_display_name} أشار إليك في إحدى المشاركات في {title}.\n\n{url}\n\n---\n\n{content}\n'
+      html:
+        body: '{mentioner_display_name} أشار إليك في إحدى المشاركات في [{title}]({url}).'
+    group_mentioned:
+      plain:
+        body: '{mentioner_display_name} أشار إلى مجموعة أنت عضو فيها في {title}.\n\n{url}\n\n---\n\n{content}\n'
+      html:
+        body: '{mentioner_display_name} أشار إلى مجموعة أنت عضو فيها في [{title}]({url}).'
+
+  lib:
+    gambits:
+      posts:
+        mentioned:
+          key: أشار إليه
+          hint: معرّف العضو المُشار إليه أو اسم مستخدمه

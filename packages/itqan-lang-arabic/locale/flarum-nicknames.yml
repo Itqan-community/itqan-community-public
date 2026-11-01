@@ -1,0 +1,5 @@
+flarum-nicknames:
+  admin:
+    basics:
+      display_name_driver_options:
+        nickname: الاسم المستعار

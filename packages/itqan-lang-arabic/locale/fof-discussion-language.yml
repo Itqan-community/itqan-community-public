@@ -1,0 +1,51 @@
+fof-discussion-language:
+  forum:
+    change_language:
+      edit_title: "تعديل لغة {title}"
+      title: تعديل اللغة
+      submit_button: => core.ref.save_changes
+    composer_discussion:
+      choose_language_link: اللغة
+    discussion_controls:
+      change_language_button: تحديد اللغة
+    index_language:
+      any: أي لغة
+    language_dropdown:
+      toggle_label: اختر لغة النقاش
+    sub_controls:
+      subscription_language_label: لغة النقاش
+      subscription_language_help: عند اختيار لغة هنا، ستتلقى الإشعارات عن النشاط الجديد بتلك اللغة فقط.
+
+  admin:
+    settings:
+      native_label: استخدام أسماء اللغات الأصلية
+      show_flag_label: عرض أعلام الدول مع أسماء اللغات
+      composer_default_label: تحديد لغة الواجهة الحالية مسبقًا في محرّر النقاش
+      locale_sort_label: استخدام اللغة المكتشفة كمرشّح افتراضي للنقاشات
+      show_any_lang_opt_label: عرض خيار اختيار «أي لغة»
+      tags_page_discussion_locale_label: عرض نقاشات لغة العضو الحالية فقط في صفحة الوسوم
+      errors:
+        missing_assets: تعذّر تحميل الملفات التي تحتاجها هذه الإضافة. جرّب تشغيل <code>php flarum assets:publish</code> وتحقق إن كان ذلك يحل المشكلة.
+      languages_heading: اللغات
+      languages_help: اللغات التي يمكن أن يكون عليها النقاش. ويحدّد البلد العلم المعروض مع كل لغة.
+      attribution: تستخدم هذه الإضافة مواد من مقالة ويكيبيديا <article>قائمة رموز ISO 639-2</article>، المنشورة بموجب <license>رخصة المشاع الإبداعي نَسب المُصنَّف - المشاركة بالمثل 3.0</license>.
+      config:
+        language_label: اللغة
+        country_label: البلد (لعرض العلم)
+        choose_language: اختر لغة…
+        choose_country: اختر بلدًا…
+        add_button: إضافة لغة
+        remove_button: "إزالة {language}"
+    permissions:
+      allow_change_language_label: السماح بتعديل اللغة
+      change_language_label: تغيير لغة النقاش
+
+  api:
+    discussion:
+      validation_error: يجب اختيار لغة النقاش.
+
+  lib:
+    gambits:
+      language:
+        key: اللغة
+        hint: رمز اللغة أو قائمة رموز لغات مفصولة بفواصل

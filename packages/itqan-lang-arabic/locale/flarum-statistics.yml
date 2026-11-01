@@ -1,0 +1,6 @@
+flarum-statistics:
+  admin:
+    statistics:
+      dialogs_heading: محادثات خاصة بدأت
+      dialog_replies_heading: ردود المحادثات الخاصة
+      export_chart_button: تصدير الرسم البياني إلى SVG

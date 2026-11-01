@@ -1,0 +1,48 @@
+fof-follow-tags:
+  forum:
+    prompt:
+      choose_button: اختر وسومًا للمتابعة
+      modal_title: اختر وسومًا للمتابعة
+      later_button: ذكّرني لاحقًا
+      continue_button: المتابعة إلى المنتدى
+
+  admin:
+    settings:
+      following_page_default_label: المرشّح الافتراضي لصفحة المتابعة
+      following_none_label: => fof-follow-tags.ref.filtering_options.none
+      following_tags_label: => fof-follow-tags.ref.filtering_options.tags
+      prompt_new_users_label: مطالبة الأعضاء الجدد باختيار وسوم للمتابعة
+      prompt_new_users_help: "سيظهر للأعضاء الذين لم يؤكدوا اختيارهم بعد نافذة تطلب منهم متابعة وسوم، وتعود في كل زيارة حتى يضغطوا «المتابعة إلى المنتدى».\n"
+      prompt_button_on_following_page_label: عرض زر «اختر وسومًا للمتابعة» في صفحة المتابعة
+      prompt_tag_strategy_label: الوسوم المعروضة في الطلب
+      prompt_tag_strategy_options:
+        primary: الوسوم الأساسية من المستوى الأول
+        primaryAndChildren: كل الوسوم الأساسية من أي مستوى
+        primaryAndSecondary: الوسوم الأساسية من المستوى الأول والوسوم الفرعية
+        secondary: الوسوم الفرعية فقط
+        all: كل الوسوم
+        list: الوسوم المحددة أدناه
+      prompt_tag_ids_label: الوسوم المعروضة
+      all_discussions_on_following_page_for_guests_label: عرض كل النقاشات في صفحة المتابعة للزوار
+    basics:
+      following_label: => flarum-subscriptions.forum.index.following_link
+
+  email:
+    newDiscussionInTag:
+      subject: "[وسم | نقاش جديد] {title}"
+      plain:
+        body: "{actor_display_name} بدأ نقاشًا في وسم تتابعه: {discussion_title}\n\nلعرض النقاش الجديد، افتح الرابط التالي:\n{discussion_url}\n\n---\n\n{content}\n"
+      html:
+        body: "{actor_display_name} بدأ نقاشًا في وسم تتابعه: [{discussion_title}]({discussion_url})\n"
+    newPostInTag:
+      subject: "[وسم | مشاركة جديدة] {title}"
+      plain:
+        body: "{actor_display_name} نشر مشاركة في نقاش ضمن وسم تتابعه: {discussion_title}\n\nلعرض النشاط الجديد، افتح الرابط التالي:\n{post_url}\n\n---\n\n{content}\n"
+      html:
+        body: "{actor_display_name} نشر مشاركة في نقاش ضمن وسم تتابعه: [{discussion_title}]({post_url})\n"
+    newDiscussionTag:
+      subject: "[وسم | تغيير وسم] {title}"
+      plain:
+        body: "{actor_display_name} غيّر للتو وسم نقاش كتبه {author_display_name} إلى وسم تتابعه: {discussion_title}\n\nلعرض النقاش، افتح الرابط التالي:\n{discussion_url}\n\n---\n\n{content}\n"
+      html:
+        body: "{actor_display_name} غيّر للتو وسم نقاش كتبه {author_display_name} إلى وسم تتابعه: [{discussion_title}]({discussion_url})\n"

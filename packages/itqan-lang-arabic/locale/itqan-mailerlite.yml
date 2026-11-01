@@ -1,0 +1,96 @@
+itqan-mailerlite:
+  admin:
+    title: تكامل MailerLite
+    connection:
+      connected: متصل بـ MailerLite
+      disconnected: غير متصل بـ MailerLite
+      checking: جارٍ التحقق من الاتصال...
+      refresh: تحديث
+    settings:
+      enabled_label: تفعيل تكامل MailerLite
+      api_key_label: مفتاح API الخاص بـ MailerLite
+      api_key_help: احصل على مفتاح API من لوحة تحكم MailerLite → التكاملات → API
+      groups_section: إعدادات المجموعات
+      new_members_label: مجموعة الأعضاء الجدد
+      new_members_help: اسم المجموعة في MailerLite للأعضاء المسجلين حديثًا
+      first_posters_label: مجموعة أول من ينشر
+      first_posters_help: اسم المجموعة في MailerLite للأعضاء الذين يكتبون أول منشور لهم
+      inactive_users_label: مجموعة الأعضاء غير النشطين
+      inactive_users_help: اسم المجموعة في MailerLite للأعضاء غير النشطين
+      power_users_label: مجموعة الأعضاء الأكثر نشاطًا
+      power_users_help: اسم المجموعة في MailerLite للأعضاء ذوي النشاط العالي
+      thresholds_section: إعدادات الحدود
+      inactivity_days_label: حد عدم النشاط (بالأيام)
+      inactivity_days_help: عدد أيام عدم النشاط قبل اعتبار العضو غير نشط
+      power_user_posts_label: حد منشورات العضو النشط
+      power_user_posts_help: الحد الأدنى لعدد المنشورات لاعتبار العضو نشطًا
+      webhook_section: إعدادات Webhook
+      webhook_url_label: رابط Webhook
+      webhook_url_help: اضبط هذا الرابط في MailerLite لاستقبال أحداث إلغاء الاشتراك (انقر للنسخ)
+      webhook_secret_label: المفتاح السري لـ Webhook
+      webhook_secret_help: مفتاح سري اختياري للتحقق من طلبات Webhook الواردة من MailerLite
+    tabs:
+      dashboard: لوحة التحكم
+      subscribers: المشتركون
+      groups: المجموعات
+      logs: سجلات المزامنة
+    dashboard:
+      quick_actions: إجراءات سريعة
+      sync_all_users: مزامنة جميع الأعضاء
+      refresh_stats: تحديث الإحصاءات
+      recent_activity: النشاط الأخير
+      no_recent_activity: لا يوجد نشاط مزامنة حديث
+      sync_cli_message: "لمزامنة جميع الأعضاء، نفّذ الأمر التالي على خادمك:\n\nphp flarum mailerlite:sync-users"
+      stats:
+        total_users: إجمالي الأعضاء
+        synced: تمت مزامنته
+        pending: قيد الانتظار
+        failed: فشل
+    groups:
+      title: مجموعات MailerLite
+      refresh: تحديث المجموعات
+      no_groups: لم يتم العثور على مجموعات. اضبط مفتاح API وأسماء المجموعات في الإعدادات.
+      subscribers: مشتركون
+      sent: أُرسلت
+      opens: فُتحت
+    subscribers:
+      filter_status: تصفية حسب الحالة
+      search: بحث
+      search_placeholder: اسم المستخدم أو البريد الإلكتروني...
+      search_button: بحث
+      all: الكل
+      synced: تمت مزامنته
+      pending: قيد الانتظار
+      failed: فشل
+      unsubscribed: ألغى الاشتراك
+      not_synced: لم تتم مزامنته
+      no_subscribers: لم يتم العثور على مشتركين
+      sync: مزامنة
+      sync_failed: تعذّرت مزامنة العضو. يُرجى المحاولة مرة أخرى.
+    logs:
+      filter_status: تصفية حسب الحالة
+      filter_action: تصفية حسب الإجراء
+      refresh: تحديث
+      all: الكل
+      success: نجاح
+      failed: فشل
+      pending: قيد الانتظار
+      action_sync: مزامنة
+      action_add_to_group: إضافة إلى مجموعة
+      action_remove_from_group: إزالة من مجموعة
+      action_unsubscribe: إلغاء الاشتراك
+      no_logs: لم يتم العثور على سجلات مزامنة
+    table:
+      user: العضو
+      email: البريد الإلكتروني
+      action: الإجراء
+      group: المجموعة
+      status: الحالة
+      error: الخطأ
+      time: الوقت
+      groups: المجموعات
+      posts: المنشورات
+      last_synced: آخر مزامنة
+      actions: الإجراءات
+    pagination:
+      page: الصفحة {current} من {total}

@@ -1,0 +1,68 @@
+fof-links:
+  admin:
+    edit_link:
+      title: => fof-links.ref.create_link
+      title_child: "رابط جديد تحت {parent}"
+      title_label: => fof-links.ref.title
+      title_placeholder: => fof-links.ref.title
+      icon_label: => core.ref.icon
+      icon_text: => core.ref.icon_text
+      icon_additional_text: إذا أردت استخدام أيقونة علامة تجارية، فالبادئة هي <code>fab fa-</code> بدلًا من ذلك.
+      type:
+        heading: وظيفة هذا الرابط
+        internal:
+          label: ينتقل إلى صفحة داخل هذا المنتدى
+          help: يُفتح دون إعادة تحميل الصفحة.
+        external:
+          label: ينتقل إلى موقع آخر
+          help: يفتح عنوانًا خارج هذا المنتدى.
+        label:
+          label: لا ينتقل إلى أي مكان
+          help: يظهر كعنوان فقط. استخدمه لتسمية مجموعة من الروابط.
+      url_label: => fof-links.ref.url
+      url_help:
+        internal: "الجزء من العنوان بعد {baseUrl}، ويبدأ بشرطة مائلة."
+        external: العنوان الكامل، بما في ذلك <code>https://</code>.
+      url_placeholder:
+        internal: /tags
+        external: https://example.com
+      options_label: الخيارات
+      open_newtab: الفتح في تبويب جديد
+      use_rel_me: "إضافة السمة <code>rel=\"me\"</code>"
+      use_rel_me_help: يتيح للموقع الذي ترتبط به التحقق من أن هذا المنتدى ملكك.
+      visibility:
+        label: من يمكنه رؤيته
+        help: "الرابط الجديد مرئي لمستخدمي {admin} فقط. عدّل الصلاحية لتوسيع ذلك."
+        help-disabled: احفظ الرابط قبل اختيار من يمكنه رؤيته.
+        guest-only:
+          label: "عرضه لـ{guest} فقط"
+          help: "لن يرى هذا الرابط الأعضاء المسجّلون. ويجب ضبط الصلاحية أعلاه على {everyone}."
+      submit_button: => core.ref.save_changes
+      delete_link_button: حذف الرابط
+      delete_link_confirmation: "هل أنت متأكد من حذف «{title}»؟"
+    links:
+      links: => fof-links.ref.links
+      description: تظهر هذه الروابط في قائمة تنقّل منتداك، بالترتيب المذكور هنا.
+      create_button: => fof-links.ref.create_link
+      preconfigured: روابط هذا المنتدى معدّة مسبقًا في الشيفرة، ولا يمكن تعديلها من هنا.
+      no_url: بلا رابط، يُعرض كعنوان
+      reorder_help: اسحب الرابط من مقبضه لإعادة ترتيبه، أو أفلته فوق رابط آخر لتداخله تحته. وعند التركيز على المقبض تؤدي مفاتيح الأسهم الأمر نفسه.
+      reorder_loading: جارٍ تهيئة القائمة لإعادة الترتيب…
+      reorder_accessible_label: "إعادة ترتيب {title}. استخدم مفاتيح الأسهم لتحريكه لأعلى أو لأسفل أو إلى الرابط الذي فوقه أو للخروج منه."
+      edit_accessible_label: "تعديل {title}"
+      add_child_accessible_label: "إضافة رابط تحت {title}"
+      audience_everyone: مرئي للجميع
+      flag:
+        new_tab: تبويب جديد
+        rel_me: "rel=\"me\""
+        guest_only: للزوار فقط
+      moved: "نُقل {title} إلى الموضع {position} من {total}."
+      moved_under: "نُقل {title} تحت {parent}، الموضع {position} من {total}."
+    settings:
+      heading: الإعدادات
+      show_icons_only_on_tablet: عرض الأيقونات فقط على شاشات الأجهزة اللوحية
+      show_icons_only_on_tablet_help: يخفي عناوين الروابط بين عرض 768px و991px، حيث تكون مساحة التنقّل أضيق. وتبقى العناوين مقروءة لقارئات الشاشة.
+
+  forum:
+    header:
+      toggle_dropdown_accessible_label: "عرض الروابط تحت {title}"

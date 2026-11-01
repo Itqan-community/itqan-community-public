@@ -1,0 +1,10 @@
+fof-formatting:
+  admin:
+    plugins:
+      Autoimage: تحويل روابط الصور إلى صور فعلية
+      Autovideo: تحويل روابط الفيديو إلى فيديوهات قابلة للتشغيل
+      FancyPants: استخدام طباعة أنيقة
+      HTMLEntities: استخدام كيانات HTML
+      MediaEmbed: تضمين محتوى من مواقع مسموح بها
+      PipeTables: جداول بنمط ASCII
+      TaskLists: قوائم مهام بنمط GitHub/GitLab

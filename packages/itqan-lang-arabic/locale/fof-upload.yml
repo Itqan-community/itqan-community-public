@@ -1,0 +1,211 @@
+fof-upload:
+  admin:
+    nav:
+      shared-uploads-button: المرفوعات المشتركة
+    shared-uploads:
+      description: ارفع ملفات يمكن لجميع مستخدمي منتداك استخدامها.
+      introduction: "المرفوعات المشتركة هي ملفات يمكن لجميع مستخدمي منتداك استخدامها. وهي غير مرتبطة بأي منشور، لكن يمكن إدراجها في المنشورات عبر مدير الوسائط.\n\n<strong>تحذير:</strong> المرفوعات المشتركة غير محمية بأي أذونات. ويمكن لأي شخص يملك الرابط عرضها.\n"
+      no-files: لم تُرفع أي ملفات مشتركة بعد.
+      title: المرفوعات المشتركة
+      upload-new-button: رفع ملف جديد
+    pane:
+      title: الرفع
+      description: إعداد خدمات الرفع والتفضيلات.
+    help_texts:
+      disable-download-logging: "تعطيل تسجيل كل عملية تنزيل يقوم بها مستخدمو منتداك. وإبقاؤه مفعّلًا يتيح لك عرض عدد التنزيلات ومقاييس أخرى في المستقبل القريب.\n"
+      disable-hotlink-protection: "تمنع الحماية من الربط المباشر (hotlink) فتح التنزيلات من مواقع أخرى. وتتطلب الطريقة الحالية رمز csrf ومعرّف المنشور.\n"
+      download_templates: "قوالب التنزيل هي طريقة عرض المرفوعات في منتداك، مثل المعاينات والأزرار. والمتاح حاليًا:\n"
+      mime_types: حدّد الملفات التي يمكن للأعضاء رفعها، وأين يُخزّن كل نوع، وكيف يظهر في المنشور.
+      mime_order: "تُطابَق القواعد من الأعلى إلى الأسفل وتفوز أول مطابقة، لذا ضع القواعد الأكثر تحديدًا فوق القواعد العامة.\n"
+      resize: اختر ما إذا كنت تريد تغيير حجم صورك قبل رفعها. ويمكنك اختيار حد أقصى للعرض والارتفاع بالبكسل. وتحافظ عملية تغيير الحجم على نسبة أبعاد الصور.
+      client_extension: "يختار الرفع افتراضيًا امتداد ملف آمنًا بناءً على نوع MIME.\nوبالنسبة لبعض أنواع الملفات المعتمدة على ZIP أو البيانات الثنائية، قد يؤدي ذلك إلى استخدام امتدادات عامة بدلًا من الامتداد المتوقع.\nوهنا يمكنك إدخال قائمة مفصولة بفواصل من امتدادات الملفات التي ستُبقى كما هي.\n"
+      thumbnails: "توليد صورة مصغّرة مُصغّر حجمها للصور عند الرفع. وتُعرض الصورة المصغّرة داخل المنشور،\nوالنقر عليها يفتح الملف الأصلي بالدقة الكاملة في تبويب جديد. وتقلّل الصور المصغّرة كثيرًا من\nاستهلاك النطاق الترددي وثقل الصفحة في المنتديات التي تحوي صورًا كبيرة كثيرة.\n"
+      thumbnail_quality: "جودة الترميز من 1 إلى 100، وتُطبّق على الصور المصغّرة بصيغتي WebP و JPEG. والقيم الأعلى تبدو أكثر حدة\nلكنها تنتج ملفات أكبر. أما الصور المصغّرة GIF و PNG فهي بلا فقدان وتتجاهل هذا الإعداد.\nوتحتفظ الصور المصغّرة الحالية بجودتها حتى تُعاد توليدها بالأمر backfill.\n"
+      watermark: "اختر ما إذا كانت الصور ستضاف إليها علامة مائية أثناء الرفع. وتُضاف العلامات المائية إلى الصور غير المتحركة (غير GIF) وفق تفضيلاتك أدناه.\n"
+      storage_intro: "تُعرض هنا الخدمات التي أعددتها، أو التي يستخدمها نوع ملف ما. ويمكنك إعداد خدمة\nقبل ربط أي نوع ملف بها — عيّنها في تبويب الملفات عندما تكون جاهزًا.\n"
+      storage_configure_another: "هناك خدمات تخزين أخرى مثبّتة لكنها غير معدّة بعد. وإعداد إحداها لا يغيّر مكان حفظ الملفات\nحتى تعيّنها لنوع ملف.\n"
+      storage_not_installed: تبحث عن Amazon S3 أو Cloudflare R2 أو Qiniu؟ تحتاج هذه إلى حزمة إضافية — راجع <a>تثبيت محوّلات التخزين</a>.
+      local_cdn: "اختياري. إذا كنت تقدّم <code>assets/files</code> عبر CDN، فأدخل عنوانه الأساسي وستستخدمه روابط الملفات المرفوعة.\nاتركه فارغًا لتقديم الملفات مباشرة من منتداك.\n"
+      s3_provider: "اختيار المزوّد يحدّد تنسيق نقطة النهاية وأسلوب العنونة ودعم ACL أدناه. واختر «Other S3-compatible»\nإذا لم يكن مزوّدك مُدرجًا.\n"
+      s3_endpoint: "رابط S3 API الخاص بالمزوّد — وليس الرابط العام للحاوية (bucket) الخاصة بك. ولا يحتاج Amazon S3 إليه.\n"
+      s3_acl: "يُطبّق على كل كائن مرفوع. واتركه فارغًا للقيمة الافتراضية للمزوّد (عادةً خاصة).\nاستخدم <code>public-read</code> إذا وجب أن تكون الملفات قابلة للقراءة مباشرة من الحاوية.\n"
+      s3_acl_unsupported: "{provider} لا يدعم ACL. وتحكّم في الوصول العام من لوحة تحكم المزوّد نفسه بدلًا من ذلك.\n"
+      s3_path_style: "يضع الحاوية في مسار الرابط بدلًا من اسم المضيف. ويطلبه MinIO و Cloudflare R2؛\nويُضبط تلقائيًا عند اختيار مزوّد.\n"
+      custom_s3_url: "الرابط الأساسي العام الذي تُقدَّم منه ملفاتك — CDN أو نطاق مخصص أمام الحاوية.\nاتركه فارغًا لاستخدام الرابط الافتراضي للمزوّد. ويجب أن يتضمن <code>https://</code>.\n"
+      s3_instance_profile: "اترك الحقلين فارغين لاستخدام دور IAM بدلًا من ذلك — لا يعمل إلا على EC2 أو ECS أو EKS.\n"
+      composer_buttons: افتراضيًا يظهر زر مدير الوسائط وزر الرفع معًا. ويمكنك أيضًا اختيار عرض زر واحد فقط.
+    tabs:
+      files: الملفات
+      storage: التخزين
+      images: الصور
+      advanced: متقدّم
+      unsaved_changes: يحتوي هذا التبويب على تغييرات غير محفوظة
+      unsaved_hint: لديك تغييرات غير محفوظة.
+    labels:
+      storage:
+        configure_another: إعداد خدمة تخزين أخرى ({count} متاحة)
+        hide_unused: إخفاء الخدمات غير المستخدمة
+      aws-s3:
+        bucket: الحاوية (Bucket)
+        key: معرّف مفتاح الوصول
+        region: المنطقة
+        secret: مفتاح الوصول السري
+        title: تخزين S3
+        provider: المزوّد
+        advanced_title: خيارات متقدمة
+        endpoint: نقطة النهاية
+        use_path_style_endpoint: استخدام العنونة بنمط المسار
+        acl: قائمة التحكم في الوصول (ACL)
+        custom_url: الرابط العام
+      disable-download-logging:
+        title: تعطيل تسجيل التنزيلات
+        toggle: تعطيل
+      disable-hotlink-protection:
+        title: تعطيل الحماية من الربط المباشر
+        toggle: تعطيل
+      imgur:
+        client_id: معرّف عميل Imgur
+        deprecated: لم يعد Imgur يصدر معرّفات عميل API، لذا أصبح هذا المحوّل مهملًا وسيُزال في إصدار مستقبلي. انقل أنواع الملفات هذه إلى محوّل تخزين آخر.
+        title: إعدادات تخزين صور Imgur
+        tos: تقع على عاتقك مسؤولية ضمان التزام مستخدمي منتداك بـ<a>شروط خدمة</a> Imgur
+      local:
+        cdn_url: رابط توصيل المحتوى (يُضاف قبل الملفات)
+        title: إعدادات التخزين المحلي
+      configured_by_environment: تم إعداد إعدادات التخزين مسبقًا عبر متغيرات البيئة.
+      qiniu:
+        title: إعدادات تخزين Qiniu
+        key: المفتاح
+        secret: السر
+        bucket: الحاوية (Bucket)
+      preferences:
+        max_file_size: الحد الأقصى لحجم الملف
+        max_file_size_equivalent: يُخزّن كـ<code>{kb}</code> كيلوبايت ({value}).
+        mime_types: أنواع الملفات
+        mime_type_regex_placeholder: 'مثال: ^image/(jpeg|png|gif)$'
+        mime_type_regex_invalid: تعبير نمطي غير صالح (مثل بدائل فارغة كـ ||)
+        mime_type_permission_placeholder: 'اختياري، مثال: Images'
+        mime_type_remove: إزالة نوع الملف هذا
+        mime_type_add: إضافة نوع الملف هذا
+        mime_column_pattern: نوع الملف
+        mime_column_pattern_help: أنواع الملفات التي تُطبّق عليها هذه القاعدة، وتُطابَق مع نوع MIME للملف.
+        mime_column_storage: يُخزّن في
+        mime_column_storage_help: خدمة التخزين التي تُرفع إليها ملفات هذا النوع.
+        mime_column_display: يظهر كـ
+        mime_column_display_help: كيف يظهر الملف في المنشور — معاينة داخلية، زر تنزيل، وما إلى ذلك.
+        mime_column_permission: تسمية الإذن
+        mime_column_permission_help: اختياري. تسمية مجموعة هنا تنشئ إذنًا يمكّنك من التحكم فيمن يجوز له رفع هذه الملفات.
+        mime_move_up: تحريك لأعلى (يُطابَق أولًا)
+        mime_move_down: تحريك لأسفل (يُطابَق لاحقًا)
+        mime_edit_pattern: تحرير النمط
+        mime_use_simple: استخدام المحرر المبسّط
+        mime_advanced_pattern: نمط متقدّم
+        mime_add_subtype: إضافة صيغة ملف
+        mime_add_subtype_placeholder: 'مثال: webp'
+        mime_remove_subtype: إزالة {subtype}
+        mime_add_prompt: إضافة أنواع ملفات…
+        mime_add_custom: نمط مخصص…
+      mime_presets:
+        images: الصور
+        pdf: مستندات PDF
+        documents: مستندات Word
+        spreadsheets: جداول البيانات
+        archives: الأرشيفات (zip، tar، 7z)
+        audio: الصوت
+        video: الفيديو
+        title: التفضيلات العامة
+        php_ini_values: قيم <code>php.ini</code> لديك هي <code>post_max_size={post}</code> و<code>upload_max_filesize={upload}</code>. وتأكد من أن القيمة المعيّنة هنا أقل من هذين الحدّين، أو عدّلهما بما يلائم. وإذا كنت تستخدم <code>Nginx</code>، فتأكد أيضًا من أن <code>client_max_body_size</code> بحجم كافٍ للحد الأقصى الذي اخترته.
+      resize:
+        max_width: الحد الأقصى لعرض/ارتفاع الصورة
+        title: تغيير حجم الصور
+        toggle: تغيير حجم الصور
+      client_extension:
+        title: امتدادات الملفات التي يقدّمها المستخدم
+        placeholder: 'مثال: docx، xlsx، epub'
+      thumbnails:
+        title: الصور المصغّرة
+        toggle: توليد صور مصغّرة عند الرفع
+        webp_toggle: ترميز الصور المصغّرة بصيغة WebP (موصى به، أصغر بنحو 30%)
+        max_width: الحد الأقصى لعرض الصورة المصغّرة (بكسل)
+        quality: جودة الصور المصغّرة
+      watermark:
+        file: ارفع صورة العلامة المائية
+        opacity: شفافية العلامة المائية (0–100)
+        padding: الهامش من الحافة (بكسل)
+        position: موضع العلامة المائية
+        size_percent: حجم العلامة المائية (% من عرض الصورة)
+        title: وضع علامة مائية على الصور
+        toggle: وضع علامة مائية على الصور
+      svg-sanitizer:
+        title: منقّي SVG
+        allow_animate: السماح بحركات SVG
+        help: إعداد كيفية معالجة ملفات SVG وتنقيتها عند رفعها. ويمكن أن تحتوي ملفات SVG على نصوص برمجية ضارة، لذا يجب التعامل معها بحذر. وتُنقّى ملفات SVG المرفوعة عند الرفع وتُزال النصوص البرمجية والوسوم الضارة.
+        allow_animate_help: قد يؤدي تفعيل حركات SVG إلى ثغرات أمنية، لأن ملفات SVG المتحركة قد تحتوي شيفرة خبيثة. فعّل هذا الإعداد على مسؤوليتك وفقط إذا كنت تثق بمستخدميك.
+      composer_buttons:
+        title: أزرار المحرر
+        options:
+          both: كلاهما
+          upload-btn: زر الرفع فقط
+          media-btn: زر مدير الوسائط فقط
+      inspect-mime: اختبار نوع MIME للملف
+    warnings:
+      fileinfo_missing: "إضافة PHP <strong>fileinfo</strong> غير محمّلة على هذا الخادم. وسيظل FoF Upload يعمل، لكن التحقق المتقاطع من نوع MIME معطّل، ما يقلّل الحماية من أنواع الملفات المزوّرة. فعّل الإضافة في إعدادات PHP لأفضل أمان.\n"
+      max_file_size_exceeds_php: يتجاوز هذا حد الرفع الفعلي على خادمك البالغ <strong>{limit}</strong> (<code>post_max_size={post}</code>، <code>upload_max_filesize={upload}</code>). وسيرفض PHP أي رفع أكبر من ذلك الحد بغض النظر عن هذا الإعداد. اخفض هذه القيمة أو ارفع الحدود في <code>php.ini</code> (و<code>client_max_body_size</code> إذا كنت تستخدم Nginx).
+    permissions:
+      download_label: تنزيل الملفات
+      upload_label: رفع الملفات (إذن أساسي، مطلوب لكل عمليات الرفع)
+      upload_mime_label: رفع {label}
+      delete_own_uploads_label: حذف مرفوعاتك
+      upload_shared_label: رفع الملفات المشتركة وإخفاؤها وحذفها
+      access_shared_label: الوصول إلى الملفات المشتركة في مدير الوسائط
+    templates:
+      file: قالب تنزيل الملفات الافتراضي
+      file_description: "يعرض اسم الملف وبعض المعلومات العامة. ويمرّر التنزيلات عبر php، ما يتيح جمع الإحصاءات والحماية من الربط المباشر.\n"
+      image: قالب تنزيل الصور الافتراضي
+      image_description: "يعرض صورة مصغّرة للصورة ويمرّر التنزيل عبر php، ما يتيح جمع الإحصاءات والحماية من الربط المباشر.\n"
+      image-preview: قالب معاينة الصورة الكاملة
+      image-preview_description: "يعرض الصورة كاملة داخل المنشور. لا وظيفة تنزيل، ولا تُجمع إحصاءات، وتُتجاهل الحماية من الربط المباشر.\n"
+      markdown-image: قالب صورة Markdown
+      markdown-image_description: "يعرض الصورة كاملة داخل المنشور باستخدام Markdown. <strong>يجب أن تكون إضافة flarum/markdown مثبّتة ومفعّلة ليعمل هذا.</strong> لا وظيفة تنزيل، ولا تُجمع إحصاءات، وتُتجاهل الحماية من الربط المباشر.\n"
+      bbcode-image: قالب صورة BBCode
+      bbcode-image_description: "يعرض الصورة كاملة داخل المنشور باستخدام BBCode. <strong>يجب أن تكون إضافة flarum/bbcode مثبّتة ومفعّلة ليعمل هذا.</strong> لا وظيفة تنزيل، ولا تُجمع إحصاءات، وتُتجاهل الحماية من الربط المباشر.\n"
+      just-url: الرابط فقط
+      just-url_description: "يُدرج الرابط فقط. ويمكن أن تتولى إضافات أخرى معالجة عرضه عبر خاصية الربط التلقائي. لا وظيفة تنزيل، ولا تُجمع إحصاءات، وتُتجاهل الحماية من الربط المباشر.\n"
+      text-preview: معاينة النص
+      text-preview_description: "يُدرج معاينة (أول 5 أسطر) من الملف النصي، مع خيار للتوسيع وكشف محتوى الملف كاملًا.\n"
+    upload_methods:
+      aws-s3: S3 أو متوافق معه
+      imgur: Imgur
+      local: محلي
+      ovh-svfs: OVH SVFS
+      qiniu: QiNiu
+    inspect-mime:
+      title: فحص MIME
+      description: "يستخدم FoF Upload مكتبة <a>PHP Mime Detector</a> لأنواع MIME الشائعة، و PHP Fileinfo كبديل احتياطي.\nوقد تختلف قيمة MIME التي يعيدها Fileinfo من خادم إلى آخر!\n"
+      select: اختر ملفًا أدناه لفحص القيم التي ستُستخدم. ولن يُحفظ الملف.
+      laravel-validation: التحقق من الملفات في Laravel
+      no-file-selected: لا ملف
+      validation-passed: ناجح
+      validation-failed: 'فشل: {error}'
+      mime-detector: كاشف MIME (الأساسي)
+      mime-fileinfo: PHP Fileinfo (احتياطي)
+      guessed-extension: امتداد الملف الافتراضي (إن لم يكن الامتداد الأصلي مدرجًا في القائمة المسموحة)
+      not-available: لا نتيجة
+  forum:
+    display_name:
+      title: سمِّ هذا التنزيل
+      title_plural: سمِّ هذه التنزيلات
+      help: يُعرض على التنزيل بدلًا من اسم الملف. واتركه كما هو لاستخدام اسم الملف.
+      insert: إدراج
+      use_file_name: استخدام أسماء الملفات
+    states:
+      permission_required: إذن مطلوب
+    text_preview:
+      download: تنزيل الملف
+      no_snippet_preview: <ستظهر المعاينة هنا بعد النشر>
+      no_snippet: <لا يتوفر مقتطف معاينة>
+  api:
+    upload_errors:
+      mime_permission_denied: ليس لديك إذن لرفع هذا النوع من الملفات.
+  lib:
+    file_list:
+      load_error: تعذّر تحميل الملفات. يُرجى المحاولة مرة أخرى.

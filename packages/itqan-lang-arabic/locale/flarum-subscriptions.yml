@@ -1,0 +1,18 @@
+flarum-subscriptions:
+  forum:
+    settings:
+      follow_after_create_label: متابعة النقاشات التي أنشئها تلقائيًا
+
+  email:
+    new_post:
+      plain:
+        body: '{poster_display_name} نشر للتو في نقاش تتابعه: {title}.\n\nلعرض النشاط الجديد، افتح الرابط التالي:\n{url}\n\n---\n\n{content}\n\n---\n\nلن تتلقى مزيدًا من الإشعارات حول هذا النقاش حتى تواكب كل الجديد.\n'
+      html:
+        body: '{poster_display_name} نشر للتو في نقاش تتابعه: [{title}]({url}).\n\nلن تتلقى مزيدًا من الإشعارات حول هذا النقاش حتى تواكب كل الجديد.\n'
+
+  lib:
+    gambits:
+      discussions:
+        subscription:
+          following_key: يتابع
+          ignoring_key: يتجاهل

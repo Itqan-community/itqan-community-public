@@ -1,0 +1,24 @@
+flarum-gdpr:
+  lib:
+    data:
+      subscriptionlanguages:
+        export_description: تُصدَّر مع كل اشتراك في وسم، كما تُصدّرها إضافة fof/follow-tags.
+        anonymize_description: يزيل لغة النقاش التي اختارها العضو لكل وسم يتابعه.
+      messages:
+        export_description: رسائلك الخاصة، مع وقت إرسالها والعنوان الذي أُرسلت منه.
+        anonymize_description: تُزال العناوين التي أُرسلت منها رسائلك الخاصة. تبقى الرسائل.
+        delete_description: تُحذف رسائلك الخاصة.
+      followuser:
+        export_description: يصدّر تفاصيل الأعضاء الذين يتابعهم العضو والأعضاء الذين يتابعونه.
+        anonymize_description: => flarum-gdpr.lib.data.followuser.delete_description
+        delete_description: يحذف كل البيانات المتعلقة بمتابعة الأعضاء.
+      tagsubscription:
+        export_description: يصدّر تفاصيل مستوى الاشتراك في وسم، إن وُجد.
+        anonymize_description: يزيل اشتراك العضو في الوسم.
+      pushsubscriptions:
+        export_description: يصدّر كل اشتراكات الإشعارات الفورية ورموز الأجهزة المرتبطة بالعضو.
+        delete_description: يحذف كل اشتراكات الإشعارات الفورية ورموز الأجهزة المرتبطة بالعضو.
+      uploads:
+        export_description: كل الملفات التي رفعها العضو.
+        anonymize_description: يزيل إشارة العضو من الملفات المرفوعة. تبقى الملفات نفسها متاحة للأعضاء الذين كانوا يستطيعون رؤيتها قبل إخفاء الهوية.
+        delete_description: يحذف كل الملفات التي رفعها العضو.

@@ -1,0 +1,8 @@
+clarkwinkelmann-likes-received:
+  forum:
+    user-card:
+      likes: "{likes, plural, one {# إعجاب مستلَم} other {# إعجابات مستلَمة}}"
+
+  admin:
+    permission:
+      view: عرض الإعجابات المستلَمة

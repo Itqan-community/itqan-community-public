@@ -1,0 +1,115 @@
+fof-webhooks:
+  actions:
+    discussion:
+      started: 'بدأ مناقشة `{1}`'
+      renamed:
+        title: 'غيّر عنوان المناقشة `{1}`'
+        description: 'العنوان الجديد: {1}'
+      hidden: 'أخفى المناقشة `{1}`'
+      restored: 'استعاد المناقشة `{1}`'
+      deleted: 'حذف المناقشة `{1}`'
+    group:
+      created: 'أنشأ مجموعة `{1}`'
+      renamed: 'غيّر اسم مجموعة إلى `{1}`'
+      deleted: 'حذف مجموعة `{1}`'
+    post:
+      posted: 'مشاركة جديدة في `{1}`'
+      revised: 'عدّل مشاركة في `{1}`'
+      hidden: 'أخفى مشاركة في `{1}`'
+      restored: 'استعاد مشاركة في `{1}`'
+      deleted: 'حذف مشاركة في `{1}`'
+      approved: 'اعتمد مشاركة في `{1}`'
+    user:
+      registered: سجّل عضو جديد
+      renamed:
+        title: 'غيّر اسم مستخدم `{1}`'
+        description: 'اسم المستخدم الجديد: {1}'
+      deleted: 'حذف العضو `{1}`'
+
+  adapters:
+    errors:
+      404: لم يُعثر على Webhook
+
+  admin:
+    errors:
+      service_not_found: 'لم يُعثر على الخدمة «{service}».'
+      url_invalid: الرابط غير صالح للخدمة المحددة.
+      tag_invalid: هذا Webhook مقيّد بوسم غير صالح. لن يسري التقييد. تأكد من أن هذا مقصود.
+      tag_disabled: كان لهذا Webhook تقييد بوسم محدد، لكن إضافة الوسوم معطّلة. لن يسري التقييد. تأكد من أن هذا مقصود.
+
+    nav:
+      desc: Webhooks صادرة قابلة للتخصيص لمنتداك.
+
+    settings:
+      debug_label: التصحيح
+      debug_help: أضف سجلات إضافية إلى ملف سجل Flarum لتشخيص مشكلات Webhooks أو الأحداث التي لا تعمل بشكل صحيح.
+
+      help:
+        disabled: هذا Webhook معطّل لأنه لا يحتوي على أي أحداث مفعّلة.
+        general: يمكنك هنا إضافة Webhooks وتعديلها وإزالتها من منتداك.
+        tags: يمكنك تقييد Webhooks بوسوم محددة. إذا اخترت أي وسوم، فلن يُشغّل Webhook إلا إذا وقع الحدث على مورد يحمل أحد الوسوم المحددة.
+        url: عنوان نقطة النهاية التي ينفّذها Webhook
+
+      item:
+        tag_any_label: أي وسم
+        edit_tooltip: تعديل إعدادات Webhook
+        delete_tooltip: حذف Webhook
+        delete_confirm_alert: 'هل تريد بالتأكيد حذف Webhook الخاص بـ {service}؟'
+        create_button: إنشاء
+        edit_tags_button: تعديل الوسوم
+
+      modal:
+        title: إعدادات Webhook
+        description: هنا تعدّل الأحداث التي يُشغّل عندها Webhook.
+        use_plain_text_label: تقليل التنسيق في محتوى المشاركة
+        max_post_content_length_label: الحد الأقصى لطول محتوى المشاركة
+        max_post_content_length_help: عيّن رقمًا لتحديد حد محتوى المشاركة في جميع الأحداث المتعلقة بالمشاركات. اجعله 0 أو اتركه فارغًا لإزالة الحد.
+        extra_text_label: نص إضافي
+        extra_text_help: نص إضافي يُضمَّن في Webhook المُرسل.
+        group_label: المجموعة
+        group_help: أرسل الموارد التي يمكن لهذه المجموعة رؤيتها
+        name_label: الاسم
+        name_help: اسم Webhook، ويُستخدم في أشياء مثل اسم مستخدم Discord واسم روبوت Slack وغيرها.
+        events_label: الأحداث
+        include_matching_tags_label: تضمين الوسوم المطابقة — للـ Webhooks المقيّدة بوسوم محددة، أظهر أي الوسوم طابقها الحدث
+
+      services:
+        discord: Discord
+        slack: Slack
+        microsoft-teams: Microsoft Teams
+
+      actions:
+        flarum:
+          discussion:
+            title: مناقشة Flarum
+            started: بدء
+            renamed: "=> fof-webhooks.ref.renamed"
+            hidden: "=> fof-webhooks.ref.hidden"
+            restored: "=> fof-webhooks.ref.restored"
+            deleted: "=> fof-webhooks.ref.deleted"
+          group:
+            title: مجموعة Flarum
+            created: إنشاء
+            renamed: "=> fof-webhooks.ref.renamed"
+            deleted: "=> fof-webhooks.ref.deleted"
+          post:
+            title: مشاركة Flarum
+            posted: نشر
+            revised: تعديل
+            hidden: "=> fof-webhooks.ref.hidden"
+            restored: "=> fof-webhooks.ref.restored"
+            deleted: "=> fof-webhooks.ref.deleted"
+          user:
+            title: عضو Flarum
+            registered: تسجيل
+            renamed: "=> fof-webhooks.ref.renamed"
+            deleted: "=> fof-webhooks.ref.deleted"
+          approval:
+            title: اعتماد Flarum
+            postwasapproved: اعتماد المشاركة
+
+  ref:
+    deleted: حذف
+    hidden: إخفاء
+    renamed: إعادة تسمية
+    restored: استعادة

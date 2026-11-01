@@ -1,0 +1,5 @@
+flarum-emoji:
+  admin:
+    settings:
+      cdn_label: عنوان مرآة CDN
+      cdn_help: 'مثال: https://cdn.jsdelivr.net/gh/jdecked/twemoji@[version]/assets/، النسخة الحالية هي: {version}'

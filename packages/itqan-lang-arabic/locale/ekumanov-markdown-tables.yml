@@ -1,0 +1,18 @@
+ekumanov-markdown-tables:
+  lib:
+    composer:
+      table_tooltip: إدراج جدول
+      table_menu:
+        num_cols: الأعمدة
+        num_rows: الصفوف (بما فيها الترويسة)
+        column: العمود
+        remove_column: حذف العمود
+        insert_column_before: إدراج عمود قبل
+        insert_column_after: إدراج عمود بعد
+        row: الصف
+        remove_row: حذف الصف
+        insert_row_before: إدراج صف قبل
+        insert_row_after: إدراج صف بعد
+        delete_table: حذف الجدول
+        toggle_header_row: إظهار/إخفاء صف الترويسة
+        insert_table: إدراج جدول

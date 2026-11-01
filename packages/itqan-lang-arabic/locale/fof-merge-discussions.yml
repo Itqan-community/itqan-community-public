@@ -1,0 +1,48 @@
+fof-merge-discussions:
+  forum:
+    modal:
+      title: دمج النقاشات
+      search_discussions_placeholder: ابحث عن نقاشات...
+      ordering_heading: ترتيب الدمج
+      ordering_date_label: دمج المشاركات حسب تاريخ الإنشاء
+      ordering_date_help: تُعاد ترتيب مشاركات النقاش الناتج حسب تاريخ إنشاء كل منها
+      ordering_suffix_label: إضافة المشاركات المدموجة إلى نهاية النقاش
+      ordering_suffix_help: تُضاف المشاركات المدموجة إلى النقاش الباقي في نهايته
+      type_heading: نوع الدمج
+      type_target_label: دمج في هذا النقاش
+      type_target_help_text: "اختر النقاشات التي تريد دمجها في {title}."
+      type_from_label: دمج هذا النقاش في نقاش آخر
+      type_from_help_text: "اختر النقاش الهدف لدمج {title} فيه."
+      load_preview_button: معاينة
+      submit_button: => fof-merge-discussions.ref.merge
+    notification:
+      discussion_merged: "دُمج نقاشك {oldTitle} في هذا النقاش بواسطة {username}."
+      preferences:
+        discussion_merged: يدمج أحدهم أحد نقاشاتي مع نقاش آخر
+    discussion:
+      merge: => fof-merge-discussions.ref.merge
+    post:
+      merged: "{count, plural, one {دُمجت مشاركة واحدة من {titles}.} other {دُمجت {count} مشاركات من {titles}.}}"
+
+  admin:
+    permissions:
+      merge_discussions_label: دمج النقاشات
+    settings:
+      search_result_help: عدد النقاشات التي تُعاد عند البحث داخل نافذة «دمج النقاشات».
+      search_result_label: حدّ البحث في دمج النقاشات
+
+  api:
+    error:
+      merging_failed: فشل دمج النقاشات.
+      updating_failed: فشل تحديث تفاصيل النقاش.
+      deleting_failed: فشل حذف النقاشات الفارغة.
+      fixing_posts_number_failed: فشل تصحيح أرقام المشاركات.
+      fixing_posts_number_meta_failed: فشل تصحيح أرقام المشاركات.
+
+  ref:
+    merge: دمج
+
+  email:
+    merged:
+      body: "دُمج نقاشك، {merged_discussion_title}، في {discussion_title} بواسطة {actor_display_name}.\n\nشاهده هنا {discussion_url} .\n"
+      subject: "دُمج نقاشك «{merged_discussion_title}»"

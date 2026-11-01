@@ -81,11 +81,19 @@ flarum-audit:
             cache_cleared: تم مسح الذاكرة المؤقتة يدويًا
             developer_token_created: تم إنشاء رمز وصول للمطوّر "{title}" للعضو {username}
             discussion:
+                approved: اعتمد {discussion}
                 created: بدأ النقاش {discussion}
                 deleted: حذف النقاش {discussion}
                 hidden: أخفى النقاش {discussion}
+                locked: أغلق النقاش {discussion}
+                merged_away: دمج {discussion} في {new_discussion}
+                merged_into: دمج {post_count} مشاركة من {original_discussion_ids_count} نقاش في {discussion}
                 renamed: أعاد تسمية النقاش من {old_title} إلى {new_title}
                 restored: استعاد النقاش {discussion}
+                stickied: ثبّت النقاش {discussion}
+                tagged: حدّث وسوم {discussion} من {old_tags} إلى {new_tags}
+                unstickied: ألغى تثبيت النقاش {discussion}
+                unlocked: أعاد فتح النقاش {discussion}
             extension:
                 disabled: عطّل الإضافة {package}
                 enabled: فعّل الإضافة {package}
@@ -99,8 +107,11 @@ flarum-audit:
                 renamed: أعاد تسمية المجموعة من {old_name} إلى {new_name}
             permission_changed: عدّل الصلاحية {permission} من {old_groups} إلى {new_groups}
             post:
+                approved: اعتمد {post} للعضو {postuser} في {discussion}
                 created: أنشأ {post} في {discussion}
                 deleted: حذف {post} للعضو {postuser} في {discussion}
+                dismissed_flags: تجاهل البلاغات على {post} للعضو {postuser} في {discussion}
+                flagged: أبلغ عن {post} للعضو {postuser} بسبب {reason} في {discussion}
                 hidden: أخفى {post} للعضو {postuser} في {discussion}
                 restored: استعاد {post} للعضو {postuser} في {discussion}
                 revised: عدّل {post} للعضو {postuser} في {discussion}
@@ -112,8 +123,39 @@ flarum-audit:
                 activated_with_email: فعّل حساب {username} عبر رابط التأكيد
                 avatar_changed: غيّر صورة {username}
                 avatar_removed: أزال صورة {username}
+                bio_changed: عدّل نبذة {username}
                 created: أنشأ حساب {username}
                 deleted: حذف {username}
                 email_changed: غيّر بريد {username} من {old_email} إلى {new_email}
                 email_change_requested: طلب تغيير بريد {username} إلى {new_email}
                 groups_changed: غيّر مجموعات {username} من {old_groups} إلى {new_groups}
+                logged_in: سجّل الدخول إلى حساب {username}
+                logged_in_with_provider: سجّل الدخول إلى حساب {username} عبر {provider}
+                logged_out: سجّل الخروج من حساب {username}
+                nickname_changed: غيّر الاسم المستعار لـ {username} من {old_nickname} إلى {new_nickname}
+                password_changed: غيّر كلمة مرور {username}
+                password_change_requested: طلب تغيير كلمة مرور {username}
+                password_reset_attempted: طلب إعادة ضبط كلمة المرور للعضو {username}
+                password_reset_attempted_unmatched: طلب إعادة ضبط كلمة المرور للبريد {email} (لا يوجد حساب مطابق)
+                provider_connected: ربط المزوّد {provider} بحساب {username}
+                suspended: أوقف {username} حتى {until}
+                unsuspended: ألغى إيقاف {username}
+                username_changed: غيّر اسم المستخدم {username} من {old_username} إلى {new_username}
+
+            dialog:
+                started: بدأ محادثة خاصة مع {username}
+                posted: أرسل رسالة خاصة إلى {username}
+
+            fof-reactions:
+                reaction_created: أنشأ التفاعل {reaction}
+                reaction_updated: غيّر {key} للتفاعل {reaction} من {old_value} إلى {new_value}
+                reaction_enabled: فعّل التفاعل {reaction}
+                reaction_disabled: عطّل التفاعل {reaction}
+                reaction_deleted: حذف التفاعل {reaction}
+                post_reaction_removed: أزال تفاعل {reaction} للعضو {username} من {post} للعضو {postuser} في {discussion}
+                post_reactions_removed: 'أزال {count, plural, zero {# تفاعلات} one {تفاعلًا واحدًا} two {تفاعلين} few {# تفاعلات} many {# تفاعلًا} other {# تفاعل}} من نوع {reaction} من {post} للعضو {postuser} في {discussion}'
+
+            tag:
+                created: أنشأ الوسم {tag}
+                updated: حدّث الوسم {tag}
+                deleted: حذف الوسم {tag}

@@ -1,0 +1,18 @@
+flarum-suspend:
+  email:
+    suspended:
+      plain:
+        body: 'تم إيقاف حسابك للسبب التالي:\n\n---\n{suspension_message}\n---\n'
+      html:
+        body: 'تم إيقافك من {forumTitle} للسبب التالي:'
+    unsuspended:
+      plain:
+        body: 'تم إلغاء إيقاف حسابك. يمكنك العودة إلى المنتدى بالنقر على الرابط التالي:\n\n{forum_url}\n'
+      html:
+        body: 'تم إلغاء إيقاف حسابك. يمكنك العودة إلى [{forumTitle}]({forum_url}) متى شئت.'
+
+  lib:
+    gambits:
+      users:
+        suspended:
+          key: موقوف

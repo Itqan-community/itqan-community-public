@@ -1,0 +1,4 @@
+flarum-flags:
+  forum:
+    flag_post:
+      reason_inappropriate_text_no_guidelines: هذه المشاركة مسيئة أو مخالفة.

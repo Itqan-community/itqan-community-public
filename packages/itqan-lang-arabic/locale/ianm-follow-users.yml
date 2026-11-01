@@ -1,0 +1,42 @@
+ianm-follow-users:
+  admin:
+    permissions:
+      follow_label: متابعة أعضاء آخرين
+      be_followed_label: السماح للأعضاء بمتابعتي
+      view_followed_users_label: عرض الأعضاء الذين يتابعهم عضو
+    settings:
+      button-on-profile-label: عرض زر المتابعة مباشرة في رأس الملف الشخصي
+      stats-on-profile-label: عرض عدد المتابعين والمتابَعين في الملفات الشخصية
+
+  forum:
+    followers_link: المتابعون
+    profile_page:
+      no_followers: يبدو أنه لا متابعين لك بعد.
+    modals:
+      select_follow_level:
+        no_user_attr_provided_err_debug: لم تُمرَّر سمة `user` إلى نافذة SelectFollowUserLevel عند إنشائها، لذا لا يمكن عرضها.
+
+  email:
+    new_discussion_by_user:
+      subject: "{user_display_name} بدأ نقاشًا"
+      plain:
+        body: "{user_display_name} بدأ نقاشًا جديدًا: {discussion_title}\n\n{discussion_url}\n\n---\n\n{post_content}\n"
+      html:
+        body: "{user_display_name} بدأ نقاشًا جديدًا: [{discussion_title}]({discussion_url})."
+    new_follower:
+      subject: "{follower_display_name} تابعك"
+      plain:
+        body: "{follower_display_name} بدأ متابعتك، لذا سيُشعَر عند بدء نقاش جديد.\n\n{profile_url}\n"
+      html:
+        body: "{follower_display_name} بدأ متابعتك، لذا سيُشعَر عند بدء نقاش جديد."
+    new_post:
+      subject: "{user_display_name} نشر في {discussion_title}"
+      plain:
+        body: "{user_display_name} نشر في {discussion_title}.\n\n{post_url}\n\n---\n\n{post_content}\n\n---\n\nلن تتلقى مزيدًا من الإشعارات عن هذا النقاش حتى تُحدِّث قراءتك.\n"
+      html:
+        body: "{user_display_name} نشر في [{discussion_title}]({post_url})."
+
+  lib:
+    gambits:
+      followeduser:
+        key: المتابَعون

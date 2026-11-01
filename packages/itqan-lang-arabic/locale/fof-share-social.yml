@@ -1,0 +1,15 @@
+fof-share-social:
+  admin:
+    settings:
+      canonical-urls: استخدام الروابط الأساسية (canonical) للمشاركة
+      plain-copy: عرض نسخ الرابط العادي
+      default-option: خيار المشاركة الافتراضي
+      default-option-help: "اختيار خيار افتراضي يحوّل النافذة إلى زر منسدل.\nإذا اختير «المشاركة الأصلية»، فلن تظهر إلا إذا كان المتصفح يدعمها، وإلا رجع السلوك إلى النافذة الأصلية.\n"
+
+  lib:
+    networks:
+      vkontakte: VKontakte
+      odnoklassniki: Odnoklassniki
+      my_mail: My World
+      qq: QQ
+      qzone: QZone
