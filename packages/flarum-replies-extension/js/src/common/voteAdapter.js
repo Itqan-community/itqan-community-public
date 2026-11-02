@@ -12,15 +12,33 @@ export function createVoteAdapter(app) {
     return value === 'up' || value === 'down' ? value : null;
   };
 
+  // Who wrote the post is readable from the store, so the rail can refuse a
+  // self-vote even when the server hint is missing (Flarum 2.0 did not
+  // serialize `canVote` for a while, and every click on your own post ended in
+  // a 403 toaster). The server policy is still the hard gate.
+  const isOwnPost = (post) => {
+    const user = app && app.session && app.session.user;
+
+    if (!post || !user || typeof post.user !== 'function') return false;
+
+    const author = post.user();
+    const userId = user.id && typeof user.id === 'function' ? user.id() : user.id;
+    const authorId = author && author.id && typeof author.id === 'function' ? author.id() : author && author.id;
+
+    return userId != null && authorId != null && String(authorId) === String(userId);
+  };
+
   // `canVote` is the serialized hint; a missing hint means "assume available"
   // (the server still decides). `post` is optional so score-only callers work.
   const isAvailable = (post) =>
     Boolean(app && app.session && app.session.user) &&
+    !isOwnPost(post) &&
     (!post || post.attribute('canVote') !== false);
   const pending = new Set();
 
   return {
     isAvailable,
+    isOwnPost,
 
     getScore: (post) => readNumber(post, 'votes'),
     getUserVote: (post) => readVote(post),
@@ -28,6 +46,7 @@ export function createVoteAdapter(app) {
     vote(post, direction) {
       if (!post) return Promise.resolve();
       if (!app.session || !app.session.user) return Promise.resolve({ rejected: 'guest' });
+      if (isOwnPost(post)) return Promise.resolve({ rejected: 'own' });
       if (!isAvailable(post)) return Promise.resolve({ rejected: 'cannot' });
 
       const key = String(post.id());

@@ -12,7 +12,7 @@ function fakeApp({ user = { id: 1 }, payload = { data: { type: 'posts', id: '4' 
   };
 }
 
-function fakePost(attributes = {}) {
+function fakePost(attributes = {}, author = null) {
   const store = { ...attributes };
   const post = {
     id: () => '4',
@@ -22,8 +22,13 @@ function fakePost(attributes = {}) {
     }),
     _store: store,
   };
+
+  if (author) post.user = () => author;
+
   return post;
 }
+
+const author = (id) => ({ id: () => String(id) });
 
 describe('createVoteAdapter', () => {
   it('is available to signed-in users only', () => {
@@ -159,6 +164,35 @@ describe('createVoteAdapter', () => {
     expect(adapter.isAvailable(fakePost({ canVote: true }))).toBe(true);
     expect(adapter.isAvailable(fakePost())).toBe(true);
     expect(adapter.isAvailable()).toBe(true);
+  });
+
+  it('treats your own post as unavailable, even without a canVote hint', () => {
+    // Flarum 2.0 did not serialize canVote for a while, so the rail was live on
+    // the author's own posts and every click ended in a 403 toaster. Ownership
+    // is readable from the store, so it must not depend on the hint alone.
+    const adapter = createVoteAdapter(fakeApp({ user: { id: 1 } }));
+
+    expect(adapter.isOwnPost(fakePost({}, author(1)))).toBe(true);
+    expect(adapter.isOwnPost(fakePost({}, author(9)))).toBe(false);
+    expect(adapter.isOwnPost(fakePost())).toBe(false);
+    expect(adapter.isOwnPost()).toBe(false);
+
+    expect(adapter.isAvailable(fakePost({ votes: 2 }, author(1)))).toBe(false);
+    // A stale/incorrect hint must not re-enable a vote on your own post.
+    expect(adapter.isAvailable(fakePost({ votes: 2, canVote: true }, author(1)))).toBe(false);
+    expect(adapter.isAvailable(fakePost({ votes: 2 }, author(9)))).toBe(true);
+  });
+
+  it('rejects a vote on your own post without hitting the API', async () => {
+    const app = fakeApp({ user: { id: 1 } });
+    const adapter = createVoteAdapter(app);
+    const post = fakePost({ votes: 2, canVote: true }, author(1));
+
+    const result = await adapter.vote(post, 'up');
+
+    expect(result).toEqual({ rejected: 'own' });
+    expect(app.request).not.toHaveBeenCalled();
+    expect(post.pushAttributes).not.toHaveBeenCalled();
   });
 
   it('rejects a vote on a read-only post without hitting the API', async () => {
