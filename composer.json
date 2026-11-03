@@ -81,7 +81,8 @@
         "itqan/sitemap": "@dev",
         "itqan/translate": "@dev",
         "itqan/flarum-preview-cards": "@dev",
-        "itqan/pretty-mail": "@dev"
+        "itqan/pretty-mail": "@dev",
+        "itqan/user-badges": "@dev"
     },
     "config": {
         "preferred-install": "dist",
@@ -94,6 +95,10 @@
         }
     },
     "repositories": [
+        {
+            "type": "path",
+            "url": "packages/itqan-user-badges"
+        },
         {
             "type": "path",
             "url": "packages/itqan-composer-tools"

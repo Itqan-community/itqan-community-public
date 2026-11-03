@@ -160,6 +160,18 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
                         return $vote ? ($vote->value > 0 ? 'up' : 'down') : null;
                     }),
 
+                // Display hint only — registered actors who did not author this
+                // post. Cheap (no query): calling the PostPolicy here would
+                // lazy-load every post's discussion just to serialize the hint.
+                // The policy still gates the write, so this never widens access;
+                // it only stops the rail from firing a request the server denies.
+                \Flarum\Api\Schema\Boolean::make('canVote')
+                    ->get(function ($post, $context) {
+                        $actor = $context->getActor();
+
+                        return (bool) ($actor->exists && (int) $post->user_id !== (int) $actor->id);
+                    }),
+
                 \Flarum\Api\Schema\Integer::make('replyToPostId')
                     ->nullable()
                     ->writableOnCreate()

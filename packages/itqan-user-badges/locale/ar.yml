@@ -1,0 +1,120 @@
+v17development-flarum-badges:
+  admin:
+    uncategorized: غير مصنَّف
+    new_badge: وسم جديد
+    create_category: إنشاء تصنيف
+    update_badge: تحديث وسم
+    update_category: تحديث تصنيف
+    edit_category: تعديل تصنيف
+    nothing_here_yet: لم تنشئ أي أوسمة أو تصنيفات بعد.
+    show_badges_on_user_card: إظهار الأوسمة في البطاقة الشخصية
+    number_of_badges_on_user_card: عدد الأوسمة
+    number_of_badges_on_user_card_help: عدد الأوسمة المعروضة في البطاقة الشخصية
+
+    permissions:
+      badge_detail_users: رؤية المستخدمين في صفحة تفاصيل الوسام
+      give_badge: منح وسم لمستخدم
+      take_badge: سحب وسم من مستخدم
+      edit_own_card_badges: تعديل أوسمة بطاقته الشخصية
+      edit_card_badges: تعديل أوسمة البطاقات الشخصية
+
+    confirm_dialog:
+      title: تأكيد
+      no: لا
+      yes: نعم
+
+    confirm_messages:
+      delete_badge: هل أنت متأكد من إزالة هذا الوسام؟ سيُزال من جميع المستخدمين، ولا يمكن التراجع عن ذلك.
+      delete_category: هل أنت متأكد من إزالة هذا التصنيف؟ إن كان فيه أي أوسمة فستصبح «غير مصنَّفة».
+
+    badge:
+      name: اسم الوسام
+      icon: أيقونة الوسام
+      description: وصف الوسام
+      visible: ظاهر
+      visible_description: تفعيل هذا الوسام. عند التعطيل لن يكون الوسام ظاهرًا.
+
+      is_image: الوسام صورة
+      is_image_description: استخدام صورة بدلًا من الوسام الافتراضي
+
+      image: رابط صورة الوسام
+      image_placeholder: أدخل رابط صورة الوسام
+
+      icon_color: لون الأيقونة
+      background_color: لون الخلفية
+      label_color: لون النص
+
+    badge_category:
+      name: اسم التصنيف
+      description: وصف التصنيف
+      blockview: عرض بشكل بطاقات
+      blockview_description: عرض أوسمة التصنيف في بطاقات على صفحة الأوسمة. عند التعطيل تُعرض كل الأوسمة في جدول.
+      enabled: مفعّل
+      enabled_description: تفعيل هذا التصنيف. عند التعطيل تُعطَّل كل أوسمته ويُخفى التصنيف.
+
+    auto_moderator:
+      not_installed:
+        title: منح الأوسمة للمستخدمين تلقائيًا
+        content: توفّر هذه الإضافة مزيدًا من الوظائف عند تثبيت <a>المراقب التلقائي</a> وتفعيله. وبعد تثبيتها يمكن منح المستخدمين الأوسمة تلقائيًا دون تدخّل من فريق المنتدى!
+        install: تثبيت
+        dismiss: عدم الإظهار مجددًا
+
+      action_drivers:
+        badge_id: معرّف الوسام
+        give_badge: منح وسم
+        remove_badge: إزالة وسم
+
+      requirement_drivers:
+        has_badge: يملك الوسام
+
+      metric_drivers:
+        badges_received: الأوسمة المستلمة
+
+      badge_selector:
+        placeholder: اختر وسامًا
+        loading_badges: جارٍ تحميل الأوسمة
+
+  forum:
+    badge_information: معلومات الوسام
+    all_badges: عرض كل الأوسمة
+    all_users: عرض كل المستخدمين
+    give_badge: منح وسم
+    update_badge: تحديث الوسام
+    select_badge: اختر وسامًا
+    user_has_badge: هذا الوسام موجود لدى المستخدم بالفعل.
+    user_no_badges: لم يحصل هذا المستخدم على أي وسام بعد.
+    no_received: لم يحصل أي مستخدم على هذا الوسام.
+    uncategorized: => v17development-flarum-badges.admin.uncategorized
+    save_changes: حفظ التغييرات
+
+    badge:
+      badge: وسام
+      badges: الأوسمة
+      name: اسم الوسام
+      description: وصف الوسام
+      earning_reason: سبب الحصول على الوسام
+      update_earning_reason: تحديث سبب الحصول
+      no_earning_reason: لا يوجد سبب محدد للحصول عليه
+      earned_on: تاريخ الحصول على الوسام
+      category: تصنيف الوسام
+      received_on: "حصل عليه في {date}"
+      badge_details: تفاصيل الوسام
+      earned_count: "{count, plural, zero {لم يحصل على هذا الوسام أحد بعد} one {حصل على هذا الوسام مستخدم واحد} two {حصل عليه مستخدمان} few {حصل على هذا الوسام # مستخدمين} many {حصل على هذا الوسام # مستخدمًا} other {حصل على هذا الوسام # مستخدم}}"
+      earned_by_count: "{count, plural, zero {لم يحصل عليه أحد} one {حصل عليه مستخدم واحد} two {حصل عليه مستخدمان} few {حصل عليه # مستخدمين} many {حصل عليه # مستخدمًا} other {حصل عليه # مستخدم}}"
+      others_link: "+ {count} آخرين"
+
+    badges_in_card:
+      title: الأوسمة في البطاقة الشخصية
+      manage_badges: "إدارة الأوسمة"
+      description: يمكنك تغيير الأوسمة الظاهرة في بطاقتك الشخصية بأحد أوسمتك الأخرى. وإن لم تختر أيًّا منها فستُختار تلقائيًا.
+      select_limit: "يمكنك اختيار {limit, plural, zero {لا أوسمة} one {وسام واحد} two {وسمين} few {# أوسمة} many {# وسامًا} other {# وسام}} لتظهر في بطاقتك الشخصية."
+      hit_limit: "المتسع في بطاقتك لا يكفي إلا لـ{limit, plural, zero {لا أوسمة} one {وسام واحد} two {وسمين} few {# أوسمة} many {# وسامًا} other {# وسام}}. أزل تحديد وسم لإفساح المجال لهذا الوسام."
+
+    moderation:
+      remove_badge: إزالة الوسام من المستخدم
+      remove_badge_confirm: هل أنت متأكد من إزالة هذا الوسام من هذا المستخدم؟
+      give_badge: منح وسم
+
+    notification:
+      title: حصلت على وسام جديد
+      settings: استلمت وسامًا
