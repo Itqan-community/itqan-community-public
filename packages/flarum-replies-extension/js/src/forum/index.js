@@ -44,22 +44,22 @@ app.initializers.add('mtareq-nested-replies', () => {
     treeScrollCache = null;
   }
 
+  // The item list is read from the DOM every time. Caching it meant the
+  // scrubber kept the one item that existed during the loading paint — count
+  // stayed "1 of 1" and the handle stayed full-height after the thread
+  // rendered. Only the (more expensive) absolute tops are cached, keyed by the
+  // number of items they were measured for.
   function treeItems() {
-    if (treeScrollCache && treeScrollCache.items) return treeScrollCache.items;
-
     const root = document.querySelector('.PostStream');
-    const items = root
-      ? Array.from(root.querySelectorAll('.PostStream-item')).filter((el) => el.getAttribute('data-id') != null)
-      : [];
 
-    treeScrollCache = { items, tops: null };
-    return items;
+    return root ? Array.from(root.querySelectorAll('.PostStream-item')).filter((el) => el.getAttribute('data-id') != null) : [];
   }
 
   function treeTops(items) {
-    if (!treeScrollCache.tops || treeScrollCache.tops.length !== items.length) {
-      treeScrollCache.tops = items.map((el) => el.getBoundingClientRect().top + window.pageYOffset);
+    if (!treeScrollCache || treeScrollCache.count !== items.length) {
+      treeScrollCache = { count: items.length, tops: items.map((el) => el.getBoundingClientRect().top + window.pageYOffset) };
     }
+
     return treeScrollCache.tops;
   }
 
@@ -124,12 +124,21 @@ app.initializers.add('mtareq-nested-replies', () => {
       description: '',
       disabled: () => false,
       count: () => Math.max(1, treeItems().length),
-      sanitizeIndex: (i) => Math.max(0, Math.min(i, treeItems().length)),
+      // Core's scrubber is 1-based: the first post is "1 of N", and
+      // updateScrubberValues() displays max(1, index). renderedIndex() is
+      // 0-based, so translate at the boundary — without this the scrubber read
+      // "0 of N" on every discussion and its height math was off by one.
+      sanitizeIndex: (i) => Math.max(1, Math.min(i, treeItems().length)),
       get index() {
-        return dragIndex != null ? dragIndex : renderedIndex();
+        return dragIndex != null ? dragIndex : renderedIndex() + 1;
       },
       set index(v) {
         dragIndex = v;
+      },
+      // The tree renders every post into the DOM, but only the ones crossing
+      // the viewport are "visible"; core sizes the handle from this.
+      get visible() {
+        return visibleCount();
       },
       goToFirst() {
         dragIndex = null;
@@ -141,7 +150,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       },
       goToIndex(i) {
         dragIndex = null;
-        scrollToRendered(i);
+        scrollToRendered(i - 1);
       },
     };
   }
