@@ -61,7 +61,16 @@
     margin-top: 0px;
 
     .Button {
-      color: var(--contrast-color, var(--body-bg));
+      // `--contrast-color` is only set on a coloured hero; the fallback
+      // (--body-bg) is near-black in dark mode and white in light, both of
+      // which disappear against an uncoloured hero. Follow the hero's own text
+      // colour and add a translucent chip so the control is legible anywhere.
+      color: inherit;
+      background: transparent;
+      background: ~"color-mix(in srgb, currentColor 12%, transparent)";
+      border: 1px solid ~"color-mix(in srgb, currentColor 30%, transparent)";
+      border-radius: 999px;
+      padding: 2px 10px;
     }
   }
 }
