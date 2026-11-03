@@ -13,9 +13,14 @@
 
 // Core draws a 1px separator between every stream item. The reply card below
 // draws its own dividers between top-level replies only, so remove the core
-// one.
+// one. 2.0 moved the line from `border-bottom` to a `::after` pseudo-element,
+// so both have to go — otherwise every post gets a second rule under it.
 .PostStream .PostStream-item:not(:last-child) {
   border-bottom: 0;
+}
+
+.PostStream .PostStream-item::after {
+  content: none;
 }
 
 // Card shared by the original post and the reply tree.
@@ -93,16 +98,22 @@
     background: transparent;
   }
 
-  // Core renders a 64px avatar, absolutely positioned 85px left of the content
-  // to sit in the page gutter. Inline it at 28px instead so replies get the
-  // maximum reading width.
-  .PostUser .PostUser-avatar {
-    position: static;
-    left: auto;
-    top: auto;
+  // Core 2.0 renders the avatar twice: a 64px copy in `.Post-side` (the old
+  // desktop gutter) and an inline copy in the post header. Production shows
+  // the inline one at 28px, so hide the gutter copy and show the header copy —
+  // that is what puts the avatar on the same line as the author name.
+  .Post-side {
+    display: none !important;
+  }
+
+  .Post-header .Post-avatar {
+    display: inline-flex !important;
     --size: 28px;
-    margin-inline-end: 6px;
     vertical-align: middle;
+    // The base .Avatar carries negative physical margins for stacked avatars;
+    // clear them and leave only the gap between avatar and name.
+    margin: 0;
+    margin-inline-end: 6px;
   }
 
   // The badges overlay the avatars in core's gutter layout; flow them inline
@@ -1041,7 +1052,7 @@ a.NestedRepliesReplyTag {
       margin-bottom: 8px;
     }
 
-    .PostUser .PostUser-avatar {
+    .Post-header .Post-avatar {
       --size: 24px;
     }
 
