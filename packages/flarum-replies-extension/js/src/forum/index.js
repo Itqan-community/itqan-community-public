@@ -964,7 +964,11 @@ app.initializers.add('mtareq-nested-replies', () => {
       const commentCount = discussion && typeof discussion.commentCount === 'function' ? discussion.commentCount() : postIds.length;
       const count = Math.max(0, commentCount - 1);
 
-      return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort' }, [
+      // The stream is a `role="feed"`, whose only permitted children are
+      // `article`s. The toolbar (and its radiogroup) is not one, so give the
+      // toolbar the role the feed requires; axe otherwise flags the whole feed
+      // as aria-required-children.
+      return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort', role: 'article', 'aria-label': app.translator.trans('mtareq-nested-replies.forum.sort_label') }, [
         m('div.itqan-stream-toolbar-title', [
           m('i.icon.far.fa-comments'),
           m('span', app.translator.locale === 'ar' || !app.translator.locale || app.translator.locale.startsWith('ar') ? formatArabicPlural(count, 'comment') : app.translator.trans('mtareq-nested-replies.forum.heading_count', { count }))
@@ -1148,7 +1152,11 @@ app.initializers.add('mtareq-nested-replies', () => {
         });
       }
 
-      return m('div.PostStream', vnode.attrs, m(LoadingIndicator));
+      // Core marks the stream as `role="feed"`, which only allows `article`
+      // children; the loading indicator is `role="status"`. Drop the feed role
+      // for the loading paint (there is nothing to feed yet) and keep the
+      // busy state so assistive tech still announces work in progress.
+      return m('div.PostStream', { ...vnode.attrs, role: undefined, 'aria-busy': 'true' }, m(LoadingIndicator));
     }
 
     if (allPosts && allPosts.length) {

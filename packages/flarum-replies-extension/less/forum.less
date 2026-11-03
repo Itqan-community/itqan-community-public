@@ -78,7 +78,11 @@
   background-repeat: no-repeat;
   background-size: 2px 100%;
 
-  > .NestedRepliesPost-container {
+  // `flarum/flags` reuses this container class for the flagged-post banner and
+  // paints it with the primary colour. The transparent background below is for
+  // reply cards only — applying it to the banner left the flags extension's
+  // near-black text on the dark card, at 1.15:1 (axe: color-contrast).
+  > .NestedRepliesPost-container:not(.Post-flagged) {
     margin-inline-start: ~"calc(var(--depth) * var(--indent))";
     // A guide gutter on the inline-start holds the thread line and the
     // fold/unfold button, both centred on it, so the line runs through the
@@ -514,6 +518,18 @@
 .NestedRepliesPost .item-like.is-liked .Button:hover,
 .NestedRepliesPost .item-like.is-liked .Button:focus {
   color: var(--nested-replies-like-color, #ff4500);
+}
+
+// The configured like colour is usually a saturated brand red (#ff0000 in the
+// live settings). On the dark surface that is 4.0:1 at 12px — below AA. Mixing
+// a little white keeps the hue but lifts the label over 4.5:1; browsers without
+// color-mix keep the plain colour above.
+html[data-theme^='dark'] {
+  .NestedRepliesPost .item-like.is-liked .Button,
+  .NestedRepliesPost .item-like.is-liked .Button:hover,
+  .NestedRepliesPost .item-like.is-liked .Button:focus {
+    color: color-mix(in srgb, var(--nested-replies-like-color, #ff4500) 70%, white);
+  }
 }
 
 // "Reply to X" tag shown in the post header, replacing the inline mention.
