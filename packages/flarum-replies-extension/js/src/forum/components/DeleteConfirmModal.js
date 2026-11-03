@@ -1,4 +1,4 @@
-import Modal from 'flarum/common/components/Modal';
+import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import app from 'flarum/forum/app';
 
@@ -12,7 +12,7 @@ import app from 'flarum/forum/app';
  * otherwise leak straight into the UI. Callers are responsible for supplying
  * keys that actually exist (see locale/en.yml and locale/ar.yml).
  */
-export default class DeleteConfirmModal extends Modal {
+export default class DeleteConfirmModal extends FormModal {
   className() {
     return 'DeleteConfirmModal Modal--small';
   }
@@ -39,12 +39,8 @@ export default class DeleteConfirmModal extends Modal {
         m(
           Button,
           {
-            // Flarum 2.0 no longer wraps modal content in a <form>, so a
-            // `type="submit"` button never fires onsubmit and the click does
-            // nothing. Call confirm() directly; the form path stays for 1.8.
-            type: 'button',
+            type: 'submit',
             className: 'Button Button--danger DeleteConfirmModal-buttonConfirm',
-            onclick: () => this.confirm(),
           },
           confirmLabel || app.translator.trans('core.ref.delete')
         ),
