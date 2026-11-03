@@ -32,7 +32,7 @@
                 background: #e8ecf3;
             }
         </style>
-        <style>v
+        <style>
             {!! $forumStyle !!}
         </style>
     </head>
