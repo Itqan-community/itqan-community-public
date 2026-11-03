@@ -729,6 +729,27 @@ app.initializers.add('mtareq-nested-replies', () => {
     });
   });
 
+  // Core puts `aria-label` on the deleted-author avatar's plain <span>, which
+  // is a prohibited ARIA attribute without a role (axe: aria-prohibited-attr).
+  // The label is useful — it names the author and date — so give the span the
+  // role that makes it valid instead of dropping the label.
+  const labelAvatarRoles = (root) => {
+    root?.querySelectorAll?.('.DiscussionListItem-author-avatar[aria-label]:not([role])').forEach((el) => el.setAttribute('role', 'img'));
+  };
+
+  // Registered on the imported class rather than by module path: the path
+  // form resolves lazily and would miss the rows already on screen.
+  //
+  // `oncreate` fires before Mithril appends the row's children, so the avatar
+  // is not in the tree yet; patch on the next frame, and again on every update.
+  extend(DiscussionListItem.prototype, 'oncreate', function () {
+    requestAnimationFrame(() => labelAvatarRoles(this.element));
+  });
+
+  extend(DiscussionListItem.prototype, 'onupdate', function () {
+    labelAvatarRoles(this.element);
+  });
+
   function isLikedByMe(post) {
     if (!app.session.user || typeof post.likes !== 'function') return false;
 

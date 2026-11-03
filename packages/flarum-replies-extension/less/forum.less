@@ -325,7 +325,14 @@
   color: var(--muted-color, #878a8c);
 
   &.is-disabled {
-    opacity: 0.5;
+    // The score is information, not a control. Fading the whole rail dropped
+    // the number to ~4.0:1 in dark mode (axe flagged it at 12px), so keep the
+    // number at full contrast and fade only the buttons nobody can press.
+    opacity: 1;
+
+    .NestedRepliesVoteButton {
+      opacity: 0.45;
+    }
   }
 }
 
