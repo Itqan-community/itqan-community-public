@@ -220,7 +220,10 @@ html[data-theme^='dark'] {
   // comments or replies is not a clickable affordance, and the colour shift
   // read as an accidental selection. The reply/preview cards keep their own
   // hover states; only the post envelope stays flat.
-  .NestedRepliesPost:hover > .NestedRepliesPost-container {
+  // The flagged-post banner reuses this container class and paints itself with
+  // the primary colour; stripping it on hover left the flags' near-black text
+  // on the dark card (the reported unreadable banner). Exclude it.
+  .NestedRepliesPost:hover > .NestedRepliesPost-container:not(.Post-flagged) {
     background: transparent !important;
   }
 
