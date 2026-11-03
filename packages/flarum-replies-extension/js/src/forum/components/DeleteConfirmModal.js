@@ -39,8 +39,12 @@ export default class DeleteConfirmModal extends Modal {
         m(
           Button,
           {
-            type: 'submit',
+            // Flarum 2.0 no longer wraps modal content in a <form>, so a
+            // `type="submit"` button never fires onsubmit and the click does
+            // nothing. Call confirm() directly; the form path stays for 1.8.
+            type: 'button',
             className: 'Button Button--danger DeleteConfirmModal-buttonConfirm',
+            onclick: () => this.confirm(),
           },
           confirmLabel || app.translator.trans('core.ref.delete')
         ),

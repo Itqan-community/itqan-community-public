@@ -91,7 +91,7 @@ export default class TeamModal extends Modal {
           <Button className="Button" onclick={() => this.hide()}>
             {app.translator.trans('itqan-statistics.admin.teams.cancel')}
           </Button>
-          <Button className="Button Button--primary" type="submit" loading={this.saving}>
+          <Button className="Button Button--primary" type="button" onclick={() => this.submit()} loading={this.saving}>
             {app.translator.trans('itqan-statistics.admin.teams.save_team')}
           </Button>
         </div>
@@ -99,8 +99,14 @@ export default class TeamModal extends Modal {
     );
   }
 
+  // Flarum 2.0 modals are no longer wrapped in a <form>, so the Save button
+  // has to call this directly. onsubmit stays for the 1.8 path.
   onsubmit(e) {
     e.preventDefault();
+    this.submit();
+  }
+
+  submit() {
     if (!this.name.trim()) return;
 
     this.saving = true;
