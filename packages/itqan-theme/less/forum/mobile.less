@@ -1,0 +1,23 @@
+// ---------------------------------------------------------------------------
+// Mobile dropdowns
+// ---------------------------------------------------------------------------
+// Flarum turns every dropdown into a bottom sheet pinned to the viewport
+// bottom. On the discussion list the "…" control sits inside a z-index:2
+// stacking context (it has to float over the row), so the sheet was trapped
+// under the later rows and under the mobile tab bar (z-index 1000): the last
+// actions were covered and the rows showed through the gaps.
+//
+// While a row's menu is open, lift that row above the tab bar. Scoped to the
+// open row on purpose — raising every row would defeat the stacking fix and
+// put the list over the tab bar permanently.
+@media @phone {
+  .DiscussionListItem:has(.Dropdown.open) {
+    z-index: ~"calc(var(--mobile-tab-zindex, 1000) + 1)";
+  }
+
+  // The sheet spans the viewport; keep its surface opaque even if a future
+  // core release stops painting the individual items.
+  .Dropdown .Dropdown-menu {
+    background: var(--body-bg);
+  }
+}
