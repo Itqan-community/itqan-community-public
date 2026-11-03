@@ -15,7 +15,7 @@ import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 import Stream from 'flarum/common/utils/Stream';
-import { withFirstPostInclude } from './utils/listParams';
+import { withFirstPostInclude, withTagsInclude } from './utils/listParams';
 import { withCatalogSorts } from './utils/discussionSortMap';
 import { readSettings } from '../common/settings';
 import { createVoteAdapter } from '../common/voteAdapter';
@@ -44,22 +44,22 @@ app.initializers.add('mtareq-nested-replies', () => {
     treeScrollCache = null;
   }
 
+  // The item list is read from the DOM every time. Caching it meant the
+  // scrubber kept the one item that existed during the loading paint — count
+  // stayed "1 of 1" and the handle stayed full-height after the thread
+  // rendered. Only the (more expensive) absolute tops are cached, keyed by the
+  // number of items they were measured for.
   function treeItems() {
-    if (treeScrollCache && treeScrollCache.items) return treeScrollCache.items;
-
     const root = document.querySelector('.PostStream');
-    const items = root
-      ? Array.from(root.querySelectorAll('.PostStream-item')).filter((el) => el.getAttribute('data-id') != null)
-      : [];
 
-    treeScrollCache = { items, tops: null };
-    return items;
+    return root ? Array.from(root.querySelectorAll('.PostStream-item')).filter((el) => el.getAttribute('data-id') != null) : [];
   }
 
   function treeTops(items) {
-    if (!treeScrollCache.tops || treeScrollCache.tops.length !== items.length) {
-      treeScrollCache.tops = items.map((el) => el.getBoundingClientRect().top + window.pageYOffset);
+    if (!treeScrollCache || treeScrollCache.count !== items.length) {
+      treeScrollCache = { count: items.length, tops: items.map((el) => el.getBoundingClientRect().top + window.pageYOffset) };
     }
+
     return treeScrollCache.tops;
   }
 
@@ -124,12 +124,21 @@ app.initializers.add('mtareq-nested-replies', () => {
       description: '',
       disabled: () => false,
       count: () => Math.max(1, treeItems().length),
-      sanitizeIndex: (i) => Math.max(0, Math.min(i, treeItems().length)),
+      // Core's scrubber is 1-based: the first post is "1 of N", and
+      // updateScrubberValues() displays max(1, index). renderedIndex() is
+      // 0-based, so translate at the boundary — without this the scrubber read
+      // "0 of N" on every discussion and its height math was off by one.
+      sanitizeIndex: (i) => Math.max(1, Math.min(i, treeItems().length)),
       get index() {
-        return dragIndex != null ? dragIndex : renderedIndex();
+        return dragIndex != null ? dragIndex : renderedIndex() + 1;
       },
       set index(v) {
         dragIndex = v;
+      },
+      // The tree renders every post into the DOM, but only the ones crossing
+      // the viewport are "visible"; core sizes the handle from this.
+      get visible() {
+        return visibleCount();
       },
       goToFirst() {
         dragIndex = null;
@@ -141,7 +150,7 @@ app.initializers.add('mtareq-nested-replies', () => {
       },
       goToIndex(i) {
         dragIndex = null;
-        scrollToRendered(i);
+        scrollToRendered(i - 1);
       },
     };
   }
@@ -169,11 +178,15 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   const votes = createVoteAdapter(app);
 
-  // The list rail needs the discussion's original post (and its votes/userVote).
-  // Requested client-side so it works on both Flarum 1.8 and 2.0.
+  // The list rail needs the discussion's original post (and its votes/userVote),
+  // and every row needs its tags for the section pill. Requested client-side so
+  // it works on both Flarum 1.8 and 2.0.
   override('flarum/forum/states/DiscussionListState', 'requestParams', function (original) {
-    if (!settings.showVotes) return original();
-    return withFirstPostInclude(original());
+    const params = withTagsInclude(original());
+
+    if (!settings.showVotes) return params;
+
+    return withFirstPostInclude(params);
   });
 
   // The list dropdown is built from this map's keys. We swap core's `top`
@@ -725,6 +738,27 @@ app.initializers.add('mtareq-nested-replies', () => {
     });
   });
 
+  // Core puts `aria-label` on the deleted-author avatar's plain <span>, which
+  // is a prohibited ARIA attribute without a role (axe: aria-prohibited-attr).
+  // The label is useful — it names the author and date — so give the span the
+  // role that makes it valid instead of dropping the label.
+  const labelAvatarRoles = (root) => {
+    root?.querySelectorAll?.('.DiscussionListItem-author-avatar[aria-label]:not([role])').forEach((el) => el.setAttribute('role', 'img'));
+  };
+
+  // Registered on the imported class rather than by module path: the path
+  // form resolves lazily and would miss the rows already on screen.
+  //
+  // `oncreate` fires before Mithril appends the row's children, so the avatar
+  // is not in the tree yet; patch on the next frame, and again on every update.
+  extend(DiscussionListItem.prototype, 'oncreate', function () {
+    requestAnimationFrame(() => labelAvatarRoles(this.element));
+  });
+
+  extend(DiscussionListItem.prototype, 'onupdate', function () {
+    labelAvatarRoles(this.element);
+  });
+
   function isLikedByMe(post) {
     if (!app.session.user || typeof post.likes !== 'function') return false;
 
@@ -939,7 +973,11 @@ app.initializers.add('mtareq-nested-replies', () => {
       const commentCount = discussion && typeof discussion.commentCount === 'function' ? discussion.commentCount() : postIds.length;
       const count = Math.max(0, commentCount - 1);
 
-      return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort' }, [
+      // The stream is a `role="feed"`, whose only permitted children are
+      // `article`s. The toolbar (and its radiogroup) is not one, so give the
+      // toolbar the role the feed requires; axe otherwise flags the whole feed
+      // as aria-required-children.
+      return m('div.itqan-stream-toolbar', { key: 'nestedRepliesReplySort', role: 'article', 'aria-label': app.translator.trans('mtareq-nested-replies.forum.sort_label') }, [
         m('div.itqan-stream-toolbar-title', [
           m('i.icon.far.fa-comments'),
           m('span', app.translator.locale === 'ar' || !app.translator.locale || app.translator.locale.startsWith('ar') ? formatArabicPlural(count, 'comment') : app.translator.trans('mtareq-nested-replies.forum.heading_count', { count }))
@@ -1123,7 +1161,11 @@ app.initializers.add('mtareq-nested-replies', () => {
         });
       }
 
-      return m('div.PostStream', vnode.attrs, m(LoadingIndicator));
+      // Core marks the stream as `role="feed"`, which only allows `article`
+      // children; the loading indicator is `role="status"`. Drop the feed role
+      // for the loading paint (there is nothing to feed yet) and keep the
+      // busy state so assistive tech still announces work in progress.
+      return m('div.PostStream', { ...vnode.attrs, role: undefined, 'aria-busy': 'true' }, m(LoadingIndicator));
     }
 
     if (allPosts && allPosts.length) {
@@ -1499,9 +1541,18 @@ app.initializers.add('mtareq-nested-replies', () => {
     forceRedraw();
   }
 
+  // Core renders the hidden-post reveal control as an icon-only button with no
+  // accessible name (axe: button-name). Give it a label in both locales.
+  const labelPostToggle = (root) => {
+    root?.querySelectorAll?.('.Post-header .item-toggle button.Button--more:not([aria-label])').forEach((el) => {
+      el.setAttribute('aria-label', app.translator.trans('mtareq-nested-replies.forum.post_toggle_accessible_label'));
+    });
+  };
+
   extend('flarum/forum/components/Post', 'oncreate', function () {
     mounted.add(this);
     decorate(this);
+    requestAnimationFrame(() => labelPostToggle(this.element));
 
     // Keep the liked colour in sync even when the post doesn't rebuild.
     if (this.element) {
@@ -1517,6 +1568,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   extend('flarum/forum/components/Post', 'onupdate', function () {
     decorate(this);
+    labelPostToggle(this.element);
   });
 
   extend('flarum/forum/components/Post', 'onremove', function () {

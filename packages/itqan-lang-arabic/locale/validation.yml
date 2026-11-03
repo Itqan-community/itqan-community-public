@@ -1,0 +1,42 @@
+validation:
+
+  # Rules Laravel added after the upstream Arabic pack was last updated. Only
+  # the missing keys live here; the pack supplies the rest and Flarum merges
+  # the two catalogues. `current_password` and `password.*` are user-facing
+  # (account settings), the rest can surface on any validated form.
+  accepted_if: "يجب قبول حقل :attribute عندما يكون :other هو :value."
+  ascii: "يجب أن يحتوي حقل :attribute على أحرف أبجدية رقمية ورموز أحادية البايت فقط."
+  can: "يحتوي حقل :attribute على قيمة غير مصرّح بها."
+  current_password: "كلمة المرور غير صحيحة."
+  decimal: "يجب أن يحتوي حقل :attribute على :decimal من المنازل العشرية."
+  declined: "يجب رفض حقل :attribute."
+  declined_if: "يجب رفض حقل :attribute عندما يكون :other هو :value."
+  doesnt_end_with: "يجب ألا ينتهي حقل :attribute بأحد القيم التالية: :values."
+  doesnt_start_with: "يجب ألا يبدأ حقل :attribute بأحد القيم التالية: :values."
+  enum: "القيمة المحددة في :attribute غير صالحة."
+  extensions: "يجب أن يكون امتداد حقل :attribute أحد الامتدادات التالية: :values."
+  hex_color: "يجب أن يكون حقل :attribute لونًا سداسيًا عشريًا صالحًا."
+  lowercase: "يجب أن يكون حقل :attribute بأحرف صغيرة."
+  mac_address: "يجب أن يكون حقل :attribute عنوان MAC صالحًا."
+  max_digits: "يجب ألا يحتوي حقل :attribute على أكثر من :max رقمًا."
+  min_digits: "يجب أن يحتوي حقل :attribute على :min رقمًا على الأقل."
+  missing: "يجب أن يكون حقل :attribute مفقودًا."
+  missing_if: "يجب أن يكون حقل :attribute مفقودًا عندما يكون :other هو :value."
+  missing_unless: "يجب أن يكون حقل :attribute مفقودًا ما لم يكن :other هو :value."
+  missing_with: "يجب أن يكون حقل :attribute مفقودًا عند وجود :values."
+  missing_with_all: "يجب أن يكون حقل :attribute مفقودًا عند وجود :values."
+  present_if: "يجب أن يكون حقل :attribute موجودًا عندما يكون :other هو :value."
+  present_unless: "يجب أن يكون حقل :attribute موجودًا ما لم يكن :other هو :value."
+  present_with: "يجب أن يكون حقل :attribute موجودًا عند وجود :values."
+  present_with_all: "يجب أن يكون حقل :attribute موجودًا عند وجود :values."
+  prohibits: "يمنع حقل :attribute وجود :other."
+  required_if_accepted: "حقل :attribute مطلوب عندما يكون :other مقبولًا."
+  uppercase: "يجب أن يكون حقل :attribute بأحرف كبيرة."
+  ulid: "يجب أن يكون حقل :attribute معرف ULID صالحًا."
+
+  password:
+    letters: "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل."
+    mixed: "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير على الأقل."
+    numbers: "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل."
+    symbols: "يجب أن تحتوي كلمة المرور على رمز واحد على الأقل."
+    uncompromised: "ظهرت كلمة المرور هذه في تسريب بيانات. يرجى اختيار كلمة مرور مختلفة."

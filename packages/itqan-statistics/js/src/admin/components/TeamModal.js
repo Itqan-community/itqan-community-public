@@ -1,9 +1,9 @@
 import app from 'flarum/admin/app';
-import Modal from 'flarum/common/components/Modal';
+import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import Switch from 'flarum/common/components/Switch';
 
-export default class TeamModal extends Modal {
+export default class TeamModal extends FormModal {
   oninit(vnode) {
     super.oninit(vnode);
 

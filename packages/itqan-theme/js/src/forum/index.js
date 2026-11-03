@@ -9,6 +9,9 @@ import addRichToolbarButtons from './components/RichToolbarButtons';
 import addImageLightbox from './addImageLightbox';
 import addReplyAffordances from './addReplyAffordances';
 import addMessagePolish from './addMessagePolish';
+import addModalLabels from './addModalLabels';
+import syncThemeColor from './syncThemeColor';
+import alignCountLabels from './alignCountLabels';
 import { applyArabicCountOverrides } from './utils/arabicCounts';
 
 export { default as PwaInstallPrompt } from './components/PwaInstallPrompt';
@@ -22,6 +25,9 @@ app.initializers.add('itqan-theme', () => {
   addImageLightbox();
   addReplyAffordances();
   addMessagePolish();
+  addModalLabels();
+  syncThemeColor();
+  alignCountLabels();
 
   // Colour scheme switching is Flarum 2.0's own (header + settings), driven by
   // `data-theme`. The theme styles that attribute; it does not manage it.
@@ -33,7 +39,7 @@ app.initializers.add('itqan-theme', () => {
         icon="fas fa-mobile-alt"
         onclick={() => PwaInstallPrompt.openModal()}
       >
-        تثبيت التطبيق
+        {app.translator.trans('itqan-theme.forum.pwa.menu')}
       </Button>,
       -10
     );
@@ -42,13 +48,13 @@ app.initializers.add('itqan-theme', () => {
   extend('flarum/forum/components/SettingsPage', 'settingsItems', function (items) {
     items.add(
       'itqanPwa',
-      <FieldSet className="Settings-pwa" label="تطبيق مجتمع إتقان">
+      <FieldSet className="Settings-pwa" label={app.translator.trans('itqan-theme.forum.pwa.settings_heading')}>
         <Button
           className="Button Button--primary"
           icon="fas fa-download"
           onclick={() => PwaInstallPrompt.openModal()}
         >
-          تثبيت التطبيق على جهازك
+          {app.translator.trans('itqan-theme.forum.pwa.settings_description')}
         </Button>
       </FieldSet>,
       4
@@ -67,9 +73,12 @@ app.initializers.add('itqan-theme', () => {
     items.remove('time');
     items.add(
       'time',
-      <a className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
+      // A button, not an anchor: this toggle has no href, and an anchor
+      // without one is not crawlable (Lighthouse: crawlable-anchors). Bootstrap
+      // dropdowns work the same with either element.
+      <button type="button" className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
         <AbsoluteDateBadge time={time} />
-      </a>,
+      </button>,
       100
     );
   });

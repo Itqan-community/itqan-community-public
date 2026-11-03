@@ -303,7 +303,7 @@ export default class ItqanStatisticsPage extends ExtensionPage {
               <LoadingIndicator size="large" />
             </div>
           ) : !this.data ? (
-            <div className="ItqanStats-card">Failed to load statistics data.</div>
+            <div className="ItqanStats-card">{this.tr('error.load_failed')}</div>
           ) : (
             <div className="ItqanStats-viewWrapper">
               {this.activeSection === 'dashboard' && this.renderDashboardView(isRtl)}

@@ -26,8 +26,11 @@
 .itqan-scheme(@dark) when (@dark = false) {
   @t-body-bg:              @body-bg-light;
   @t-text:                 #111;
-  @t-muted:                hsl(@secondary-hue, min(20%, @secondary-sat), 50%);
-  @t-muted-more:           #aaa;
+  // Core's 50% / #aaa pair reads at 3.9:1 and 2.3:1 on white at the sizes we
+  // use them (13px and 11px). Darkened to clear AA without changing the hue:
+  // 42% is ~5.5:1, 46% is ~4.6:1.
+  @t-muted:                hsl(@secondary-hue, min(20%, @secondary-sat), 42%);
+  @t-muted-more:           hsl(@secondary-hue, min(15%, @secondary-sat), 46%);
   @t-muted-dark:           darken(@t-muted, 50%);
   @t-shadow:               rgba(0, 0, 0, 0.35);
   @t-control-bg:           hsl(@secondary-hue, min(50%, @secondary-sat), 93%);

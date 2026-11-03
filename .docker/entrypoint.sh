@@ -18,6 +18,29 @@ until mysqladmin ping -h db -u flarum -pflarum --silent >/dev/null 2>&1; do
     sleep 1
 done
 
+# Flarum 2.0 distinguishes MySQL from MariaDB. The `mysql` driver emits
+# MySQL-only JSON casts that MariaDB rejects, which surfaces as a 500 on the
+# first notification sync (replying to a followed tag, for one). The installer
+# used to write `mysql`; correct an existing config.php in place, idempotently.
+if [ -f config.php ]; then
+    driver=$(php -r '$c = require "config.php"; echo $c["database"]["driver"] ?? "";')
+    flavor=$(php -r '
+        try {
+            $p = new PDO("mysql:host=db;port=3306;dbname=flarum", "flarum", "flarum");
+            echo stripos($p->query("select version()")->fetchColumn(), "mariadb") !== false ? "mariadb" : "mysql";
+        } catch (Throwable $e) { echo "mysql"; }
+    ')
+    if [ "$driver" = "mysql" ] && [ "$flavor" = "mariadb" ]; then
+        log 'Correcting config.php: MariaDB needs the mariadb driver'
+        php -r '
+            $c = require "config.php";
+            $c["database"]["driver"] = "mariadb";
+            file_put_contents("config.php", "<?php return ".var_export($c, true).";\n");
+        '
+        chown www-data:www-data config.php
+    fi
+fi
+
 # The extensions under packages/ are path repositories that composer.lock does
 # not list yet. Linking them needs a full Composer resolve, which also reaches
 # a private VCS repository (flarum-lang-arabic) that most contributors have no

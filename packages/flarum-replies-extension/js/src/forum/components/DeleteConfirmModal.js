@@ -1,4 +1,4 @@
-import Modal from 'flarum/common/components/Modal';
+import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import app from 'flarum/forum/app';
 
@@ -12,7 +12,7 @@ import app from 'flarum/forum/app';
  * otherwise leak straight into the UI. Callers are responsible for supplying
  * keys that actually exist (see locale/en.yml and locale/ar.yml).
  */
-export default class DeleteConfirmModal extends Modal {
+export default class DeleteConfirmModal extends FormModal {
   className() {
     return 'DeleteConfirmModal Modal--small';
   }

@@ -3,7 +3,10 @@
 debug: true
 baseUrl: http://localhost:8080
 databaseConfiguration:
-  driver: mysql
+  # The stack runs MariaDB. Flarum 2.0 distinguishes the two: the `mysql`
+  # driver emits MySQL-only JSON casts that MariaDB rejects with a 500 on the
+  # first notification sync (e.g. replying to a followed tag).
+  driver: mariadb
   host: db
   port: 3306
   database: flarum

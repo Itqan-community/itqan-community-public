@@ -137,6 +137,11 @@
     background: fade(#fff, 16%);
     font-size: 11.5px;
     line-height: 1.7;
+    // The pill measured 23.5px tall, just under the 24px WCAG 2.2 target
+    // minimum (axe: target-size). Flex centring keeps the label centred.
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
 
     &:hover {
       background: fade(#fff, 26%);
@@ -149,6 +154,10 @@
   bottom: auto;
   height: auto;
   min-height: 40px;
+  // Core fades this block to 70%. On the brand-green tile that is #b9d3cf on
+  // #146c60 — 3.97:1 at 11–12px (axe: color-contrast). The smaller type and
+  // the hairline already set it apart; keep it at full strength.
+  opacity: 1;
   display: flex;
   align-items: center;
   gap: 8px;
