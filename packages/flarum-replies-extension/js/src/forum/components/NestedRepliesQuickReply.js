@@ -368,7 +368,7 @@ export default class NestedRepliesQuickReply extends Component {
       this.viewMentions(),
       m('div.NestedRepliesQuickReply-toolbar', [
         m('label.Button.Button--icon.NestedRepliesQuickReply-format', {
-          title: 'رفع صورة',
+          title: app.translator.trans('mtareq-nested-replies.forum.upload_image'),
           style: 'cursor: pointer; display: inline-flex; align-items: center; justify-content: center;',
         }, [
           icon(this.uploadingImage ? 'fas fa-spinner fa-spin' : 'fas fa-image', { className: 'Button-icon' }),
