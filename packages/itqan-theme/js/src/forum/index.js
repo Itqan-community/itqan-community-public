@@ -10,6 +10,7 @@ import addImageLightbox from './addImageLightbox';
 import addReplyAffordances from './addReplyAffordances';
 import addMessagePolish from './addMessagePolish';
 import addModalLabels from './addModalLabels';
+import syncThemeColor from './syncThemeColor';
 import { applyArabicCountOverrides } from './utils/arabicCounts';
 
 export { default as PwaInstallPrompt } from './components/PwaInstallPrompt';
@@ -24,6 +25,7 @@ app.initializers.add('itqan-theme', () => {
   addReplyAffordances();
   addMessagePolish();
   addModalLabels();
+  syncThemeColor();
 
   // Colour scheme switching is Flarum 2.0's own (header + settings), driven by
   // `data-theme`. The theme styles that attribute; it does not manage it.
