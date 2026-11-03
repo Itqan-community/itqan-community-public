@@ -1532,9 +1532,18 @@ app.initializers.add('mtareq-nested-replies', () => {
     forceRedraw();
   }
 
+  // Core renders the hidden-post reveal control as an icon-only button with no
+  // accessible name (axe: button-name). Give it a label in both locales.
+  const labelPostToggle = (root) => {
+    root?.querySelectorAll?.('.Post-header .item-toggle button.Button--more:not([aria-label])').forEach((el) => {
+      el.setAttribute('aria-label', app.translator.trans('mtareq-nested-replies.forum.post_toggle_accessible_label'));
+    });
+  };
+
   extend('flarum/forum/components/Post', 'oncreate', function () {
     mounted.add(this);
     decorate(this);
+    requestAnimationFrame(() => labelPostToggle(this.element));
 
     // Keep the liked colour in sync even when the post doesn't rebuild.
     if (this.element) {
@@ -1550,6 +1559,7 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   extend('flarum/forum/components/Post', 'onupdate', function () {
     decorate(this);
+    labelPostToggle(this.element);
   });
 
   extend('flarum/forum/components/Post', 'onremove', function () {

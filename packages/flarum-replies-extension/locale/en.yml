@@ -55,6 +55,7 @@ mtareq-nested-replies:
     delete_discussion_title: Delete discussion
     delete_discussion_forever_title: Delete discussion forever
     hide_discussion_confirmation: Hide this discussion?
+    post_toggle_accessible_label: Show or hide this post
 
 core:
   forum:
