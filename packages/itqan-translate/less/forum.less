@@ -66,8 +66,11 @@
       // which disappear against an uncoloured hero. Follow the hero's own text
       // colour and add a translucent chip so the control is legible anywhere.
       color: inherit;
-      background: transparent;
-      background: ~"color-mix(in srgb, currentColor 12%, transparent)";
+      // `.Button--link` forces `background: transparent !important`, so the
+      // chip has to win with the same flag. The first declaration is the
+      // no-color-mix fallback (outline only, still legible).
+      background: transparent !important;
+      background: ~"color-mix(in srgb, currentColor 12%, transparent)" !important;
       border: 1px solid ~"color-mix(in srgb, currentColor 30%, transparent)";
       border-radius: 999px;
       padding: 2px 10px;
