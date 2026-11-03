@@ -210,4 +210,16 @@ if (class_exists(\Flarum\Api\Resource\PostResource::class)) {
         });
 }
 
+// Flarum 2.0: the server-rendered first paint is built from the index
+// endpoint's default includes. Tags are not among them, so the section pills
+// were missing until the reader changed the sort and the client re-fetched.
+// Declared here (rather than in the tags extension, which is vendor code) so
+// the initial payload carries the relation too.
+if (class_exists(\Flarum\Api\Resource\DiscussionResource::class)) {
+    $extenders[] = (new Extend\ApiResource(\Flarum\Api\Resource\DiscussionResource::class))
+        ->endpoint('index', function ($endpoint) {
+            return $endpoint->addDefaultInclude(['tags', 'tags.parent']);
+        });
+}
+
 return $extenders;

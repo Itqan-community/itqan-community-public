@@ -15,7 +15,7 @@ import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 import Stream from 'flarum/common/utils/Stream';
-import { withFirstPostInclude } from './utils/listParams';
+import { withFirstPostInclude, withTagsInclude } from './utils/listParams';
 import { withCatalogSorts } from './utils/discussionSortMap';
 import { readSettings } from '../common/settings';
 import { createVoteAdapter } from '../common/voteAdapter';
@@ -169,11 +169,15 @@ app.initializers.add('mtareq-nested-replies', () => {
 
   const votes = createVoteAdapter(app);
 
-  // The list rail needs the discussion's original post (and its votes/userVote).
-  // Requested client-side so it works on both Flarum 1.8 and 2.0.
+  // The list rail needs the discussion's original post (and its votes/userVote),
+  // and every row needs its tags for the section pill. Requested client-side so
+  // it works on both Flarum 1.8 and 2.0.
   override('flarum/forum/states/DiscussionListState', 'requestParams', function (original) {
-    if (!settings.showVotes) return original();
-    return withFirstPostInclude(original());
+    const params = withTagsInclude(original());
+
+    if (!settings.showVotes) return params;
+
+    return withFirstPostInclude(params);
   });
 
   // The list dropdown is built from this map's keys. We swap core's `top`
