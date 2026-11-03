@@ -33,7 +33,7 @@ app.initializers.add('itqan-theme', () => {
         icon="fas fa-mobile-alt"
         onclick={() => PwaInstallPrompt.openModal()}
       >
-        تثبيت التطبيق
+        {app.translator.trans('itqan-theme.forum.pwa.menu')}
       </Button>,
       -10
     );
@@ -42,13 +42,13 @@ app.initializers.add('itqan-theme', () => {
   extend('flarum/forum/components/SettingsPage', 'settingsItems', function (items) {
     items.add(
       'itqanPwa',
-      <FieldSet className="Settings-pwa" label="تطبيق مجتمع إتقان">
+      <FieldSet className="Settings-pwa" label={app.translator.trans('itqan-theme.forum.pwa.settings_heading')}>
         <Button
           className="Button Button--primary"
           icon="fas fa-download"
           onclick={() => PwaInstallPrompt.openModal()}
         >
-          تثبيت التطبيق على جهازك
+          {app.translator.trans('itqan-theme.forum.pwa.settings_description')}
         </Button>
       </FieldSet>,
       4

@@ -2,36 +2,53 @@ itqan-theme:
   admin:
     settings:
       default_mode_label: المظهر الافتراضي
-      default_mode_help: يُطبَّق على من لم يختر مظهرًا بنفسه.
-      default_mode_auto: حسب إعداد الجهاز
+      default_mode_help: يُطبَّق على القُرّاء الذين لم يختاروا مظهرًا بأنفسهم.
+      default_mode_auto: حسب إعداد جهاز القارئ
       default_mode_light: فاتح
       default_mode_dark: داكن
 
   forum:
     switcher:
       title: المظهر
-      accessible_label: تغيير مظهر الألوان
-      light: فاتح
-      dark: داكن
+      accessible_label: تغيير المظهر
+      light: الوضع الفاتح
+      dark: الوضع الداكن
       auto: حسب إعداد جهازي
 
     settings:
       heading: المظهر
 
     reply_dock:
-      placeholder: اكتب تعليقًا على الموضوع…
-      accessible_label: اكتب ردًا على الموضوع
+      placeholder: اكتب ردًا…
+      accessible_label: اكتب ردًا على النقاش
 
     new_discussion:
-      accessible_label: بدء موضوع جديد
+      accessible_label: بدء نقاش جديد
 
     lightbox:
       title: عارض الصور
-      open: فتح الصورة بملء الشاشة
+      open: فتح الصورة بالحجم الكامل
       close: إغلاق
-      hint: قرصة للتكبير · نقرتان لملء الشاشة · سحب لأسفل للإغلاق
+      hint: قرّب بإصبعين للتكبير · انقر مرتين للملء · اسحب لأسفل للإغلاق
 
     toolbar:
       table_tooltip: إدراج جدول
       quote_tooltip: إدراج اقتباس
-      code_tooltip: إدراج كتلة كود
+      code_tooltip: إدراج كتلة برمجية
+
+    pwa:
+      menu: تثبيت التطبيق
+      title: تثبيت تطبيق مجتمع إتقان
+      installed: التطبيق مثبت بالفعل على جهازك!
+      ios_heading: "لتثبيت التطبيق على جهاز آيفون / آيباد:"
+      ios_step1: "اضغط على زر المشاركة ⎋ (Share) في شريط أبل السفلي."
+      ios_step2: 'اسحب للأسفل واختر "إضافة إلى الشاشة الرئيسية" ➕.'
+      ios_step3: 'اضغط على "إضافة" (Add) في أعلى الشاشة.'
+      android_heading: "لتثبيت التطبيق على جهاز أندرويد (Chrome / Brave):"
+      android_step1: "افتح قائمة المتصفح ⋮ (النقاط الثلاث) في الأعلى."
+      android_step2: 'اختر "إضافة إلى الشاشة الرئيسية" 📲 (أو "تثبيت التطبيق").'
+      android_step3: 'أكّد التثبيت بالضغط على "إضافة".'
+      install_hint: استمتع بتجربة أسرع وتصفح أسهل بتثبيت التطبيق على جهازك.
+      install_now: تثبيت التطبيق الآن
+      settings_heading: تطبيق مجتمع إتقان
+      settings_description: تثبيت التطبيق على جهازك

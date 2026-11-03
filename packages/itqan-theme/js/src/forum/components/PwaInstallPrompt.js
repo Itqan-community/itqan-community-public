@@ -50,7 +50,7 @@ export default class PwaInstallPrompt extends Modal {
   }
 
   title() {
-    return 'تثبيت تطبيق مجتمع إتقان';
+    return app.translator.trans('itqan-theme.forum.pwa.title');
   }
 
   install() {
@@ -78,37 +78,37 @@ export default class PwaInstallPrompt extends Modal {
           <div>
             <p style="font-size: 1.1rem; margin-bottom: 1rem;">
               {icon('fas fa-check-circle', { style: 'color: #00c853; font-size: 2.5rem; display: block; margin: 0 auto 10px;' })}
-              التطبيق مثبت بالفعل على جهازك!
+              {app.translator.trans('itqan-theme.forum.pwa.installed')}
             </p>
           </div>
         ) : ios ? (
           <div className="PwaInstall-ios-guide" style="padding: 10px 0;">
-            <p style="font-weight: bold; margin-bottom: 15px;">لتثبيت التطبيق على جهاز آيفون / آيباد:</p>
+            <p style="font-weight: bold; margin-bottom: 15px;">{app.translator.trans('itqan-theme.forum.pwa.ios_heading')}</p>
             <ol style="text-align: start; line-height: 1.8; margin: 0 auto; max-width: 320px; font-size: 0.95rem;">
-              <li>اضغط على زر المشاركة <strong>⎋ (Share)</strong> في شريط أبل السفلي.</li>
-              <li>اسحب للأسفل واختر <strong>"إضافة إلى الشاشة الرئيسية" ➕</strong>.</li>
-              <li>اضغط على <strong>"إضافة" (Add)</strong> في أعلى الشاشة.</li>
+              <li>{app.translator.trans('itqan-theme.forum.pwa.ios_step1')}</li>
+              <li>{app.translator.trans('itqan-theme.forum.pwa.ios_step2')}</li>
+              <li>{app.translator.trans('itqan-theme.forum.pwa.ios_step3')}</li>
             </ol>
           </div>
         ) : promptEvent ? (
           <div>
-            <p style="margin-bottom: 20px;">استمتع بتجربة أسرع وتصفح أسهل بتثبيت التطبيق على جهازك.</p>
+            <p style="margin-bottom: 20px;">{app.translator.trans('itqan-theme.forum.pwa.install_hint')}</p>
             <Button
               className="Button Button--primary Button--block"
               onclick={() => this.install()}
               style="padding: 12px; font-size: 1rem;"
             >
               {icon('fas fa-download', { style: 'margin-inline-end: 8px;' })}
-              تثبيت التطبيق الآن
+              {app.translator.trans('itqan-theme.forum.pwa.install_now')}
             </Button>
           </div>
         ) : (
           <div className="PwaInstall-android-guide" style="padding: 10px 0;">
-            <p style="font-weight: bold; margin-bottom: 15px;">لتثبيت التطبيق على جهاز أندرويد (Chrome / Brave):</p>
+            <p style="font-weight: bold; margin-bottom: 15px;">{app.translator.trans('itqan-theme.forum.pwa.android_heading')}</p>
             <ol style="text-align: start; line-height: 1.8; margin: 0 auto; max-width: 320px; font-size: 0.95rem;">
-              <li>افتح قائمة المتصفح <strong>⋮ (النقاط الثلاث)</strong> في الأعلى.</li>
-              <li>اختر <strong>"إضافة إلى الشاشة الرئيسية" 📲</strong> (أو "تثبيت التطبيق").</li>
-              <li>تأكيد التثبيت بالضغط على <strong>"إضافة"</strong>.</li>
+              <li>{app.translator.trans('itqan-theme.forum.pwa.android_step1')}</li>
+              <li>{app.translator.trans('itqan-theme.forum.pwa.android_step2')}</li>
+              <li>{app.translator.trans('itqan-theme.forum.pwa.android_step3')}</li>
             </ol>
           </div>
         )}

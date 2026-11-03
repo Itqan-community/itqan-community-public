@@ -35,3 +35,20 @@ itqan-theme:
       table_tooltip: Insert Table
       quote_tooltip: Insert Blockquote
       code_tooltip: Insert Code Block
+
+    pwa:
+      menu: Install the app
+      title: Install the Itqan Community app
+      installed: The app is already installed on your device!
+      ios_heading: "To install the app on iPhone / iPad:"
+      ios_step1: "Tap the Share button ⎋ (Share) in Safari's bottom bar."
+      ios_step2: 'Scroll down and choose "Add to Home Screen" ➕.'
+      ios_step3: 'Tap "Add" at the top of the screen.'
+      android_heading: "To install the app on Android (Chrome / Brave):"
+      android_step1: "Open the browser menu ⋮ (three dots) at the top."
+      android_step2: 'Choose "Add to Home Screen" 📲 (or "Install app").'
+      android_step3: 'Confirm the install by tapping "Add".'
+      install_hint: Enjoy a faster, easier experience by installing the app on your device.
+      install_now: Install the app now
+      settings_heading: Itqan Community app
+      settings_description: Install the app on your device
