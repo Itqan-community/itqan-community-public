@@ -3,6 +3,9 @@ itqan-statistics:
     title: General Statistics
     subtitle: Comprehensive analytics dashboard for community activity over time, member engagement levels, and team contributions.
 
+    error:
+      load_failed: Failed to load statistics data.
+
     nav:
       dashboard: General Statistics
       teams: Manage Teams & Members
