@@ -74,9 +74,15 @@ app.initializers.add('itqan-theme', () => {
     items.add(
       'time',
       // A button, not an anchor: this toggle has no href, and an anchor
-      // without one is not crawlable (Lighthouse: crawlable-anchors). Bootstrap
-      // dropdowns work the same with either element.
-      <button type="button" className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
+      // without one is not crawlable (Lighthouse: crawlable-anchors). It needs
+      // the same text-button classes core's PostMeta time uses — a bare
+      // <button> renders with the browser's grey native chrome.
+      <button
+        type="button"
+        className="Button Button--text Dropdown-toggle Button--link"
+        onclick={(e) => this.selectPermalink(e)}
+        data-toggle="dropdown"
+      >
         <AbsoluteDateBadge time={time} />
       </button>,
       100
