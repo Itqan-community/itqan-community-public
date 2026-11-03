@@ -8,6 +8,8 @@ import TranslateButton from './components/TranslateButton';
 import DetectedLanguageLabel from './components/DetectedLanguageLabel';
 import TranslatedCommentPost from './components/TranslatedCommentPost';
 import DiscussionTitle from './components/DiscussionTitle';
+import Discussion from 'flarum/common/models/Discussion';
+import Post from 'flarum/common/models/Post';
 
 function languages() {
   const supported = app.forum.attribute('itqanTranslate.supportedLanguages') || { ar: 'ar', en: 'en' };
@@ -16,6 +18,22 @@ function languages() {
 }
 
 app.initializers.add('itqan-translate', () => {
+  // The API sends `detectedLang` as a plain attribute, but every component here
+  // reads it as a model method (`post.detectedLang()`). Without the accessor the
+  // language badge never rendered and the translation source label fell back to
+  // "unknown language". Add it only if nothing else already defines it.
+  if (typeof Discussion.prototype.detectedLang !== 'function') {
+    Discussion.prototype.detectedLang = function () {
+      return this.attribute('detectedLang');
+    };
+  }
+
+  if (typeof Post.prototype.detectedLang !== 'function') {
+    Post.prototype.detectedLang = function () {
+      return this.attribute('detectedLang');
+    };
+  }
+
   // --- posts -------------------------------------------------------------
   extend(CommentPost.prototype, 'oninit', function () {
     this.tqaTranslationState = new TranslationState(this.attrs.post, 'post');
