@@ -69,9 +69,12 @@ app.initializers.add('itqan-theme', () => {
     items.remove('time');
     items.add(
       'time',
-      <a className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
+      // A button, not an anchor: this toggle has no href, and an anchor
+      // without one is not crawlable (Lighthouse: crawlable-anchors). Bootstrap
+      // dropdowns work the same with either element.
+      <button type="button" className="Dropdown-toggle" onclick={(e) => this.selectPermalink(e)} data-toggle="dropdown">
         <AbsoluteDateBadge time={time} />
-      </a>,
+      </button>,
       100
     );
   });

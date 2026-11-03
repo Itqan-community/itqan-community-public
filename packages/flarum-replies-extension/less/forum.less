@@ -1149,7 +1149,9 @@ a.NestedRepliesReplyTag {
   &.is-deleted,
   &.is-hidden,
   &.Post--hidden:not(.revealContent) {
-    opacity: 0.55;
+    // 0.55 took the author name to 4.38:1 on the dark card (axe:
+    // color-contrast). 0.7 still reads as muted but clears AA.
+    opacity: 0.7;
 
     > .NestedRepliesPost-container {
       background: rgba(220, 53, 69, 0.04);

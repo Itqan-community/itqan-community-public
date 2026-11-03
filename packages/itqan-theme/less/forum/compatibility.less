@@ -224,9 +224,13 @@ html[data-theme^='dark'] {
     background: transparent !important;
   }
 
+  // Core paints a hidden post's author with --muted-more-color, which lands
+  // at 2.6:1 on the dark card (axe: color-contrast). The link is a separate
+  // element, so it needs naming too.
   .NestedRepliesPost .Post-body,
   .NestedRepliesPost .Post-content,
-  .NestedRepliesPost .PostUser-name {
+  .NestedRepliesPost .PostUser-name,
+  .NestedRepliesPost .PostUser-name a {
     color: var(--text-color, #e0e0e0) !important;
   }
 
