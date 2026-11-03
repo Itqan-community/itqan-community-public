@@ -37,6 +37,19 @@ Every row is one commit and one rollback point (`v2-stable-N`). All are on `feat
 | 19 | `v2-stable-20` | `77f82fd5` | Visible counts included in accessible names (unread buttons, notification and flag bells). | Lighthouse: `label-content-name-mismatch` clean |
 | 20 | `v2-stable-21` | — | This document + final QA pass. | See below |
 
+## Follow-up fixes (reported after the run)
+
+Three failures reported while using the local replica. All were real; none was "the server being down".
+
+| Commit | Symptom | Cause | Fix |
+|--------|---------|-------|-----|
+| `f6f8f242` | Replying returned 500: `SQLSTATE[42000] ... near 'JSON'` | The compose stack runs MariaDB but `config.php` said `driver: mysql`. Flarum 2.0's mysql grammar emits `CAST(... AS JSON)`, which MariaDB rejects on the notification sync that follows a reply. | `install.yaml` installs with `mariadb`; the entrypoint rewrites an existing `mysql` config to `mariadb` when the server is MariaDB. |
+| local DB only | Replying returned 500: `Connection could not be established with host "in-v3.mailjet.com"` | The prod-pulled local database still had the production Mailjet credentials and `mail_driver=smtp`; the local queue is `sync`, so the mail was sent inline and failed. | `mail_driver` set to `log` on the local database. Staging/prod use the database queue, so a mail outage does not fail the reply there. |
+| `90ea47a9` | "Delete forever" + confirm did nothing | Flarum 2.0 no longer wraps modal content in a `<form>`, so the confirmation's `type="submit"` button had nothing to submit. The statistics team modal's Save had the same defect. | The confirm/save buttons call their action from `onclick`; `onsubmit` is kept for 1.8. |
+
+Verified: reply `POST /api/posts` → **201**, delete `DELETE /api/posts/{id}` → **204**, and the
+delete-confirm button now renders `type="button"` with an `onclick` that runs `confirm()` → `onconfirm`.
+
 ## Final QA (2026-11-03, local replica, logged in as admin)
 
 | Page | Accessibility | Best practices | SEO | Notes |
