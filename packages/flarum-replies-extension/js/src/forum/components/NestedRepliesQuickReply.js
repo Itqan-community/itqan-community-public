@@ -22,6 +22,7 @@ export default class NestedRepliesQuickReply extends Component {
     this.mentionQuery = null;
     this.mentionResults = [];
     this.mentionIndex = 0;
+    this.mentionLoading = false;
     this.mentionToken = 0;
   }
 
@@ -91,6 +92,7 @@ export default class NestedRepliesQuickReply extends Component {
     this.mentionIndex = 0;
     this.mentionOffset = 0;
     this.mentionHasMore = false;
+    this.mentionLoading = false;
     this.mentionLoadingMore = false;
     this.mentionToken++;
   }
@@ -120,6 +122,7 @@ export default class NestedRepliesQuickReply extends Component {
     this.mentionQuery = found.query;
     this.mentionOffset = 0;
     this.mentionHasMore = false;
+    this.mentionLoading = false;
     this.mentionLoadingMore = false;
 
     const applyResults = (users, hasMore = false) => {
@@ -128,6 +131,7 @@ export default class NestedRepliesQuickReply extends Component {
       this.mentionResults = list;
       this.mentionOffset = list.length;
       this.mentionHasMore = hasMore;
+      this.mentionLoading = false;
       this.mentionLoadingMore = false;
       this.mentionIndex = 0;
       this.redraw();
@@ -144,7 +148,8 @@ export default class NestedRepliesQuickReply extends Component {
       return;
     }
 
-    if (!wasActive) this.redraw();
+    this.mentionLoading = true;
+    this.redraw();
 
     const searchPromise =
       typeof mentionable.searchPage === 'function'
@@ -255,7 +260,11 @@ export default class NestedRepliesQuickReply extends Component {
   }
 
   viewMentions() {
-    if (this.mentionStart === null || !this.mentionResults.length) return null;
+    const isInitialLoading = Boolean(this.mentionLoading);
+    const isLoadingMore = Boolean(this.mentionLoadingMore);
+    if (this.mentionStart === null || (!this.mentionResults.length && !isInitialLoading && !isLoadingMore)) {
+      return null;
+    }
 
     const items = this.mentionResults.map((user, i) =>
       m(
@@ -272,9 +281,23 @@ export default class NestedRepliesQuickReply extends Component {
       )
     );
 
-    return m(
+    if (isLoadingMore) {
+      items.push(
+        m(
+          'div.NestedRepliesQuickReply-mentionLoading',
+          {
+            key: 'loading-more',
+            style: 'text-align:center;padding:6px 0;opacity:0.7;',
+          },
+          icon('fas fa-spinner fa-spin')
+        )
+      );
+    }
+
+    const list = m(
       'div.NestedRepliesQuickReply-mentions',
       {
+        style: !this.mentionResults.length && isInitialLoading ? 'min-height:56px;' : undefined,
         onscroll: (e) => {
           const el = e.currentTarget;
           if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) {
@@ -284,6 +307,29 @@ export default class NestedRepliesQuickReply extends Component {
       },
       items
     );
+
+    if (!isInitialLoading) {
+      return list;
+    }
+
+    return m('div.NestedRepliesQuickReply-mentionsWrap', { style: 'position:relative;' }, [
+      list,
+      m(
+        'div.NestedRepliesQuickReply-mentionOverlay',
+        {
+          style:
+            'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.28);backdrop-filter:blur(1px);z-index:2;pointer-events:none;',
+        },
+        m(
+          'span',
+          {
+            style:
+              'display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;background:var(--body-bg,#fff);color:var(--text-color,#111);box-shadow:0 2px 8px rgba(0,0,0,0.2);',
+          },
+          icon('fas fa-spinner fa-spin')
+        )
+      ),
+    ]);
   }
 
   format(key) {
