@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cbde5e73d4ca902988052473e493596e",
+    "content-hash": "2cb931fa42ce3518e1a79e47e38da835",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -8923,11 +8923,11 @@
         },
         {
             "name": "itqan/flarum-composer-tools",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-composer-tools",
-                "reference": "cf20b47394722371175b68db790c24b157868e85"
+                "reference": "c1557e60071b0293358c7db60b49bbbea7498d2a"
             },
             "require": {
                 "flarum/core": "^1.8 || ^2.0"
@@ -8976,11 +8976,11 @@
         },
         {
             "name": "itqan/flarum-mailerlite",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-mailerlite",
-                "reference": "458a78bffd5864c9a1a6fde6f642d1016c20b667"
+                "reference": "5f93dfef2ee3392d7029caa1c92549b861eb59b3"
             },
             "require": {
                 "flarum/core": "^1.8 || ^2.0",
@@ -9035,11 +9035,11 @@
         },
         {
             "name": "itqan/flarum-notifications",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-notifications",
-                "reference": "f7fef3ef84857fb928a23f8fca1349869fe97932"
+                "reference": "317819411164fa0d7c4c24b54d728654082bf28e"
             },
             "require": {
                 "flarum/core": "^1.8 || ^2.0"
@@ -9077,7 +9077,7 @@
         },
         {
             "name": "itqan/flarum-preview-cards",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-preview-cards",
@@ -9126,8 +9126,65 @@
             }
         },
         {
+            "name": "itqan/flarum-search",
+            "version": "dev-feat/itqan-search-staging",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-search",
+                "reference": "b28d50eaab66da663d04bf084faf41ca0b73278a"
+            },
+            "require": {
+                "flarum/core": "^2.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Search",
+                    "category": "feature",
+                    "icon": {
+                        "name": "fas fa-search",
+                        "color": "#ffffff",
+                        "backgroundColor": "#064e3b"
+                    },
+                    "optional-dependencies": [
+                        "flarum/nicknames",
+                        "flarum/mentions"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\Search\\": "src/"
+                }
+            },
+            "scripts": {
+                "build": [
+                    "cd js && npm run build"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Smart Arabic-normalized search for discussions, posts, and @mentions in Itqan Community",
+            "keywords": [
+                "arabic",
+                "flarum",
+                "mentions",
+                "search"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "itqan/flarum-statistics",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-statistics",
@@ -9177,11 +9234,11 @@
         },
         {
             "name": "itqan/flarum-theme",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-theme",
-                "reference": "869c4336d3f4d654d10016b6b259b2d5e8e2a1ae"
+                "reference": "5ace66c840d24ec60153e208eb3154b3a684da21"
             },
             "require": {
                 "flarum/core": "^1.8 || ^2.0"
@@ -9230,11 +9287,11 @@
         },
         {
             "name": "itqan/flarum-typography",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-typography",
-                "reference": "8a031b85150d990d71f8ed0dc7ae6897b59320e8"
+                "reference": "509e3c4146ac60765825c23c4d12defee1170a94"
             },
             "require": {
                 "flarum/core": "^1.8 || ^2.0"
@@ -9282,11 +9339,11 @@
         },
         {
             "name": "itqan/lang-arabic",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-lang-arabic",
-                "reference": "0b6dc5fa7f8d7acd8e74fa1be7e7e30d869616f7"
+                "reference": "ef0f02de425e611068434086fbed483b3e559806"
             },
             "require": {
                 "flarum/core": "^1.8 || ^2.0"
@@ -9312,11 +9369,11 @@
         },
         {
             "name": "itqan/pretty-mail",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-pretty-mail",
-                "reference": "80cc63b5e1942be0fb5cf2bfc260257fe5954cfa"
+                "reference": "345126d55acb34afb3be12c031715ce66f484a57"
             },
             "require": {
                 "flarum/core": "^2.0"
@@ -9364,7 +9421,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-sitemap",
-                "reference": "40d8686d8eda6af3ea91e80e7dce8176b63755f6"
+                "reference": "fe9454ca320bae8163740ef6e47396b7badaee97"
             },
             "require": {
                 "flarum/core": "^2.0.0",
@@ -9483,11 +9540,11 @@
         },
         {
             "name": "itqan/translate",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-translate",
-                "reference": "89b9474852990b374f08264695527756f1ba4cf6"
+                "reference": "12415c54bb56f70b9eba8ebc31600d78eb57383c"
             },
             "require": {
                 "flarum/core": "^2.0",
@@ -9520,11 +9577,11 @@
         },
         {
             "name": "itqan/user-badges",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-user-badges",
-                "reference": "1863e360ce1e89a85bab038bdfcb08fe8bcd2124"
+                "reference": "f9a7c25742c3fcbaa1697d5e289eb7b668311bff"
             },
             "require": {
                 "flarum/core": "^2.0"
@@ -11823,11 +11880,11 @@
         },
         {
             "name": "mtareq/flarum-nested-replies",
-            "version": "dev-main",
+            "version": "dev-feat/itqan-search-staging",
             "dist": {
                 "type": "path",
                 "url": "packages/flarum-replies-extension",
-                "reference": "22203cc5d3f763c0ad95ec29954084954a2f3caa"
+                "reference": "0c3767e19b10ad47a067c0740f49e0307304bd42"
             },
             "require": {
                 "flarum/core": "^1.8 || ^2.0"
@@ -18253,6 +18310,7 @@
         "itqan/flarum-mailerlite": 20,
         "itqan/flarum-notifications": 20,
         "itqan/flarum-preview-cards": 20,
+        "itqan/flarum-search": 20,
         "itqan/flarum-statistics": 20,
         "itqan/flarum-theme": 20,
         "itqan/flarum-typography": 20,
