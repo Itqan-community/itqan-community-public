@@ -22,6 +22,7 @@ export default class NestedRepliesQuickReply extends Component {
     this.mentionQuery = null;
     this.mentionResults = [];
     this.mentionIndex = 0;
+    this.mentionLoading = false;
     this.mentionToken = 0;
   }
 
@@ -89,6 +90,10 @@ export default class NestedRepliesQuickReply extends Component {
     this.mentionQuery = null;
     this.mentionResults = [];
     this.mentionIndex = 0;
+    this.mentionOffset = 0;
+    this.mentionHasMore = false;
+    this.mentionLoading = false;
+    this.mentionLoadingMore = false;
     this.mentionToken++;
   }
 
@@ -115,10 +120,19 @@ export default class NestedRepliesQuickReply extends Component {
     const wasActive = this.mentionStart !== null;
     this.mentionStart = found.start;
     this.mentionQuery = found.query;
+    this.mentionOffset = 0;
+    this.mentionHasMore = false;
+    this.mentionLoading = false;
+    this.mentionLoadingMore = false;
 
-    const applyResults = (users) => {
+    const applyResults = (users, hasMore = false) => {
       if (token !== this.mentionToken) return;
-      this.mentionResults = (users || []).slice(0, 6);
+      const list = users || [];
+      this.mentionResults = list;
+      this.mentionOffset = list.length;
+      this.mentionHasMore = hasMore;
+      this.mentionLoading = false;
+      this.mentionLoadingMore = false;
       this.mentionIndex = 0;
       this.redraw();
     };
@@ -130,16 +144,58 @@ export default class NestedRepliesQuickReply extends Component {
       } catch (e) {
         initial = [];
       }
-      applyResults(initial);
+      applyResults(initial, false);
       return;
     }
 
-    if (!wasActive) this.redraw();
+    this.mentionLoading = true;
+    this.redraw();
 
-    Promise.resolve()
-      .then(() => mentionable.search(found.query))
-      .then(applyResults)
-      .catch(() => applyResults([]));
+    const searchPromise =
+      typeof mentionable.searchPage === 'function'
+        ? mentionable.searchPage(found.query, 0, 20)
+        : Promise.resolve(mentionable.search(found.query)).then((users) => ({ users: users || [], hasMore: false }));
+
+    Promise.resolve(searchPromise)
+      .then((res) => applyResults(res && res.users, Boolean(res && res.hasMore)))
+      .catch(() => applyResults([], false));
+  }
+
+  loadMoreMentions() {
+    const mentionable = this.mentionable();
+    if (!mentionable || typeof mentionable.searchPage !== 'function') return;
+    if (!this.mentionHasMore || this.mentionLoadingMore || !this.mentionQuery) return;
+
+    const token = this.mentionToken;
+    const query = this.mentionQuery;
+    const offset = this.mentionOffset || 0;
+    this.mentionLoadingMore = true;
+    this.redraw();
+
+    Promise.resolve(mentionable.searchPage(query, offset, 20))
+      .then((res) => {
+        if (token !== this.mentionToken) return;
+        const incoming = (res && res.users) || [];
+        const seen = new Set((this.mentionResults || []).map((u) => String(u.id())));
+        const next = (this.mentionResults || []).slice();
+        for (const u of incoming) {
+          const id = String(u.id());
+          if (!seen.has(id)) {
+            seen.add(id);
+            next.push(u);
+          }
+        }
+        this.mentionResults = next;
+        this.mentionOffset = offset + incoming.length;
+        this.mentionHasMore = incoming.length > 0 && Boolean(res && res.hasMore);
+        this.mentionLoadingMore = false;
+        this.redraw();
+      })
+      .catch(() => {
+        if (token !== this.mentionToken) return;
+        this.mentionLoadingMore = false;
+        this.redraw();
+      });
   }
 
   startMention() {
@@ -204,7 +260,11 @@ export default class NestedRepliesQuickReply extends Component {
   }
 
   viewMentions() {
-    if (this.mentionStart === null || !this.mentionResults.length) return null;
+    const isInitialLoading = Boolean(this.mentionLoading);
+    const isLoadingMore = Boolean(this.mentionLoadingMore);
+    if (this.mentionStart === null || (!this.mentionResults.length && !isInitialLoading && !isLoadingMore)) {
+      return null;
+    }
 
     const items = this.mentionResults.map((user, i) =>
       m(
@@ -221,7 +281,55 @@ export default class NestedRepliesQuickReply extends Component {
       )
     );
 
-    return m('div.NestedRepliesQuickReply-mentions', items);
+    if (isLoadingMore) {
+      items.push(
+        m(
+          'div.NestedRepliesQuickReply-mentionLoading',
+          {
+            key: 'loading-more',
+            style: 'text-align:center;padding:6px 0;opacity:0.7;',
+          },
+          icon('fas fa-spinner fa-spin')
+        )
+      );
+    }
+
+    const list = m(
+      'div.NestedRepliesQuickReply-mentions',
+      {
+        style: !this.mentionResults.length && isInitialLoading ? 'min-height:56px;' : undefined,
+        onscroll: (e) => {
+          const el = e.currentTarget;
+          if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) {
+            this.loadMoreMentions();
+          }
+        },
+      },
+      items
+    );
+
+    if (!isInitialLoading) {
+      return list;
+    }
+
+    return m('div.NestedRepliesQuickReply-mentionsWrap', { style: 'position:relative;' }, [
+      list,
+      m(
+        'div.NestedRepliesQuickReply-mentionOverlay',
+        {
+          style:
+            'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.28);backdrop-filter:blur(1px);z-index:2;pointer-events:none;',
+        },
+        m(
+          'span',
+          {
+            style:
+              'display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;background:var(--body-bg,#fff);color:var(--text-color,#111);box-shadow:0 2px 8px rgba(0,0,0,0.2);',
+          },
+          icon('fas fa-spinner fa-spin')
+        )
+      ),
+    ]);
   }
 
   format(key) {
