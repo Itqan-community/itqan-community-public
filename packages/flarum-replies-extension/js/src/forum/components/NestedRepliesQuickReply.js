@@ -89,6 +89,9 @@ export default class NestedRepliesQuickReply extends Component {
     this.mentionQuery = null;
     this.mentionResults = [];
     this.mentionIndex = 0;
+    this.mentionOffset = 0;
+    this.mentionHasMore = false;
+    this.mentionLoadingMore = false;
     this.mentionToken++;
   }
 
@@ -115,10 +118,17 @@ export default class NestedRepliesQuickReply extends Component {
     const wasActive = this.mentionStart !== null;
     this.mentionStart = found.start;
     this.mentionQuery = found.query;
+    this.mentionOffset = 0;
+    this.mentionHasMore = false;
+    this.mentionLoadingMore = false;
 
-    const applyResults = (users) => {
+    const applyResults = (users, hasMore = false) => {
       if (token !== this.mentionToken) return;
-      this.mentionResults = (users || []).slice(0, 6);
+      const list = users || [];
+      this.mentionResults = list;
+      this.mentionOffset = list.length;
+      this.mentionHasMore = hasMore;
+      this.mentionLoadingMore = false;
       this.mentionIndex = 0;
       this.redraw();
     };
@@ -130,16 +140,57 @@ export default class NestedRepliesQuickReply extends Component {
       } catch (e) {
         initial = [];
       }
-      applyResults(initial);
+      applyResults(initial, false);
       return;
     }
 
     if (!wasActive) this.redraw();
 
-    Promise.resolve()
-      .then(() => mentionable.search(found.query))
-      .then(applyResults)
-      .catch(() => applyResults([]));
+    const searchPromise =
+      typeof mentionable.searchPage === 'function'
+        ? mentionable.searchPage(found.query, 0, 20)
+        : Promise.resolve(mentionable.search(found.query)).then((users) => ({ users: users || [], hasMore: false }));
+
+    Promise.resolve(searchPromise)
+      .then((res) => applyResults(res && res.users, Boolean(res && res.hasMore)))
+      .catch(() => applyResults([], false));
+  }
+
+  loadMoreMentions() {
+    const mentionable = this.mentionable();
+    if (!mentionable || typeof mentionable.searchPage !== 'function') return;
+    if (!this.mentionHasMore || this.mentionLoadingMore || !this.mentionQuery) return;
+
+    const token = this.mentionToken;
+    const query = this.mentionQuery;
+    const offset = this.mentionOffset || 0;
+    this.mentionLoadingMore = true;
+    this.redraw();
+
+    Promise.resolve(mentionable.searchPage(query, offset, 20))
+      .then((res) => {
+        if (token !== this.mentionToken) return;
+        const incoming = (res && res.users) || [];
+        const seen = new Set((this.mentionResults || []).map((u) => String(u.id())));
+        const next = (this.mentionResults || []).slice();
+        for (const u of incoming) {
+          const id = String(u.id());
+          if (!seen.has(id)) {
+            seen.add(id);
+            next.push(u);
+          }
+        }
+        this.mentionResults = next;
+        this.mentionOffset = offset + incoming.length;
+        this.mentionHasMore = incoming.length > 0 && Boolean(res && res.hasMore);
+        this.mentionLoadingMore = false;
+        this.redraw();
+      })
+      .catch(() => {
+        if (token !== this.mentionToken) return;
+        this.mentionLoadingMore = false;
+        this.redraw();
+      });
   }
 
   startMention() {
@@ -221,7 +272,18 @@ export default class NestedRepliesQuickReply extends Component {
       )
     );
 
-    return m('div.NestedRepliesQuickReply-mentions', items);
+    return m(
+      'div.NestedRepliesQuickReply-mentions',
+      {
+        onscroll: (e) => {
+          const el = e.currentTarget;
+          if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) {
+            this.loadMoreMentions();
+          }
+        },
+      },
+      items
+    );
   }
 
   format(key) {
