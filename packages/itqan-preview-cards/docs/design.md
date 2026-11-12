@@ -45,7 +45,7 @@ The extension is deliberately backend-only in v1. No forum JavaScript, no client
 
 ### 2.3 Non-goals
 
-- Replacing `v17development/flarum-seo`. We extend it; its manually uploaded social image keeps priority over the generated card.
+- Replacing `v17development/flarum-seo`. We extend it; a social image set by a moderator keeps priority over the generated card, while an image v17 merely auto-detected in the first post (`open_graph_image_source = auto`) does not.
 - Replacing `fof/share-social` (sharing buttons) or `datlechin/flarum-copy-links` (copy link). They keep working; only the image behind the shared link changes.
 
 ---
@@ -71,7 +71,7 @@ No issue was found to close or link on this subject, and no branch or open PR to
 
 1. Site-wide defaults are set first (`PageListener.php:127-169`): title, description, `og:type=website`, `twitter:card` (large if `seo_twitter_card_size`), and a site image from, in order: `seo_social_media_image_path` → `logo_path` → `favicon_path`.
 2. For a discussion (`DiscussionPage.php:93-169`): `og:type=article`, `og:url`, title/description from the `seo_meta` table, author JSON-LD, breadcrumbs.
-3. An image is set **only** if a moderator uploaded one to the `seo_meta` row (`PageListener.php:518-523`). Otherwise the site logo/favicon stays.
+3. An image is set only if the `seo_meta` row carries one (`PageListener.php:518-523`): either a moderator set it in the SEO dialog, or v17 copied the first image of the first post into the row and marked it `open_graph_image_source = auto` (`DiscussionSubscriber.php:118-125`). Otherwise the site logo/favicon stays.
 
 Gaps this extension fills:
 
@@ -167,7 +167,7 @@ If Chromium cannot be shipped to production (§5.7, option B), the Pango path ha
 ┌───────────▼─────────────┐            ┌───────────▼─────────────┐
 │ DiscussionCardDriver    │            │ CardController          │
 │ (v17 SEO PageDriver)    │            │ - visibility check      │
-│ - skips if manual image │            │ - cache hit?  serve     │
+│ - skips if moderator img│            │ - cache hit?  serve     │
 │ - sets og/twitter tags  │            │ - miss: lock, render,   │
 └───────────┬─────────────┘            │   cache, serve          │
             │                          │ - failure: brand card   │
@@ -226,7 +226,7 @@ packages/itqan-preview-cards/
 
 1. `v17development/flarum-seo` sets site defaults and runs its `discussion` driver (title, description, URL, JSON-LD).
 2. Our `DiscussionCardDriver` runs after it, and:
-   - returns early if the extension is disabled, or if a manual `seo_meta.open_graph_image` exists (manual override wins), or if v17 itself skipped this page (the `seo_post_crawler` early-return at `DiscussionPage.php:115-120` is mirrored);
+   - returns early if the extension is disabled, or if a moderator-set `seo_meta.open_graph_image` exists (manual override wins), or if v17 itself skipped this page (the `seo_post_crawler` early-return at `DiscussionPage.php:115-120` is mirrored). An image v17 auto-detected in the first post is not a manual image: v17 marks it with `open_graph_image_source = auto`, and the generated card must still be advertised. A source other than `auto` (`fof-upload`, another extension's name) is always a moderator image. v17's SEO dialog stores a typed URL with a NULL source, and only lets a moderator type one after automatic updates are switched off, so a row with `auto_update_data = 0` and no explicit source is a moderator image when its URL differs from the image v17 would detect in the first post;
    - builds the content hash from the current card data + template/font version;
    - sets `og:image` to the absolute `/og/d/{id}-{hash}.png` and adds `og:image:width/height/type/alt`, `twitter:image`, `twitter:image:alt`. `twitter:card` is left as configured (must be `summary_large_image`; an admin notice is shown otherwise).
 3. Optionally, if no cached file exists for the hash, the driver dispatches `GenerateCardJob` — no rendering in the page request.
@@ -261,7 +261,7 @@ return [
 ];
 ```
 
-Driver (abridged; the real one also handles the settings, manual image and `seo_post_crawler` checks):
+Driver (abridged; the real one also handles the settings, moderator image and `seo_post_crawler` checks):
 
 ```php
 final class DiscussionCardDriver implements PageDriverInterface
@@ -282,7 +282,7 @@ final class DiscussionCardDriver implements PageDriverInterface
         $discussion = $this->discussions->findOrFail($id);
 
         if ($this->hasManualImage($discussion) || ! $this->settings->cardsEnabled()) {
-            return; // v17's site image or the manual image stays
+            return; // v17's site image or the moderator's image stays
         }
 
         $data = $this->cardFactory->forDiscussion($discussion, $this->localePolicy->for($discussion));
@@ -577,7 +577,7 @@ The article's strongest claim: *bidi cannot be checked by looking; a reversed Ar
 - `CardData`: excerpt extraction (HTML tags stripped, whitespace collapsed, truncation on word boundary), escaping.
 - Locale/direction policy: discussion language → direction mapping, fallbacks.
 - Visibility: guest cannot get a card for a restricted-tag discussion (fake repository/scope), hidden discussion → brand path.
-- Meta integration (with v17 SEO enabled, integration test): exactly one `og:image`, absolute, `width/height/type/alt` present, `twitter:image` matches, manual SeoMeta image wins, disabled setting leaves v17 output untouched.
+- Meta integration (with v17 SEO enabled, integration test): exactly one `og:image`, absolute, `width/height/type/alt` present, `twitter:image` matches, a moderator-set SeoMeta image wins while an `open_graph_image_source = auto` image does not, disabled setting leaves v17 output untouched.
 - Cache: atomic write, lock contention path returns provisional response with short TTL, 5xx never cached, prune removes only orphaned hashes.
 
 ### 7.2 Golden render tests (the important ones)
@@ -669,7 +669,7 @@ Phase 2 candidate (separate issue): in-post link unfurling.
 1. **Renderer**: Headless Chromium (+~400 MB image, best fidelity) vs Pango (+~30 MB, less design freedom) vs external service. Recommendation: Chromium.
 2. **In-post link unfurling**: confirm it is out of scope for v1.
 3. **Card language**: discussion language when set, else forum default — confirm, given the forum's EN/AR mix.
-4. **Manual image priority**: confirm that a moderator-set `seo_meta` image always wins over the generated card (recommendation: yes).
+4. **Manual image priority**: confirm that a moderator-set `seo_meta` image always wins over the generated card, while an image v17 auto-detected in the first post (`open_graph_image_source = auto`) does not (recommendation: yes).
 5. **Card contents**: category, author display name, date, reading time — anything else? No votes/reply counts (they would freeze or force per-request rendering).
 6. **Package/route naming**: `itqan/flarum-preview-cards`, `/og/d/...`, route `itqan-preview-cards.image` — approve or rename.
 7. **Hash-in-path URL** vs human-readable slug URL (§5.4). Recommendation: hash in path.
@@ -710,7 +710,7 @@ Phase 2 candidate (separate issue): in-post link unfurling.
 | Meta/head rendering, server-side | `vendor/flarum/core/src/Frontend/Document.php:259-289` |
 | Frontend `content()` callback order | `vendor/flarum/core/src/Frontend/Frontend.php:43-45,61-62` |
 | v17 SEO site image fallback | `vendor/v17development/flarum-seo/src/Listeners/PageListener.php:127-169` |
-| v17 SEO per-discussion image (manual only) | `vendor/v17development/flarum-seo/src/Listeners/PageListener.php:517-523` |
+| v17 SEO per-discussion image (moderator-set or auto-detected) | `vendor/v17development/flarum-seo/src/Listeners/PageListener.php:517-523` |
 | v17 SEO discussion driver + early return | `vendor/v17development/flarum-seo/src/Page/DiscussionPage.php:115-141` |
 | `SeoProperties` public API | `vendor/v17development/flarum-seo/src/SeoProperties.php:181,200,128` |
 | Driver ordering / PageManager | `vendor/v17development/flarum-seo/src/Page/PageManager.php:36-51`, `src/Extend/SEO.php:49-56` |

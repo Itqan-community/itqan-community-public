@@ -58,7 +58,7 @@ class DiscussionCardDriver implements PageDriverInterface
         $actor = RequestUtil::getActor($request);
         $discussion = Discussion::whereVisibleTo($actor)->find($id);
 
-        if (! $discussion || $this->hasManualImage($id)) {
+        if (! $discussion || $this->hasManualImage($discussion, $properties)) {
             return;
         }
 
@@ -81,7 +81,7 @@ class DiscussionCardDriver implements PageDriverInterface
         }
     }
 
-    private function hasManualImage(int $id): bool
+    private function hasManualImage(Discussion $discussion, SeoProperties $properties): bool
     {
         if (! class_exists(SeoMeta::class)) {
             return false;
@@ -89,9 +89,73 @@ class DiscussionCardDriver implements PageDriverInterface
 
         $meta = SeoMeta::query()
             ->where('object_type', 'discussions')
-            ->where('object_id', $id)
+            ->where('object_id', $discussion->id)
             ->first();
 
-        return $meta !== null && ! empty($meta->open_graph_image);
+        if ($meta === null) {
+            return false;
+        }
+
+        $image = $meta->open_graph_image;
+        $source = $meta->open_graph_image_source;
+        $autoUpdate = (bool) $meta->auto_update_data;
+
+        // Only the ambiguous case needs the post rendered: an image without a
+        // recorded source on a row the moderator has frozen.
+        $detected = null;
+
+        if (! $autoUpdate && trim((string) $image) !== '' && ! static::hasExplicitSource($source)) {
+            try {
+                $content = $discussion->firstPost?->formatContent();
+                $detected = $content !== null ? $properties->getImageFromContent($content) : null;
+            } catch (\Throwable $e) {
+                $detected = null;
+            }
+        }
+
+        return static::isManualImage($image, $source, $autoUpdate, $detected);
+    }
+
+    /**
+     * Whether the seo_meta image was chosen by a moderator and must keep priority.
+     *
+     * v17development/flarum-seo copies the first image of the first post into
+     * open_graph_image and marks it as source "auto". That image is detected,
+     * not chosen, so it does not replace the generated card.
+     *
+     * The source alone is not enough, though: v17's SEO dialog never sends the
+     * source for a typed URL, so a moderator's own image is stored with a NULL
+     * source. The dialog only unlocks the field once automatic updates are
+     * off, so such a row is manual when it is frozen and its image is not the
+     * one v17 would detect in the first post ($detected).
+     */
+    public static function isManualImage(
+        ?string $image,
+        ?string $source,
+        bool $autoUpdate = true,
+        ?string $detected = null,
+    ): bool {
+        $image = trim((string) $image);
+
+        if ($image === '') {
+            return false;
+        }
+
+        if (static::hasExplicitSource($source)) {
+            return true;
+        }
+
+        if ($autoUpdate) {
+            return false;
+        }
+
+        return $image !== trim((string) $detected);
+    }
+
+    private static function hasExplicitSource(?string $source): bool
+    {
+        $source = strtolower(trim((string) $source));
+
+        return $source !== '' && $source !== 'auto';
     }
 }
