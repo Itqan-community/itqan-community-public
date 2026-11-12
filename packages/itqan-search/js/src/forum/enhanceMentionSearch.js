@@ -4,6 +4,15 @@ import { extend } from 'flarum/common/extend';
 const PAGE_LIMIT = 20;
 const SCROLL_THRESHOLD_PX = 24;
 
+export function normalizeMentionText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي');
+}
+
 export function patchUserMentionable() {
   const userMentionable = app.mentionFormats?.mentionable?.('user');
   if (!userMentionable || userMentionable.__itqanMentionSearchPatched) return userMentionable;
@@ -22,16 +31,29 @@ export function patchUserMentionable() {
     onSearchComplete: null,
   };
 
-  // Backend FulltextFilter / NicknameFullTextFilter already match anywhere in
-  // username/nickname and sort prefix matches first. Match the same substring
-  // semantics on the client so middle-of-name results are not filtered out.
+  // Match the backend SmartUserFullTextGambit: substring, spaceless
+  // (@محمداحمد -> محمد احمد), multi-word (@"حسن محمد"), and Arabic
+  // normalization (أ/إ/آ -> ا, ة -> ه, ى -> ي, tashkeel stripped).
   userMentionable.matches = function (model, typed) {
     if (!typed) return false;
 
-    const query = String(typed).toLowerCase();
-    const names = [model.username?.(), model.displayName?.()].filter(Boolean);
+    const query = normalizeMentionText(typed).trim();
+    if (!query) return false;
 
-    return names.some((name) => String(name).toLowerCase().includes(query));
+    const spacelessQuery = query.replace(/\s+/g, '');
+    const words = query.split(/\s+/).filter(Boolean);
+    const names = [model.username?.(), model.displayName?.()].filter(Boolean).map(normalizeMentionText);
+
+    if (names.some((name) => name.includes(query) || (spacelessQuery && name.replace(/\s+/g, '').includes(spacelessQuery)))) {
+      return true;
+    }
+
+    if (words.length > 1) {
+      const combined = names.join(' ');
+      return words.every((w) => combined.includes(w));
+    }
+
+    return false;
   };
 
   userMentionable.searchPage = async function (typed, offset = 0, limit = PAGE_LIMIT) {

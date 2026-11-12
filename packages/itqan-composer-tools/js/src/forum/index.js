@@ -7,7 +7,6 @@ import classList from 'flarum/common/utils/classList';
 import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
 
 import MarkdownPreviewDrawer from './components/MarkdownPreviewDrawer';
-import enhanceMentionSearch from './enhanceMentionSearch';
 
 export { default as MarkdownPreviewDrawer } from './components/MarkdownPreviewDrawer';
 
@@ -18,8 +17,6 @@ function isDiscussionComposer(composer) {
 }
 
 app.initializers.add('itqan-composer-tools', () => {
-  enhanceMentionSearch(TextEditor.prototype);
-
   extend(TextEditor.prototype, 'oninit', function () {
     this.itqanMarkdownPreviewOpen = false;
   });

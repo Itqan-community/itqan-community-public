@@ -21,12 +21,20 @@ export function detectMention(value, cursor) {
   // like "a@b" never triggers).
   if (at > 0 && !/\s/.test(before[at - 1])) return null;
 
-  const query = before.slice(at + 1);
+  const rawQuery = before.slice(at + 1);
 
-  // Whitespace ends the mention.
-  if (/\s/.test(query)) return null;
+  // Allow spaces inside quoted mentions (@"محمد احمد"), matching Flarum's
+  // AtMentionFormat.queryFromTyped; unquoted whitespace ends the mention.
+  if (/^["“]/.test(rawQuery)) {
+    if (/[\r\n]/.test(rawQuery)) return null;
+    const closed = rawQuery.slice(1).match(/^((?:(?!"#).)*)["”]$/);
+    if (closed) return null;
+    return { start: at, query: rawQuery.slice(1) };
+  }
 
-  return { start: at, query };
+  if (/\s/.test(rawQuery)) return null;
+
+  return { start: at, query: rawQuery };
 }
 
 export default detectMention;

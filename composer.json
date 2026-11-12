@@ -76,6 +76,7 @@
         "itqan/flarum-mailerlite": "@dev",
         "itqan/flarum-notifications": "@dev",
         "itqan/flarum-preview-cards": "@dev",
+        "itqan/flarum-search": "@dev",
         "itqan/flarum-statistics": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
@@ -130,6 +131,10 @@
         "itqan-reactions": {
             "type": "path",
             "url": "packages/itqan-reactions"
+        },
+        "itqan-search": {
+            "type": "path",
+            "url": "packages/itqan-search"
         },
         "mtareq-flarum-nested-replies": {
             "type": "path",
