@@ -34,6 +34,10 @@ describe('detectMention', () => {
     expect(detectMention('@ab hi', 3)).toEqual({ start: 0, query: 'ab' });
   });
 
+  it('allows spaces inside quoted mentions', () => {
+    expect(detectMention('hi @"محمد احمد', 14)).toEqual({ start: 3, query: 'محمد احمد' });
+  });
+
   it('handles non-string input', () => {
     expect(detectMention(null, 0)).toBeNull();
   });
