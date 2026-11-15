@@ -1,0 +1,9 @@
+itqan-community-mcp:
+  admin:
+    settings:
+      enabled_label: "Enable MCP server and LLM endpoints"
+      enabled_help: "Expose the Model Context Protocol server at /api/mcp and the LLM Markdown endpoints. Disable to take the endpoints offline without uninstalling the extension."
+      rate_limit_per_minute_label: "Requests per minute"
+      rate_limit_per_minute_help: "Maximum number of MCP and LLM endpoint requests allowed per client per minute. Set to 0 to disable the limit."
+      max_search_results_label: "Maximum search results"
+      max_posts_per_page_label: "Maximum posts per page"
