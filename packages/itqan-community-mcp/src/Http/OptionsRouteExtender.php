@@ -23,7 +23,7 @@ use Itqan\CommunityMcp\Http\Controller\McpStreamableController;
  */
 class OptionsRouteExtender implements ExtenderInterface
 {
-    public function extend(Container $container, ?Extension $extension = null)
+    public function extend(Container $container, ?Extension $extension = null): void
     {
         $container->resolving(
             'flarum.api.routes',
