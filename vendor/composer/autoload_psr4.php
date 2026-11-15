@@ -122,6 +122,7 @@ return array(
     'Itqan\\MailerLite\\' => array($vendorDir . '/itqan/flarum-mailerlite/src'),
     'Itqan\\Discussions\\' => array($vendorDir . '/itqan/flarum-discussions/src'),
     'Itqan\\ComposerTools\\' => array($vendorDir . '/itqan/flarum-composer-tools/src'),
+    'Itqan\\CommunityMcp\\' => array($vendorDir . '/itqan/community-mcp/src'),
     'Itqan\\Llms\\' => array($baseDir . '/packages/itqan-llms/src'),
     'Itqan\\PreviewCards\\' => array($baseDir . '/packages/itqan-preview-cards/src'),
     'Itqan\\Statistics\\' => array($baseDir . '/packages/itqan-statistics/src'),

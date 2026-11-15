@@ -1254,6 +1254,15 @@
             'reference' => null,
             'dev_requirement' => false,
         ),
+        'itqan/community-mcp' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'flarum-extension',
+            'install_path' => __DIR__ . '/../../packages/itqan-community-mcp',
+            'aliases' => array(),
+            'reference' => null,
+            'dev_requirement' => false,
+        ),
         'mtareq/flarum-nested-replies' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
