@@ -70,6 +70,7 @@
         "itqan/flarum-mailerlite": "@dev",
         "itqan/flarum-notifications": "@dev",
         "itqan/flarum-search": "@dev",
+        "itqan/community-mcp": "@dev",
         "itqan/flarum-statistics": "@dev",
         "itqan/flarum-theme": "@dev",
         "itqan/flarum-typography": "@dev",
@@ -151,6 +152,10 @@
         {
             "type": "path",
             "url": "packages/itqan-search"
+        },
+        {
+            "type": "path",
+            "url": "packages/itqan-community-mcp"
         }
     ],
     "minimum-stability": "beta",

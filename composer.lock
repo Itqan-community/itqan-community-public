@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2cb931fa42ce3518e1a79e47e38da835",
+    "content-hash": "0357cd18c8f425d4191bf3d3a3ba0391",
     "packages": [
         {
             "name": "acpl/mobile-tab",
@@ -8922,8 +8922,75 @@
             "time": "2026-10-19T17:33:15+00:00"
         },
         {
+            "name": "itqan/community-mcp",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/itqan-community-mcp",
+                "reference": "8122992d2de34f84727c3dfbdf03198c2df6c7af"
+            },
+            "require": {
+                "flarum/core": "^1.8.0 || ^2.0",
+                "php": "^8.1"
+            },
+            "suggest": {
+                "flarum/tags": "Enables tag taxonomy and tag filtering in MCP tools"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-extension": {
+                    "title": "Itqan Community MCP",
+                    "category": "feature",
+                    "optional-dependencies": [
+                        "flarum-tags",
+                        "fof-user-bio",
+                        "v17development-user-badges",
+                        "flarum-likes",
+                        "flarum-sticky",
+                        "flarum-approval"
+                    ],
+                    "icon": {
+                        "name": "fas fa-robot",
+                        "backgroundColor": "#0d9488",
+                        "color": "#ffffff"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itqan\\CommunityMcp\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Itqan\\CommunityMcp\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Itqan Community",
+                    "email": "a.abduraghman@itqan.dev"
+                }
+            ],
+            "description": "Model Context Protocol (MCP) Server & LLM Markdown endpoints for Itqan Community (Flarum 1.x & 2.x)",
+            "keywords": [
+                "ai",
+                "flarum",
+                "itqan",
+                "llm",
+                "mcp",
+                "quran"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "itqan/flarum-composer-tools",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-composer-tools",
@@ -8976,7 +9043,7 @@
         },
         {
             "name": "itqan/flarum-mailerlite",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-mailerlite",
@@ -9035,7 +9102,7 @@
         },
         {
             "name": "itqan/flarum-notifications",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-notifications",
@@ -9077,7 +9144,7 @@
         },
         {
             "name": "itqan/flarum-preview-cards",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-preview-cards",
@@ -9127,11 +9194,11 @@
         },
         {
             "name": "itqan/flarum-search",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-search",
-                "reference": "b28d50eaab66da663d04bf084faf41ca0b73278a"
+                "reference": "cf250d3ebd04e4928ddf63a42d4f9999fb9cf486"
             },
             "require": {
                 "flarum/core": "^2.0"
@@ -9184,7 +9251,7 @@
         },
         {
             "name": "itqan/flarum-statistics",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-statistics",
@@ -9234,7 +9301,7 @@
         },
         {
             "name": "itqan/flarum-theme",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-theme",
@@ -9287,7 +9354,7 @@
         },
         {
             "name": "itqan/flarum-typography",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-typography",
@@ -9339,7 +9406,7 @@
         },
         {
             "name": "itqan/lang-arabic",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-lang-arabic",
@@ -9369,7 +9436,7 @@
         },
         {
             "name": "itqan/pretty-mail",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-pretty-mail",
@@ -9540,7 +9607,7 @@
         },
         {
             "name": "itqan/translate",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-translate",
@@ -9577,7 +9644,7 @@
         },
         {
             "name": "itqan/user-badges",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-user-badges",
@@ -11880,7 +11947,7 @@
         },
         {
             "name": "mtareq/flarum-nested-replies",
-            "version": "dev-feat/itqan-search-staging",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/flarum-replies-extension",
@@ -18306,6 +18373,7 @@
     "aliases": [],
     "minimum-stability": "beta",
     "stability-flags": {
+        "itqan/community-mcp": 20,
         "itqan/flarum-composer-tools": 20,
         "itqan/flarum-mailerlite": 20,
         "itqan/flarum-notifications": 20,
