@@ -8525,68 +8525,6 @@
             "time": "2024-11-22T21:38:06+00:00"
         },
         {
-            "name": "itqan/community-mcp",
-            "version": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "packages/itqan-community-mcp",
-                "reference": "main"
-            },
-            "require": {
-                "php": "^8.1",
-                "flarum/core": "^1.8.0 || ^2.0"
-            },
-            "suggest": {
-                "flarum/tags": "Enables tag taxonomy and tag filtering in MCP tools"
-            },
-            "type": "flarum-extension",
-            "extra": {
-                "flarum-extension": {
-                    "title": "Itqan Community MCP",
-                    "category": "feature",
-                    "optional-dependencies": [
-                        "flarum-tags",
-                        "fof-user-bio",
-                        "v17development-user-badges",
-                        "flarum-likes",
-                        "flarum-sticky",
-                        "flarum-approval"
-                    ],
-                    "icon": {
-                        "name": "fas fa-robot",
-                        "color": "#ffffff",
-                        "backgroundColor": "#0d9488"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Itqan\\CommunityMcp\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Itqan Community",
-                    "email": "a.abduraghman@itqan.dev"
-                }
-            ],
-            "description": "Model Context Protocol (MCP) Server & LLM Markdown endpoints for Itqan Community (Flarum 1.x & 2.x)",
-            "keywords": [
-                "flarum",
-                "mcp",
-                "ai",
-                "itqan",
-                "quran",
-                "llm"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
             "name": "itqan/flarum-composer-tools",
             "version": "dev-feat/notifications-dnd-toggle",
             "dist": {
@@ -17408,7 +17346,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "itqan/community-mcp": 20,
         "flarum-locale/arabic": 20,
         "itqan/flarum-composer-tools": 20,
         "itqan/flarum-discussions": 20,
