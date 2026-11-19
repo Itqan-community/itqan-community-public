@@ -1,6 +1,6 @@
 {
   "extends": "flarum-tsconfig",
-  "include": ["src/**/*", "admin.ts"],
+  "include": ["src/**/*", "admin.ts", "forum.ts"],
   "compilerOptions": {
     "declarationDir": "./dist-typings",
     "baseUrl": ".",

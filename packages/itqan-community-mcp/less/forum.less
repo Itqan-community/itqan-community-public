@@ -1,0 +1,397 @@
+// ==========================================================================
+// «إسأل إتقان .. Ask Itqan» & Prior-Art Suggestions Styles
+// ==========================================================================
+
+// Header Ask Button
+.Button--askItqan {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+  color: #ffffff !important;
+  border: none;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 6px 14px;
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.25);
+  transition: all 0.2s ease;
+
+  .fa-sparkles,
+  .icon {
+    color: #fef08a;
+  }
+
+  &:hover,
+  &:focus {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+    box-shadow: 0 4px 10px rgba(13, 148, 136, 0.4);
+    transform: translateY(-1px);
+    color: #ffffff !important;
+  }
+}
+
+// Ask Itqan Modal
+.AskItqanModal {
+  .Modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .AskItqanModal-titleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .AskItqanModal-titleIcon {
+      color: #0d9488;
+    }
+  }
+
+  .AskItqanModal-subtitle {
+    color: var(--muted-color, #6b7280);
+    font-size: 13px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  // Suggestion Chips
+  .AskItqanModal-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .AskItqanModal-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    background: var(--control-bg, #f3f4f6);
+    color: var(--text-color, #374151);
+    border: 1px solid var(--control-border, #e5e7eb);
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    .AskItqanModal-chipIcon {
+      color: #0d9488;
+      font-size: 11px;
+    }
+
+    &:hover {
+      background: rgba(13, 148, 136, 0.1);
+      border-color: #0d9488;
+      color: #0d9488;
+    }
+  }
+
+  // Search Input Form
+  .AskItqanModal-searchForm {
+    margin-bottom: 20px;
+  }
+
+  .AskItqanModal-inputGroup {
+    display: flex;
+    gap: 8px;
+  }
+
+  .AskItqanModal-input {
+    flex: 1;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .AskItqanModal-submitBtn {
+    border-radius: 8px;
+    padding: 10px 18px;
+    background-color: #0d9488;
+    border-color: #0d9488;
+
+    &:hover {
+      background-color: #0f766e;
+      border-color: #0f766e;
+    }
+  }
+
+  .AskItqanModal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 10px;
+    color: var(--muted-color, #6b7280);
+
+    p {
+      margin-top: 12px;
+      font-size: 13px;
+    }
+  }
+
+  // Answer Section
+  .AskItqanModal-results {
+    margin-top: 10px;
+  }
+
+  .AskItqanModal-answerBox {
+    background: rgba(13, 148, 136, 0.05);
+    border: 1px solid rgba(13, 148, 136, 0.25);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+
+    .AskItqanModal-answerHeader {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0d9488;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .AskItqanModal-answerText {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-color, #1f2937);
+
+      p {
+        margin-bottom: 8px;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      blockquote {
+        margin: 8px 0;
+        padding: 6px 12px;
+        border-right: 3px solid #0d9488;
+        background: rgba(0, 0, 0, 0.02);
+        color: var(--muted-color, #4b5563);
+        font-size: 13px;
+      }
+    }
+  }
+
+  // Source Cards
+  .AskItqanModal-sourcesTitle {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--heading-color, #111827);
+  }
+
+  .AskItqanModal-sourcesList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .AskItqanModal-sourceCard {
+    background: var(--control-bg, #f9fafb);
+    border: 1px solid var(--control-border, #e5e7eb);
+    border-radius: 8px;
+    padding: 12px 14px;
+    transition: border-color 0.15s ease;
+
+    &:hover {
+      border-color: #0d9488;
+    }
+
+    .AskItqanModal-sourceCardHeader {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .AskItqanModal-sourceTitle {
+      font-weight: 600;
+      color: var(--heading-color, #111827);
+      text-decoration: none;
+      font-size: 14px;
+
+      &:hover {
+        color: #0d9488;
+      }
+    }
+
+    .AskItqanModal-sourceMeta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted-color, #6b7280);
+    }
+
+    .AskItqanModal-sourceSnippet {
+      font-size: 13px;
+      color: var(--text-color, #4b5563);
+      margin: 6px 0 8px;
+      line-height: 1.45;
+    }
+
+    .AskItqanModal-sourceActions {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  // Empty State & Fallback
+  .AskItqanModal-emptyAction {
+    text-align: center;
+    padding: 24px 16px;
+    background: var(--control-bg, #f9fafb);
+    border-radius: 10px;
+    border: 1px dashed var(--control-border, #d1d5db);
+
+    .AskItqanModal-emptyText {
+      font-size: 14px;
+      color: var(--text-color, #374151);
+      margin-bottom: 6px;
+    }
+
+    .AskItqanModal-promptText {
+      font-size: 13px;
+      color: var(--muted-color, #6b7280);
+      margin-bottom: 16px;
+    }
+
+    .AskItqanModal-newTopicBtn {
+      background-color: #0d9488;
+      border-color: #0d9488;
+    }
+  }
+}
+
+// Composer Similar Discussions Alert ("هل اطلعت على هذا؟")
+.ItqanSimilarDiscussionsAlert {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  animation: fadeIn 0.2s ease-in-out;
+
+  .ItqanSimilarDiscussionsAlert-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .ItqanSimilarDiscussionsAlert-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #92400e;
+    font-size: 13px;
+
+    .ItqanSimilarDiscussionsAlert-icon {
+      color: #d97706;
+    }
+  }
+
+  .ItqanSimilarDiscussionsAlert-dismiss {
+    color: #92400e;
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+
+  .ItqanSimilarDiscussionsAlert-subtitle {
+    font-size: 12px;
+    color: #78350f;
+    margin-bottom: 8px;
+  }
+
+  .ItqanSimilarDiscussionsAlert-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ItqanSimilarDiscussionsAlert-item {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 6px 10px;
+    border: 1px solid #fef3c7;
+    transition: border-color 0.15s ease;
+
+    &:hover {
+      border-color: #f59e0b;
+    }
+  }
+
+  .ItqanSimilarDiscussionsAlert-link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    color: #1f2937;
+
+    &:hover .ItqanSimilarDiscussionsAlert-itemTitle {
+      color: #0d9488;
+    }
+  }
+
+  .ItqanSimilarDiscussionsAlert-itemTitle {
+    font-weight: 500;
+  }
+
+  .ItqanSimilarDiscussionsAlert-itemMeta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #6b7280;
+  }
+}
+
+// Dark Mode Support
+@media (prefers-color-scheme: dark), [data-theme='dark'] {
+  .ItqanSimilarDiscussionsAlert {
+    background: #2b2518;
+    border-color: #78350f;
+
+    .ItqanSimilarDiscussionsAlert-title {
+      color: #fef08a;
+    }
+
+    .ItqanSimilarDiscussionsAlert-subtitle {
+      color: #fde68a;
+    }
+
+    .ItqanSimilarDiscussionsAlert-dismiss {
+      color: #fef08a;
+    }
+
+    .ItqanSimilarDiscussionsAlert-item {
+      background: #1c1917;
+      border-color: #451a03;
+    }
+
+    .ItqanSimilarDiscussionsAlert-link {
+      color: #f3f4f6;
+    }
+  }
+
+  .AskItqanModal {
+    .AskItqanModal-sourceCard {
+      background: #1f2937;
+      border-color: #374151;
+    }
+
+    .AskItqanModal-answerBox {
+      background: rgba(13, 148, 136, 0.12);
+      border-color: rgba(13, 148, 136, 0.4);
+    }
+  }
+}
