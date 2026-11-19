@@ -356,7 +356,47 @@
 }
 
 // Dark Mode Support
-@media (prefers-color-scheme: dark), [data-theme='dark'] {
+@media (prefers-color-scheme: dark) {
+  .ItqanSimilarDiscussionsAlert {
+    background: #2b2518;
+    border-color: #78350f;
+
+    .ItqanSimilarDiscussionsAlert-title {
+      color: #fef08a;
+    }
+
+    .ItqanSimilarDiscussionsAlert-subtitle {
+      color: #fde68a;
+    }
+
+    .ItqanSimilarDiscussionsAlert-dismiss {
+      color: #fef08a;
+    }
+
+    .ItqanSimilarDiscussionsAlert-item {
+      background: #1c1917;
+      border-color: #451a03;
+    }
+
+    .ItqanSimilarDiscussionsAlert-link {
+      color: #f3f4f6;
+    }
+  }
+
+  .AskItqanModal {
+    .AskItqanModal-sourceCard {
+      background: #1f2937;
+      border-color: #374151;
+    }
+
+    .AskItqanModal-answerBox {
+      background: rgba(13, 148, 136, 0.12);
+      border-color: rgba(13, 148, 136, 0.4);
+    }
+  }
+}
+
+[data-theme='dark'] {
   .ItqanSimilarDiscussionsAlert {
     background: #2b2518;
     border-color: #78350f;

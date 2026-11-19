@@ -8923,7 +8923,7 @@
         },
         {
             "name": "itqan/community-mcp",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-community-mcp",
@@ -8990,7 +8990,7 @@
         },
         {
             "name": "itqan/flarum-composer-tools",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-composer-tools",
@@ -9043,7 +9043,7 @@
         },
         {
             "name": "itqan/flarum-mailerlite",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-mailerlite",
@@ -9102,7 +9102,7 @@
         },
         {
             "name": "itqan/flarum-notifications",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-notifications",
@@ -9144,7 +9144,7 @@
         },
         {
             "name": "itqan/flarum-preview-cards",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-preview-cards",
@@ -9194,7 +9194,7 @@
         },
         {
             "name": "itqan/flarum-search",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-search",
@@ -9251,7 +9251,7 @@
         },
         {
             "name": "itqan/flarum-statistics",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-statistics",
@@ -9301,7 +9301,7 @@
         },
         {
             "name": "itqan/flarum-theme",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-theme",
@@ -9354,7 +9354,7 @@
         },
         {
             "name": "itqan/flarum-typography",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-typography",
@@ -9406,7 +9406,7 @@
         },
         {
             "name": "itqan/lang-arabic",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-lang-arabic",
@@ -9436,7 +9436,7 @@
         },
         {
             "name": "itqan/pretty-mail",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-pretty-mail",
@@ -9607,7 +9607,7 @@
         },
         {
             "name": "itqan/translate",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-translate",
@@ -9644,7 +9644,7 @@
         },
         {
             "name": "itqan/user-badges",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/itqan-user-badges",
@@ -11947,7 +11947,7 @@
         },
         {
             "name": "mtareq/flarum-nested-replies",
-            "version": "dev-main",
+            "version": "dev-feat/ask-itqan",
             "dist": {
                 "type": "path",
                 "url": "packages/flarum-replies-extension",
@@ -18317,7 +18317,7 @@
             "version": "2.0.0",
             "source": {
                 "type": "git",
-                "url": "https://git.parlz.com/Xiaoxiaobai5724/id-slug",
+                "url": "https://github.com/Xiaoxiaobai5724/id-slug.git",
                 "reference": "394031abfa1bdee60bae277572bb82b134c5a21d"
             },
             "require": {
@@ -18396,5 +18396,5 @@
     "platform-overrides": {
         "php": "8.4.0"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
