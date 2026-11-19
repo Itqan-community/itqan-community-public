@@ -2,6 +2,7 @@
 
 /*
  * Itqan Community MCP — Model Context Protocol server and LLM endpoints.
+ * Includes «إسأل إتقان .. Ask Itqan» smart assistant and prior-art detection.
  *
  * See README.md for the endpoint list, the tools/resources/prompts and client
  * configuration snippets.
@@ -10,9 +11,11 @@
 namespace Itqan\CommunityMcp;
 
 use Flarum\Extend;
+use Itqan\CommunityMcp\Http\Controller\AskItqanController;
 use Itqan\CommunityMcp\Http\Controller\DiscussionMarkdownController;
 use Itqan\CommunityMcp\Http\Controller\LlmsTxtController;
 use Itqan\CommunityMcp\Http\Controller\McpStreamableController;
+use Itqan\CommunityMcp\Http\Controller\SimilarDiscussionsController;
 use Itqan\CommunityMcp\Http\Controller\SkillMdController;
 use Itqan\CommunityMcp\Http\Middleware\McpCorsAndRateLimitMiddleware;
 use Itqan\CommunityMcp\Http\OptionsRouteExtender;
@@ -21,14 +24,23 @@ $apiRoutes = (new Extend\Routes('api'))
     ->post('/mcp', 'itqan.mcp.rpc', McpStreamableController::class)
     ->get('/mcp', 'itqan.mcp.info', McpStreamableController::class)
     ->get('/mcp/discussions/{id}', 'itqan.mcp.discussion.md', DiscussionMarkdownController::class)
-    ->get('/mcp/SKILL.md', 'itqan.mcp.skill', SkillMdController::class);
+    ->get('/mcp/SKILL.md', 'itqan.mcp.skill', SkillMdController::class)
+    ->get('/itqan/ask', 'itqan.ask', AskItqanController::class)
+    ->post('/itqan/ask', 'itqan.ask.post', AskItqanController::class)
+    ->get('/itqan/similar', 'itqan.similar', SimilarDiscussionsController::class);
 
 // Flarum 2.x exposes `options()`; Flarum 1.x needs the route added manually.
 if (method_exists(Extend\Routes::class, 'options')) {
     $apiRoutes->options('/mcp', 'itqan.mcp.options', McpStreamableController::class);
+    $apiRoutes->options('/itqan/ask', 'itqan.ask.options', AskItqanController::class);
+    $apiRoutes->options('/itqan/similar', 'itqan.similar.options', SimilarDiscussionsController::class);
 }
 
 $extenders = [
+    (new Extend\Frontend('forum'))
+        ->js(__DIR__.'/js/dist/forum.js')
+        ->css(__DIR__.'/less/forum.less'),
+
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js'),
 
@@ -49,7 +61,10 @@ $extenders = [
 
     (new Extend\Csrf())
         ->exemptRoute('itqan.mcp.rpc')
-        ->exemptRoute('itqan.mcp.options'),
+        ->exemptRoute('itqan.mcp.options')
+        ->exemptRoute('itqan.ask.post')
+        ->exemptRoute('itqan.ask.options')
+        ->exemptRoute('itqan.similar.options'),
 
     (new Extend\Settings())
         ->default('itqan-community-mcp.enabled', true)
