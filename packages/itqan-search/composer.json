@@ -1,0 +1,39 @@
+{
+    "name": "itqan/flarum-search",
+    "description": "Smart Arabic-normalized search for discussions, posts, and @mentions in Itqan Community",
+    "keywords": ["flarum", "search", "arabic", "mentions"],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Itqan Community",
+            "email": "a.abduraghman@itqan.dev"
+        }
+    ],
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Itqan\\Search\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Itqan Search",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-search",
+                "color": "#ffffff",
+                "backgroundColor": "#064e3b"
+            },
+            "optional-dependencies": [
+                "flarum/nicknames",
+                "flarum/mentions"
+            ]
+        }
+    },
+    "scripts": {
+        "build": "cd js && npm run build"
+    }
+}
