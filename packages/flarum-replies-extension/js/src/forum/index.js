@@ -1,4 +1,5 @@
 import { extend, override } from 'flarum/common/extend';
+import Component from 'flarum/common/Component';
 import Link from 'flarum/common/components/Link';
 import app from 'flarum/forum/app';
 import icon from 'flarum/common/helpers/icon';
@@ -6,6 +7,7 @@ import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Post from 'flarum/forum/components/Post';
 import CommentPost from 'flarum/forum/components/CommentPost';
+import ComposerPostPreview from 'flarum/forum/components/ComposerPostPreview';
 import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
 import PostControls from 'flarum/forum/utils/PostControls';
 import Composer from 'flarum/forum/components/Composer';
@@ -27,6 +29,7 @@ import NestedRepliesInlineReply from './components/NestedRepliesInlineReply';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { formatArabicPlural } from './utils/arabicPlural';
 import { canOpenOpComposer, createOpComposerAutoOpen } from './utils/opComposerAutoOpen';
+import { createPreviewUpdater } from './utils/previewUpdater';
 
 app.initializers.add('mtareq-nested-replies', () => {
   const settings = readSettings(app);
@@ -472,6 +475,36 @@ app.initializers.add('mtareq-nested-replies', () => {
       },
       true
     );
+  }
+
+  if (ComposerPostPreview && ComposerPostPreview.prototype) {
+    // Core's ComposerPostPreview latches `preview = content` before calling
+    // s9e.TextFormatter.preview(). Wait for window.xsltPolyfillReady when the
+    // XSLT WASM polyfill is still initializing instead of latching an error.
+    override(ComposerPostPreview.prototype, 'oncreate', function (original, vnode) {
+      Component.prototype.oncreate.call(this, vnode);
+
+      const surround = typeof this.attrs.surround === 'function' ? this.attrs.surround : (preview) => preview();
+
+      this.nestedRepliesPreviewUpdater = createPreviewUpdater({
+        isVisible: () => this.attrs.composer.isVisible(),
+        getContent: () => this.attrs.composer.fields.content(),
+        render: (content) => {
+          surround(() => window.s9e.TextFormatter.preview(content, vnode.dom));
+        },
+        getPolyfillReady: () => (typeof window !== 'undefined' ? window.xsltPolyfillReady : null),
+      });
+
+      this.nestedRepliesPreviewUpdater.update();
+      this.updateInterval = setInterval(() => this.nestedRepliesPreviewUpdater.update(), 50);
+    });
+
+    extend(ComposerPostPreview.prototype, 'onremove', function () {
+      if (this.nestedRepliesPreviewUpdater) {
+        this.nestedRepliesPreviewUpdater.dispose();
+        this.nestedRepliesPreviewUpdater = null;
+      }
+    });
   }
 
   function patchReplyComposer(componentClass) {

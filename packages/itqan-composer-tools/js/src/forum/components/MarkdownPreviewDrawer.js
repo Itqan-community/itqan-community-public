@@ -40,6 +40,9 @@ export default class MarkdownPreviewDrawer extends Component {
     this.emptyElement = vnode.dom.querySelector('.MarkdownPreviewDrawer-empty');
     this.errorElement = vnode.dom.querySelector('.MarkdownPreviewDrawer-error');
     this.lastContent = undefined;
+    this.disposed = false;
+    this.waitingForPolyfill = false;
+    this.polyfillSettled = false;
 
     this.updatePreview();
     this.updateInterval = window.setInterval(() => this.updatePreview(), UPDATE_INTERVAL);
@@ -48,18 +51,26 @@ export default class MarkdownPreviewDrawer extends Component {
   onremove(vnode) {
     super.onremove(vnode);
 
+    this.disposed = true;
     window.clearInterval(this.updateInterval);
   }
 
+  showError(content) {
+    this.lastContent = content;
+    this.previewElement.replaceChildren();
+    this.previewElement.hidden = true;
+    this.emptyElement.hidden = true;
+    this.errorElement.hidden = false;
+  }
+
   updatePreview() {
-    if (!this.attrs.composer.isVisible()) return;
+    if (this.disposed || this.waitingForPolyfill || !this.attrs.composer.isVisible()) return;
 
     const content = this.attrs.composer.fields.content();
     if (content === this.lastContent) return;
 
-    this.lastContent = content;
-
     if (!content.trim()) {
+      this.lastContent = content;
       this.previewElement.replaceChildren();
       this.previewElement.hidden = true;
       this.errorElement.hidden = true;
@@ -69,14 +80,31 @@ export default class MarkdownPreviewDrawer extends Component {
 
     try {
       s9e.TextFormatter.preview(content, this.previewElement);
+      this.lastContent = content;
       this.previewElement.hidden = false;
       this.emptyElement.hidden = true;
       this.errorElement.hidden = true;
     } catch (error) {
-      this.previewElement.replaceChildren();
-      this.previewElement.hidden = true;
-      this.emptyElement.hidden = true;
-      this.errorElement.hidden = false;
+      if (!this.polyfillSettled && typeof window !== 'undefined' && typeof window.xsltPolyfillReady === 'function') {
+        this.waitingForPolyfill = true;
+        Promise.resolve()
+          .then(() => window.xsltPolyfillReady())
+          .then(
+            () => {
+              this.waitingForPolyfill = false;
+              this.polyfillSettled = true;
+              if (!this.disposed) this.updatePreview();
+            },
+            () => {
+              this.waitingForPolyfill = false;
+              this.polyfillSettled = true;
+              if (!this.disposed) this.showError(content);
+            }
+          );
+        return;
+      }
+
+      this.showError(content);
     }
   }
 }
