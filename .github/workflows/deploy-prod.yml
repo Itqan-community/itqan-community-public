@@ -166,13 +166,22 @@ jobs:
           # deploys). Back up first, and restore if the config fails to test.
           cp /etc/nginx/sites-available/flarum.conf /tmp/flarum.conf.bak
           python3 scripts/normalize-nginx-locations.py /etc/nginx/sites-available/flarum.conf --beta-guard
+
+          # Allow WebAssembly compilation for Flarum's XSLT polyfill (required on
+          # Chromium 155+ where native XSLTProcessor was removed, otherwise all
+          # s9e.TextFormatter live previews fail with a CSP CompileError).
+          rm -rf /tmp/itqan-csp-bak
+          python3 scripts/ensure-csp-wasm.py --backup-dir /tmp/itqan-csp-bak /etc/nginx/sites-available/flarum.conf /etc/nginx/snippets/security-headers.conf
+
           if ! nginx -t; then
+            python3 scripts/ensure-csp-wasm.py --restore /tmp/itqan-csp-bak || true
+            rm -rf /tmp/itqan-csp-bak
             cp /tmp/flarum.conf.bak /etc/nginx/sites-available/flarum.conf
             echo "nginx config invalid after normalization; restored previous config"
             nginx -t
             exit 1
           fi
-          rm -f /tmp/flarum.conf.bak
+          rm -rf /tmp/flarum.conf.bak /tmp/itqan-csp-bak
           systemctl reload nginx
           # Reload whichever PHP-FPM branches are actually running: the box can
           # carry more than one during the 8.1 -> 8.3 security upgrade, and a
