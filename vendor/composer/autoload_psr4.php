@@ -192,7 +192,6 @@ return array(
     'FoF\\Reactions\\' => array($vendorDir . '/fof/reactions/src'),
     'FoF\\PrettyMail\\' => array($vendorDir . '/fof/pretty-mail/src'),
     'FoF\\OAuth\\' => array($vendorDir . '/fof/oauth/src'),
-    'FoF\\ModeratorWarnings\\' => array($vendorDir . '/fof/moderator-warnings/src'),
     'FoF\\MergeDiscussions\\' => array($vendorDir . '/fof/merge-discussions/src'),
     'FoF\\Links\\' => array($vendorDir . '/fof/links/src'),
     'FoF\\Linguist\\' => array($vendorDir . '/fof/linguist/src'),

@@ -28,12 +28,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'askvortsov/flarum-moderator-warnings' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
         'askvortsov/flarum-pwa' => array(
             'pretty_version' => 'v3.4.1',
             'version' => '3.4.1.0',
@@ -717,15 +711,6 @@
             'reference' => '8086e0828a243bb53df45eb111685f81188bb3f2',
             'type' => 'flarum-extension',
             'install_path' => __DIR__ . '/../fof/merge-discussions',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'fof/moderator-warnings' => array(
-            'pretty_version' => '1.0.1',
-            'version' => '1.0.1.0',
-            'reference' => '529251281b5358994e5a311da40fa56562bb1d4e',
-            'type' => 'flarum-extension',
-            'install_path' => __DIR__ . '/../fof/moderator-warnings',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
