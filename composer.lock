@@ -5152,6 +5152,91 @@
             "time": "2025-05-20T10:17:31+00:00"
         },
         {
+            "name": "fof/moderator-warnings",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfFlarum/moderator-warnings.git",
+                "reference": "529251281b5358994e5a311da40fa56562bb1d4e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfFlarum/moderator-warnings/zipball/529251281b5358994e5a311da40fa56562bb1d4e",
+                "reference": "529251281b5358994e5a311da40fa56562bb1d4e",
+                "shasum": ""
+            },
+            "require": {
+                "flarum/core": "^1.8.0"
+            },
+            "replace": {
+                "askvortsov/flarum-moderator-warnings": "*"
+            },
+            "require-dev": {
+                "flarum/phpstan": "^1.0.0",
+                "flarum/testing": "^1.0.0"
+            },
+            "type": "flarum-extension",
+            "extra": {
+                "flarum-cli": {
+                    "modules": {
+                        "admin": true,
+                        "forum": true,
+                        "js": true,
+                        "jsCommon": false,
+                        "css": false,
+                        "gitConf": true,
+                        "githubActions": true,
+                        "prettier": true,
+                        "typescript": false,
+                        "bundlewatch": false,
+                        "backendTesting": true,
+                        "editorConfig": true,
+                        "styleci": true
+                    }
+                },
+                "flarum-extension": {
+                    "category": "feature",
+                    "icon": {
+                        "backgroundColor": "#e74c3c",
+                        "color": "#fff",
+                        "name": "fas fa-exclamation-circle"
+                    },
+                    "title": "FoF Moderator Warnings"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FoF\\ModeratorWarnings\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Skvortsov",
+                    "email": "askvortsov@flarum.org",
+                    "role": "Developer"
+                },
+                {
+                    "name": "IanM",
+                    "email": "ian@flarum.org",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Moderator Warnings extension for flarum.",
+            "keywords": [
+                "flarum"
+            ],
+            "support": {
+                "forum": "https://discuss.flarum.org/d/38529-friendsofflarum-moderator-warnings",
+                "issues": "https://github.com/FriendsOfFlarum/moderator-warnings/issues",
+                "source": "https://github.com/FriendsOfFlarum/moderator-warnings"
+            },
+            "time": "2026-02-11T10:23:14+00:00"
+        },
+        {
             "name": "fof/oauth",
             "version": "1.7.3",
             "source": {

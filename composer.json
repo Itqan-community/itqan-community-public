@@ -58,6 +58,7 @@
         "fof/linguist": "*",
         "fof/links": "^1.3",
         "fof/merge-discussions": "*",
+        "fof/moderator-warnings": "^1.0",
         "fof/oauth": "*",
         "fof/pretty-mail": "*",
         "fof/reactions": "^1.4",

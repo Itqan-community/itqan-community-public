@@ -1,0 +1,92 @@
+{
+    "name": "fof/moderator-warnings",
+    "description": "Moderator Warnings extension for flarum.",
+    "keywords": [
+        "flarum"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/FriendsOfFlarum/moderator-warnings/issues",
+        "source": "https://github.com/FriendsOfFlarum/moderator-warnings",
+        "forum": "https://discuss.flarum.org/d/38529-friendsofflarum-moderator-warnings"
+    },
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "replace": {
+        "askvortsov/flarum-moderator-warnings": "*"
+    },
+    "authors": [
+        {
+            "name": "Alexander Skvortsov",
+            "email": "askvortsov@flarum.org",
+            "role": "Developer"
+        },
+        {
+            "name": "IanM",
+            "email": "ian@flarum.org",
+            "role": "Maintainer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "FoF\\ModeratorWarnings\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "FoF Moderator Warnings",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-exclamation-circle",
+                "backgroundColor": "#e74c3c",
+                "color": "#fff"
+            }
+        },
+        "flarum-cli": {
+            "modules": {
+                "admin": true,
+                "forum": true,
+                "js": true,
+                "jsCommon": false,
+                "css": false,
+                "gitConf": true,
+                "githubActions": true,
+                "prettier": true,
+                "typescript": false,
+                "bundlewatch": false,
+                "backendTesting": true,
+                "editorConfig": true,
+                "styleci": true
+            }
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FoF\\ModeratorWarnings\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "analyse:phpstan": "phpstan analyse",
+        "clear-cache:phpstan": "phpstan clear-result-cache",
+        "test": [
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:unit": "phpunit -c tests/phpunit.unit.xml",
+        "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:setup": "@php tests/integration/setup.php"
+    },
+    "scripts-descriptions": {
+        "analyse:phpstan": "Run static analysis",
+        "test": "Runs all tests.",
+        "test:unit": "Runs all unit tests.",
+        "test:integration": "Runs all integration tests.",
+        "test:setup": "Sets up a database for use with integration tests. Execute this only once."
+    },
+    "require-dev": {
+        "flarum/testing": "^1.0.0",
+        "flarum/phpstan": "^1.0.0"
+    }
+}
