@@ -387,6 +387,7 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
             'FoF\\Reactions\\' => 14,
             'FoF\\PrettyMail\\' => 15,
             'FoF\\OAuth\\' => 10,
+            'FoF\\ModeratorWarnings\\' => 22,
             'FoF\\MergeDiscussions\\' => 21,
             'FoF\\Links\\' => 10,
             'FoF\\Linguist\\' => 13,
@@ -1223,6 +1224,10 @@ class ComposerStaticInit971ada262890473cd1ad51a47f33e20b
         'FoF\\OAuth\\' =>
         array (
             0 => __DIR__ . '/..' . '/fof/oauth/src',
+        ),
+        'FoF\\ModeratorWarnings\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/fof/moderator-warnings/src',
         ),
         'FoF\\MergeDiscussions\\' =>
         array (
